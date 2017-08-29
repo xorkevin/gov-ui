@@ -1,8 +1,6 @@
 import {h, Component} from 'preact';
 import {isWeb} from 'utility';
 
-const DATATYPES = new Set(['image']);
-
 const deferLoadImage = (url)=>{
   return new Promise((resolve)=>{
     if(isWeb()){

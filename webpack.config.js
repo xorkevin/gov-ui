@@ -17,18 +17,11 @@ module.exports = {
   module: {
     rules: [
       {test: /\.js$/, loader: 'babel-loader'},
-      {test: /\.scss$/,
+      {test: /\.s?css$/,
         use: ExtractTextPlugin.extract({
           use: [
             {loader: "css-loader", options: {minimize: true}},
             {loader: "sass-loader"},
-          ]
-        }),
-      },
-      {test: /\.css$/,
-        use: ExtractTextPlugin.extract({
-          use: [
-            {loader: "css-loader", options: {minimize: true}},
           ]
         }),
       },
