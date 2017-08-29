@@ -1,12 +1,118 @@
 import 'main.scss';
 
 import {h, render, Component} from 'preact';
+import Navbar from 'component/navbar';
+import Header from 'component/header';
+import Footer from 'component/footer';
 import Section from 'component/section';
+import Grid from 'component/grid';
+import Card from 'component/card';
 import Article from 'component/article';
 import {CommentSection, Comment} from 'component/comment';
+import Input from 'component/form';
+import Button from 'component/button';
+import Anchor from 'component/anchor';
+import FaIcon from 'component/faicon';
 
 render(
   <div>
+    <Navbar left={[
+      {key: 'home', scroll: true, component: 'Home', target: ''},
+      {key: 'cards', scroll: true, component: 'Cards', target: 'cards'},
+      {key: 'typography', scroll: true, component: 'Typography', target: 'typography'},
+      {key: 'form', scroll: true, component: 'Form', target: 'form'},
+      {key: 'buttons', scroll: true, component: 'Buttons', target: 'buttons'},
+    ]} right={[
+      {key: 'contact', scroll: false, component: 'Contact'},
+      {key: 'xorkevin', scroll: false, component: <span><FaIcon icon="github"/> xorkevin</span>, ext: true, target: 'https://github.com/xorkevin'},
+    ]}>
+    </Navbar>
+
+    <Header fixed color="#F1F5FD" image="https://xorkevin.github.io/stratosphere/assets/mountain.jpg">
+      <h1 className="colossal">Nuke</h1>
+      <h4>a reactive frontend for governor</h4>
+    </Header>
+
+    <Section id="cards" sectionTitle="Cards anyone?" container padded>
+      <Grid md={8} sm={12}>
+        <Card colkey="underground" size="md" restrictHeight background="https://xorkevin.github.io/stratosphere/assets/underground.jpg" title={[
+            <h3>Lorem ipsum</h3>,<button><FaIcon icon="heart"/></button>
+          ]} bar={[
+            <button>View</button>
+          ]}>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        </Card>
+        <Card colkey="mountain" size="md" restrictHeight background="https://xorkevin.github.io/stratosphere/assets/mountain.jpg" title={[
+            <h3>Dolor sit amet</h3>,<button><FaIcon icon="heart"/></button>
+          ]} bar={[
+            <button>View</button>
+          ]}>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer fringilla aliquet condimentum. Nunc facilisis orci dui, sit amet dictum massa porta at. Mauris augue nisi, scelerisque ac suscipit sit amet, egestas ut risus. In hac habitasse platea dictumst. Vivamus nibh enim, dignissim quis consequat at, sagittis in magna.</p>
+        </Card>
+        <Card colkey="forest" size="md" restrictHeight background="https://xorkevin.github.io/stratosphere/assets/forest.jpg" title={[
+            <h3>Consectetur</h3>,<button><FaIcon icon="heart"/></button>
+          ]} bar={[
+            <button>View</button>
+          ]}>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        </Card>
+        <Card colkey="flower" size="md" restrictHeight background="https://xorkevin.github.io/stratosphere/assets/flower.jpg" title={[
+            <h3>Adipiscing elit</h3>,<button><FaIcon icon="heart"/></button>
+          ]} bar={[
+            <button>View</button>
+          ]}>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        </Card>
+        <Card colkey="climb" size="md" restrictHeight background="https://xorkevin.github.io/stratosphere/assets/climb.jpg" title={[
+            <h3>Integer fringilla</h3>,<button><FaIcon icon="heart"/></button>
+          ]} bar={[
+            <button>View</button>
+          ]}>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        </Card>
+        <Card colkey="thames" size="md" restrictHeight background="https://xorkevin.github.io/stratosphere/assets/thames.jpg" title={[
+            <h3>Aliquet</h3>,<button><FaIcon icon="heart"/></button>
+          ]} bar={[
+            <button>View</button>
+          ]}>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        </Card>
+        {'String'}
+      </Grid>
+      <div>
+        <Card size="lg" square background="https://xorkevin.github.io/stratosphere/assets/climb.jpg" title={[
+            <h3>Vivamus nibh enim</h3>,<button><FaIcon icon="heart"/></button>
+          ]} bar={[
+            <button>Share</button>
+          ]}>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer fringilla aliquet condimentum. Nunc facilisis orci dui, sit amet dictum massa porta at. Mauris augue nisi, scelerisque ac suscipit sit amet, egestas ut risus. In hac habitasse platea dictumst. Vivamus nibh enim, dignissim quis consequat at, sagittis in magna.
+        </Card>
+        <Card size="md" square background="https://xorkevin.github.io/stratosphere/assets/flower.jpg" title={[
+            <h3>Vivamus nibh enim</h3>,<button><FaIcon icon="heart"/></button>
+          ]} bar={[
+            <button>Share</button>
+          ]}>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer fringilla aliquet condimentum. Nunc facilisis orci dui, sit amet dictum massa porta at. Mauris augue nisi, scelerisque ac suscipit sit amet, egestas ut risus. In hac habitasse platea dictumst. Vivamus nibh enim, dignissim quis consequat at, sagittis in magna.
+        </Card>
+        <Card size="sm" square background="https://xorkevin.github.io/stratosphere/assets/underground.jpg" title={[
+            <h3>Vivamus nibh enim</h3>,<button><FaIcon icon="heart"/></button>
+          ]} bar={[
+            <button>Share</button>
+          ]}>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer fringilla aliquet condimentum. Nunc facilisis orci dui, sit amet dictum massa porta at. Mauris augue nisi, scelerisque ac suscipit sit amet, egestas ut risus. In hac habitasse platea dictumst. Vivamus nibh enim, dignissim quis consequat at, sagittis in magna.
+        </Card>
+        <Card size="md" restrictWidth titleBar title={[
+            <h3>Vivamus nibh enim</h3>,<button><FaIcon icon="heart"/></button>
+          ]} bar={[
+            <button>Share</button>
+          ]}>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer fringilla aliquet condimentum. Nunc facilisis orci dui, sit amet dictum massa porta at. Mauris augue nisi, scelerisque ac suscipit sit amet, egestas ut risus. In hac habitasse platea dictumst. Vivamus nibh enim, dignissim quis consequat at, sagittis in magna.
+        </Card>
+      </div>
+    </Section>
+
+    <Header image="https://xorkevin.github.io/stratosphere/assets/thames.jpg" fixed size="lg"/>
+
     <Section id="typography" sectionTitle="Typography" container padded>
       <h1>Heading 1 <small>small</small></h1>
       <h2>Heading 2 <small>small</small></h2>
@@ -90,5 +196,49 @@ render(
         </Comment>
       </CommentSection>
     </Section>
+
+    <Section id="form" sectionTitle="Form" container padded>
+      <Input label="Name"/>
+      <Input label="Email" error="not an email"/>
+      <Input label="Phone" valid/>
+      <Input label="Tagline" info="What describes you?"/>
+      <Card size="lg" restrictWidth titleBar title={[
+          <h3>Vivamus nibh enim</h3>
+        ]} bar={[
+          <Button fixedWidth text>Cancel</Button>,
+          <Button fixedWidth outline>Save</Button>,
+          <Button fixedWidth primary>Submit</Button>
+        ]}>
+        <Input textarea fullWidth label="Biography" info="Tell us about yourself"/>
+      </Card>
+    </Section>
+    <Section id="buttons" sectionTitle="Buttons" container padded>
+      <Button fixedWidth primary>Primary</Button>
+      <Button fixedWidth outline>Outline</Button>
+      <Button fixedWidth text>Text</Button>
+      <Button raised fixedWidth primary>Raised Primary</Button>
+      <Button raised fixedWidth outline>Raised Outline</Button>
+      <Button raised fixedWidth text>Raised Text</Button>
+    </Section>
+
+    <Footer>
+      <Grid center md={6} sm={8}>
+        <div colkey="left" className="text-center">
+         <h4>Nuke</h4>
+         a reactive frontend for governor
+        </div>
+        <div colkey="center" className="text-center">
+          <ul>
+            <li><Anchor noColor ext href="https://github.com/xorkevin/stratosphere"><FaIcon icon="github"/> Github</Anchor></li>
+            <li>Designed for <Anchor noColor ext href="https://github.com/hackform/governor">hackform/governor</Anchor></li>
+          </ul>
+        </div>
+        <div colkey="right" className="text-center">
+          <h5>
+            <FaIcon icon="code"/> with <FaIcon icon="heart-o"/> by <Anchor noColor ext href="https://github.com/xorkevin"><FaIcon icon="github"/> xorkevin</Anchor>
+          </h5>
+        </div>
+      </Grid>
+    </Footer>
   </div>
 , document.getElementById('mount'));

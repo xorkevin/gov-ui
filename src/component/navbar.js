@@ -45,46 +45,44 @@ const scrollTo = (element, duration)=>{
   });
 };
 
-const Navbar = ({left, right, children}){
-  render(){
-    let j = [];
-    let k = [];
-    if(left){
-      for(let i = 0; i < left.length; i++){
-        const l = left[i];
-        if(l.scroll){
-          j.push(<div key={l.key} className="item" onClick={()=>{scrollTo(l.target, scrollTime);}}>{l.component}</div>);
-        } else {
-          j.push(<div key={l.key} className="item"><Anchor noStyle ext={l.ext} href={l.target}>{l.component}</Anchor></div>);
-        }
+const Navbar = ({left, right, children})=>{
+  let j = [];
+  let k = [];
+  if(left){
+    for(let i = 0; i < left.length; i++){
+      const l = left[i];
+      if(l.scroll){
+        j.push(<div key={l.key} className="item" onClick={()=>{scrollTo(l.target, scrollTime);}}>{l.component}</div>);
+      } else {
+        j.push(<div key={l.key} className="item"><Anchor noStyle ext={l.ext} href={l.target}>{l.component}</Anchor></div>);
       }
     }
-    if(right){
-      for(let i = 0; i < right.length; i++){
-        const l = right[i];
-        if(l.scroll){
-          k.push(<div key={l.key} className="item" onClick={()=>{scrollTo(l.target, scrollTime);}}>{l.component}</div>);
-        } else {
-          k.push(<div key={l.key} className="item"><Anchor noStyle ext={l.ext} href={l.target}>{l.component}</Anchor></div>);
-        }
-      }
-    }
-    return <nav>
-      <div className="nav-container">
-        <Container padded>
-          <div className="element">
-            {j}
-          </div>
-          <div className="element">
-            {children}
-          </div>
-          <div className="element">
-            {k}
-          </div>
-        </Container>
-      </div>
-    </nav>;
   }
+  if(right){
+    for(let i = 0; i < right.length; i++){
+      const l = right[i];
+      if(l.scroll){
+        k.push(<div key={l.key} className="item" onClick={()=>{scrollTo(l.target, scrollTime);}}>{l.component}</div>);
+      } else {
+        k.push(<div key={l.key} className="item"><Anchor noStyle ext={l.ext} href={l.target}>{l.component}</Anchor></div>);
+      }
+    }
+  }
+  return <nav>
+    <div className="nav-container">
+      <Container padded>
+        <div className="element">
+          {j}
+        </div>
+        <div className="element">
+          {children}
+        </div>
+        <div className="element">
+          {k}
+        </div>
+      </Container>
+    </div>
+  </nav>;
 };
 
 export default Navbar
