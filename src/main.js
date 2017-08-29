@@ -1,4 +1,3 @@
-import 'main.scss';
 import {h, render} from 'preact';
 import App from 'app';
 

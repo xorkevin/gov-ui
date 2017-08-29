@@ -5,3 +5,7 @@ const App = require('app');
 const renderToString = (props)=>{
   return preactRenderToString(h(App, props));
 };
+
+module.exports = {
+  renderToString: renderToString,
+};

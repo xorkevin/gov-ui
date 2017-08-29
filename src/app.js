@@ -1,3 +1,5 @@
+import 'main.scss';
+
 import {h, Component} from 'preact';
 import Navbar from 'component/navbar';
 import Header from 'component/header';

@@ -8,8 +8,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack -p --progress --color",
     "build-dev": "webpack-dev-server -w --progress --color",
-    "build-server": "babel server.js -d build_server",
-    "serve" : "node build_server/server.js"
+    "build-server": "webpack -p --progress --color --config webpack.server.config.js",
+    "serve" : "node server.js"
   },
   "repository": {
     "type": "git",
