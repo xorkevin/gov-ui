@@ -1,5 +1,6 @@
 import {h} from 'preact';
 import Container from 'component/container';
+import Deferrer from 'component/deferrer';
 
 import './header.scss';
 
@@ -23,7 +24,7 @@ const colorSwitch = (colorName)=>{
   return "";
 };
 
-const Header = ({size, fixed, color, image, children})=>{
+const Header = Deferrer(({size, fixed, color, image, children})=>{
   let k = [];
   let j = ["inner-static"];
   let l = ["inner"];
@@ -42,7 +43,11 @@ const Header = ({size, fixed, color, image, children})=>{
   if(fixed){
     k.push("fixed");
   }
-  let s = {backgroundImage: `url(${image})`};
+  const s = {
+  };
+  if(image){
+    s.backgroundImage = `url(${image})`;
+  }
   const y = colorSwitch(color);
   if(y !== ""){
     s.backgroundColor = y;
@@ -52,6 +57,6 @@ const Header = ({size, fixed, color, image, children})=>{
       {children}
     </Container>
   </header>;
-};
+}, {type: 'image', target: 'image'});
 
 export default Header

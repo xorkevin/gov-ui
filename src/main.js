@@ -15,7 +15,7 @@ import Anchor from 'component/anchor';
 import FaIcon from 'component/faicon';
 
 render(
-  <div>
+  <div id="mount">
     <Navbar left={[
       {key: 'home', scroll: true, component: 'Home', target: ''},
       {key: 'cards', scroll: true, component: 'Cards', target: 'cards'},
@@ -241,4 +241,4 @@ render(
       </Grid>
     </Footer>
   </div>
-, document.getElementById('mount'));
+, document.body, document.getElementById('mount'));
