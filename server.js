@@ -12,6 +12,9 @@ app.engine('html', hbsEngine);
 app.use(compression());
 app.use('/static', express.static('bin/static'));
 app.use('/static', express.static('public/static'));
+app.use('/static', function(req, res, next) {
+  res.send(404);
+});
 app.get('/*', (req, res) => {
   res.render('index', {html: asString});
 });

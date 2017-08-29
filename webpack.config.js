@@ -17,7 +17,7 @@ module.exports = {
   module: {
     rules: [
       {test: /\.js$/, loader: 'babel-loader'},
-      {test: /\.s?css$/,
+      {test: /\.scss$/,
         use: ExtractTextPlugin.extract({
           use: [
             {loader: "css-loader", options: {minimize: true}},
@@ -25,6 +25,14 @@ module.exports = {
           ]
         }),
       },
+      {test: /\.css$/,
+        use: ExtractTextPlugin.extract({
+          use: [
+            {loader: "css-loader", options: {minimize: true}},
+          ]
+        }),
+      },
+      {test: /\.(eot|svg|ttf|woff(2)?)(\?v=\d+\.\d+\.\d+)?/, loader: 'url-loader'},
     ]
   },
 
