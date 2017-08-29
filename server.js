@@ -1,15 +1,14 @@
 const express = require('express');
-const {h} = require('preact');
-const render = require('preact-render-to-string');
-const App = require('../src/app');
+const renderToString = require('../src/app').renderToString;
 
 const app = express();
 app.set('view engine', 'html');
 app.engine('html', require('hbs').__express);
-app.use(express.static('bin'));
-app.use(express.static('public'));
+app.use('/static', express.static('bin/static'));
+app.use('/static', express.static('public/static'));
 app.get('/*', (req, res) => {
-  res.render('bin/index', {html: render(h(App))});
+  console.log('renderToString length', renderToString().length);
+  res.render('bin/index', {html: renderToString()});
 });
 
 app.listen(3030);

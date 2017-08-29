@@ -13,6 +13,6 @@ dev:
 build:
 	npm run build
 
-serve:
+serve: build
 	npm run build-server
 	npm run serve

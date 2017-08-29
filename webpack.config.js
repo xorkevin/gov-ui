@@ -40,7 +40,7 @@ module.exports = {
     new ScriptExtHtmlPlugin({
       defaultAttribute: 'defer',
     }),
-    new ExtractTextPlugin('[name].[contenthash].css'),
+    new ExtractTextPlugin('static/[name].[contenthash].css'),
     new webpack.HashedModuleIdsPlugin(),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
@@ -52,8 +52,8 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'bin'),
     publicPath: '/',
-    filename: '[name].[chunkhash].js',
-    chunkFilename: '[name].[chunkhash].js',
+    filename: 'static/[name].[chunkhash].js',
+    chunkFilename: 'static/[name].[chunkhash].js',
   },
 
 
