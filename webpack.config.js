@@ -67,6 +67,6 @@ module.exports = {
     contentBase: [path.resolve(__dirname, 'bin'), path.resolve(__dirname, 'public')],
     compress: true,
     port: 3000,
-    historyApiFallback: true
+    historyApiFallback: true,
   },
 };

@@ -1,0 +1,10 @@
+{
+  "name": "Nuke",
+  "short_name": "Nuke",
+  "lang": "en-US",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#224A7F",
+  "background_color": "#FCFCFC",
+  "description": "governor frontend"
+}

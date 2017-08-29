@@ -36,44 +36,44 @@ render(
     <Section id="cards" sectionTitle="Cards anyone?" container padded>
       <Grid md={8} sm={12}>
         <Card colkey="underground" size="md" restrictHeight background="https://xorkevin.github.io/stratosphere/assets/underground.jpg" title={[
-            <h3>Lorem ipsum</h3>,<button><FaIcon icon="heart"/></button>
+            <h3>Lorem ipsum</h3>,<Button label="favorite"><FaIcon icon="heart"/></Button>
           ]} bar={[
-            <button>View</button>
+            <Button>View</Button>
           ]}>
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
         </Card>
         <Card colkey="mountain" size="md" restrictHeight background="https://xorkevin.github.io/stratosphere/assets/mountain.jpg" title={[
-            <h3>Dolor sit amet</h3>,<button><FaIcon icon="heart"/></button>
+            <h3>Dolor sit amet</h3>,<Button label="favorite"><FaIcon icon="heart"/></Button>
           ]} bar={[
-            <button>View</button>
+            <Button>View</Button>
           ]}>
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer fringilla aliquet condimentum. Nunc facilisis orci dui, sit amet dictum massa porta at. Mauris augue nisi, scelerisque ac suscipit sit amet, egestas ut risus. In hac habitasse platea dictumst. Vivamus nibh enim, dignissim quis consequat at, sagittis in magna.</p>
         </Card>
         <Card colkey="forest" size="md" restrictHeight background="https://xorkevin.github.io/stratosphere/assets/forest.jpg" title={[
-            <h3>Consectetur</h3>,<button><FaIcon icon="heart"/></button>
+            <h3>Consectetur</h3>,<Button label="favorite"><FaIcon icon="heart"/></Button>
           ]} bar={[
-            <button>View</button>
+            <Button>View</Button>
           ]}>
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
         </Card>
         <Card colkey="flower" size="md" restrictHeight background="https://xorkevin.github.io/stratosphere/assets/flower.jpg" title={[
-            <h3>Adipiscing elit</h3>,<button><FaIcon icon="heart"/></button>
+            <h3>Adipiscing elit</h3>,<Button label="favorite"><FaIcon icon="heart"/></Button>
           ]} bar={[
-            <button>View</button>
+            <Button>View</Button>
           ]}>
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
         </Card>
         <Card colkey="climb" size="md" restrictHeight background="https://xorkevin.github.io/stratosphere/assets/climb.jpg" title={[
-            <h3>Integer fringilla</h3>,<button><FaIcon icon="heart"/></button>
+            <h3>Integer fringilla</h3>,<Button label="favorite"><FaIcon icon="heart"/></Button>
           ]} bar={[
-            <button>View</button>
+            <Button>View</Button>
           ]}>
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
         </Card>
         <Card colkey="thames" size="md" restrictHeight background="https://xorkevin.github.io/stratosphere/assets/thames.jpg" title={[
-            <h3>Aliquet</h3>,<button><FaIcon icon="heart"/></button>
+            <h3>Aliquet</h3>,<Button label="favorite"><FaIcon icon="heart"/></Button>
           ]} bar={[
-            <button>View</button>
+            <Button>View</Button>
           ]}>
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
         </Card>
@@ -81,30 +81,30 @@ render(
       </Grid>
       <div>
         <Card size="lg" square background="https://xorkevin.github.io/stratosphere/assets/climb.jpg" title={[
-            <h3>Vivamus nibh enim</h3>,<button><FaIcon icon="heart"/></button>
+            <h3>Vivamus nibh enim</h3>,<Button label="favorite"><FaIcon icon="heart"/></Button>
           ]} bar={[
-            <button>Share</button>
+            <Button>Share</Button>
           ]}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer fringilla aliquet condimentum. Nunc facilisis orci dui, sit amet dictum massa porta at. Mauris augue nisi, scelerisque ac suscipit sit amet, egestas ut risus. In hac habitasse platea dictumst. Vivamus nibh enim, dignissim quis consequat at, sagittis in magna.
         </Card>
         <Card size="md" square background="https://xorkevin.github.io/stratosphere/assets/flower.jpg" title={[
-            <h3>Vivamus nibh enim</h3>,<button><FaIcon icon="heart"/></button>
+            <h3>Vivamus nibh enim</h3>,<Button label="favorite"><FaIcon icon="heart"/></Button>
           ]} bar={[
-            <button>Share</button>
+            <Button>Share</Button>
           ]}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer fringilla aliquet condimentum. Nunc facilisis orci dui, sit amet dictum massa porta at. Mauris augue nisi, scelerisque ac suscipit sit amet, egestas ut risus. In hac habitasse platea dictumst. Vivamus nibh enim, dignissim quis consequat at, sagittis in magna.
         </Card>
         <Card size="sm" square background="https://xorkevin.github.io/stratosphere/assets/underground.jpg" title={[
-            <h3>Vivamus nibh enim</h3>,<button><FaIcon icon="heart"/></button>
+            <h3>Vivamus nibh enim</h3>,<Button label="favorite"><FaIcon icon="heart"/></Button>
           ]} bar={[
-            <button>Share</button>
+            <Button>Share</Button>
           ]}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer fringilla aliquet condimentum. Nunc facilisis orci dui, sit amet dictum massa porta at. Mauris augue nisi, scelerisque ac suscipit sit amet, egestas ut risus. In hac habitasse platea dictumst. Vivamus nibh enim, dignissim quis consequat at, sagittis in magna.
         </Card>
         <Card size="md" restrictWidth titleBar title={[
-            <h3>Vivamus nibh enim</h3>,<button><FaIcon icon="heart"/></button>
+            <h3>Vivamus nibh enim</h3>,<Button label="favorite"><FaIcon icon="heart"/></Button>
           ]} bar={[
-            <button>Share</button>
+            <Button>Share</Button>
           ]}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer fringilla aliquet condimentum. Nunc facilisis orci dui, sit amet dictum massa porta at. Mauris augue nisi, scelerisque ac suscipit sit amet, egestas ut risus. In hac habitasse platea dictumst. Vivamus nibh enim, dignissim quis consequat at, sagittis in magna.
         </Card>
@@ -229,7 +229,7 @@ render(
         </div>
         <div colkey="center" className="text-center">
           <ul>
-            <li><Anchor noColor ext href="https://github.com/xorkevin/stratosphere"><FaIcon icon="github"/> Github</Anchor></li>
+            <li><Anchor noColor ext href="https://github.com/hackform/nuke"><FaIcon icon="github"/> Github</Anchor></li>
             <li>Designed for <Anchor noColor ext href="https://github.com/hackform/governor">hackform/governor</Anchor></li>
           </ul>
         </div>

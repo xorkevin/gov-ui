@@ -2,7 +2,7 @@ import {h} from 'preact';
 
 import './button.scss';
 
-const Button = ({primary, outline, text, fixedWidth, raised, children})=>{
+const Button = ({primary, outline, text, fixedWidth, raised, label, children})=>{
   const k = [];
   if(primary){
     k.push("primary");
@@ -20,7 +20,7 @@ const Button = ({primary, outline, text, fixedWidth, raised, children})=>{
     k.push("raised");
   }
 
-  return <button className={k.join(" ")}>{children}</button>
+  return <button className={k.join(" ")} aria-label={label}>{children}</button>
 };
 
 export default Button
