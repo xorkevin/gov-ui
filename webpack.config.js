@@ -53,6 +53,7 @@ module.exports = {
 
   output: {
     path: path.resolve(__dirname, 'bin'),
+    publicPath: '/',
     filename: '[name].[chunkhash].js',
     chunkFilename: '[name].[chunkhash].js',
   },
