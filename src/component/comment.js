@@ -1,5 +1,6 @@
 import {h, Component} from 'preact';
 import Time from 'component/time';
+import {isWeb} from 'utility';
 
 import './comment.scss';
 
@@ -64,35 +65,43 @@ class Comment extends Component {
   }
 }
 
-const sm = 768;
-const md = sm * 1.5;
-const lg = md * 1.5;
-const xs = 768 / 2;
+const WIDTH = {
+  sm: 768,
+};
+WIDTH.md = WIDTH.sm * 1.5;
+WIDTH.lg = WIDTH.md * 1.5;
+WIDTH.xs = WIDTH.sm / 2;
 
-const depthXxs = 4;
-const depthXs = 6;
-const depthSm = 8;
-const depthMd = 12;
-const depthLg = 16;
+const DEPTH = {
+  xxs: 4,
+  xs: 6,
+  sm: 8,
+  md: 12,
+  lg: 16,
+};
 
 const widthToDepth = (width)=>{
-  if(width > lg){
-    return depthLg;
-  } else if(width > md){
-    return depthMd;
-  } else if(width > sm){
-    return depthSm;
-  } else if(width > xs){
-    return depthXs;
+  if(width > WIDTH.lg){
+    return DEPTH.lg;
+  } else if(width > WIDTH.md){
+    return DEPTH.md;
+  } else if(width > WIDTH.sm){
+    return DEPTH.sm;
+  } else if(width > WIDTH.xs){
+    return DEPTH.xs;
   }
-  return depthXxs;
+  return DEPTH.xxs;
 };
 
 class CommentSection extends Component {
   constructor(props){
     super(props);
+    let width = WIDTH.md;
+    if(isWeb()){
+      width = window.innerWidth;
+    }
     this.state = {
-      depth: widthToDepth(window.innerWidth),
+      depth: widthToDepth(width),
     };
   }
 
@@ -103,21 +112,25 @@ class CommentSection extends Component {
   }
 
   componentDidMount(){
-    this.running = false;
-    this.handler = ()=>{
-      if(!this.running){
-        this.running = true;
-        window.requestAnimationFrame(()=>{
-          this.tick();
-          this.running = false;
-        });
-      }
-    };
-    window.addEventListener("resize", this.handler);
+    if(isWeb()){
+      this.running = false;
+      this.handler = ()=>{
+        if(!this.running){
+          this.running = true;
+          window.requestAnimationFrame(()=>{
+            this.tick();
+            this.running = false;
+          });
+        }
+      };
+      window.addEventListener("resize", this.handler);
+    }
   }
 
   componentWillUnmount(){
-    window.removeEventListener("resize", this.handler);
+    if(this.handler){
+      window.removeEventListener("resize", this.handler);
+    }
   }
 
   render({children}, {depth}){

@@ -1,15 +1,19 @@
 const express = require('express');
-const renderToString = require('./bin_server/render');
+const compression = require('compression');
+const hbsEngine = require('hbs').__express;
+const {renderToString} = require('./bin_server/render');
 
-console.log(require('./bin_server/render'));
+const asString = renderToString();
 
 const app = express();
+app.set('views', 'bin');
 app.set('view engine', 'html');
-app.engine('html', require('hbs').__express);
+app.engine('html', hbsEngine);
+app.use(compression());
 app.use('/static', express.static('bin/static'));
 app.use('/static', express.static('public/static'));
 app.get('/*', (req, res) => {
-  res.render('bin/index', {html: renderToString()});
+  res.render('index', {html: asString});
 });
 
-//app.listen(3030);
+app.listen(3030);

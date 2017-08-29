@@ -1,14 +1,19 @@
 import {h, Component} from 'preact';
+import {isWeb} from 'utility';
 
 const DATATYPES = new Set(['image']);
 
 const deferLoadImage = (url)=>{
   return new Promise((resolve)=>{
-    const img = new Image();
-    img.onload = ()=>{
-      resolve(url);
-    };
-    img.src = url;
+    if(isWeb()){
+      const img = new Image();
+      img.onload = ()=>{
+        resolve(url);
+      };
+      img.src = url;
+    } else {
+      resolve(false);
+    }
   });
 };
 

@@ -15,17 +15,17 @@ module.exports = {
   module: {
     rules: [
       {test: /\.js$/, loader: 'babel-loader', exclude: /node_modules/},
+      {test: /\.s?css$/, loader: 'ignore-loader'},
     ]
   },
 
   plugins: [
     new CleanPlugin(['bin_server']),
-    new webpack.IgnorePlugin(/\.s?css$/)
   ],
 
   output: {
     path: path.resolve(__dirname, 'bin_server'),
-    publicPath: '/',
     filename: '[name].js',
+    libraryTarget: 'commonjs',
   },
 };

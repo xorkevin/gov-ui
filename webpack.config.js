@@ -3,7 +3,6 @@ const webpack = require('webpack');
 const CleanPlugin = require('clean-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlPlugin = require('html-webpack-plugin');
-const ScriptExtHtmlPlugin = require('script-ext-html-webpack-plugin');
 
 module.exports = {
   target: 'web',
@@ -34,11 +33,8 @@ module.exports = {
     new HtmlPlugin({
       title: 'Nuke',
       filename: 'index.html',
-      inject: 'head',
+      inject: 'body',
       template: 'index.html',
-    }),
-    new ScriptExtHtmlPlugin({
-      defaultAttribute: 'defer',
     }),
     new ExtractTextPlugin('static/[name].[contenthash].css'),
     new webpack.HashedModuleIdsPlugin(),

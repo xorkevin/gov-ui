@@ -14,7 +14,7 @@ import Button from 'component/button';
 import Anchor from 'component/anchor';
 import FaIcon from 'component/faicon';
 
-const App = ()=>{
+const App = (props)=>{
   return <div id="mount">
     <Navbar left={[
       {key: 'home', scroll: true, component: 'Home', target: ''},
