@@ -1,0 +1,95 @@
+@import "../style/vars";
+@import "../style/color";
+
+$button-color-outline: lighten($color-primary-light, 12.5%);
+$button-color-background: lighten($color-text-dark-4, 42%);
+
+button {
+  padding         : $button-padding $button-padding-h;
+  min-width       : $button-min-width;
+  background-color: transparent;
+  border          : 0;
+  border-radius   : 4px;
+  font-weight     : 700;
+  font-family     : $typography-base-font;
+  text-transform  : uppercase;
+  color           : $color-accent;
+  text-align      : center;
+  transition      : $transition-normal;
+  cursor          : pointer;
+
+  &:hover {
+    background-color: $color-accent;
+    color: $white;
+  }
+
+  &:active {
+    background-color: $color-accent;
+    color: $white;
+  }
+
+  &.primary {
+    background-color: $color-primary-light;
+    color           : $white;
+
+    &:hover {
+      background-color: lighten($color-primary-light, 12.5%);
+      color           : $white;
+    }
+  }
+
+  &.outline {
+    background-color: $white;
+    color           : $color-primary-light;
+    border          : 1px solid $button-color-outline;
+
+    &:hover {
+      background-color: $white;
+      color           : lighten($color-primary-light, 12.5%);
+      border-color    : lighten($button-color-outline, 12.5%);
+    }
+  }
+
+  &.text {
+    background-color: transparent;
+    color           : $color-text-dark-3;
+
+    &:hover {
+      background-color: $button-color-background;
+      color           : $color-text-dark-3;
+    }
+
+    &.raised {
+      background-color: $white;
+      color           : $color-text-dark-3;
+
+      &:hover {
+        background-color: $white;
+        color           : $color-text-dark-3;
+      }
+    }
+  }
+
+  &.raised {
+    box-shadow: $shadow-button;
+    border: 0;
+
+    &:hover {
+      box-shadow: $shadow-button-raised;
+      transform : translateY(-1px);
+      border: 0;
+    }
+  }
+
+  &.fixed-width {
+    min-width: 96px;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  & + button {
+    margin-left: 8px;
+  }
+}

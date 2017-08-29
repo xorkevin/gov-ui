@@ -1,0 +1,71 @@
+@import "../style/vars";
+@import "../style/color";
+
+nav, .nav {
+  position        : fixed;
+  height          : $nav-height;
+  width           : 100%;
+  background-color: $background-transparent;
+  color           : $color-text-dark-2;
+  display         : flex;
+  justify-content : center;
+  align-items     : center;
+  transition      : $transition-normal;
+  font-family     : $typography-base-font;
+  font-size       : 0.84rem;
+  letter-spacing  : 2px;
+  text-transform  : uppercase;
+  box-shadow      : $shadow-box-2;
+  z-index         : 64;
+  overflow        : hidden;
+  border-top      : 4px solid $color-accent;
+
+  &.top {
+    background-color: transparent;
+  }
+
+  &>.nav-container {
+    display        : flex;
+    justify-content: center;
+    align-items    : center;
+    width          : 100%;
+    height         : 100%;
+    overflow-y     : hidden;
+    overflow-x     : auto;
+
+    &>.container {
+      display        : flex;
+      justify-content: space-between;
+      align-items    : center;
+      white-space    : nowrap;
+
+      &>.element {
+        display        : flex;
+        justify-content: center;
+        align-items    : center;
+        margin         : 0 8px;
+
+        &>.item {
+          margin     : 0 $nav-margin 0 0;
+          float      : left;
+          color      : $color-text-dark-2;
+          transition : $transition-normal;
+          white-space: nowrap;
+
+          &:last-child {
+            margin: 0;
+          }
+
+          &:hover {
+            color : lighten(saturate($color-accent, 25%), 6.25%);
+            cursor: pointer;
+          }
+
+          &:active {
+            color: lighten(saturate($color-accent, 25%), 6.25%);
+          }
+        }
+      }
+    }
+  }
+}

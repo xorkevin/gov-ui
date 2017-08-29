@@ -1,0 +1,63 @@
+@import "../style/vars";
+@import "../style/color";
+
+.comment {
+  margin: 16px 0;
+
+  &>.inner {
+    &>.info {
+      &>* + * {
+        margin-left: 8px;
+      }
+
+      .data {
+        font-family: monospace;
+        font-size  : 0.85rem;
+        color      : $color-text-dark-2;
+      }
+    }
+
+    &>.content {
+      font-size: 1rem;
+      color    : $color-text-dark-1-5;
+    }
+
+    &>.options {
+      font-size: 0.85rem;
+      color    : $color-text-dark-2;
+
+      &>* + * {
+        margin-left: 8px;
+      }
+    }
+  }
+
+  &>.children {
+    margin     : 0 0 0 12px;
+    border-left: 1px solid $color-text-dark-4;
+    padding    : 0 0 0 12px;
+  }
+
+  &.hidden {
+    &>.inner {
+      &>:not(.info) {
+        display: none;
+      }
+    }
+
+    &>:not(.inner) {
+      display: none;
+    }
+  }
+}
+
+.comment-section {
+  &>.comment {
+    margin: 0;
+    padding: 16px 0;
+  }
+
+  &>.comment + .comment {
+    border-top : 2px solid $color-text-dark-4;
+  }
+}

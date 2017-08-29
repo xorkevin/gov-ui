@@ -1,0 +1,37 @@
+// Grid //
+$grid-sm-breakpoint   : 512px * 1.5 !default;
+$grid-md-breakpoint   : $grid-sm-breakpoint * 1.5 !default;
+$grid-lg-breakpoint   : $grid-md-breakpoint * 1.5 !default;
+$grid-gutter-padding  : 8px !default;
+$grid-vertical-padding: 8px !default;
+
+// Typography //
+$typography-base-font: 'Lato', sans-serif;
+$typography-base-size: 12px !default;
+$typography-article-font: 'Source Serif Pro', sans-serif;
+
+// Card //
+$card-sm-size  : 256px !default;
+$card-md-size  : $card-sm-size * 1.5 !default;
+$card-lg-size  : $card-md-size * 1.5 !default;
+$card-padding  : 8px !default;
+$card-padding-h: $card-padding * 2 !default;
+$card-margin   : 8px !default;
+
+// Button //
+$button-padding  : 8px !default;
+$button-padding-h: $button-padding * 2 !default;
+$button-min-width: 48px !default;
+
+// Hero //
+$hero-sm-size: 512px !default;
+$hero-md-size: $hero-sm-size * 1.5 !default;
+$hero-lg-size: $hero-md-size * 1.5 !default;
+
+// Nav //
+$nav-height: 64px !default;
+$nav-margin: 24px !default;
+
+// Transitions //
+$transition-normal: 0.125s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-fast  : 0.0625s cubic-bezier(0.4, 0, 0.2, 1);

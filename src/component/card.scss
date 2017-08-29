@@ -1,0 +1,135 @@
+@import "../style/vars";
+@import "../style/color";
+
+.card {
+  box-shadow   : $shadow-box;
+  border-radius: 4px;
+  overflow     : hidden;
+  max-width    : 100%;
+  height       : 100%;
+
+  &.accent {
+    border-top: 6px solid $color-accent;
+  }
+
+  &>.title {
+    background: no-repeat center center / cover;
+
+    &>.inner {
+      height         : 100%;
+      width          : 100%;
+      max-width      : 100%;
+      padding        : $card-padding $card-padding-h;
+      display        : flex;
+      justify-content: space-between;
+      align-items    : flex-end;
+      color          : $color-text-light-1;
+
+      h1, h2, h3, h4, h5, h6 {
+        font-weight: 300;
+        text-shadow: $shadow-text;
+        margin     : 0;
+      }
+
+      button {
+        font-weight: 700;
+        font-size  : 1rem;
+        color      : $color-text-light-1;
+      }
+    }
+  }
+
+  &>.title-bar {
+    letter-spacing: 1px;
+
+    &>.inner {
+      padding         : $card-padding $card-padding-h;
+      display         : flex;
+      justify-content : space-between;
+      align-items     : center;
+      color           : $color-primary;
+      background-color: $white;
+    }
+  }
+
+  &>.body, &>.bar {
+    padding         : $card-padding $card-padding-h;
+    background-color: $white;
+    color           : $color-text-dark-1-5;
+  }
+
+  &>.body {
+    overflow     : hidden;
+    text-overflow: ellipsis;
+    position     : relative;
+    font-size    : 1rem;
+
+    &:before {
+      content:'';
+      width:100%;
+      height:100%;
+      position:absolute;
+      left:0;
+      top:0;
+      background: linear-gradient(transparent calc(100% - 1em), rgba($white, 0.7));
+      pointer-events: none;
+    }
+  }
+
+  &>.bar {
+    border      : 1px $color-text-dark-4;
+    border-style: solid none none none;
+  }
+
+  &.sm {
+    &>.title {
+      height: $card-sm-size * 2 / 3;
+    }
+  }
+
+  &.md {
+    &>.title {
+      height: $card-md-size * 2 / 3;
+    }
+  }
+
+  &.lg {
+    &>.title {
+      height: $card-lg-size * 2 / 3;
+    }
+  }
+
+  &.restrict-height {
+    &.sm {
+      &>.body {
+        max-height: $card-sm-size / 3;
+      }
+    }
+
+    &.md {
+      &>.body {
+        max-height: $card-md-size / 3;
+      }
+    }
+
+    &.lg {
+      &>.body {
+        max-height: $card-lg-size / 3;
+      }
+    }
+  }
+
+  &.restrict-width {
+    &.sm {
+      width: $card-sm-size;
+    }
+
+    &.md {
+      width: $card-md-size;
+    }
+
+    &.lg {
+      width: $card-lg-size;
+    }
+  }
+}

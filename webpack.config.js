@@ -17,10 +17,7 @@ module.exports = {
   },
   module: {
     rules: [
-      {test: /\.js$/, loader: 'babel-loader', options: {
-        presets: ['env'],
-        plugins: [['transform-react-jsx', { pragma: 'h' }]],
-      }},
+      {test: /\.js$/, loader: 'babel-loader'},
       {test: /\.s?css$/,
         use: ExtractTextPlugin.extract({
           use: [
@@ -38,6 +35,7 @@ module.exports = {
       title: 'Nuke',
       filename: 'index.html',
       inject: 'head',
+      template: 'index.html',
     }),
     new ScriptExtHtmlPlugin({
       defaultAttribute: 'defer',

@@ -1,0 +1,27 @@
+@import "../style/vars";
+@import "../style/color";
+
+article, .article {
+  line-height: 1.8;
+  max-width  : 42rem;
+  margin     : auto;
+  font-family: $typography-article-font;
+  font-size  : 1.25rem;
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: $typography-base-font;
+  }
+
+  .info {
+    font-family: $typography-base-font;
+    font-size: 1rem;
+
+    time {
+      font-size: 0.85rem;
+    }
+  }
+
+  p {
+    margin: 2rem 0rem;
+  }
+}

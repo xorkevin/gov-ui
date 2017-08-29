@@ -1,0 +1,147 @@
+@import "../style/vars";
+@import "../style/color";
+
+input, textarea {
+  font-family: $typography-base-font;
+  background : transparent;
+}
+
+.input {
+  position: relative;
+  width   : 256px;
+  padding : 20px 0;
+
+  &.wide {
+    width: 512px;
+  }
+
+  &.full-width {
+    width: 100%;
+  }
+
+  &>input, &>textarea {
+    font-size    : 1em;
+    border-bottom: 1px solid $color-text-dark-3;
+    width        : 100%;
+    padding      : 4px 0;
+    color        : $color-text-dark-1;
+
+    & + label {
+      transition: $transition-normal;
+
+      bottom        : 0;
+      color         : $color-text-dark-2;
+      font-size     : 1em;
+      left          : 0;
+      right         : 0;
+      pointer-events: none;
+      position      : absolute;
+      display       : block;
+      top           : 24px;
+      width         : 100%;
+      overflow      : hidden;
+      white-space   : nowrap;
+      text-align    : left;
+
+      &:after {
+        background-color: $color-accent;
+        bottom          : 20px;
+        left            : calc(50% - 8px);
+        width           : 16px;
+        height          : 2px;
+        content         : '';
+        position        : absolute;
+        transition      : $transition-normal;
+        visibility      : hidden;
+      }
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &:focus + label {
+      color     : $color-accent;
+      font-size : 0.75em;
+      top       : 4px;
+      visibility: visible;
+
+      &:after {
+        left      : 0;
+        visibility: visible;
+        width     : 100%;
+      }
+    }
+
+    &:not(:placeholder-shown) + label {
+      color     : $color-accent;
+      font-size : 0.75em;
+      top       : 4px;
+      visibility: visible;
+    }
+
+    & ~ .info {
+      color     : $color-text-dark-3;
+      position  : absolute;
+      font-size : 0.75em;
+      margin-top: 2px;
+      display   : block;
+    }
+
+    &:focus ~ .info {
+      color: $color-text-dark-2;
+    }
+
+    &:not(:placeholder-shown) ~ .info {
+      color: $color-text-dark-2;
+    }
+
+    & ~ .error {
+      color     : $color-invalid;
+      position  : absolute;
+      font-size : 0.75em;
+      margin-top: 2px;
+      visibility: hidden;
+      display   : block;
+    }
+  }
+
+  &>textarea {
+    padding      : 4px 0;
+    border       : none;
+    border-bottom: 1px solid $color-text-dark-3;
+    margin-bottom: -4px;
+    resize       : vertical;
+  }
+}
+
+.input.invalid {
+  &>label {
+    color: $color-invalid !important;
+
+    &:after {
+      background-color: $color-invalid;
+      left            : 0;
+      visibility      : visible;
+      width           : 100%;
+    }
+  }
+
+  &>.error {
+    visibility: visible;
+  }
+}
+
+.input.valid {
+  &>label {
+    color: $color-valid !important;
+
+    &:after {
+      background-color: $color-valid;
+      left            : 0;
+      visibility      : visible;
+      width           : 100%;
+    }
+  }
+}
+

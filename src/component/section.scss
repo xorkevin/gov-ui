@@ -1,0 +1,12 @@
+@import "../style/vars";
+@import "../style/color";
+
+section {
+  margin: 32px 0;
+
+  .section-header {
+    font-family   : $typography-base-font;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+}

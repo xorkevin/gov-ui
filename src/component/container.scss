@@ -1,0 +1,23 @@
+@import "../style/vars";
+@import "../style/color";
+
+.container {
+  width : 100%;
+  margin: auto;
+
+  &.padded {
+    padding: 8px;
+  }
+
+  @media (min-width: $grid-sm-breakpoint) {
+    max-width: $grid-sm-breakpoint * 15 / 16;
+  }
+
+  @media (min-width: $grid-md-breakpoint) {
+    max-width: $grid-md-breakpoint * 15 / 16;
+  }
+
+  @media (min-width: $grid-lg-breakpoint) {
+    max-width: $grid-lg-breakpoint * 15 / 16;
+  }
+}

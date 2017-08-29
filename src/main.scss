@@ -1,3 +1,4 @@
-#hello-world {
-  color: blue;
-}
+@import "style/normalize";
+@import "style/vars";
+@import "style/color";
+@import "style/typography";

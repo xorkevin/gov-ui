@@ -35,6 +35,7 @@
     "webpack-dev-server": "^2.7.1"
   },
   "dependencies": {
+    "font-awesome": "^4.7.0",
     "preact": "^8.2.5"
   }
 }
