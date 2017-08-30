@@ -3,15 +3,11 @@ import {isWeb} from 'utility';
 
 const deferLoadImage = (url)=>{
   return new Promise((resolve)=>{
-    if(isWeb()){
-      const img = new Image();
-      img.onload = ()=>{
-        resolve(url);
-      };
-      img.src = url;
-    } else {
+    const img = new Image();
+    img.onload = ()=>{
       resolve(url);
-    }
+    };
+    img.src = url;
   });
 };
 
@@ -31,25 +27,29 @@ const Deferrer = (component, data)=>{
     constructor(props){
       super(props);
       this.state = {};
-      images.forEach(({target})=>{
-        if(this.props[target]){
-          this.state[target] = false;
-        }
-      });
+      if(isWeb()){
+        images.forEach(({target})=>{
+          if(this.props[target]){
+            this.state[target] = false;
+          }
+        });
+      }
     }
 
     componentWillMount() {
-      images.forEach(({target})=>{
-        if(this.props[target]){
-          deferLoadImage(this.props[target]).then((url)=>{
-            this.setState((prevState)=>{
-              const k = {};
-              k[target] = url;
-              return Object.assign({}, prevState, k);
+      if(isWeb()){
+        images.forEach(({target})=>{
+          if(this.props[target]){
+            deferLoadImage(this.props[target]).then((url)=>{
+              this.setState((prevState)=>{
+                const k = {};
+                k[target] = url;
+                return Object.assign({}, prevState, k);
+              });
             });
-          });
-        }
-      });
+          }
+        });
+      }
     }
 
     render(props, state){
