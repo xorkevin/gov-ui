@@ -46,17 +46,19 @@ const Header = Deferrer(({semantic, size, fixed, color, image, children})=>{
     s.backgroundColor = y;
   }
   if(semantic){
-    return <header className={k.join(" ")} style={s}>
+    return <header className={k.join(" ")}>
       <Container padded>
         {children}
       </Container>
+      <div className="bg" style={s}/>
     </header>;
   }
   k.push("header");
-  return <div className={k.join(" ")} style={s}>
+  return <div className={k.join(" ")}>
     <Container padded>
       {children}
     </Container>
+    <div className="bg" style={s}/>
   </div>;
 }, {type: 'image', target: 'image'});
 
