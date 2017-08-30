@@ -12,7 +12,7 @@ header, .header, .hero {
   align-items          : center;
 
   &.fixed {
-    background: no-repeat center center / cover fixed;
+    background-attachment: fixed;
   }
 
   &.animated {

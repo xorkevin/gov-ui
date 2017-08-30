@@ -10,7 +10,7 @@ const deferLoadImage = (url)=>{
       };
       img.src = url;
     } else {
-      resolve(false);
+      resolve(url);
     }
   });
 };
