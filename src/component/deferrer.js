@@ -19,7 +19,7 @@ const Deferrer = (component, data)=>{
   let images = [];
   if(Array.isArray(data)){
     images = data.filter(dataIsImage);
-  } else if(dataIsImage(data)){
+  } else if(data && dataIsImage(data)){
     images.push(data);
   }
 
@@ -27,7 +27,7 @@ const Deferrer = (component, data)=>{
     constructor(props){
       super(props);
       this.state = {};
-      if(isWeb()){
+      if(isWeb() && images.length > 0){
         images.forEach(({target})=>{
           if(this.props[target]){
             this.state[target] = false;
@@ -36,8 +36,13 @@ const Deferrer = (component, data)=>{
       }
     }
 
-    componentWillMount() {
-      if(isWeb()){
+    tick(){
+      const innerHeight = window.innerHeight;
+      const {top: elemTop, bottom: elemBottom} = this.elem.getBoundingClientRect();
+      const halfHeight = innerHeight / 2;
+      const topBound = -halfHeight;
+      const bottomBound = innerHeight + halfHeight;
+      if(elemTop < bottomBound && elemTop > topBound || elemBottom < bottomBound && elemBottom > topBound){
         images.forEach(({target})=>{
           if(this.props[target]){
             deferLoadImage(this.props[target]).then((url)=>{
@@ -49,12 +54,53 @@ const Deferrer = (component, data)=>{
             });
           }
         });
+        return true;
       }
+    }
+
+    unbind(){
+      if(this.registered){
+        window.removeEventListener("scroll", this.handler);
+        window.removeEventListener("resize", this.handler);
+      }
+      if(this.handler){
+        this.handler = false;
+      }
+    }
+
+    componentDidMount(){
+      if(isWeb() && images.length > 0){
+        let prefired = false;
+        this.running = false;
+        this.registered = false;
+        this.handler = ()=>{
+          if(!this.running){
+            this.running = true;
+            window.requestAnimationFrame(()=>{
+              if(this.tick()){
+                prefired = true;
+                this.unbind();
+              }
+              this.running = false;
+            });
+          }
+        };
+        this.handler();
+        if(!prefired){
+          window.addEventListener("scroll", this.handler);
+          window.addEventListener("resize", this.handler);
+          this.registered = true;
+        }
+      }
+    }
+
+    componentWillUnmount(){
+      this.unbind();
     }
 
     render(props, state){
       const k = Object.assign({}, props, state);
-      return h(component, k);
+      return <div ref={(elem)=>{this.elem = elem;}}>{h(component, k)}</div>;
     }
   };
 };

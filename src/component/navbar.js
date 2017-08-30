@@ -27,8 +27,10 @@ const scrollTo = (element)=>{
   if(targetY < 0) {
     targetY = 0;
   }
-  if(document.body.scrollHeight - elementY < window.innerHeight){
-    targetY = document.body.scrollHeight - window.innerHeight;
+  const scrollHeight = document.body.scrollHeight;
+  const innerHeight = window.innerHeight;
+  if(scrollHeight - elementY < innerHeight){
+    targetY = scrollHeight - innerHeight;
   }
   const diff = targetY - startingY;
   let start;

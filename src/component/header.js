@@ -24,21 +24,14 @@ const colorSwitch = (colorName)=>{
   return "";
 };
 
-const Header = Deferrer(({size, fixed, color, image, children})=>{
+const Header = Deferrer(({semantic, size, fixed, color, image, children})=>{
   let k = [];
-  let j = ["inner-static"];
-  let l = ["inner"];
-  if(size){
-    k.push("hero");
-    j.push("hero");
-    l.push("hero");
-    k.push(size);
-    j.push(size);
-    l.push(size);
-  } else {
-    k.push("header");
-    j.push("header");
-    l.push("header");
+  switch(size){
+    case "sm":
+    case "md":
+    case "lg":
+    case "full":
+      k.push(size);
   }
   if(fixed){
     k.push("fixed");
@@ -52,11 +45,19 @@ const Header = Deferrer(({size, fixed, color, image, children})=>{
   if(y !== ""){
     s.backgroundColor = y;
   }
-  return <header className={k.join(" ")} style={s}>
+  if(semantic){
+    return <header className={k.join(" ")} style={s}>
+      <Container padded>
+        {children}
+      </Container>
+    </header>;
+  }
+  k.push("header");
+  return <div className={k.join(" ")} style={s}>
     <Container padded>
       {children}
     </Container>
-  </header>;
+  </div>;
 }, {type: 'image', target: 'image'});
 
 export default Header

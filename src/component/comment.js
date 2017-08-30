@@ -1,4 +1,5 @@
 import {h, Component} from 'preact';
+import Container from 'component/container';
 import Time from 'component/time';
 import {isWeb} from 'utility';
 
@@ -130,17 +131,21 @@ class CommentSection extends Component {
   componentWillUnmount(){
     if(this.handler){
       window.removeEventListener("resize", this.handler);
+      this.handler = false;
     }
   }
 
   render({children}, {depth}){
-    return <div className="comment-section">
-      {children && children.map((child)=>{
-        child.attributes.depth = depth - 1;
-        return child;
-      })}
-      {!children && <span>No comments</span>}
-    </div>;
+    return <Container padded>
+      <h5>Comments</h5>
+      <div className="comment-section">
+        {children && children.map((child)=>{
+          child.attributes.depth = depth - 1;
+          return child;
+        })}
+        {!children && <span>No comments</span>}
+      </div>
+    </Container>;
   }
 }
 

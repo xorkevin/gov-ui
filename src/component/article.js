@@ -1,4 +1,5 @@
 import {h} from 'preact';
+import Container from 'component/container';
 import Time from 'component/time';
 
 import './article.scss';
