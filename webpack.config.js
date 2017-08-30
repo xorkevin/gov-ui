@@ -4,6 +4,8 @@ const CleanPlugin = require('clean-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlPlugin = require('html-webpack-plugin');
 
+const extractScss = new ExtractTextPlugin('static/[name].[contenthash].css');
+
 module.exports = {
   target: 'web',
 
@@ -12,20 +14,25 @@ module.exports = {
     main: 'main.js',
   },
   resolve: {
-    modules: [path.resolve(__dirname, "src"), "node_modules"],
+    modules: [path.resolve(__dirname, 'src'), 'node_modules'],
   },
   module: {
     rules: [
       {test: /\.js$/, loader: 'babel-loader'},
       {test: /\.s?css$/,
-        use: ExtractTextPlugin.extract({
+        use: extractScss.extract({
           use: [
-            {loader: "css-loader", options: {minimize: true}},
-            {loader: "sass-loader"},
+            {loader: 'css-loader', options: {minimize: true}},
+            {loader: 'sass-loader'},
           ]
         }),
       },
-      {test: /\.(eot|svg|ttf|woff(2)?)(\?v=\d+\.\d+\.\d+)?/, loader: 'url-loader'},
+      {test: /\.(eot|svg|ttf|woff(2)?)(\?v=\d+\.\d+\.\d+)?/,
+        use: {loader: 'file-loader', options: {
+          name: '/[name].[hash].[ext]',
+          outputPath: 'static/fonts',
+        }},
+      },
     ]
   },
 
@@ -37,7 +44,7 @@ module.exports = {
       inject: 'body',
       template: 'index.html',
     }),
-    new ExtractTextPlugin('static/[name].[contenthash].css'),
+    extractScss,
     new webpack.HashedModuleIdsPlugin(),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
