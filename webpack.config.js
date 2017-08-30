@@ -6,7 +6,7 @@ const HtmlPlugin = require('html-webpack-plugin');
 
 const extractScss = new ExtractTextPlugin('static/[name].[contenthash].css');
 
-module.exports = {
+const config = {
   target: 'web',
 
   context: path.resolve(__dirname, 'src'),
@@ -37,7 +37,6 @@ module.exports = {
   },
 
   plugins: [
-    new CleanPlugin(['bin']),
     new HtmlPlugin({
       title: 'Nuke',
       filename: 'index.html',
@@ -74,3 +73,8 @@ module.exports = {
     historyApiFallback: true,
   },
 };
+if(process.env.NODE_ENV === 'production'){
+  config.plugins.push(new CleanPlugin(['bin']));
+}
+
+module.exports = config;
