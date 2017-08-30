@@ -5,7 +5,9 @@ import Anchor from 'component/anchor';
 import './navbar.scss';
 
 const scrollTime = 384;
+const scrollTimeSqrt = Math.sqrt(scrollTime);
 const navHeight = 64;
+const scrollDistanceCap = 4096;
 
 const easing = (t)=>{
   if(t<.5){
@@ -15,7 +17,7 @@ const easing = (t)=>{
   }
 };
 
-const scrollTo = (element, duration)=>{
+const scrollTo = (element)=>{
   const startingY = window.pageYOffset;
   let elementY = 0;
   if(element){
@@ -33,6 +35,7 @@ const scrollTo = (element, duration)=>{
   if(!diff){
     return;
   }
+  const duration = Math.min(Math.sqrt(Math.abs(diff) * scrollTime / scrollDistanceCap) * scrollTimeSqrt, scrollTime);
   window.requestAnimationFrame(function step(timestamp) {
     if (!start){
       start = timestamp;
@@ -52,7 +55,7 @@ const Navbar = ({left, right, children})=>{
     for(let i = 0; i < left.length; i++){
       const l = left[i];
       if(l.scroll){
-        j.push(<div key={l.key} className="item" onClick={()=>{scrollTo(l.target, scrollTime);}}>{l.component}</div>);
+        j.push(<div key={l.key} className="item" onClick={()=>{scrollTo(l.target);}}>{l.component}</div>);
       } else {
         j.push(<div key={l.key} className="item"><Anchor noStyle ext={l.ext} href={l.target}>{l.component}</Anchor></div>);
       }
@@ -62,7 +65,7 @@ const Navbar = ({left, right, children})=>{
     for(let i = 0; i < right.length; i++){
       const l = right[i];
       if(l.scroll){
-        k.push(<div key={l.key} className="item" onClick={()=>{scrollTo(l.target, scrollTime);}}>{l.component}</div>);
+        k.push(<div key={l.key} className="item" onClick={()=>{scrollTo(l.target);}}>{l.component}</div>);
       } else {
         k.push(<div key={l.key} className="item"><Anchor noStyle ext={l.ext} href={l.target}>{l.component}</Anchor></div>);
       }
