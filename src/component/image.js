@@ -1,7 +1,6 @@
 import {h, Component} from 'preact';
 import renderToString from 'preact-render-to-string';
 import {isWeb} from 'utility';
-import Container from 'component/container';
 
 import './image.scss';
 
@@ -142,9 +141,7 @@ class Img extends Component {
     return <div className={k.join(' ')} ref={(elem)=>{this.elem = elem;}}>
       <div className='inner' style={j}>
         {children && <div className='children'>
-          <Container padded>
-            {children}
-          </Container>
+          {children}
         </div>}
         {image}
         <noscript dangerouslySetInnerHTML={{__html: this.noscript}}/>

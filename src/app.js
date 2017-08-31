@@ -5,6 +5,7 @@ import {h, Component} from 'preact';
 import Navbar from 'component/navbar';
 import Footer from 'component/footer';
 import Section from 'component/section';
+import Container from 'component/container';
 import Grid from 'component/grid';
 import Card from 'component/card';
 import Article from 'component/article';
@@ -30,9 +31,11 @@ const App = (props)=>{
     </Navbar>
 
     <Img fixed size="full" imgWidth={1920} imgHeight={1080} src="https://xorkevin.github.io/stratosphere/assets/mountain.jpg" color="#F1F5FD">
-      <header>
-        <h1 className="colossal">Nuke</h1>
-        <h4>a reactive frontend for governor</h4>
+      <header style={{width: "100%"}}>
+        <Container padded>
+          <h1 className="colossal">Nuke</h1>
+          <h4>a reactive frontend for governor</h4>
+        </Container>
       </header>
     </Img>
 

@@ -1,9 +1,9 @@
 import {h} from 'preact';
-import Deferrer from 'component/deferrer';
+import Img from 'component/image';
 
 import './card.scss';
 
-const Card = Deferrer(({size, square, restrictWidth, restrictHeight, titleBar, background, title, children, bar})=>{
+const Card = ({size, square, restrictWidth, restrictHeight, titleBar, background, title, children, bar})=>{
   let k = ["card"];
   if(size){
     switch(size){
@@ -51,6 +51,6 @@ const Card = Deferrer(({size, square, restrictWidth, restrictHeight, titleBar, b
       {bar}
     </div>
   </div>;
-}, {type: 'image', target: 'background'});
+};
 
 export default Card
