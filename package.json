@@ -42,6 +42,7 @@
     "express": "^4.15.4",
     "font-awesome": "^4.7.0",
     "hbs": "^4.0.1",
+    "morgan": "^1.8.2",
     "preact": "^8.2.5",
     "preact-render-to-string": "^3.6.3",
     "shortid": "^2.2.8"

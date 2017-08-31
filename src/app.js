@@ -3,7 +3,6 @@ import 'main.scss';
 
 import {h, Component} from 'preact';
 import Navbar from 'component/navbar';
-import Header from 'component/header';
 import Footer from 'component/footer';
 import Section from 'component/section';
 import Grid from 'component/grid';
@@ -30,12 +29,12 @@ const App = (props)=>{
     ]}>
     </Navbar>
 
-    <Header semantic size="full" fixed color="#F1F5FD" image="https://xorkevin.github.io/stratosphere/assets/mountain.jpg">
-      <h1 className="colossal">Nuke</h1>
-      <h4>a reactive frontend for governor</h4>
-    </Header>
-
-
+    <Img fixed size="full" imgWidth={1920} imgHeight={1080} src="https://xorkevin.github.io/stratosphere/assets/mountain.jpg" color="#F1F5FD">
+      <header>
+        <h1 className="colossal">Nuke</h1>
+        <h4>a reactive frontend for governor</h4>
+      </header>
+    </Img>
 
     <Section id="typography" sectionTitle="Typography" container padded>
       <h1>Heading 1 <small>small</small></h1>
@@ -51,7 +50,7 @@ const App = (props)=>{
       <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer fringilla aliquet condimentum. Nunc facilisis orci dui, sit amet dictum massa porta at.</p>
       <p>Mauris augue nisi, scelerisque ac suscipit sit amet, egestas ut risus. In hac habitasse platea dictumst. Vivamus nibh enim, dignissim quis consequat at, sagittis in magna. Aliquam accumsan, nisl vel sollicitudin fringilla, libero neque vehicula mauris, eu laoreet nunc ligula convallis nulla. Aliquam felis elit, fermentum ac felis sagittis, porttitor placerat odio.</p>
       <p>Ut consectetur est lectus, sed maximus libero malesuada ut. Proin aliquet, sapien et pretium feugiat, dui diam posuere diam, ut tempor elit purus quis metus.</p>
-      <Img className="outset" size="lg" imgWidth={1920} imgHeight={1080} src="https://xorkevin.github.io/stratosphere/assets/thames.jpg"/>
+      <Img className="outset" imgWidth={1920} imgHeight={1080} src="https://xorkevin.github.io/stratosphere/assets/thames.jpg"/>
       <p>Nulla facilisi. Phasellus blandit interdum est, in pellentesque nunc fermentum et. Proin nibh risus, sollicitudin ac urna sed, aliquet hendrerit massa. Pellentesque vehicula fringilla purus, sit amet bibendum turpis malesuada in. Aliquam nisl enim, elementum id dapibus at, suscipit non arcu. Suspendisse sodales massa vitae dolor vestibulum, lacinia congue enim hendrerit.</p>
       <p>Curabitur dapibus, arcu a pulvinar pulvinar, lectus elit eleifend dolor, id tincidunt nunc dolor eu orci. Sed neque massa, cursus et enim quis, gravida fermentum est. Nam non justo accumsan arcu volutpat ullamcorper sit amet nec mi.</p>
       <p>Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Integer a sagittis nibh, sit amet posuere sapien. Aliquam erat volutpat. Phasellus vitae cursus turpis, posuere viverra diam.</p>
@@ -150,6 +149,7 @@ const App = (props)=>{
       <Button raised fixedWidth outline>Raised Outline</Button>
       <Button raised fixedWidth text>Raised Text</Button>
     </Section>
+    <Img className="outset" fixed imgWidth={1920} imgHeight={1080} src="https://xorkevin.github.io/stratosphere/assets/underground.jpg"/>
 
     <Section id="cards" sectionTitle="Cards anyone?" container padded>
       <Grid md={8} sm={12}>

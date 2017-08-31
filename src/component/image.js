@@ -1,5 +1,7 @@
 import {h, Component} from 'preact';
+import renderToString from 'preact-render-to-string';
 import {isWeb} from 'utility';
+import Container from 'component/container';
 
 import './image.scss';
 
@@ -20,12 +22,16 @@ class Img extends Component {
       imgsrc: false,
       loaded: false,
     };
+
+    this.imgLoaded = this.imgLoaded.bind(this);
+
+    this.noscript = !isWeb() ? renderToString(<img className='image' src={props.src}/>) : '';
   }
 
   tick(){
     const innerHeight = window.innerHeight;
     const {top: elemTop, bottom: elemBottom} = this.elem.getBoundingClientRect();
-    const halfHeight = innerHeight / 2;
+    const halfHeight = innerHeight / 4;
     const topBound = -halfHeight;
     const bottomBound = innerHeight + halfHeight;
     if(elemTop < bottomBound && elemTop > topBound || elemBottom < bottomBound && elemBottom > topBound){
@@ -83,7 +89,7 @@ class Img extends Component {
     this.unbind();
   }
 
-  render({preview, size, fixed, color, width, height, imgWidth, imgHeight, className}, {imgsrc, loaded}){
+  render({preview, size, fixed, color, imgWidth, imgHeight, className, children}, {imgsrc, loaded}){
     const k = ['img'];
 
     if(className){
@@ -103,6 +109,7 @@ class Img extends Component {
       case 'md':
       case 'lg':
       case 'full':
+        k.push('sized');
         k.push(size);
     }
 
@@ -124,15 +131,7 @@ class Img extends Component {
     if(fixed){
       image = <div className='image' style={s}/>;
     } else {
-      image = <img className='image' src={url} onLoad={()=>{this.imgLoaded();}}/>;
-    }
-
-    const l = {};
-    if(width){
-      l.width = width;
-    }
-    if(height){
-      l.height = height;
+      image = <img className='image' src={url} onLoad={this.imgLoaded}/>;
     }
 
     const j = {};
@@ -140,12 +139,15 @@ class Img extends Component {
       j.paddingBottom = (imgHeight / imgWidth).toFixed(4) * 100 + '%';
     }
 
-    return <div className={k.join(' ')} style={l} ref={(elem)=>{this.elem = elem;}}>
+    return <div className={k.join(' ')} ref={(elem)=>{this.elem = elem;}}>
       <div className='inner' style={j}>
+        {children && <div className='children'>
+          <Container padded>
+            {children}
+          </Container>
+        </div>}
         {image}
-        <noscript>
-          <img className='image' src={this.props.src}/>
-        </noscript>
+        <noscript dangerouslySetInnerHTML={{__html: this.noscript}}/>
       </div>
     </div>;
   }

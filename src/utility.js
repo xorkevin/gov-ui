@@ -7,8 +7,10 @@ const formatStr = (str, ...args)=>{
   });
 };
 
+const IS_WEB = typeof window !== 'undefined';
+
 const isWeb = ()=>{
-  return typeof window !== 'undefined';
+  return IS_WEB;
 };
 
 export {

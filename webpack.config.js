@@ -18,7 +18,7 @@ const config = {
   },
   module: {
     rules: [
-      {test: /\.js$/, loader: 'babel-loader'},
+      {test: /\.js$/, loader: 'babel-loader', exclude: /node_modules/},
       {test: /\.s?css$/,
         use: extractScss.extract({
           use: [

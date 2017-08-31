@@ -7,18 +7,19 @@ article, .article {
   font-family: $typography-base-font;
 
   &>* {
-    max-width: 100%;
-  }
-
-  &>p, &>h1, &>h2, &>h3, &>h4, &>h5, &>h6, &>.info, &>.img:not(.fixed) {
+    max-width   : 100%;
     margin-left : auto;
     margin-right: auto;
     width       : 42rem;
     display     : block;
   }
 
-  &>.img.outset {
+  &>*.outset {
     width: 64rem;
+  }
+
+  &>*.fullwidth {
+    width: 100%;
   }
 
   .info {
