@@ -1,7 +1,7 @@
-import {h} from 'preact';
-import Img from 'component/image';
+import {h} from "preact";
+import Img from "component/image";
 
-import './card.scss';
+import "./card.scss";
 
 const Card = ({size, square, restrictWidth, restrictHeight, titleBar, background, title, children, bar})=>{
   let k = ["card"];
@@ -31,18 +31,16 @@ const Card = ({size, square, restrictWidth, restrictHeight, titleBar, background
     k.push("accent");
   }
 
-  let s = {};
-  if(background){
-    s = {
-      backgroundImage: `url(${background})`,
-    };
-  }
-
   return <div className={k.join(" ")}>
-    <div className={titleclass} style={s}>
-      <div className="inner">
+    <div className={titleclass}>
+      {!titleBar && <Img size="fill" src={background}>
+        <div className="title-inner">
+          {title}
+        </div>
+      </Img>}
+      {titleBar && <div className="title-inner">
         {title}
-      </div>
+      </div>}
     </div>
     <div className="body">
       {children}

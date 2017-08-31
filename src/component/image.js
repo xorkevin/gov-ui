@@ -108,6 +108,7 @@ class Img extends Component {
       case 'md':
       case 'lg':
       case 'full':
+      case 'fill':
         k.push('sized');
         k.push(size);
     }

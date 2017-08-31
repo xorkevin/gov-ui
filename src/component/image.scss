@@ -78,6 +78,10 @@
     }
   }
 
+  &.fill {
+    height: 100%;
+  }
+
   &.sized {
     &>.inner {
       height: 100%;
