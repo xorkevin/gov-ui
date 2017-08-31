@@ -83,11 +83,27 @@ class Img extends Component {
     this.unbind();
   }
 
-  render({preview, fixed, color, width, height, imgWidth, imgHeight, className}, {imgsrc, loaded}){
+  render({preview, size, fixed, color, width, height, imgWidth, imgHeight, className}, {imgsrc, loaded}){
     const k = ['img'];
 
     if(className){
       k.push(className);
+    }
+    if(!loaded){
+      k.push('invisible');
+    }
+    if(fixed){
+      k.push('fixed');
+      if(!size){
+        size = 'full';
+      }
+    }
+    switch(size){
+      case 'sm':
+      case 'md':
+      case 'lg':
+      case 'full':
+        k.push(size);
     }
 
     const s = {};
@@ -100,25 +116,15 @@ class Img extends Component {
       url = preview;
       s.backgroundImage = `url(${preview})`;
     }
-    if(!loaded){
-      k.push('invisible');
-    }
-
     if(color){
       s.backgroundColor = color;
     }
 
     let image;
-    switch(fixed){
-      case 'sm':
-      case 'md':
-      case 'lg':
-        k.push(fixed);
-        k.push('fixed');
-        image = <div className='image' style={s}/>;
-        break;
-      default:
-        image = <img className='image' src={url} onLoad={()=>{this.imgLoaded();}}/>;
+    if(fixed){
+      image = <div className='image' style={s}/>;
+    } else {
+      image = <img className='image' src={url} onLoad={()=>{this.imgLoaded();}}/>;
     }
 
     const l = {};
@@ -130,13 +136,16 @@ class Img extends Component {
     }
 
     const j = {};
-    if(!fixed && imgWidth && imgHeight && imgWidth !== 0){
+    if(!size && imgWidth && imgHeight && imgWidth !== 0){
       j.paddingBottom = (imgHeight / imgWidth).toFixed(4) * 100 + '%';
     }
 
     return <div className={k.join(' ')} style={l} ref={(elem)=>{this.elem = elem;}}>
       <div className='inner' style={j}>
         {image}
+        <noscript>
+          <img className='image' src={this.props.src}/>
+        </noscript>
       </div>
     </div>;
   }
