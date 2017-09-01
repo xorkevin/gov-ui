@@ -1,6 +1,5 @@
 const path = require('path');
 const webpack = require('webpack');
-const CleanPlugin = require('clean-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlPlugin = require('html-webpack-plugin');
 
@@ -73,8 +72,5 @@ const config = {
     historyApiFallback: true,
   },
 };
-if(process.env.NODE_ENV === 'production'){
-  config.plugins.push(new CleanPlugin(['bin']));
-}
 
 module.exports = config;
