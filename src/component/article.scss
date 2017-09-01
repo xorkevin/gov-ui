@@ -5,6 +5,7 @@ article, .article {
   line-height: 1.8;
   font-size  : 1.25rem;
   font-family: $typography-base-font;
+  width      : 100%;
 
   &>* {
     max-width   : 100%;
@@ -34,5 +35,10 @@ article, .article {
     font-family: $typography-article-font;
     margin-top   : 2rem;
     margin-bottom: 2rem;
+  }
+
+  h1, h2, h3, h4, h5, h6, .info, p {
+    padding-left : 8px;
+    padding-right: 8px;
   }
 }
