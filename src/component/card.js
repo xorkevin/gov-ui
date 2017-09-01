@@ -3,7 +3,7 @@ import Img from "component/image";
 
 import "./card.scss";
 
-const Card = ({size, square, restrictWidth, restrictHeight, titleBar, background, title, children, bar})=>{
+const Card = ({size, square, restrictWidth, restrictHeight, titleBar, background, preview, title, children, bar})=>{
   let k = ["card"];
   if(size){
     switch(size){
@@ -33,7 +33,7 @@ const Card = ({size, square, restrictWidth, restrictHeight, titleBar, background
 
   return <div className={k.join(" ")}>
     <div className={titleclass}>
-      {!titleBar && <Img size="fill" src={background}>
+      {!titleBar && <Img size="fill" src={background} preview={preview}>
         <div className="title-inner">
           {title}
         </div>

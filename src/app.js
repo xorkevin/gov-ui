@@ -16,6 +16,8 @@ import Button from 'component/button';
 import Anchor from 'component/anchor';
 import FaIcon from 'component/faicon';
 
+import {mountainPreview, thamesPreview} from 'config';
+
 const App = (props)=>{
   return <div id="mount">
     <Navbar left={[
@@ -30,7 +32,7 @@ const App = (props)=>{
     ]}>
     </Navbar>
 
-    <Img fixed size="full" imgWidth={1920} imgHeight={1080} src="https://xorkevin.github.io/stratosphere/assets/mountain.jpg" color="#F1F5FD">
+    <Img fixed size="full" imgWidth={1920} imgHeight={1080} src="https://xorkevin.github.io/stratosphere/assets/mountain.jpg" color="#F1F5FD" preview={mountainPreview}>
       <header style={{width: "100%"}}>
         <Container padded>
           <h1 className="colossal">Nuke</h1>
@@ -53,7 +55,7 @@ const App = (props)=>{
       <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer fringilla aliquet condimentum. Nunc facilisis orci dui, sit amet dictum massa porta at.</p>
       <p>Mauris augue nisi, scelerisque ac suscipit sit amet, egestas ut risus. In hac habitasse platea dictumst. Vivamus nibh enim, dignissim quis consequat at, sagittis in magna. Aliquam accumsan, nisl vel sollicitudin fringilla, libero neque vehicula mauris, eu laoreet nunc ligula convallis nulla. Aliquam felis elit, fermentum ac felis sagittis, porttitor placerat odio.</p>
       <p>Ut consectetur est lectus, sed maximus libero malesuada ut. Proin aliquet, sapien et pretium feugiat, dui diam posuere diam, ut tempor elit purus quis metus.</p>
-      <Img className="outset" imgWidth={1920} imgHeight={1080} src="https://xorkevin.github.io/stratosphere/assets/thames.jpg"/>
+      <Img className="outset" imgWidth={1920} imgHeight={1080} preview={thamesPreview} src="https://xorkevin.github.io/stratosphere/assets/thames.jpg"/>
       <p>Nulla facilisi. Phasellus blandit interdum est, in pellentesque nunc fermentum et. Proin nibh risus, sollicitudin ac urna sed, aliquet hendrerit massa. Pellentesque vehicula fringilla purus, sit amet bibendum turpis malesuada in. Aliquam nisl enim, elementum id dapibus at, suscipit non arcu. Suspendisse sodales massa vitae dolor vestibulum, lacinia congue enim hendrerit.</p>
       <p>Curabitur dapibus, arcu a pulvinar pulvinar, lectus elit eleifend dolor, id tincidunt nunc dolor eu orci. Sed neque massa, cursus et enim quis, gravida fermentum est. Nam non justo accumsan arcu volutpat ullamcorper sit amet nec mi.</p>
       <p>Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Integer a sagittis nibh, sit amet posuere sapien. Aliquam erat volutpat. Phasellus vitae cursus turpis, posuere viverra diam.</p>
@@ -163,7 +165,7 @@ const App = (props)=>{
           ]}>
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
         </Card>
-        <Card colkey="mountain" size="md" restrictHeight background="https://xorkevin.github.io/stratosphere/assets/mountain.jpg" title={[
+        <Card colkey="mountain" size="md" restrictHeight background="https://xorkevin.github.io/stratosphere/assets/mountain.jpg" preview={mountainPreview} title={[
             <h3>Dolor sit amet</h3>,<Button label="favorite"><FaIcon icon="heart"/></Button>
           ]} bar={[
             <Button>View</Button>
@@ -191,14 +193,13 @@ const App = (props)=>{
           ]}>
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
         </Card>
-        <Card colkey="thames" size="md" restrictHeight background="https://xorkevin.github.io/stratosphere/assets/thames.jpg" title={[
+        <Card colkey="thames" size="md" restrictHeight background="https://xorkevin.github.io/stratosphere/assets/thames.jpg" preview={thamesPreview} title={[
             <h3>Aliquet</h3>,<Button label="favorite"><FaIcon icon="heart"/></Button>
           ]} bar={[
             <Button>View</Button>
           ]}>
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
         </Card>
-        {'String'}
       </Grid>
       <div>
         <Card size="lg" square background="https://xorkevin.github.io/stratosphere/assets/climb.jpg" title={[

@@ -118,20 +118,32 @@ class Img extends Component {
     if(imgsrc){
       url = imgsrc;
       s.backgroundImage = `url(${imgsrc})`;
-    } else if(preview){
-      k.push('preview');
-      url = preview;
-      s.backgroundImage = `url(${preview})`;
     }
+
+    const previewStyle = {};
+    let previewUrl = undefined;
+    if(preview){
+      previewUrl = preview;
+      previewStyle.backgroundImage = `url(${preview})`;
+    }
+
     if(color){
       s.backgroundColor = color;
+      previewStyle.backgroundColor = color;
     }
 
     let image;
+    let previewImage;
     if(fixed){
       image = <div className='image' style={s}/>;
+      if(preview){
+        previewImage = <div className='image preview' style={previewStyle}/>;
+      }
     } else {
       image = <img className='image' src={url} onLoad={this.imgLoaded}/>;
+      if(preview){
+        previewImage = <img className='image preview' src={previewUrl}/>;
+      }
     }
 
     const j = {};
@@ -141,10 +153,11 @@ class Img extends Component {
 
     return <div className={k.join(' ')} ref={(elem)=>{this.elem = elem;}}>
       <div className='inner' style={j}>
-        {children && <div className='children'>
+        {children.length > 0 && <div className='children'>
           {children}
         </div>}
         {image}
+        {previewImage}
         <noscript dangerouslySetInnerHTML={{__html: this.noscript}}/>
       </div>
     </div>;
