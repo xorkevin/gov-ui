@@ -24,6 +24,7 @@
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
+    "babel-plugin-syntax-dynamic-import": "^6.18.0",
     "babel-plugin-transform-react-jsx": "^6.24.1",
     "babel-preset-env": "^1.6.0",
     "css-loader": "^0.28.7",
@@ -34,7 +35,9 @@
     "node-sass": "^4.5.3",
     "sass-loader": "^6.0.6",
     "webpack": "^3.5.5",
-    "webpack-dev-server": "^2.7.1"
+    "webpack-bundle-analyzer": "^2.9.0",
+    "webpack-dev-server": "^2.7.1",
+    "webpack-md5-hash": "0.0.5"
   },
   "dependencies": {
     "compression": "^1.7.0",

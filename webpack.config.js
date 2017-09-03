@@ -2,6 +2,8 @@ const path = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlPlugin = require('html-webpack-plugin');
+const MD5Hash = require('webpack-md5-hash');
+const BundleAnalyzer = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const extractScss = new ExtractTextPlugin('static/[name].[contenthash].css');
 
@@ -40,11 +42,12 @@ const config = {
   },
 
   plugins: [
+    new MD5Hash(),
     new HtmlPlugin({
       title: 'Nuke',
       filename: 'index.html',
       inject: 'body',
-      template: 'index.html',
+      template: '../template/index.html',
     }),
     extractScss,
     new webpack.HashedModuleIdsPlugin(),
@@ -53,6 +56,8 @@ const config = {
       minChunks: ({ resource }) => /node_modules/.test(resource),
     }),
     new webpack.optimize.CommonsChunkPlugin({name: 'runtime'}),
+    new webpack.optimize.CommonsChunkPlugin({children: true, minChunks: 2}),
+    //new BundleAnalyzer({openAnalyzer: false}),
   ],
 
   output: {

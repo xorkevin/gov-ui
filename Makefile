@@ -17,10 +17,10 @@ dev:
 build: clean-bin
 	npm run build
 
-build-server:
+build-server: clean-binserver
 	npm run build-server
 
 start:
 	npm run serve
 
-serve: clean build build-server start
+serve: build build-server start

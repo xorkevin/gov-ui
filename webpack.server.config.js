@@ -1,6 +1,5 @@
 const path = require('path');
 const webpack = require('webpack');
-const CleanPlugin = require('clean-webpack-plugin');
 
 module.exports = {
   target: 'node',
@@ -19,10 +18,6 @@ module.exports = {
       {test: /\.(eot|svg|ttf|woff(2)?)(\?v=\d+\.\d+\.\d+)?/, loader: 'ignore-loader'},
     ]
   },
-
-  plugins: [
-    new CleanPlugin(['bin_server']),
-  ],
 
   output: {
     path: path.resolve(__dirname, 'bin_server'),

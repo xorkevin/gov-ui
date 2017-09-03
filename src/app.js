@@ -4,10 +4,9 @@ import 'main.scss';
 import {h} from 'preact';
 import {Switch, Route, NavLink} from 'react-router-dom';
 
-import HomeContainer from 'container/home';
-import FormContainer from 'container/form';
-import CardContainer from 'container/card';
+import Loader from 'battery/loader';
 
+import MainContent from 'component/maincontent';
 import Navbar from 'component/navbar';
 import Footer from 'component/footer';
 import Grid from 'component/grid';
@@ -26,11 +25,28 @@ const App = ({match})=>{
     ]}>
     </Navbar>
 
-    <Switch>
-      <Route exact path="/" component={HomeContainer}/>
-      <Route path="/form" component={FormContainer}/>
-      <Route path="/cards" component={CardContainer}/>
-    </Switch>
+    <MainContent>
+      <Switch>
+        <Route exact path="/" component={Loader('container/home', (loaded, Home)=>{
+          if(loaded){
+            return h(Home);
+          }
+          return 'loading';
+        })}/>
+        <Route path="/form" component={Loader('container/form', (loaded, Form)=>{
+          if(loaded){
+            return h(Form);
+          }
+          return 'loading';
+        })}/>
+        <Route path="/cards" component={Loader('container/card', (loaded, Card)=>{
+          if(loaded){
+            return h(Card);
+          }
+          return 'loading';
+        })}/>
+      </Switch>
+    </MainContent>
 
     <Footer>
       <Grid center md={6} sm={8}>
