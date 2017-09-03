@@ -3,6 +3,8 @@
 
 nav, .nav {
   position        : fixed;
+  top             : 0;
+  left            : 0;
   height          : $nav-height;
   width           : 100%;
   background-color: $background-transparent;
@@ -51,6 +53,15 @@ nav, .nav {
           color      : $color-text-dark-2;
           transition : $transition-normal;
           white-space: nowrap;
+
+          a {
+            color          : inherit;
+            text-decoration: inherit;
+
+            &.active {
+              color: $color-accent;
+            }
+          }
 
           &:last-child {
             margin: 0;

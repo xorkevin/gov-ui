@@ -1,4 +1,14 @@
 import {h, render} from 'preact';
-import App from 'app';
+import {Provider} from 'preact-redux';
+import {BrowserRouter} from 'react-router-dom';
 
-render(h(App), document.body, document.getElementById('mount'));
+import App from 'app';
+import makeStore from 'store';
+
+render(<div id="mount">
+  <Provider store={makeStore()}>
+    <BrowserRouter>
+      <App/>
+    </BrowserRouter>
+  </Provider>
+</div>, document.body, document.getElementById('mount'));

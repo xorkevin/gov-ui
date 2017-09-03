@@ -1,6 +1,5 @@
 import {h} from 'preact';
 import Container from 'component/container';
-import Anchor from 'component/anchor';
 
 import './navbar.scss';
 
@@ -59,7 +58,7 @@ const Navbar = ({left, right, children})=>{
       if(l.scroll){
         j.push(<div key={l.key} className="item" onClick={()=>{scrollTo(l.target);}}>{l.component}</div>);
       } else {
-        j.push(<div key={l.key} className="item"><Anchor noStyle ext={l.ext} href={l.target}>{l.component}</Anchor></div>);
+        j.push(<div key={l.key} className="item">{l.component}</div>);
       }
     }
   }
@@ -69,7 +68,7 @@ const Navbar = ({left, right, children})=>{
       if(l.scroll){
         k.push(<div key={l.key} className="item" onClick={()=>{scrollTo(l.target);}}>{l.component}</div>);
       } else {
-        k.push(<div key={l.key} className="item"><Anchor noStyle ext={l.ext} href={l.target}>{l.component}</Anchor></div>);
+        k.push(<div key={l.key} className="item">{l.component}</div>);
       }
     }
   }
