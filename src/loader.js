@@ -1,4 +1,5 @@
 import {Component} from 'preact';
+import {isWeb} from 'utility';
 
 const Loader = (loader, callback)=>{
   return class extends Component {
@@ -12,18 +13,29 @@ const Loader = (loader, callback)=>{
 
     load(){
       if(!this.state.loaded){
-        loader().then((mod)=>{
-          let k = mod;
-          if(mod.default){
-            k = mod.default;
+        if(isWeb()){
+          loader().then((mod)=>{
+            let k = mod;
+            if(mod.default){
+              k = mod.default;
+            }
+            this.setState({
+              loaded: true,
+              mod: k,
+            });
+          }).catch((err)=>{
+            console.error(err);
+          });
+        } else {
+          let k = loader();
+          if(k.default){
+            k = k.default;
           }
           this.setState({
             loaded: true,
             mod: k,
           });
-        }).catch((err)=>{
-          console.error(err);
-        });
+        }
       }
     }
 

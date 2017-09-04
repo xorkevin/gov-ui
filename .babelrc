@@ -3,10 +3,17 @@
     ["env", {
       "modules": false,
       "loose": true,
-    }]
+    }],
   ],
   "plugins": [
     ["transform-react-jsx", { pragma: "h" }],
-    "syntax-dynamic-import"
-  ]
+    "syntax-dynamic-import",
+  ],
+  "env": {
+    "server": {
+      "plugins": [
+        "transform-import-to-require",
+      ],
+    },
+  },
 }

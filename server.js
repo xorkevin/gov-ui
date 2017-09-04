@@ -5,10 +5,15 @@ const morgan = require('morgan');
 const hbsEngine = require('hbs').__express;
 const {renderToString} = require('./bin_server/render');
 
-const asString = renderToString();
-
 const serveIndex = (req, res)=>{
-  res.render('index', {html: asString});
+  const {redirect, url, html} = renderToString(req.url);
+  if(redirect){
+    res.writeHead(302, {
+      Location: url,
+    });
+  } else {
+    res.render('index', {html: html});
+  }
 };
 
 const app = express();

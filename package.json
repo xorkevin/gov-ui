@@ -42,10 +42,12 @@
     "webpack-dev-server": "^2.7.1"
   },
   "dependencies": {
+    "babel-plugin-transform-import-to-require": "^1.0.0",
     "compression": "^1.7.0",
     "express": "^4.15.4",
     "font-awesome": "^4.7.0",
     "hbs": "^4.0.1",
+    "isomorphic-fetch": "^2.2.1",
     "morgan": "^1.8.2",
     "preact": "^8.2.5",
     "preact-compat": "^3.17.0",

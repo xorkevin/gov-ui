@@ -18,7 +18,7 @@ build: clean-bin
 	npm run build
 
 build-server: clean-binserver
-	npm run build-server
+	BABEL_ENV=server npm run build-server
 
 start:
 	npm run serve

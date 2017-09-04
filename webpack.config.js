@@ -94,7 +94,7 @@ const createConfig = (env, argv)=>{
       navigateFallback: '/',
       navigateFallbackWhitelist: [/^(?!\/api\/)(?!\/static\/).*/],
       runtimeCaching: [
-        {urlPattern: '/api/*', handler: 'networkFirst'},
+        {urlPattern: '/*', handler: 'networkFirst'},
       ],
     }));
     //config.plugins.push(new BundleAnalyzer({analyzerMode: 'static', openAnalyzer: true}));
