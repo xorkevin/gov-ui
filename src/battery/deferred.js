@@ -1,5 +1,4 @@
-const Charge = (timeout = 1000)=>{
-  const id = new Symbol();
+const Deferred = (timeout = 1000)=>{
   let r;
   const k = new Promise((resolve)=>{
     r = resolve;
@@ -9,21 +8,20 @@ const Charge = (timeout = 1000)=>{
   const timer = setTimeout(()=>{
     if(!resolved){
       resolved = true;
-      r(id);
+      r();
     }
   }, timeout);
 
   return {
     promise: k,
-    id: id,
     resolver: ()=>{
       if(!resolved){
         clearTimeout(timer);
         resolved = true;
-        r(id);
+        r();
       }
     },
   };
 };
 
-export default Charge
+export default Deferred

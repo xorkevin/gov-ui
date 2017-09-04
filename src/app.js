@@ -1,6 +1,3 @@
-import 'font-awesome/css/font-awesome.min.css';
-import 'main.scss';
-
 import {h} from 'preact';
 import {Switch, Route, NavLink} from 'react-router-dom';
 

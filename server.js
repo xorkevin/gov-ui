@@ -7,22 +7,22 @@ const {renderToString} = require('./bin_server/render');
 
 const asString = renderToString();
 
+const serveIndex = (req, res)=>{
+  res.set('Cache-Control', 'no-cache');
+  res.render('index', {html: asString});
+};
+
 const app = express();
 app.set('views', 'bin');
 app.set('view engine', 'html');
 app.engine('html', hbsEngine);
 app.use(compression());
 app.use(morgan('dev'));
-app.use('/static', express.static('bin/static'));
-app.use('/static', express.static('public/static'));
-app.use('/static', function(req, res, next){
+app.use('/index.html', serveIndex);
+app.use('/', express.static('bin'));
+app.use('/static', (req, res)=>{
   res.sendStatus(404);
 });
-app.get('/service-worker.js', function(req, res, next){
-  res.sendFile(path.resolve(__dirname, 'bin/service-worker.js'));
-});
-app.get('/*', (req, res) => {
-  res.render('index', {html: asString});
-});
+app.get('/*', serveIndex);
 
 app.listen(3030);

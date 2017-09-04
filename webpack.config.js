@@ -3,7 +3,8 @@ const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlPlugin = require('html-webpack-plugin');
 const SWPrecachePlugin = require('sw-precache-webpack-plugin');
-const MD5Hash = require('webpack-md5-hash');
+const CopyPlugin = require('copy-webpack-plugin');
+const ChunkHash = require('webpack-chunk-hash');
 const BundleAnalyzer = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const extractScss = new ExtractTextPlugin('static/[name].[contenthash].css');
@@ -44,14 +45,13 @@ const createConfig = (env, argv)=>{
     },
 
     plugins: [
-      new MD5Hash(),
       new webpack.HashedModuleIdsPlugin(),
       new webpack.optimize.CommonsChunkPlugin({
         name: 'vendor',
         minChunks: ({ resource }) => /node_modules/.test(resource),
       }),
       new webpack.optimize.CommonsChunkPlugin({name: 'runtime'}),
-      new webpack.optimize.CommonsChunkPlugin({children: true, minChunks: 2}),
+      new ChunkHash(),
       extractScss,
       new HtmlPlugin({
         title: 'Nuke',
@@ -59,13 +59,16 @@ const createConfig = (env, argv)=>{
         inject: 'body',
         template: '../template/index.html',
       }),
+      new CopyPlugin([{
+        from: '../public',
+      }]),
     ],
 
     output: {
       path: path.resolve(__dirname, 'bin'),
       publicPath: '/',
       filename: 'static/[name].[chunkhash].js',
-      chunkFilename: 'static/[id].[chunkhash].js',
+      chunkFilename: 'static/chunk.[id].[chunkhash].js',
     },
 
 
@@ -88,11 +91,10 @@ const createConfig = (env, argv)=>{
       minify: true,
       cacheId: 'nuke',
       filename: 'service-worker.js',
-      dontCacheBustUrlsMatching: /static/,
       navigateFallback: '/',
       navigateFallbackWhitelist: [/^(?!\/api\/)(?!\/static\/).*/],
       runtimeCaching: [
-        {urlPattern: /\/api\//, handler: 'networkFirst'},
+        {urlPattern: '/api/*', handler: 'networkFirst'},
       ],
     }));
     //config.plugins.push(new BundleAnalyzer({analyzerMode: 'static', openAnalyzer: true}));
