@@ -1,9 +1,17 @@
 import {h, Component} from 'preact';
 
-const Connector = (Child)=>{
-  return class extends Component {
-    render(){
-      return h(Child);
-    }
+import {TERMINALKEY} from './terminal';
+
+const Connector = (promises)=>{
+  return (Child)=>{
+    return class extends Component {
+      componentWillMount(){
+        this.context[TERMINALKEY].charge(promises());
+      }
+
+      render(){
+        return h(Child);
+      }
+    };
   };
 };

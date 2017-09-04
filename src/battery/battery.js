@@ -1,8 +1,14 @@
-import {h, Component} from 'preact';
+class Battery {
+  constructor(){
+    this.promises = [];
+  }
 
-class Battery extends Component {
-  render({children}){
-    return children;
+  charge(promises){
+    this.promises.concat(promises);
+  }
+
+  resolve(){
+    return new Promise.all(this.promises);
   }
 }
 

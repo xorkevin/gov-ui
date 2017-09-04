@@ -12,7 +12,7 @@ const Loader = (moduleName, callback)=>{
 
     load(){
       if(!this.state.loaded && typeof moduleName === 'string' && moduleName.length > 0){
-        import('../'+moduleName).then((mod)=>{
+        import('./'+moduleName).then((mod)=>{
           let k = mod;
           if(mod.default){
             k = mod.default;
