@@ -1,6 +1,6 @@
 import {Component} from 'preact';
 
-const Loader = (moduleName, callback)=>{
+const Loader = (loader, callback)=>{
   return class extends Component {
     constructor(props){
       super(props);
@@ -11,8 +11,8 @@ const Loader = (moduleName, callback)=>{
     }
 
     load(){
-      if(!this.state.loaded && typeof moduleName === 'string' && moduleName.length > 0){
-        import('./'+moduleName).then((mod)=>{
+      if(!this.state.loaded){
+        loader().then((mod)=>{
           let k = mod;
           if(mod.default){
             k = mod.default;
@@ -21,6 +21,8 @@ const Loader = (moduleName, callback)=>{
             loaded: true,
             mod: k,
           });
+        }).catch((err)=>{
+          console.error(err);
         });
       }
     }

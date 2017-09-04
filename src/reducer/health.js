@@ -1,5 +1,3 @@
-import Immutable from 'immutable';
-
 import {API} from 'config';
 
 const TIME_GET = Symbol('TIME_GET');
@@ -44,12 +42,12 @@ const TimeGet = ()=>{
 };
 
 
-const defaultState = Immutable.fromJS({
+const defaultState = {
   loading: false,
   success: false,
   time: '',
   err: '',
-});
+};
 
 const initState = ()=>{
   return defaultState;
@@ -58,25 +56,25 @@ const initState = ()=>{
 const Health = (state=initState(), action)=>{
   switch (action.type) {
     case TIME_GET:
-      return state.withMutations((val)=>{
-        val.set('loading', true);
-        val.set('success', false);
-        val.set('time', '');
-        val.set('err', '');
+      return Object.assign({}, state, {
+        loading: true,
+        success: false,
+        time: '',
+        err: '',
       });
     case TIME_UPDATE:
-      return state.withMutations((val)=>{
-        val.set('loading', false);
-        val.set('success', true);
-        val.set('time', action.time);
-        val.set('err', '');
+      return Object.assign({}, state, {
+        loading: false,
+        success: true,
+        time: action.time,
+        err: '',
       });
     case TIME_UPDATE_ERR:
-      return defaultState.withMutations((val)=>{
-        val.set('loading', false);
-        val.set('success', false);
-        val.set('time', '');
-        val.set('err', action.err);
+      return Object.assign({}, state, {
+        loading: false,
+        success: false,
+        time: '',
+        err: action.err,
       });
     default:
       return state;

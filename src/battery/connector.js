@@ -15,3 +15,5 @@ const Connector = (promises)=>{
     };
   };
 };
+
+export default Connector

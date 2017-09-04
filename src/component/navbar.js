@@ -1,8 +1,6 @@
 import {h} from 'preact';
 import Container from 'component/container';
 
-import './navbar.scss';
-
 const scrollTime = 384;
 const scrollTimeSqrt = Math.sqrt(scrollTime);
 const navHeight = 64;

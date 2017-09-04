@@ -1,8 +1,6 @@
 import {h} from 'preact';
 import Container from 'component/container';
 
-import './section.scss';
-
 const Section = ({id, container, padded, sectionTitle, children})=>{
   if(container){
     return <section id={id}>

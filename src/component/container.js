@@ -1,7 +1,5 @@
 import {h} from 'preact';
 
-import './container.scss';
-
 const Container = ({padded, children})=>{
   const k = ["container"];
   if(padded){

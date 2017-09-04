@@ -1,10 +1,14 @@
+import {isWeb} from 'utility';
+
 class Battery {
   constructor(){
     this.promises = [];
   }
 
   charge(promises){
-    this.promises.concat(promises);
+    if(!isWeb()){
+      this.promises.concat(promises);
+    }
   }
 
   resolve(){

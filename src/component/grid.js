@@ -1,7 +1,5 @@
 import {h} from 'preact';
 
-import './grid.scss';
-
 const Grid = ({strict, center, verticalCenter, horizontalCenter, xs, sm, md, lg, children})=>{
   const k = ["grid"];
   if(strict){

@@ -3,8 +3,6 @@ import Container from 'component/container';
 import Time from 'component/time';
 import {isWeb} from 'utility';
 
-import './comment.scss';
-
 class Comment extends Component {
   constructor(props){
     super(props);

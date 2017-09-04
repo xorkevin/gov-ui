@@ -27,19 +27,19 @@ const App = ({match})=>{
 
     <MainContent>
       <Switch>
-        <Route exact path="/" component={Loader('container/home', (loaded, Home)=>{
+        <Route exact path="/" component={Loader(()=>{return import('container/home');}, (loaded, Home)=>{
           if(loaded){
             return h(Home);
           }
           return 'loading';
         })}/>
-        <Route path="/form" component={Loader('container/form', (loaded, Form)=>{
+        <Route path="/form" component={Loader(()=>{return import('container/form');}, (loaded, Form)=>{
           if(loaded){
             return h(Form);
           }
           return 'loading';
         })}/>
-        <Route path="/cards" component={Loader('container/card', (loaded, Card)=>{
+        <Route path="/cards" component={Loader(()=>{return import('container/card');}, (loaded, Card)=>{
           if(loaded){
             return h(Card);
           }

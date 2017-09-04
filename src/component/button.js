@@ -1,7 +1,5 @@
 import {h} from 'preact';
 
-import './button.scss';
-
 const Button = ({primary, outline, text, fixedWidth, raised, label, children})=>{
   const k = [];
   if(primary){

@@ -1,8 +1,6 @@
 import {h} from "preact";
 import Img from "component/image";
 
-import "./card.scss";
-
 const Card = ({size, square, restrictWidth, restrictHeight, titleBar, background, preview, title, children, bar})=>{
   let k = ["card"];
   if(size){

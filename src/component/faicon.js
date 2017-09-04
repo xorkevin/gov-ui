@@ -1,7 +1,5 @@
 import {h} from 'preact';
 
-import './faicon.scss';
-
 const FaIcon = ({border, icon})=>{
   if(border){
     return <span className="faicon border">

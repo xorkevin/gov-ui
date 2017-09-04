@@ -1,6 +1,7 @@
 import {h, render} from 'preact';
 import {Provider} from 'preact-redux';
 import {BrowserRouter} from 'react-router-dom';
+import 'swload.js';
 
 import App from 'app';
 import {Terminal} from 'battery';

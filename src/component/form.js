@@ -1,8 +1,6 @@
 import {h} from 'preact';
 import shortid from 'shortid';
 
-import './form.scss';
-
 const Input = ({valid, error, fullWidth, textarea, label, info})=>{
   const id = shortid.generate();
   let k = ["input"];

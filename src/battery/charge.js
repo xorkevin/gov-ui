@@ -1,5 +1,3 @@
-const CHARGE = new Symbol('CHARGE');
-
 const Charge = (timeout = 1000)=>{
   const id = new Symbol();
   let r;
@@ -16,19 +14,16 @@ const Charge = (timeout = 1000)=>{
   }, timeout);
 
   return {
-    action: {
-      type: CHARGE,
-      promise: k,
-      id: id,
-    },
+    promise: k,
+    id: id,
     resolver: ()=>{
       if(!resolved){
-        resolved = true;
         clearTimeout(timer);
+        resolved = true;
         r(id);
       }
     },
   };
 };
 
-export {Charge, CHARGE}
+export default Charge

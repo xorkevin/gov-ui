@@ -2,8 +2,6 @@ import {h, Component} from 'preact';
 import renderToString from 'preact-render-to-string';
 import {isWeb} from 'utility';
 
-import './image.scss';
-
 const deferLoadImage = (src)=>{
   return new Promise((resolve)=>{
     const img = new Image();
