@@ -8,7 +8,6 @@ const {renderToString} = require('./bin_server/render');
 const asString = renderToString();
 
 const serveIndex = (req, res)=>{
-  res.set('Cache-Control', 'no-cache');
   res.render('index', {html: asString});
 };
 
