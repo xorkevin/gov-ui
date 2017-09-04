@@ -64,7 +64,7 @@ const config = {
     path: path.resolve(__dirname, 'bin'),
     publicPath: '/',
     filename: 'static/[name].[chunkhash].js',
-    chunkFilename: 'static/[name].[chunkhash].js',
+    chunkFilename: 'static/[id].[chunkhash].js',
   },
 
 

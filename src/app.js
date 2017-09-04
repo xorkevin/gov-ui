@@ -4,7 +4,7 @@ import 'main.scss';
 import {h} from 'preact';
 import {Switch, Route, NavLink} from 'react-router-dom';
 
-import Loader from 'battery/loader';
+import {Loader} from 'battery';
 
 import MainContent from 'component/maincontent';
 import Navbar from 'component/navbar';
