@@ -1,10 +1,11 @@
+const fs = require('fs');
 const path = require('path');
 const express = require('express');
 const compression = require('compression');
 const morgan = require('morgan');
-const hbsEngine = require('hbs').__express;
 const {renderToString} = require('./bin_server/render');
 
+const template = fs.readFileSync('bin/index.html', 'utf-8');
 const binpath = path.resolve(__dirname, 'bin');
 
 const serveFile = (app, filename)=>{
@@ -15,20 +16,22 @@ const serveFile = (app, filename)=>{
   });
 };
 
-const serveIndex = async (req, res)=>{
-  const {redirect, url, html} = await renderToString(req.url);
-  if(redirect){
-    res.redirect(302, url);
-  } else {
-    res.render('index', {html: html});
+const serveIndex = async (req, res, next)=>{
+  try {
+    const {redirect, url, html} = await renderToString(req.url);
+    if(redirect){
+      res.redirect(302, url);
+    } else {
+      res.type('html');
+      res.send(template.replace(`<div id="mount"></div>`, html));
+    }
+  } catch(e){
+    next(e);
   }
 };
 
 const app = express();
 app.disable('x-powered-by');
-app.set('views', 'bin');
-app.set('view engine', 'html');
-app.engine('html', hbsEngine);
 app.use(compression());
 app.use(morgan('dev'));
 app.use('/static', express.static('bin/static', {
@@ -40,6 +43,6 @@ serveFile(app, 'manifest.json');
 app.get('/favicon.ico', (req, res)=>{
   res.sendStatus(404);
 });
-app.get('/*', serveIndex);
+app.get('*', serveIndex);
 
 app.listen(3030);
