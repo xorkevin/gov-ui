@@ -13,6 +13,8 @@ const renderToString = async (url, props)=>{
   const battery = new Battery(store);
   const context = {};
 
+  console.log('context before', context);
+
   const vdom = <div id="mount">
     <Terminal battery={battery}>
       <Provider store={store}>
@@ -22,6 +24,10 @@ const renderToString = async (url, props)=>{
       </Provider>
     </Terminal>
   </div>;
+
+  const html = preactRenderToString(vdom);
+
+  console.log('context after', context);
 
   if(context.url){
     return {
@@ -33,8 +39,6 @@ const renderToString = async (url, props)=>{
   await battery.resolve();
 
   console.log(store.getState());
-
-  const html = preactRenderToString(vdom);
 
   return {
     redirect: false,

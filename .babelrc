@@ -10,6 +10,15 @@
     "syntax-dynamic-import",
   ],
   "env": {
+    "web": {
+      "presets": [
+        ["env", {
+          "targets": {
+            "browsers": ["last 2 versions"],
+          },
+        }],
+      ],
+    },
     "server": {
       "presets": [
         ["env", {
