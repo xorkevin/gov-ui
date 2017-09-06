@@ -2,17 +2,15 @@ import {h, Component} from 'preact';
 
 import Battery from './battery';
 
-const TERMINALKEY = Symbol('TERMINALKEY');
-
 class Terminal extends Component {
   constructor(props, context){
     super(props, context);
-    this.battery = props.battery || new Battery();
+    this.battery = props.battery;
   }
 
   getChildContext(){
     return {
-      [TERMINALKEY]: this.battery,
+      'battery': this.battery,
     };
   }
 
@@ -24,6 +22,4 @@ class Terminal extends Component {
   }
 }
 
-export {
-  TERMINALKEY, Terminal,
-}
+export default Terminal

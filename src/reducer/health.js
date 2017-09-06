@@ -18,7 +18,7 @@ const TimeUpdateErr = (err)=>{
   };
 };
 
-const TimeGet = ()=>{
+const TimeGet = (resolver)=>{
   return async (dispatch)=>{
     dispatch({
       type: TIME_GET,
@@ -37,6 +37,9 @@ const TimeGet = ()=>{
       }
     } catch(e) {
       dispatch(TimeUpdateErr(e.message));
+    }
+    if(resolver){
+      resolver();
     }
   };
 };

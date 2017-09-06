@@ -11,11 +11,9 @@ import {Terminal} from 'battery';
 import makeStore from 'store';
 
 render(<div id="mount">
-  <Terminal>
-    <Provider store={makeStore()}>
-      <BrowserRouter>
-        <App/>
-      </BrowserRouter>
-    </Provider>
-  </Terminal>
+  <Provider store={makeStore()}>
+    <BrowserRouter>
+      <App/>
+    </BrowserRouter>
+  </Provider>
 </div>, document.body, document.getElementById('mount'));

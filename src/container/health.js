@@ -1,7 +1,9 @@
 import {h, Component} from 'preact';
 import Section from 'component/section';
+import {isWeb} from 'utility';
 
 import {connect} from 'preact-redux';
+import {Connector} from 'battery';
 import {TimeGet} from 'reducer/health';
 
 class HealthContainer extends Component {
@@ -9,9 +11,10 @@ class HealthContainer extends Component {
     this.props.getTime();
   }
 
-  render({success, time, err}){
+  render({loading, success, time, err}){
     return <div>
       <Section sectionTitle="Health Check" container padded>
+        <span>{loading && "loading"}</span>
         <span>{success && time}</span>
         <span>{!success && err}</span>
       </Section>
@@ -22,18 +25,27 @@ class HealthContainer extends Component {
 const mapStateToProps = (state)=>{
   const {time, err, loading, success} = state.Health;
   return {
-    time, err, loading, success,
+    loading, success, time, err,
   };
 };
 
 const mapDispatchToProps = (dispatch)=>{
   return {
     getTime: ()=>{
-      dispatch(TimeGet());
+      if(isWeb()){
+        dispatch(TimeGet());
+      }
     },
   };
 };
 
+const contracts = [
+  ({dispatch}, resolver)=>{
+    dispatch(TimeGet(resolver));
+  },
+];
+
 HealthContainer = connect(mapStateToProps, mapDispatchToProps)(HealthContainer);
+HealthContainer = Connector(contracts)(HealthContainer);
 
 export default HealthContainer

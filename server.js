@@ -5,8 +5,8 @@ const morgan = require('morgan');
 const hbsEngine = require('hbs').__express;
 const {renderToString} = require('./bin_server/render');
 
-const serveIndex = (req, res)=>{
-  const {redirect, url, html} = renderToString(req.url);
+const serveIndex = async (req, res)=>{
+  const {redirect, url, html} = await renderToString(req.url);
   if(redirect){
     res.writeHead(302, {
       Location: url,

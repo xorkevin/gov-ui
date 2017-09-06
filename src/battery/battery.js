@@ -1,18 +1,22 @@
-import {isWeb} from 'utility';
-
 class Battery {
-  constructor(){
+  constructor(store){
     this.promises = [];
+    this.store = store;
+  }
+
+  getStore(){
+    return {
+      dispatch: this.store.dispatch,
+      getState: this.store.getState,
+    };
   }
 
   charge(promises){
-    if(!isWeb()){
-      this.promises.concat(promises);
-    }
+    this.promises.concat(promises);
   }
 
   resolve(){
-    return new Promise.all(this.promises);
+    return Promise.all(this.promises);
   }
 }
 

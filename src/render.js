@@ -5,21 +5,23 @@ import {Provider} from 'preact-redux';
 import {StaticRouter} from 'react-router-dom';
 
 import App from 'app';
-import {Terminal} from 'battery';
+import {Terminal, Battery} from 'battery';
 import makeStore from 'store';
 
-const renderToString = (url, props)=>{
+const renderToString = async (url, props)=>{
+  const store = makeStore();
+  const battery = new Battery(store);
   const context = {};
 
-  const html = preactRenderToString(<div id="mount">
-    <Terminal>
-      <Provider store={makeStore()}>
+  const vdom = <div id="mount">
+    <Terminal battery={battery}>
+      <Provider store={store}>
         <StaticRouter location={url} context={context}>
           <App {...props}/>
         </StaticRouter>
       </Provider>
     </Terminal>
-  </div>);
+  </div>;
 
   if(context.url){
     return {
@@ -27,6 +29,13 @@ const renderToString = (url, props)=>{
       url: context.url,
     };
   }
+
+  await battery.resolve();
+
+  console.log(store.getState());
+
+  const html = preactRenderToString(vdom);
+
   return {
     redirect: false,
     html: html,
