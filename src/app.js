@@ -1,5 +1,5 @@
 import {h} from 'preact';
-import {Switch, Route, NavLink} from 'react-router-dom';
+import {Switch, Route, Redirect, NavLink} from 'react-router-dom';
 
 import Loader from 'loader';
 
@@ -42,6 +42,13 @@ const App = ({match})=>{
           }
           return 'loading';
         })}/>
+        <Route path="/health" component={Loader(()=>{return import('container/health');}, (loaded, Health)=>{
+          if(loaded){
+            return h(Health);
+          }
+          return 'loading';
+        })}/>
+        <Redirect to="/"/>
       </Switch>
     </MainContent>
 

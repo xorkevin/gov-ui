@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "babel-plugin-transform-import-to-require": "^1.0.0",
+    "babel-polyfill": "^6.26.0",
     "compression": "^1.7.0",
     "express": "^4.15.4",
     "font-awesome": "^4.7.0",

@@ -1,4 +1,4 @@
-import {Health} from 'reducer/health';
+import {Health} from './health';
 
 export {
   Health

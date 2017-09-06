@@ -26,12 +26,12 @@ const TimeGet = ()=>{
     try {
       const response = await fetch(API.healthz.check, {
         method: 'GET',
+        mode: 'cors',
       });
       const status = await response.status;
       if(status >= 200 && status < 300){
-        // const data = await response.json();
-        const data = await response.text();
-        dispatch(TimeUpdate(data));
+        const data = await response.json();
+        dispatch(TimeUpdate(data.time));
       } else {
         throw new Error('Could not get time from api server');
       }

@@ -6,7 +6,7 @@ module.exports = {
 
   context: path.resolve(__dirname, 'src'),
   entry: {
-    render: 'render.js',
+    render: ['babel-polyfill', 'render.js'],
   },
   resolve: {
     modules: [path.resolve(__dirname, "src"), "node_modules"],

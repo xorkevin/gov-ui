@@ -15,7 +15,7 @@ const createConfig = (env, argv)=>{
 
     context: path.resolve(__dirname, 'src'),
     entry: {
-      main: 'main.js',
+      main: ['babel-polyfill', 'main.js'],
     },
     resolve: {
       modules: [path.resolve(__dirname, 'src'), 'node_modules'],

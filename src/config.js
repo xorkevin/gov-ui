@@ -1,4 +1,4 @@
-const apibase = '/api';
+const apibase = 'http://localhost:8080/api';
 const healthzbase = apibase + '/healthz';
 const API = {
   base: apibase,
