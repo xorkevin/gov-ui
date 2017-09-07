@@ -1,13 +1,12 @@
 import {h, Component} from 'preact';
 import Section from 'component/section';
-import {isWeb} from 'utility';
 
 import {connect} from 'preact-redux';
 import {Connector} from 'battery';
 import {TimeGet} from 'reducer/health';
 
 class HealthContainer extends Component {
-  componentWillMount(){
+  componentDidMount(){
     this.props.getTime();
   }
 
@@ -32,9 +31,7 @@ const mapStateToProps = (state)=>{
 const mapDispatchToProps = (dispatch)=>{
   return {
     getTime: ()=>{
-      if(isWeb()){
-        dispatch(TimeGet());
-      }
+      dispatch(TimeGet());
     },
   };
 };

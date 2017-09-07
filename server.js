@@ -18,7 +18,7 @@ const serveFile = (app, filename)=>{
 
 const serveIndex = async (req, res, next)=>{
   try {
-    const {redirect, url, html} = await renderToString(req.url);
+    const {redirect, url, html, state} = await renderToString(req.url);
     if(redirect){
       res.redirect(302, url);
     } else {

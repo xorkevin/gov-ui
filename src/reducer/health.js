@@ -28,7 +28,7 @@ const TimeGet = (resolver)=>{
         method: 'GET',
         mode: 'cors',
       });
-      const status = await response.status;
+      const status = response.status;
       if(status >= 200 && status < 300){
         const data = await response.json();
         dispatch(TimeUpdate(data.time));

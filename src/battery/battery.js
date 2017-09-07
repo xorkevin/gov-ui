@@ -1,7 +1,13 @@
+import Deferred from './deferred';
+
 class Battery {
   constructor(store){
     this.promises = [];
     this.store = store;
+  }
+
+  size(){
+    return this.promises.length;
   }
 
   getStore(){
@@ -11,8 +17,12 @@ class Battery {
     };
   }
 
-  charge(promises){
-    this.promises.concat(promises);
+  charge(contracts){
+    contracts.forEach((contract)=>{
+      const {promise, resolver} = new Deferred();
+      contract(this.getStore(), resolver);
+      this.promises.push(promise);
+    });
   }
 
   resolve(){

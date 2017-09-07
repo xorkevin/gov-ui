@@ -8,14 +8,8 @@ import App from 'app';
 import {Terminal, Battery} from 'battery';
 import makeStore from 'store';
 
-const renderToString = async (url, props)=>{
-  const store = makeStore();
-  const battery = new Battery(store);
-  const context = {};
-
-  console.log('context before', context);
-
-  const vdom = <div id="mount">
+const renderApp = (props, store, battery, url, context)=>{
+  return preactRenderToString(<div id="mount">
     <Terminal battery={battery}>
       <Provider store={store}>
         <StaticRouter location={url} context={context}>
@@ -23,11 +17,15 @@ const renderToString = async (url, props)=>{
         </StaticRouter>
       </Provider>
     </Terminal>
-  </div>;
+  </div>);
+};
 
-  const html = preactRenderToString(vdom);
+const renderToString = async (url, props)=>{
+  const store = makeStore();
+  const battery = new Battery(store);
+  const context = {};
 
-  console.log('context after', context);
+  let html = renderApp(props, store, battery, url, context);
 
   if(context.url){
     return {
@@ -36,13 +34,15 @@ const renderToString = async (url, props)=>{
     };
   }
 
-  await battery.resolve();
-
-  console.log(store.getState());
+  if(battery.size() > 0){
+    await battery.resolve();
+    html = renderApp(props, store, null, url, context);
+  }
 
   return {
     redirect: false,
     html: html,
+    state: store.getState(),
   };
 };
 
