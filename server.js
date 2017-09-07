@@ -37,7 +37,7 @@ app.use(compression());
 app.use(morgan('dev'));
 app.use('/static', express.static('bin/static', {
   fallthrough: false,
-  maxAge: 31536000,
+  maxAge: 31536000000,
 }));
 serveFile(app, 'service-worker.js');
 serveFile(app, 'manifest.json');

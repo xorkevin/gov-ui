@@ -72,7 +72,6 @@ const createConfig = (env, argv)=>{
       chunkFilename: 'static/chunk.[id].[chunkhash].js',
     },
 
-
     watchOptions: {
       aggregateTimeout: 300,
       poll: 1000,
@@ -92,6 +91,8 @@ const createConfig = (env, argv)=>{
       minify: true,
       cacheId: 'nuke',
       filename: 'service-worker.js',
+      staticFileGlobsIgnorePatterns: [/\.html$/],
+      dontCacheBustUrlsMatching: /\/static\//,
       navigateFallback: '/',
       navigateFallbackWhitelist: [/^(?!\/api\/)(?!\/static\/).*/],
       runtimeCaching: [
