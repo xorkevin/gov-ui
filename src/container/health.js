@@ -37,9 +37,7 @@ const mapDispatchToProps = (dispatch)=>{
 };
 
 const contracts = [
-  ({dispatch}, resolver)=>{
-    dispatch(TimeGet(resolver));
-  },
+  TimeGet(),
 ];
 
 HealthContainer = connect(mapStateToProps, mapDispatchToProps)(HealthContainer);

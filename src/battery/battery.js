@@ -10,17 +10,14 @@ class Battery {
     return this.promises.length;
   }
 
-  getStore(){
-    return {
-      dispatch: this.store.dispatch,
-      getState: this.store.getState,
-    };
-  }
-
   charge(contracts){
-    contracts.forEach((contract)=>{
-      const {promise, resolver} = new Deferred();
-      contract(this.getStore(), resolver);
+    contracts.forEach((action)=>{
+      const {promise, resolve} = new Deferred();
+      const contract = async ()=>{
+        await this.store.dispatch(action);
+        resolve();
+      };
+      contract();
       this.promises.push(promise);
     });
   }

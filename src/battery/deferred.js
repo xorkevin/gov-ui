@@ -14,7 +14,7 @@ const Deferred = (timeout = 1000)=>{
 
   return {
     promise: k,
-    resolver: ()=>{
+    resolve: ()=>{
       if(!resolved){
         clearTimeout(timer);
         resolved = true;
