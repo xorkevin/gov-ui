@@ -58,6 +58,7 @@ const createConfig = (env, argv)=>{
         filename: 'index.html',
         inject: 'body',
         template: '../template/index.html',
+        chunks: ['runtime', 'vendor', 'main'],
       }),
       new CopyPlugin([{
         from: '../public',
