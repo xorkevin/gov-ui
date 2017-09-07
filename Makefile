@@ -15,7 +15,7 @@ dev:
 	npm run build-dev
 
 build: clean-bin
-	npm run build
+	BABEL_ENV=web npm run build
 
 build-server: clean-binserver
 	BABEL_ENV=server npm run build-server
