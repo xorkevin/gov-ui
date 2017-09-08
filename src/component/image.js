@@ -63,7 +63,7 @@ class Img extends Component {
   }
 
   componentDidMount(){
-    if(isWeb() && this.props.src){
+    if(this.props.src){
       this.running = false;
       this.handler = ()=>{
         if(!this.running){

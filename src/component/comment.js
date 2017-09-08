@@ -111,19 +111,17 @@ class CommentSection extends Component {
   }
 
   componentDidMount(){
-    if(isWeb()){
-      this.running = false;
-      this.handler = ()=>{
-        if(!this.running){
-          this.running = true;
-          window.requestAnimationFrame(()=>{
-            this.tick();
-            this.running = false;
-          });
-        }
-      };
-      window.addEventListener("resize", this.handler);
-    }
+    this.running = false;
+    this.handler = ()=>{
+      if(!this.running){
+        this.running = true;
+        window.requestAnimationFrame(()=>{
+          this.tick();
+          this.running = false;
+        });
+      }
+    };
+    window.addEventListener("resize", this.handler);
   }
 
   componentWillUnmount(){
