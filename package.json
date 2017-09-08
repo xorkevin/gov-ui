@@ -38,8 +38,8 @@
     "sw-precache-webpack-plugin": "^0.11.4",
     "webpack": "^3.5.5",
     "webpack-bundle-analyzer": "^2.9.0",
-    "webpack-chunk-hash": "^0.4.0",
-    "webpack-dev-server": "^2.7.1"
+    "webpack-dev-server": "^2.7.1",
+    "webpack-md5-hash": "0.0.5"
   },
   "dependencies": {
     "babel-plugin-transform-import-to-require": "^1.0.0",

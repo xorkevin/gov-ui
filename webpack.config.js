@@ -4,7 +4,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlPlugin = require('html-webpack-plugin');
 const SWPrecachePlugin = require('sw-precache-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
-const ChunkHash = require('webpack-chunk-hash');
+const MD5Hash = require('webpack-md5-hash');
 const BundleAnalyzer = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const extractScss = new ExtractTextPlugin('static/[name].[contenthash].css');
@@ -45,20 +45,22 @@ const createConfig = (env, argv)=>{
     },
 
     plugins: [
+      new MD5Hash(),
       new webpack.HashedModuleIdsPlugin(),
-      new webpack.optimize.CommonsChunkPlugin({
-        name: 'vendor',
-        minChunks: ({ resource }) => /node_modules/.test(resource),
-      }),
-      new webpack.optimize.CommonsChunkPlugin({name: 'runtime'}),
-      new ChunkHash(),
-      extractScss,
       new HtmlPlugin({
         title: 'Nuke',
         filename: 'index.html',
         inject: 'body',
         template: '../template/index.html',
         chunks: ['runtime', 'vendor', 'main'],
+      }),
+      extractScss,
+      new webpack.optimize.CommonsChunkPlugin({
+        name: 'vendor',
+        minChunks: ({ resource }) => /node_modules/.test(resource),
+      }),
+      new webpack.optimize.CommonsChunkPlugin({
+        name: 'runtime',
       }),
       new CopyPlugin([{
         from: '../public',
