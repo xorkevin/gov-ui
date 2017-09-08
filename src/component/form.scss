@@ -41,7 +41,7 @@ input, textarea {
       text-align    : left;
 
       &:after {
-        background-color: $color-accent;
+        background-color: $color-primary;
         bottom          : 20px;
         left            : calc(50% - 8px);
         width           : 16px;
@@ -58,7 +58,7 @@ input, textarea {
     }
 
     &:focus + label {
-      color     : $color-accent;
+      color     : $color-primary;
       font-size : 0.75em;
       top       : 4px;
       visibility: visible;
@@ -71,7 +71,7 @@ input, textarea {
     }
 
     &:not(:placeholder-shown) + label {
-      color     : $color-accent;
+      color     : $color-primary;
       font-size : 0.75em;
       top       : 4px;
       visibility: visible;

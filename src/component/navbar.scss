@@ -17,7 +17,7 @@ nav, .nav {
   box-shadow      : $shadow-box-2;
   z-index         : 64;
   overflow        : hidden;
-  border-top      : 4px solid $color-accent;
+  border-top      : 4px solid $color-primary;
 
   &.top {
     background-color: transparent;
@@ -56,7 +56,7 @@ nav, .nav {
             text-decoration: inherit;
 
             &.active {
-              color: $color-accent;
+              color: saturate($color-primary, 12%);
             }
           }
 
@@ -65,12 +65,12 @@ nav, .nav {
           }
 
           &:hover {
-            color : lighten(saturate($color-accent, 25%), 6.25%);
+            color : saturate($color-primary, 12%);
             cursor: pointer;
           }
 
           &:active {
-            color: lighten(saturate($color-accent, 25%), 6.25%);
+            color: saturate($color-primary, 12%);
           }
         }
       }
