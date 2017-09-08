@@ -61,6 +61,7 @@ const createConfig = (env, argv)=>{
       }),
       new webpack.optimize.CommonsChunkPlugin({
         name: 'runtime',
+        filename: 'static/runtime.[hash].js',
       }),
       new CopyPlugin([{
         from: '../public',
