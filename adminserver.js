@@ -26,7 +26,6 @@ const serveAdmin = (req, res, next)=>{
     res.type('html');
     res.send(template.replace(`<div id="mount"></div>`, html));
   }
-  console.log('admin', html);
 };
 
 const app = express();

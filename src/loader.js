@@ -24,7 +24,6 @@ const Loader = (loader, callback)=>{
               mod: k,
             });
           }).catch((err)=>{
-            console.error(err);
           });
         } else {
           let k = loader();
