@@ -68,7 +68,6 @@ const WIDTH = {
   sm: 768,
 };
 WIDTH.md = WIDTH.sm * 1.5;
-WIDTH.lg = WIDTH.md * 1.5;
 WIDTH.xs = WIDTH.sm / 2;
 
 const DEPTH = {
@@ -76,13 +75,10 @@ const DEPTH = {
   xs: 6,
   sm: 8,
   md: 12,
-  lg: 16,
 };
 
 const widthToDepth = (width)=>{
-  if(width > WIDTH.lg){
-    return DEPTH.lg;
-  } else if(width > WIDTH.md){
+  if(width > WIDTH.md){
     return DEPTH.md;
   } else if(width > WIDTH.sm){
     return DEPTH.sm;
@@ -132,7 +128,7 @@ class CommentSection extends Component {
   }
 
   render({children}, {depth}){
-    return <Container padded>
+    return <Container padded narrow>
       <h5>Comments</h5>
       <div className="comment-section">
         {children && children.map((child)=>{

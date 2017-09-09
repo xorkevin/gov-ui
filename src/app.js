@@ -54,7 +54,7 @@ const App = ({match})=>{
     </MainContent>
 
     <Footer>
-      <Grid center md={6} sm={8}>
+      <Grid center sm={8}>
         <div colkey="left" className="text-center">
          <h4>Nuke</h4>
          a reactive frontend for governor

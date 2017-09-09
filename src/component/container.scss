@@ -14,7 +14,9 @@
     max-width: $grid-md-breakpoint * 15 / 16;
   }
 
-  @media (min-width: $grid-lg-breakpoint) {
-    max-width: $grid-lg-breakpoint * 15 / 16;
+  &:not(.narrow){
+    @media (min-width: $grid-lg-breakpoint) {
+      max-width: $grid-lg-breakpoint * 15 / 16;
+    }
   }
 }

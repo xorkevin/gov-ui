@@ -6,7 +6,7 @@ import Button from 'component/button';
 
 const FormContainer = ()=>{
   return <div>
-    <Section id="form" sectionTitle="Form" container padded>
+    <Section id="form" sectionTitle="Form" container padded narrow>
       <Input label="Name"/>
       <Input label="Email" error="not an email"/>
       <Input label="Phone" valid/>

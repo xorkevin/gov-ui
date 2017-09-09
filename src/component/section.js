@@ -1,7 +1,7 @@
 import {h} from 'preact';
 import Container from 'component/container';
 
-const Section = ({id, container, padded, sectionTitle, subsection, children})=>{
+const Section = ({id, container, padded, narrow, sectionTitle, subsection, children})=>{
   const k = [];
   let headingClass = 'h3';
   if(subsection){
@@ -17,9 +17,9 @@ const Section = ({id, container, padded, sectionTitle, subsection, children})=>{
     </div>;
   }
 
-  if(container && !subsection){
+  if(container){
     return <section id={id} className={k.join(" ")}>
-      <Container padded={padded} subsection={subsection}>
+      <Container padded={padded} narrow={narrow}>
         {titleElement}
         {children}
       </Container>

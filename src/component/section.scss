@@ -1,5 +1,5 @@
 section {
-  margin: 64px 0;
+  margin: 64px auto;
 
   &>.section-header, &>.container>.section-header {
     font-family   : $typography-base-font;
@@ -8,7 +8,7 @@ section {
   }
 
   &.subsection {
-    &>.section-header {
+    &>.section-header, &>.container>.section-header {
       border-bottom  : unset;
       position       : relative;
       text-transform : uppercase;

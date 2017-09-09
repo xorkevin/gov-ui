@@ -11,14 +11,14 @@ const HomeContainer = ()=>{
   return <div>
     <Img fixed size="full" imgWidth={1920} imgHeight={1080} src="https://xorkevin.github.io/stratosphere/assets/mountain.jpg" color="#F1F5FD" preview={mountainPreview}>
       <header style={{width: "100%"}}>
-        <Container padded>
+        <Container padded narrow>
           <h1 className="colossal">Nuke</h1>
           <h4>a reactive frontend for governor</h4>
         </Container>
       </header>
     </Img>
 
-    <Section id="typography" sectionTitle="Typography" container padded>
+    <Section id="typography" sectionTitle="Typography" container padded narrow>
       <h1>Heading 1 <small>small</small></h1>
       <h2>Heading 2 <small>small</small></h2>
       <h3>Heading 3 <small>small</small></h3>
