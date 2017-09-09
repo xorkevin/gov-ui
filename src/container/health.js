@@ -11,13 +11,11 @@ class HealthContainer extends Component {
   }
 
   render({loading, success, time, err}){
-    return <div>
-      <Section sectionTitle="Health Check" container padded>
-        <span>{loading && "loading"}</span>
-        <span>{success && time}</span>
-        <span>{!success && err}</span>
-      </Section>
-    </div>;
+    return <Section sectionTitle="Health Check" container padded>
+      <span>{loading && "loading"}</span>
+      <span>{success && time}</span>
+      <span>{!success && err}</span>
+    </Section>;
   }
 };
 

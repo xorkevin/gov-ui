@@ -52,7 +52,7 @@ html, body {
 
   a {
     color          : $color-primary;
-    text-decoration: inherit;
+    text-decoration: unset;
 
     &:hover {
       text-decoration: underline;
@@ -60,16 +60,16 @@ html, body {
     }
 
     &.no-style {
-      color: inherit;
-      text-decoration: inherit;
+      color: unset;
+      text-decoration: unset;
 
       &:hover {
-        text-decoration: inherit;
+        text-decoration: unset;
       }
     }
 
     &.no-color {
-      color: inherit;
+      color: unset;
     }
   }
 

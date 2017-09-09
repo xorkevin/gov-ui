@@ -13,14 +13,14 @@ import FaIcon from 'component/faicon';
 const Admin = ({match})=>{
   return <div>
     <Navbar sidebar left={[
-      {key: 'home', component: <NavLink exact to="/">Admin</NavLink>},
-      {key: 'health', component: <NavLink to="/health">Health</NavLink>},
+      {key: 'home', component: <NavLink exact to="/"><FaIcon icon="home"/><small>Home</small></NavLink>},
+      {key: 'health', component: <NavLink to="/health"><FaIcon icon="server"/><small>Health</small></NavLink>},
     ]} right={[
-      {key: 'xorkevin', component: <Anchor ext href="https://github.com/xorkevin"><FaIcon icon="github"/> xorkevin</Anchor>},
+      {key: 'xorkevin', component: <Anchor ext href="https://github.com/xorkevin"><FaIcon icon="github"/><small>xorkevin</small></Anchor>},
     ]}>
     </Navbar>
 
-    <MainContent>
+    <MainContent withSidebar sectionNoMargin>
       <Switch>
         <Route exact path="/" component={Loader(()=>{return import('container/admin');}, (loaded, Admin)=>{
           if(loaded){
@@ -38,7 +38,7 @@ const Admin = ({match})=>{
       </Switch>
     </MainContent>
 
-    <Footer>
+    <Footer withSidebar>
       <Grid center sm={8}>
         <div colkey="left" className="text-center">
          <h4>Nuke</h4>

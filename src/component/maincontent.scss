@@ -1,7 +1,23 @@
 main {
-  min-height: 100vh;
+  min-height : 100vh;
+  padding-top: 1px; // to force align main to top
 
   @media (max-width: $grid-sm-breakpoint - 1) {
     min-height: $hero-lg-size * 2 / 3;
+  }
+
+  &.with-sidebar {
+    margin-left: 80px;
+  }
+
+  &.with-navbar {
+    margin-top: 64px;
+  }
+
+  &.section-no-margin {
+    &>section {
+      margin-top   : 0;
+      margin-bottom: 0;
+    }
   }
 }

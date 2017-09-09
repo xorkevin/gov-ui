@@ -14,7 +14,7 @@ const Loader = (loader, callback)=>{
     load(){
       if(!this.state.loaded){
         if(isWeb()){
-          loader().then((mod)=>{
+          Promise.resolve(loader()).then((mod)=>{
             let k = mod;
             if(mod.default){
               k = mod.default;

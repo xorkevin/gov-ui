@@ -14,11 +14,11 @@ input, button, submit {
   -moz-appearance   : none;
   appearance        : none;
   border            : none;
-  font-family       : inherit;
+  font-family       : unset;
 }
 
 textarea, input {
-  font-family: inherit;
+  font-family: unset;
 }
 
 

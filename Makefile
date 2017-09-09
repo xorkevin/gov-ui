@@ -16,10 +16,10 @@ clean-binserver:
 clean: clean-bin clean-bin-admin clean-binserver
 
 dev:
-	npm run build-dev
+	BABEL_ENV=dev npm run build-dev
 
 dev-admin:
-	npm run build-admin-dev
+	BABEL_ENV=dev npm run build-admin-dev
 
 build: clean-bin
 	BABEL_ENV=web npm run build

@@ -77,13 +77,13 @@ class Navbar extends Component {
     }
     return <nav className={className.join(" ")}>
       <div className="nav-container">
-        <Container padded>
+        <Container>
           <div className="element">
             {j}
           </div>
-          <div className="element">
+          {children && children.length > 0 && <div className="element">
             {children}
-          </div>
+          </div>}
           <div className="element">
             {k}
           </div>

@@ -1,7 +1,18 @@
 import {h} from 'preact';
 
-const MainContent = ({children})=>{
-  return <main>
+const MainContent = ({withSidebar, withNavbar, sectionNoMargin, children})=>{
+  const k = [];
+  if(withSidebar){
+    k.push("with-sidebar");
+  }
+  if(withNavbar){
+    k.push("with-navbar");
+  }
+  if(sectionNoMargin){
+    k.push("section-no-margin");
+  }
+
+  return <main className={k.join(" ")}>
     {children}
   </main>;
 };

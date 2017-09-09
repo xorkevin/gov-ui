@@ -33,6 +33,7 @@ nav, .nav {
     overflow-x     : auto;
 
     &>.container {
+      height         : 100%;
       display        : flex;
       justify-content: space-between;
       align-items    : center;
@@ -43,17 +44,27 @@ nav, .nav {
         justify-content: center;
         align-items    : center;
         margin         : 0 8px;
+        max-width      : 100%;
+        height         : 100%;
 
         &>.item {
-          margin     : 0 $nav-margin 0 0;
-          float      : left;
-          color      : $color-text-dark-2;
-          transition : $transition-normal;
-          white-space: nowrap;
+          margin         : 0 $nav-margin 0 0;
+          color          : $color-text-dark-2;
+          transition     : $transition-normal;
+          white-space    : nowrap;
+          max-width      : 100%;
+          height         : 100%;
+          display        : flex;
+          align-items    : center;
+          justify-content: center;
 
-          a {
-            color          : inherit;
-            text-decoration: inherit;
+          &>a {
+            color          : unset;
+            text-decoration: unset;
+            height         : 100%;
+            display        : flex;
+            align-items    : center;
+            justify-content: center;
 
             &.active {
               color: saturate($color-primary, 12%);
@@ -78,8 +89,10 @@ nav, .nav {
   }
 
   &.sidebar {
-    width : $nav-width;
-    height: 100vh;
+    width           : $nav-width;
+    height          : 100vh;
+    background-color: $background-invert;
+    border          : unset;
 
     &>.nav-container {
       overflow-x: hidden;
@@ -87,13 +100,43 @@ nav, .nav {
 
       &>.container {
         flex-direction: column;
-        height        : 100%;
+        width         : 100%;
 
         &>.element {
           flex-direction: column;
+          margin        : 0;
+          height        : unset;
+          width         : 100%;
 
           &>.item {
-            margin: 0;
+            color  : $color-text-light-2;
+            margin : 0;
+            height : $nav-width * 7 / 8;
+            width  : 100%;
+
+            &>a {
+              width         : 100%;
+              flex-direction: column;
+
+              &.active {
+                color           : $color-text-light-1;
+                background-color: darken($background-invert, 6.25%);
+              }
+            }
+
+            &:hover {
+              color           : $color-text-light-1;
+              background-color: darken($background-invert, 6.25%);
+            }
+
+            &:active {
+              color           : $color-text-light-1;
+              background-color: darken($background-invert, 6.25%);
+            }
+
+            .fa {
+              font-size: 2rem;
+            }
           }
         }
       }

@@ -3,9 +3,9 @@ $black                 : #000000 !default;
 $white                 : #FFFFFF !default;
 $color-primary         : #224A7F !default;
 $color-primary-light   : lighten($color-primary, 12.5%) !default;
-$color-primary-white   : #F5F9FD !default;
 $color-accent          : #FFB74D !default;
 $background            : #FCFCFC !default;
+$background-invert     : #263238 !default;
 $background-transparent: rgba($white, 0.97) !default;
 
 $color-text-dark-1  : rgba($black, 0.87) !default; // primary

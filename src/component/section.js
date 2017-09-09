@@ -1,16 +1,12 @@
 import {h} from 'preact';
 import Container from 'component/container';
 
-const Section = ({id, container, padded, narrow, sectionTitle, subsection, withSidebar, children})=>{
+const Section = ({id, container, padded, narrow, sectionTitle, subsection, children})=>{
   const k = [];
   let headingClass = 'h3';
   if(subsection){
     k.push("subsection");
     headingClass = 'h5';
-  }
-
-  if(withSidebar){
-    k.push("with-sidebar");
   }
 
   let titleElement = false;
