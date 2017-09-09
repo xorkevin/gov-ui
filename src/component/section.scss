@@ -1,9 +1,39 @@
 section {
   margin: 64px 0;
 
-  .section-header {
+  &>.section-header, &>.container>.section-header {
     font-family   : $typography-base-font;
-    text-transform: uppercase;
-    letter-spacing: 2px;
+    border-bottom : 1px solid $color-text-dark-4;
+    margin-bottom : 16px;
+  }
+
+  &.subsection {
+    &>.section-header {
+      border-bottom  : unset;
+      position       : relative;
+      text-transform : uppercase;
+      display        : flex;
+      justify-content: center;
+      align-items    : center;
+
+      &>* {
+        margin          : 0;
+        padding         : 0 16px;
+        background-color: $background;
+        display         : inline-block;
+        position        : relative;
+        z-index         : 1;
+      }
+
+      &:before {
+        content         : '';
+        height          : 1px;
+        width           : 100%;
+        position        : absolute;
+        top             : 50%;
+        background-color: $color-text-dark-4;
+        z-index         : 0;
+      }
+    }
   }
 }

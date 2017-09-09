@@ -21,13 +21,14 @@ const FormContainer = ()=>{
         <Input textarea fullWidth label="Biography" info="Tell us about yourself"/>
       </Card>
 
-      <h4>Buttons</h4>
-      <Button fixedWidth primary>Primary</Button>
-      <Button fixedWidth outline>Outline</Button>
-      <Button fixedWidth text>Text</Button>
-      <Button raised fixedWidth primary>Raised Primary</Button>
-      <Button raised fixedWidth outline>Raised Outline</Button>
-      <Button raised fixedWidth text>Raised Text</Button>
+      <Section subsection sectionTitle="Buttons">
+        <Button fixedWidth primary>Primary</Button>
+        <Button fixedWidth outline>Outline</Button>
+        <Button fixedWidth text>Text</Button>
+        <Button raised fixedWidth primary>Raised Primary</Button>
+        <Button raised fixedWidth outline>Raised Outline</Button>
+        <Button raised fixedWidth text>Raised Text</Button>
+      </Section>
     </Section>
   </div>;
 };
