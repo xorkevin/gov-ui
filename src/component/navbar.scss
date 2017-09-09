@@ -76,4 +76,27 @@ nav, .nav {
       }
     }
   }
+
+  &.sidebar {
+    width : $nav-width;
+    height: 100vh;
+
+    &>.nav-container {
+      overflow-x: hidden;
+      overflow-y: auto;
+
+      &>.container {
+        flex-direction: column;
+        height        : 100%;
+
+        &>.element {
+          flex-direction: column;
+
+          &>.item {
+            margin: 0;
+          }
+        }
+      }
+    }
+  }
 }

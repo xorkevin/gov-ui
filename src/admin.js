@@ -12,7 +12,7 @@ import FaIcon from 'component/faicon';
 
 const Admin = ({match})=>{
   return <div>
-    <Navbar left={[
+    <Navbar sidebar left={[
       {key: 'home', component: <NavLink exact to="/">Admin</NavLink>},
       {key: 'health', component: <NavLink to="/health">Health</NavLink>},
     ]} right={[

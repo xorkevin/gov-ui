@@ -1,7 +1,11 @@
 .comment {
   margin: 16px 0;
+  width : 100%;
 
   &>.inner {
+    width    : 42rem;
+    max-width: 100%;
+
     &>.info {
       &>* + * {
         margin-left: 8px;
@@ -49,6 +53,8 @@
 }
 
 .comment-section {
+  width: 100%;
+
   &>.comment {
     margin: 0;
     padding: 16px 0;

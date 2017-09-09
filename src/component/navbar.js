@@ -1,4 +1,4 @@
-import {h} from 'preact';
+import {h, Component} from 'preact';
 import Container from 'component/container';
 
 const scrollTime = 384;
@@ -47,44 +47,50 @@ const scrollTo = (element)=>{
   });
 };
 
-const Navbar = ({left, right, children})=>{
-  let j = [];
-  let k = [];
-  if(left){
-    for(let i = 0; i < left.length; i++){
-      const l = left[i];
-      if(l.scroll){
-        j.push(<div key={l.key} className="item" onClick={()=>{scrollTo(l.target);}}>{l.component}</div>);
-      } else {
-        j.push(<div key={l.key} className="item">{l.component}</div>);
+class Navbar extends Component {
+  render({sidebar, left, right, children}){
+    const className = [];
+    if(sidebar){
+      className.push("sidebar");
+    }
+    let j = [];
+    let k = [];
+    if(left){
+      for(let i = 0; i < left.length; i++){
+        const l = left[i];
+        if(l.scroll){
+          j.push(<div key={l.key} className="item" onClick={()=>{scrollTo(l.target);}}>{l.component}</div>);
+        } else {
+          j.push(<div key={l.key} className="item">{l.component}</div>);
+        }
       }
     }
-  }
-  if(right){
-    for(let i = 0; i < right.length; i++){
-      const l = right[i];
-      if(l.scroll){
-        k.push(<div key={l.key} className="item" onClick={()=>{scrollTo(l.target);}}>{l.component}</div>);
-      } else {
-        k.push(<div key={l.key} className="item">{l.component}</div>);
+    if(right){
+      for(let i = 0; i < right.length; i++){
+        const l = right[i];
+        if(l.scroll){
+          k.push(<div key={l.key} className="item" onClick={()=>{scrollTo(l.target);}}>{l.component}</div>);
+        } else {
+          k.push(<div key={l.key} className="item">{l.component}</div>);
+        }
       }
     }
+    return <nav className={className.join(" ")}>
+      <div className="nav-container">
+        <Container padded>
+          <div className="element">
+            {j}
+          </div>
+          <div className="element">
+            {children}
+          </div>
+          <div className="element">
+            {k}
+          </div>
+        </Container>
+      </div>
+    </nav>;
   }
-  return <nav>
-    <div className="nav-container">
-      <Container padded>
-        <div className="element">
-          {j}
-        </div>
-        <div className="element">
-          {children}
-        </div>
-        <div className="element">
-          {k}
-        </div>
-      </Container>
-    </div>
-  </nav>;
-};
+}
 
 export default Navbar
