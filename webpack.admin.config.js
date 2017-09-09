@@ -15,7 +15,7 @@ const createConfig = (env, argv)=>{
 
     context: path.resolve(__dirname, 'src'),
     entry: {
-      main: ['babel-polyfill', 'main.js'],
+      admin: ['babel-polyfill', 'adminmain.js'],
     },
     resolve: {
       modules: [path.resolve(__dirname, 'src'), 'node_modules'],
@@ -51,7 +51,7 @@ const createConfig = (env, argv)=>{
         title: 'Nuke',
         filename: 'index.html',
         inject: 'body',
-        template: '../template/index.html',
+        template: '../template/admin.html',
       }),
       extractScss,
       new webpack.optimize.CommonsChunkPlugin({
@@ -68,7 +68,7 @@ const createConfig = (env, argv)=>{
     ],
 
     output: {
-      path: path.resolve(__dirname, 'bin'),
+      path: path.resolve(__dirname, 'bin_admin'),
       publicPath: '/',
       filename: 'static/[name].[chunkhash].js',
       chunkFilename: 'static/chunk.[id].[chunkhash].js',
@@ -83,7 +83,7 @@ const createConfig = (env, argv)=>{
     devServer: {
       contentBase: path.resolve(__dirname, 'public'),
       compress: true,
-      port: 3000,
+      port: 3001,
       historyApiFallback: true,
     },
   };

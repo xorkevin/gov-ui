@@ -6,13 +6,13 @@ import {Provider} from 'preact-redux';
 import {BrowserRouter} from 'react-router-dom';
 import 'swload.js';
 
-import App from 'app';
-import makeStore from 'store';
+import Admin from 'admin';
+import makeStore from 'adminstore';
 
 render(<div id="mount">
   <Provider store={makeStore()}>
     <BrowserRouter>
-      <App/>
+      <Admin/>
     </BrowserRouter>
   </Provider>
 </div>, document.body, document.getElementById('mount'));

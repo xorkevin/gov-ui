@@ -7,9 +7,12 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack -p --env.production --progress --color",
+    "build-admin": "webpack -p --env.production --progress --color --config webpack.admin.config.js",
     "build-dev": "webpack-dev-server -p -w --progress --color",
+    "build-admin-dev": "webpack-dev-server -p -w --progress --color --config webpack.admin.config.js",
     "build-server": "webpack --progress --color --config webpack.server.config.js",
-    "serve": "node server.js"
+    "serve": "node server.js",
+    "serve-admin": "node adminserver.js"
   },
   "repository": {
     "type": "git",

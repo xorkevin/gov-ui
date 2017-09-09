@@ -18,8 +18,9 @@ const serveFile = (app, filename)=>{
 
 const serveIndex = async (req, res, next)=>{
   try {
+    const props = {};
     res.set('Cache-Control', 'private, max-age=0');
-    const {redirect, url, html, state} = await renderToString(req.url);
+    const {redirect, url, html, state} = await renderToString(req.url, props);
     if(redirect){
       res.redirect(302, url);
     } else {

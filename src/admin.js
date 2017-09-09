@@ -10,36 +10,21 @@ import Grid from 'component/grid';
 import Anchor from 'component/anchor';
 import FaIcon from 'component/faicon';
 
-const App = ({match})=>{
+const Admin = ({match})=>{
   return <div>
     <Navbar left={[
-      {key: 'home', component: <NavLink exact to="/">Home</NavLink>},
-      {key: 'form', component: <NavLink to="/form">Form</NavLink>},
-      {key: 'cards', component: <NavLink to="/cards">Cards</NavLink>},
+      {key: 'home', component: <NavLink exact to="/">Admin</NavLink>},
       {key: 'health', component: <NavLink to="/health">Health</NavLink>},
     ]} right={[
-      {key: 'contact', component: 'Contact'},
       {key: 'xorkevin', component: <Anchor ext href="https://github.com/xorkevin"><FaIcon icon="github"/> xorkevin</Anchor>},
     ]}>
     </Navbar>
 
     <MainContent>
       <Switch>
-        <Route exact path="/" component={Loader(()=>{return import('container/home');}, (loaded, Home)=>{
+        <Route exact path="/" component={Loader(()=>{return import('container/admin');}, (loaded, Admin)=>{
           if(loaded){
-            return h(Home);
-          }
-          return 'loading';
-        })}/>
-        <Route path="/form" component={Loader(()=>{return import('container/form');}, (loaded, Form)=>{
-          if(loaded){
-            return h(Form);
-          }
-          return 'loading';
-        })}/>
-        <Route path="/cards" component={Loader(()=>{return import('container/card');}, (loaded, Card)=>{
-          if(loaded){
-            return h(Card);
+            return h(Admin);
           }
           return 'loading';
         })}/>
@@ -75,4 +60,4 @@ const App = ({match})=>{
   </div>;
 };
 
-export default App
+export default Admin

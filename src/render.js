@@ -1,12 +1,13 @@
-import 'isomorphic-fetch';
 import {h} from 'preact';
 import preactRenderToString from 'preact-render-to-string';
 import {Provider} from 'preact-redux';
 import {StaticRouter} from 'react-router-dom';
 
 import App from 'app';
+import Admin from 'admin';
 import {Terminal, Battery} from 'battery';
 import makeStore from 'store';
+import makeAdminStore from 'adminstore';
 
 const renderApp = (props, store, battery, url, context)=>{
   return preactRenderToString(<div id="mount">
@@ -46,6 +47,36 @@ const renderToString = async (url, props)=>{
   };
 };
 
+const renderAdmin = (props, store, url, context)=>{
+  return preactRenderToString(<div id="mount">
+    <Provider store={store}>
+      <StaticRouter location={url} context={context}>
+        <Admin {...props}/>
+      </StaticRouter>
+    </Provider>
+  </div>);
+};
+
+const renderAdminToString = (url, props)=>{
+  const store = makeAdminStore();
+  const context = {};
+
+  let html = renderAdmin(props, store, url, context);
+
+  if(context.url){
+    return {
+      redirect: true,
+      url: context.url,
+    };
+  }
+
+  return {
+    redirect: false,
+    html: html,
+    state: store.getState(),
+  };
+};
+
 export {
-  renderToString
+  renderToString, renderAdminToString,
 }

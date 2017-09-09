@@ -21,4 +21,5 @@ node_modules
 .node_repl_history
 
 bin
+bin_admin
 bin_server
