@@ -1,0 +1,122 @@
+.tooltip-parent {
+  position: relative;
+
+  &>.tooltip {
+    position        : absolute;
+    white-space     : nowrap;
+    background-color: $color-text-dark-1;
+    color           : $color-text-light-1;
+    padding         : 4px 8px;
+    border-radius   : 4px;
+    font-size       : 0.75rem;
+    pointer-events  : none;
+    opacity         : 0;
+    visibility      : hidden;
+    transition      : $transition-normal;
+    z-index         : 64;
+
+    &:before {
+      content : '';
+      position: absolute;
+      width   : 0;
+      height  : 0;
+      z-index : -1;
+    }
+
+    &.left {
+      right: calc(100% + 12px);
+      top: 50%;
+      transform: translateY(-50%);
+
+      &:before {
+        border-top: 8px solid transparent;
+        border-bottom: 8px solid transparent;
+        border-left: 8px solid $color-text-dark-1;
+        left: 100%;
+        top: calc(50% - 8px);
+      }
+    }
+
+    &.right {
+      left: calc(100% + 12px);
+      top: 50%;
+      transform: translateY(-50%);
+
+      &:before {
+        border-top: 8px solid transparent;
+        border-bottom: 8px solid transparent;
+        border-right: 8px solid $color-text-dark-1;
+        right: 100%;
+        top: calc(50% - 8px);
+      }
+    }
+
+    &.top {
+      bottom   : calc(100% + 12px);
+      left     : 50%;
+      transform: translateX(-50%);
+
+      &:before {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-top: 8px solid $color-text-dark-1;
+        top : 100%;
+        left: calc(50% - 8px);
+      }
+    }
+
+    &.bottom {
+      top: calc(100% + 12px);
+      left     : 50%;
+      transform: translateX(-50%);
+
+      &:before {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-bottom: 8px solid $color-text-dark-1;
+        bottom: 100%;
+        left: calc(50% - 8px);
+      }
+    }
+  }
+
+  &:hover {
+    &>.tooltip {
+      opacity   : 1;
+      visibility: visible;
+    }
+  }
+}
+
+body.dark {
+  .tooltip-parent {
+    &>.tooltip {
+      background-color: $color-text-light-2;
+      color           : $black;
+
+      &.left {
+        &:before {
+          border-left: 8px solid $color-text-light-2;
+        }
+      }
+
+      &.right {
+        &:before {
+          border-right: 8px solid $color-text-light-2;
+        }
+      }
+
+      &.top {
+        &:before {
+          border-top: 8px solid $color-text-light-2;
+        }
+      }
+
+      &.bottom {
+        &:before {
+          border-bottom: 8px solid $color-text-light-2;
+        }
+      }
+    }
+  }
+}

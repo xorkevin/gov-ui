@@ -1,5 +1,6 @@
 import {h, Component} from 'preact';
 import {formatStr} from 'utility';
+import Tooltip from 'component/tooltip';
 
 const Formatter = ()=>{
   if(Intl && Intl.DateTimeFormat) {
@@ -131,7 +132,11 @@ class Time extends Component {
   }
 
   render({}, {isoString, localeString, timeAgo}){
-    return <time dateTime={this.state.isoString} title={this.state.localeString}>{this.state.timeAgo}</time>;
+    return <Tooltip tooltip={this.state.localeString}>
+      <time dateTime={this.state.isoString}>
+        {this.state.timeAgo}
+      </time>
+    </Tooltip>;
   }
 }
 
