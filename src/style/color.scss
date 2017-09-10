@@ -3,7 +3,7 @@ $black                 : #000000 !default;
 $white                 : #FFFFFF !default;
 $color-primary         : #224A7F !default;
 $color-primary-light   : lighten($color-primary, 12.5%) !default;
-$color-primary-dark    : #263038 !default;
+$color-primary-dark    : #222832 !default;
 $color-accent          : #FFB74D !default;
 $background            : #FCFCFC !default;
 $background-dark       : darken($color-primary-dark, 6.25%) !default;
@@ -15,10 +15,11 @@ $color-text-dark-2  : rgba($black, 0.54) !default; // secondary
 $color-text-dark-3  : rgba($black, 0.38) !default; // disabled/hint/icons
 $color-text-dark-4  : rgba($black, 0.12) !default; // dividers
 
-$color-text-light-1: rgba($white, 1) !default; // primary
-$color-text-light-2: rgba($white, 0.7) !default; // secondary
-$color-text-light-3: rgba($white, 0.5) !default; // disabled/hint/icons
-$color-text-light-4: rgba($white, 0.12) !default; // dividers
+$color-text-light-1  : rgba($white, 1) !default; // primary
+$color-text-light-1-5: rgba($white, 0.9) !default; // primary
+$color-text-light-2  : rgba($white, 0.7) !default; // secondary
+$color-text-light-3  : rgba($white, 0.5) !default; // disabled/hint/icons
+$color-text-light-4  : rgba($white, 0.12) !default; // dividers
 
 // $color-grey-900: #212121;
 // $color-grey-800: #424242;

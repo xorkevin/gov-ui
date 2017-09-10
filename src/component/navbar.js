@@ -47,33 +47,35 @@ const scrollTo = (element)=>{
   });
 };
 
+const generateItemList = (list)=>{
+  return list.map((item)=>{
+    const className = ["item"];
+    if(item.home){
+      className.push("nav-home");
+    }
+    const itemProps = {};
+    if(item.scroll){
+      itemProps.onClick = ()=>{
+        scrollTo(item.target);
+      };
+    }
+    return <div key={item.key} className={className.join(" ")} {...itemProps}>{item.component}</div>;
+  });
+};
+
 class Navbar extends Component {
   render({sidebar, left, right, children}){
     const className = [];
     if(sidebar){
       className.push("sidebar");
     }
-    let j = [];
-    let k = [];
+    let j = false;
+    let k = false;
     if(left){
-      for(let i = 0; i < left.length; i++){
-        const l = left[i];
-        if(l.scroll){
-          j.push(<div key={l.key} className="item" onClick={()=>{scrollTo(l.target);}}>{l.component}</div>);
-        } else {
-          j.push(<div key={l.key} className="item">{l.component}</div>);
-        }
-      }
+      j = generateItemList(left);
     }
     if(right){
-      for(let i = 0; i < right.length; i++){
-        const l = right[i];
-        if(l.scroll){
-          k.push(<div key={l.key} className="item" onClick={()=>{scrollTo(l.target);}}>{l.component}</div>);
-        } else {
-          k.push(<div key={l.key} className="item">{l.component}</div>);
-        }
-      }
+      k = generateItemList(right);
     }
     return <nav className={className.join(" ")}>
       <div className="nav-container">

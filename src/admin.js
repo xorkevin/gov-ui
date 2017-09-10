@@ -39,7 +39,7 @@ class Admin extends Component {
   render({}, {dark}){
     return <div>
       <Navbar sidebar left={[
-        {key: 'home', component: <NavLink exact to="/"><FaIcon icon="home"/><small>Home</small></NavLink>},
+        {key: 'home', home: true, component: <NavLink exact to="/"><FaIcon icon="home"/><small>Home</small></NavLink>},
         {key: 'health', component: <NavLink to="/health"><FaIcon icon="server"/><small>Health</small></NavLink>},
       ]} right={[
         {key: 'dark-mode', component: <span onClick={()=>{this.toggleDark();}}><FaIcon icon="bolt"/><small>Dark Mode</small></span>},

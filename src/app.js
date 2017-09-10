@@ -39,7 +39,7 @@ class App extends Component {
   render({}, {dark}){
     return <div>
       <Navbar left={[
-        {key: 'home', component: <NavLink exact to="/">Home</NavLink>},
+        {key: 'home', home: true, component: <NavLink exact to="/">Home</NavLink>},
         {key: 'form', component: <NavLink to="/form">Form</NavLink>},
         {key: 'cards', component: <NavLink to="/cards">Cards</NavLink>},
         {key: 'health', component: <NavLink to="/health">Health</NavLink>},

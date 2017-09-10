@@ -115,6 +115,15 @@ nav, .nav {
             .fa {
               font-size: 2rem;
             }
+
+            &.nav-home {
+              color           : $color-text-light-1;
+              background-color: $color-primary;
+
+              &>.active {
+                color: $color-text-light-1;
+              }
+            }
           }
         }
       }
@@ -127,30 +136,33 @@ body.dark {
     background-color: $color-primary-dark;
     border-color    : $color-accent;
 
-    &>.nav-container {
-      &>.container {
-        &>.element {
-          &>.item {
-            color: $color-text-light-2;
+    &>.nav-container>.container>.element>.item {
+      color: $color-text-light-2;
 
-            &>* {
-              &.active {
-                color           : $color-text-light-1;
-                background-color: darken($color-primary-dark, 6.25%);
-              }
-            }
-
-            &:hover {
-              color           : $color-text-light-1;
-              background-color: darken($color-primary-dark, 6.25%);
-            }
-
-            &:active {
-              color           : $color-text-light-1;
-              background-color: darken($color-primary-dark, 6.25%);
-            }
-          }
+      &>* {
+        &.active {
+          color           : $color-text-light-1;
+          background-color: darken($color-primary-dark, 6.25%);
         }
+      }
+
+      &:hover {
+        color           : $color-text-light-1;
+        background-color: darken($color-primary-dark, 6.25%);
+      }
+
+      &:active {
+        color           : $color-text-light-1;
+        background-color: darken($color-primary-dark, 6.25%);
+      }
+    }
+
+    &.sidebar>.nav-container>.container>.element>.item.nav-home {
+      color           : $color-accent;
+      background-color: unset;
+
+      &>.active {
+        color: $color-accent;
       }
     }
   }

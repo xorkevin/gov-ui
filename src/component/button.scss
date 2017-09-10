@@ -100,15 +100,15 @@ body.dark {
       border-color    : $color-text-light-2;
 
       &:hover {
-        color       : $color-text-light-1;
-        border-color: $color-text-light-1;
+        color       : $color-text-light-1-5;
+        border-color: $color-text-light-1-5;
       }
 
       &.raised {
         border: 1px solid $color-text-light-2;
 
         &:hover {
-          border-color: $color-text-light-1;
+          border-color: $color-text-light-1-5;
         }
       }
     }

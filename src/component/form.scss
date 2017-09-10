@@ -157,11 +157,11 @@ body.dark {
       }
 
       &:focus + label {
-        color: $color-text-light-1;
+        color: $color-text-light-1-5;
       }
 
       &:not(:placeholder-shown) + label {
-        color: $color-text-light-1;
+        color: $color-text-light-1-5;
       }
 
       & ~ .info {
