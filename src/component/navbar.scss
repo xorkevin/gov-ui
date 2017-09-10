@@ -48,7 +48,6 @@ nav, .nav {
         height         : 100%;
 
         &>.item {
-          margin         : 0 $nav-margin 0 0;
           color          : $color-text-dark-2;
           transition     : $transition-normal;
           white-space    : nowrap;
@@ -65,14 +64,11 @@ nav, .nav {
             display        : flex;
             align-items    : center;
             justify-content: center;
+            padding        : 16px;
 
             &.active {
               color: saturate($color-primary, 12%);
             }
-          }
-
-          &:last-child {
-            margin: 0;
           }
 
           &:hover {
@@ -108,7 +104,6 @@ nav, .nav {
           width         : 100%;
 
           &>.item {
-            margin : 0;
             height : $nav-width * 7 / 8;
             width  : 100%;
 
@@ -130,6 +125,7 @@ nav, .nav {
 body.dark {
   nav, .nav {
     background-color: $color-primary-dark;
+    border-color    : $color-accent;
 
     &>.nav-container {
       &>.container {

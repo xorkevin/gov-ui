@@ -43,5 +43,17 @@ body.dark {
     &>.section-header, &>.container>.section-header {
       border-color: $color-text-light-4;
     }
+
+    &.subsection {
+      &>.section-header, &>.container>.section-header {
+        &>* {
+          background-color: $background-dark;
+        }
+
+        &:before {
+          background-color: $color-text-light-4;
+        }
+      }
+    }
   }
 }

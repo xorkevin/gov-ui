@@ -64,3 +64,33 @@
     border-top : 2px solid $color-text-dark-4;
   }
 }
+
+body.dark {
+  .comment {
+    &>.inner {
+      &>.info {
+        .data {
+          color: $color-text-light-3;
+        }
+      }
+
+      &>.content {
+        color: $color-text-light-2;
+      }
+
+      &>.options {
+        color: $color-text-light-3;
+      }
+    }
+
+    &>.children {
+      border-color: $color-text-light-4;
+    }
+  }
+
+  .comment-section {
+    &>.comment + .comment {
+      border-color: $color-text-light-4;
+    }
+  }
+}

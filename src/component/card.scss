@@ -137,3 +137,42 @@
     }
   }
 }
+
+body.dark {
+  .card {
+    &.accent {
+      border-color: $color-accent;
+    }
+
+    &>.title {
+      .title-inner {
+        color: $color-text-light-1;
+
+        button {
+          color: $color-text-light-1;
+        }
+      }
+    }
+
+    &>.title-bar {
+      &>.title-inner {
+        background-color: $color-primary-dark;
+      }
+    }
+
+    &>.body, &>.bar {
+      background-color: $color-primary-dark;
+      color           : $color-text-light-2;
+    }
+
+    &>.body {
+      &:before {
+        background: linear-gradient(transparent calc(100% - 1em), rgba($color-primary-dark, 0.7));
+      }
+    }
+
+    &>.bar {
+      border-color: $color-text-light-4;
+    }
+  }
+}

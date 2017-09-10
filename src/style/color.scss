@@ -3,7 +3,7 @@ $black                 : #000000 !default;
 $white                 : #FFFFFF !default;
 $color-primary         : #224A7F !default;
 $color-primary-light   : lighten($color-primary, 12.5%) !default;
-$color-primary-dark    : #263238 !default;
+$color-primary-dark    : #263038 !default;
 $color-accent          : #FFB74D !default;
 $background            : #FCFCFC !default;
 $background-dark       : darken($color-primary-dark, 6.25%) !default;

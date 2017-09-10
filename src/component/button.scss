@@ -91,3 +91,46 @@ button {
     margin-left: 8px;
   }
 }
+
+body.dark {
+  button {
+    &.outline {
+      background-color: transparent;
+      color           : $color-text-light-2;
+      border-color    : $color-text-light-2;
+
+      &:hover {
+        color       : $color-text-light-1;
+        border-color: $color-text-light-1;
+      }
+
+      &.raised {
+        border: 1px solid $color-text-light-2;
+
+        &:hover {
+          border-color: $color-text-light-1;
+        }
+      }
+    }
+
+    &.text {
+      background-color: transparent;
+      color           : $color-text-light-3;
+
+      &:hover {
+        background-color: $color-text-light-4;
+        color           : $color-text-light-2;
+      }
+
+      &.raised {
+        background-color: transparent;
+        color           : $color-text-light-3;
+
+        &:hover {
+          background-color: $color-text-light-4;
+          color           : $color-text-light-2;
+        }
+      }
+    }
+  }
+}

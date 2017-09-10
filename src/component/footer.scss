@@ -15,3 +15,9 @@ footer {
     margin-left: 80px;
   }
 }
+
+body.dark {
+  footer {
+    background-color: darken($background-dark, 6.25%);
+  }
+}

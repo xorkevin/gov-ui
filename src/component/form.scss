@@ -142,3 +142,63 @@ input, textarea {
   }
 }
 
+body.dark {
+  .input {
+    &>input, &>textarea {
+      border-color: $color-text-light-3;
+      color       : $color-text-light-1;
+
+      & + label {
+        color: $color-text-light-3;
+
+        &:after {
+          background-color: $color-text-light-2;
+        }
+      }
+
+      &:focus + label {
+        color: $color-text-light-1;
+      }
+
+      &:not(:placeholder-shown) + label {
+        color: $color-text-light-1;
+      }
+
+      & ~ .info {
+        color: $color-text-light-3;
+      }
+
+      &:focus ~ .info {
+        color: $color-text-light-2;
+      }
+
+      &:not(:placeholder-shown) ~ .info {
+        color: $color-text-light-2;
+      }
+    }
+
+    &>textarea {
+      border-color: $color-text-light-3;
+    }
+  }
+
+  .input.invalid {
+    &>label {
+      color: $color-invalid !important;
+
+      &:after {
+        background-color: $color-invalid;
+      }
+    }
+  }
+
+  .input.valid {
+    &>label {
+      color: $color-valid !important;
+
+      &:after {
+        background-color: $color-valid;
+      }
+    }
+  }
+}

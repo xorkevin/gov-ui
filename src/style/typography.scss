@@ -19,6 +19,10 @@ html, body {
     h1, h2, h3, h4, h5, h6 {
       color: $color-text-light-1;
     }
+
+    a {
+      color: $color-primary-light;
+    }
   }
 
   @media (min-width: $grid-sm-breakpoint) and (max-width: $grid-md-breakpoint - 1px){
