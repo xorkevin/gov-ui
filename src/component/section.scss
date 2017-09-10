@@ -37,3 +37,11 @@ section {
     }
   }
 }
+
+body.dark {
+  section {
+    &>.section-header, &>.container>.section-header {
+      border-color: $color-text-light-4;
+    }
+  }
+}

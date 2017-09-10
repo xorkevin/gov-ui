@@ -10,6 +10,16 @@ html, body {
   background-color: $background;
   color           : $color-text-dark-1;
   overflow-wrap   : break-word;
+  transition      : $transition-normal;
+
+  &.dark {
+    background-color: $background-dark;
+    color           : $color-text-light-2;
+
+    h1, h2, h3, h4, h5, h6 {
+      color: $color-text-light-1;
+    }
+  }
 
   @media (min-width: $grid-sm-breakpoint) and (max-width: $grid-md-breakpoint - 1px){
     font-size: $typography-base-size * 13 / 12;

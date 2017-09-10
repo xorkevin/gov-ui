@@ -58,7 +58,7 @@ nav, .nav {
           align-items    : center;
           justify-content: center;
 
-          &>a {
+          &>* {
             color          : unset;
             text-decoration: unset;
             height         : 100%;
@@ -91,7 +91,6 @@ nav, .nav {
   &.sidebar {
     width           : $nav-width;
     height          : 100vh;
-    background-color: $background-invert;
     border          : unset;
 
     &>.nav-container {
@@ -109,33 +108,50 @@ nav, .nav {
           width         : 100%;
 
           &>.item {
-            color  : $color-text-light-2;
             margin : 0;
             height : $nav-width * 7 / 8;
             width  : 100%;
 
-            &>a {
+            &>* {
               width         : 100%;
               flex-direction: column;
+            }
 
+            .fa {
+              font-size: 2rem;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+body.dark {
+  nav, .nav {
+    background-color: $color-primary-dark;
+
+    &>.nav-container {
+      &>.container {
+        &>.element {
+          &>.item {
+            color: $color-text-light-2;
+
+            &>* {
               &.active {
                 color           : $color-text-light-1;
-                background-color: darken($background-invert, 6.25%);
+                background-color: darken($color-primary-dark, 6.25%);
               }
             }
 
             &:hover {
               color           : $color-text-light-1;
-              background-color: darken($background-invert, 6.25%);
+              background-color: darken($color-primary-dark, 6.25%);
             }
 
             &:active {
               color           : $color-text-light-1;
-              background-color: darken($background-invert, 6.25%);
-            }
-
-            .fa {
-              font-size: 2rem;
+              background-color: darken($color-primary-dark, 6.25%);
             }
           }
         }
