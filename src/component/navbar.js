@@ -5,6 +5,7 @@ const scrollTime = 384;
 const scrollTimeSqrt = Math.sqrt(scrollTime);
 const navHeight = 64;
 const scrollDistanceCap = 4096;
+const scrollTriggerMargin = 8;
 
 const easing = (t)=>{
   if(t<.5){
@@ -64,10 +65,60 @@ const generateItemList = (list)=>{
 };
 
 class Navbar extends Component {
-  render({sidebar, left, right, children}){
+  constructor(props){
+    super(props);
+    this.state = {
+      hidden: false,
+    };
+    this.position = window.pageYOffset;
+  }
+
+  tick(){
+    const nextPosition = window.pageYOffset;
+    const diff = nextPosition - this.position;
+    if(Math.abs(diff) > scrollTriggerMargin){
+      this.setState((prevState)=>{
+        return Object.assign({}, prevState, {hidden: diff > 0});
+      });
+      this.position = nextPosition;
+    }
+  }
+
+  unbind(){
+    if(this.handler){
+      window.removeEventListener('scroll', this.handler);
+      this.handler = false;
+    }
+  }
+
+  componentDidMount(){
+    if(!this.props.sidebar && this.props.hideOnScroll){
+      this.running = false;
+      this.handler = ()=>{
+        if(!this.running){
+          this.running = true;
+          window.requestAnimationFrame(()=>{
+            this.tick();
+            this.running = false;
+          });
+        }
+      };
+      window.addEventListener('scroll', this.handler);
+      this.handler();
+    }
+  }
+
+  componentWillUnmount(){
+    this.unbind();
+  }
+
+  render({sidebar, left, right, children}, {hidden}){
     const className = [];
     if(sidebar){
       className.push("sidebar");
+    }
+    if(hidden){
+      className.push("hidden");
     }
     let j = false;
     let k = false;
