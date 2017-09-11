@@ -9,7 +9,7 @@ import {mountainPreview, thamesPreview} from 'config';
 
 const HomeContainer = ()=>{
   return <div>
-    <Img fixed size="full" imgWidth={1920} imgHeight={1080} src="https://xorkevin.github.io/stratosphere/assets/mountain.jpg" color="#F1F5FD" preview={mountainPreview}>
+    <Img size="full" imgWidth={1920} imgHeight={1080} src="https://xorkevin.github.io/stratosphere/assets/mountain.jpg" preview={mountainPreview}>
       <header style={{width: "100%"}}>
         <Container padded narrow>
           <h1 className="colossal">Nuke</h1>

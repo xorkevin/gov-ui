@@ -5,7 +5,7 @@ const loadingDefault = ()=>{
   return <div>LOADING</div>;
 };
 
-const Loader = (loader, callback, loading)=>{
+const Loader = (loader, callback, args, loading)=>{
   return class extends Component {
     constructor(props){
       super(props);
@@ -48,7 +48,7 @@ const Loader = (loader, callback, loading)=>{
 
     render({}, {loaded, mod}){
       if(loaded){
-        return callback && callback(mod) || h(mod, this.props.args);
+        return callback && callback(mod) || h(mod, args);
       }
       return loading && loading() || loadingDefault();
     }
