@@ -1,4 +1,5 @@
 import {h, Component} from 'preact';
+import {isWeb} from 'utility';
 import Container from 'component/container';
 
 const scrollTime = 384;
@@ -70,7 +71,10 @@ class Navbar extends Component {
     this.state = {
       hidden: false,
     };
-    this.position = window.pageYOffset;
+    this.position = 0;
+    if(isWeb()){
+      this.position = window.pageYOffset;
+    }
   }
 
   tick(){
