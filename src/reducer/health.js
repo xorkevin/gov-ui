@@ -50,7 +50,7 @@ const defaultState = {
 };
 
 const initState = ()=>{
-  return defaultState;
+  return Object.assign({}, defaultState);
 };
 
 const Health = (state=initState(), action)=>{

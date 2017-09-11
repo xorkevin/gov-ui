@@ -17,7 +17,7 @@ class HealthContainer extends Component {
       <span>{!success && err}</span>
     </Section>;
   }
-};
+}
 
 const mapStateToProps = (state)=>{
   const {time, err, loading, success} = state.Health;
