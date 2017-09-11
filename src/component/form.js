@@ -1,7 +1,7 @@
 import {h} from 'preact';
 import shortid from 'shortid';
 
-const Input = ({valid, error, fullWidth, textarea, label, info})=>{
+const Input = ({valid, error, fullWidth, textarea, label, type, info})=>{
   const id = shortid.generate();
   let k = ["input"];
   if(valid){
@@ -15,7 +15,7 @@ const Input = ({valid, error, fullWidth, textarea, label, info})=>{
   }
 
   return <div className={k.join(" ")}>
-    {!textarea && <input id={id} placeholder=" "/>}
+    {!textarea && <input id={id} type={type} placeholder=" "/>}
     {textarea && <textarea id={id} placeholder=" "></textarea>}
     <label htmlFor={id}>{label}</label>
     {!error && info && <span className="info">{info}</span>}

@@ -55,6 +55,12 @@ class Admin extends Component {
             }
             return 'loading';
           })}/>
+          <Route path="/login" component={Loader(()=>{return import('container/signin');}, (loaded, Login)=>{
+            if(loaded){
+              return h(Login);
+            }
+            return 'loading';
+          })}/>
           <Route path="/health" component={Loader(()=>{return import('container/health');}, (loaded, Health)=>{
             if(loaded){
               return h(Health);

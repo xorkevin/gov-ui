@@ -1,7 +1,7 @@
 import {h} from "preact";
 import Img from "component/image";
 
-const Card = ({size, square, restrictWidth, restrictHeight, titleBar, background, preview, title, children, bar})=>{
+const Card = ({size, square, restrictWidth, restrictHeight, center, titleBar, background, preview, title, children, bar})=>{
   let k = ["card"];
   if(size){
     switch(size){
@@ -12,6 +12,10 @@ const Card = ({size, square, restrictWidth, restrictHeight, titleBar, background
       default:
         k.push("sm");
     }
+  }
+
+  if(center){
+    k.push("center");
   }
 
   if(square){

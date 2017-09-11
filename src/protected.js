@@ -1,4 +1,5 @@
 import {h, Component} from 'preact';
+import {connect} from 'preact-redux';
 import {withRouter} from 'react-router-dom';
 
 const Protected = (child)=>{
@@ -31,7 +32,7 @@ const mapStateToProps = (state)=>{
   };
 };
 
-ProtectedRoute = withRouter(ProtectedRoute);
-ProtectedRoute = connect(mapStateToProps)(ProtectedRoute);
+Protected = connect(mapStateToProps)(Protected);
+Protected = withRouter(Protected);
 
 export default Protected
