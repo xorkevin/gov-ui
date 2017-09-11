@@ -1,7 +1,11 @@
-import {Component} from 'preact';
+import {h, Component} from 'preact';
 import {isWeb} from 'utility';
 
-const Loader = (loader, callback)=>{
+const loadingDefault = ()=>{
+  return <div>LOADING</div>;
+};
+
+const Loader = (loader, callback, loading)=>{
   return class extends Component {
     constructor(props){
       super(props);
@@ -43,7 +47,10 @@ const Loader = (loader, callback)=>{
     }
 
     render({}, {loaded, mod}){
-      return callback && callback(loaded, mod);
+      if(loaded){
+        return callback && callback(mod) || h(mod, this.props.args);
+      }
+      return loading && loading() || loadingDefault();
     }
   };
 };
