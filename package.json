@@ -51,6 +51,7 @@
     "express": "^4.15.4",
     "font-awesome": "^4.7.0",
     "isomorphic-fetch": "^2.2.1",
+    "linkstate": "^1.1.0",
     "morgan": "^1.8.2",
     "preact": "^8.2.5",
     "preact-compat": "^3.17.0",

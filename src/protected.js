@@ -2,8 +2,15 @@ import {h, Component} from 'preact';
 import {connect} from 'preact-redux';
 import {withRouter} from 'react-router-dom';
 
+const mapStateToProps = (state)=>{
+  const {loggedIn} = state.Auth;
+  return {
+    loggedIn,
+  };
+};
+
 const Protected = (child)=>{
-  return class extends Component {
+  return withRouter(connect(mapStateToProps)(class extends Component {
     componentWillMount(){
       if(!this.props.loggedIn){
         this.props.history.replace('/login');
@@ -22,17 +29,7 @@ const Protected = (child)=>{
       }
       return false;
     }
-  };
+  }));
 };
-
-const mapStateToProps = (state)=>{
-  const {loggedIn} = state.Auth;
-  return {
-    loggedIn,
-  };
-};
-
-Protected = connect(mapStateToProps)(Protected);
-Protected = withRouter(Protected);
 
 export default Protected

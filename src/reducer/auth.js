@@ -31,11 +31,11 @@ const Login = (username, password)=>{
     });
     try {
       //TODO: login route
+      console.log('login', username, password);
       const time = 840 + Date.now() / 1000;
       const firstname = 'Kevin';
       const lastname = 'Wang';
       const authTags = 'admin,user'.split(',');
-      const username = 'xorkevin';
       dispatch(LoginSuccess(time, username, firstname, lastname, authTags));
     } catch(e){
       dispatch(LoginErr(e.message));
@@ -49,10 +49,12 @@ const ReLogin = ()=>{
       type: RELOGIN,
     });
     try {
+      console.log('relogin');
       const {loggedIn, timeEnd} = getState().Auth;
       if(loggedIn){
         if(timeEnd < Date.now() / 1000){
           //TODO: check cookies if it has been a day for refreshToken, refresh
+          console.log('relogin exchange');
           //TODO: try exchange token
           const time = 840 + Date.now() / 1000;
           const firstname = 'Kevin';

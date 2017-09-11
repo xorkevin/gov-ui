@@ -2,6 +2,7 @@ import {h, Component} from 'preact';
 import {Switch, Route, Redirect, NavLink} from 'react-router-dom';
 
 import Loader from 'loader';
+import Protected from 'protected';
 
 import MainContent from 'component/maincontent';
 import Navbar from 'component/navbar';
@@ -49,24 +50,24 @@ class Admin extends Component {
 
       <MainContent withSidebar sectionNoMargin dark={dark}>
         <Switch>
-          <Route exact path="/" component={Loader(()=>{return import('container/admin');}, (loaded, Admin)=>{
+          <Route exact path="/" component={Protected(Loader(()=>{return import('container/admin');}, (loaded, Admin)=>{
             if(loaded){
               return h(Admin);
             }
             return 'loading';
-          })}/>
+          }))}/>
           <Route path="/login" component={Loader(()=>{return import('container/signin');}, (loaded, Login)=>{
             if(loaded){
               return h(Login);
             }
             return 'loading';
           })}/>
-          <Route path="/health" component={Loader(()=>{return import('container/health');}, (loaded, Health)=>{
+          <Route path="/health" component={Protected(Loader(()=>{return import('container/health');}, (loaded, Health)=>{
             if(loaded){
               return h(Health);
             }
             return 'loading';
-          })}/>
+          }))}/>
           <Redirect to="/"/>
         </Switch>
       </MainContent>
