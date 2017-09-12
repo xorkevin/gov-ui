@@ -1,10 +1,18 @@
 const apibase = 'http://localhost:8080/api';
 const healthzbase = apibase + '/healthz';
+const ubase = apibase + '/u';
+const userbase = ubase + '/user';
+const authbase = ubase + '/auth';
 const API = {
-  base: apibase,
   healthz: {
-    base: healthzbase,
     check: healthzbase + '/check',
+  },
+  u: {
+    auth: {
+      login: authbase + '/login',
+      exchange: authbase + '/exchange',
+      refresh: authbase + '/refresh',
+    },
   },
 };
 

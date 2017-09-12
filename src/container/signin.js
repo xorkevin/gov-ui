@@ -41,7 +41,7 @@ class SigninContainer extends Component {
     }
   }
 
-  render(){
+  render({loading, err}){
     return <Section container padded>
       <Card center size="md" restrictWidth titleBar title={[
         <h3>Sign in</h3>
@@ -49,16 +49,16 @@ class SigninContainer extends Component {
         <Button text>Cancel</Button>, <Button primary onClick={this.login}>Login</Button>
       ]}>
         <Input label="username" fullWidth onChange={linkState(this, 'username')}/>
-        <Input label="password" type="password" fullWidth onChange={linkState(this, 'password')} onEnter={this.login}/>
+        <Input label="password" type="password" error={!loading && err} fullWidth onChange={linkState(this, 'password')} onEnter={this.login}/>
       </Card>
     </Section>;
   }
 }
 
 const mapStateToProps = (state)=>{
-  const {loggedIn} = state.Auth;
+  const {loggedIn, loading, err} = state.Auth;
   return {
-    loggedIn,
+    loggedIn, loading, err,
   };
 };
 

@@ -10,6 +10,7 @@ const LoginSuccess = (timeEnd, userid, username, firstname, lastname, authTags)=
   return {
     type: LOGIN_SUCCESS,
     timeEnd,
+    userid,
     username,
     firstname,
     lastname,
@@ -30,13 +31,27 @@ const Login = (username, password)=>{
       type: LOGIN,
     });
     try {
-      //TODO: login route
-      console.log('login', username, password);
-      const time = 840 + Date.now() / 1000;
-      const firstname = 'Kevin';
-      const lastname = 'Wang';
-      const authTags = 'admin,user'.split(',');
-      dispatch(LoginSuccess(time, username, firstname, lastname, authTags));
+      const response = await fetch(API.u.auth.login, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        //TODO: change to same-origin
+        credentials: 'include',
+        body: JSON.stringify({username,password}),
+      });
+      const status = response.status;
+      if(status < 200 || status >= 300){
+        throw new Error('Incorrect username or password');
+      }
+      const data = await response.json();
+      if(!data.valid){
+        throw new Error('Incorrect username or password');
+      }
+      const time = data.claims.exp;
+      const userid = data.claims.userid;
+      const firstname = data.first_name;
+      const lastname = data.last_name;
+      const authTags = new Set(data.claims.auth_tags.split(','));
+      dispatch(LoginSuccess(time, userid, username, firstname, lastname, authTags));
     } catch(e){
       dispatch(LoginErr(e.message));
     }
@@ -59,9 +74,10 @@ const ReLogin = ()=>{
           const time = 840 + Date.now() / 1000;
           const firstname = 'Kevin';
           const lastname = 'Wang';
-          const authTags = 'admin,user'.split(',');
+          const authTags = new Set('admin,user'.split(','));
           const username = 'xorkevin';
-          dispatch(LoginSuccess(time, username, firstname, lastname, authTags));
+          const userid = 'userid';
+          dispatch(LoginSuccess(time, userid, username, firstname, lastname, authTags));
           //TODO: if refresh fail or beyond a week, relogin true
           //return {
           //  relogin: true,
@@ -85,8 +101,12 @@ const defaultState = {
   loading: false,
   loggedIn: false,
   timeEnd: false,
-  err: '',
+  err: false,
+  userid: '',
   username: '',
+  firstname: '',
+  lastname: '',
+  authTags: new Set(),
 };
 
 const initState = ()=>{
@@ -106,8 +126,12 @@ const Auth = (state=initState(), action)=>{
         loading: false,
         loggedIn: true,
         timeEnd: action.timeEnd,
-        err: '',
+        err: false,
+        userid: action.userid,
         username: action.username,
+        firstname: action.firstname,
+        lastname: action.lastname,
+        authTags: action.authTags,
       });
     case LOGIN_ERR:
       return Object.assign({}, state, {
