@@ -1,0 +1,46 @@
+.menu {
+  position: relative;
+
+  &>.menu-button {
+    width:           100%;
+    height:          100%;
+    display:         flex;
+    justify-content: center;
+    align-items:     center;
+    flex-direction:  column;
+  }
+
+  &>.menu-container {
+    position:         absolute;
+    background-color: $white;
+    box-shadow:       $shadow-box;
+    display:          flex;
+    justify-content:  flex-start;
+    align-items:      flex-start;
+    flex-direction:   column;
+  }
+
+  .right {
+    &>.menu-container {
+      left: 0;
+    }
+  }
+
+  .left {
+    &>.menu-container {
+      right: 0;
+    }
+  }
+
+  .top {
+    &>.menu-container {
+      bottom: 100%;
+    }
+  }
+
+  .bottom {
+    &>.menu-container {
+      top: 100%;
+    }
+  }
+}

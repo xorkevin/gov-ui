@@ -99,6 +99,8 @@ nav, .nav {
 
       &>.container {
         flex-direction: column;
+        height        : unset;
+        min-height    : 100%;
         width         : 100%;
 
         &>.element {

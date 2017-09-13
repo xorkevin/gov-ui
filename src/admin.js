@@ -6,6 +6,7 @@ import Protected from 'protected';
 
 import MainContent from 'component/maincontent';
 import Navbar from 'component/navbar';
+import Menu from 'component/menu';
 import Footer from 'component/footer';
 import Grid from 'component/grid';
 import Anchor from 'component/anchor';
@@ -43,10 +44,11 @@ class Admin extends Component {
         {key: 'home', home: true, component: <NavLink exact to="/"><FaIcon icon="home"/><small>Home</small></NavLink>},
         {key: 'health', component: <NavLink to="/health"><FaIcon icon="server"/><small>Health</small></NavLink>},
       ]} right={[
-        {key: 'dark-mode', component: <span onClick={()=>{this.toggleDark();}}><FaIcon icon="bolt"/><small>Dark Mode</small></span>},
-        {key: 'xorkevin', component: <Anchor ext href="https://github.com/xorkevin"><FaIcon icon="github"/><small>xorkevin</small></Anchor>},
-      ]}>
-      </Navbar>
+        {key: 'settings', component: <Menu icon={<FaIcon icon="cog"/>} align="left" position="top">
+          <span onClick={()=>{this.toggleDark();}}><FaIcon icon="bolt"/> Dark Mode</span>
+          <Anchor ext href="https://github.com/xorkevin"><FaIcon icon="github"/> xorkevin</Anchor>
+        </Menu>},
+      ]}/>
 
       <MainContent withSidebar sectionNoMargin dark={dark}>
         <Switch>
