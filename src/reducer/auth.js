@@ -82,8 +82,8 @@ const ReLogin = ()=>{
       }
 
       if(timeEnd < Date.now() / 1000 + 15){
-        const refreshToken = getCookie('refresh_token');
-        if(!refreshToken){
+        const refreshToken = getCookie('refresh_valid');
+        if(refreshToken !== "valid"){
           throw new Error('Unable to refresh authentication');
         }
         if(timeRefresh && timeRefresh < Date.now() / 1000){
@@ -148,7 +148,7 @@ const defaultState = {
 
 const initState = ()=>{
   const k = {};
-  if(getCookie('refresh_token')){
+  if(isWeb() && getCookie('refresh_valid')){
     k.loggedIn = true;
   }
   return Object.assign({}, defaultState, k);
