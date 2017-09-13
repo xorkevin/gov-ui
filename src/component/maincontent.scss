@@ -7,11 +7,11 @@ main {
   }
 
   &.with-sidebar {
-    margin-left: 80px;
+    margin-left: $nav-width;
   }
 
   &.with-navbar {
-    margin-top: 64px;
+    margin-top: $nav-height;
   }
 
   &.section-no-margin {
