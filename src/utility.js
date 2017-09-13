@@ -20,6 +20,27 @@ const logger = store => next => action => {
   return result;
 };
 
+const COOKIE = {
+  prev: false,
+  map: new Map(),
+};
+const getCookie = (key)=>{
+  const cookies = document.cookie;
+  if(cookies === COOKIE.prev){
+    return COOKIE.map.get(key);
+  }
+  const map = new Map(cookies.split(';').map((value)=>{
+    return value.trim().split('=');
+  }));
+  COOKIE.prev = cookies;
+  COOKIE.map = map;
+  return map.get(key);
+};
+const setCookie = (key, value)=>{
+  document.cookie = `${key}=${value};path=/;max-age=31536000`;
+};
+
 export {
   formatStr, isWeb, logger,
+  getCookie, setCookie,
 }

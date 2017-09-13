@@ -1,20 +1,22 @@
 import {API} from 'config';
+import {isWeb, getCookie} from 'utility';
 
 const LOGIN = Symbol('LOGIN');
 const RELOGIN = Symbol('RELOGIN');
+const LOGIN_REFRESH = Symbol('LOGIN_REFRESH');
 const LOGIN_SUCCESS = Symbol('LOGIN_SUCCESS');
 const LOGIN_ERR = Symbol('LOGIN_ERR');
 
 // timeEnd is in seconds
-const LoginSuccess = (timeEnd, userid, username, firstname, lastname, authTags)=>{
+const LoginSuccess = (timeEnd, userid, authTags, username, firstname, lastname)=>{
   return {
     type: LOGIN_SUCCESS,
     timeEnd,
     userid,
+    authTags,
     username,
     firstname,
     lastname,
-    authTags,
   };
 };
 
@@ -25,8 +27,15 @@ const LoginErr = (err)=>{
   };
 };
 
+const Refresh = ()=>{
+  return {
+    type: LOGIN_REFRESH,
+    time: Date.now() / 1000 + 86400,
+  };
+};
+
 const Login = (username, password)=>{
-  return async (dispatch, getState)=>{
+  return async (dispatch)=>{
     dispatch({
       type: LOGIN,
     });
@@ -48,10 +57,11 @@ const Login = (username, password)=>{
       }
       const time = data.claims.exp;
       const userid = data.claims.userid;
+      const authTags = new Set(data.claims.auth_tags.split(','));
       const firstname = data.first_name;
       const lastname = data.last_name;
-      const authTags = new Set(data.claims.auth_tags.split(','));
-      dispatch(LoginSuccess(time, userid, username, firstname, lastname, authTags));
+      dispatch(Refresh());
+      dispatch(LoginSuccess(time, userid, authTags, username, firstname, lastname));
     } catch(e){
       dispatch(LoginErr(e.message));
     }
@@ -64,32 +74,58 @@ const ReLogin = ()=>{
       type: RELOGIN,
     });
     try {
-      console.log('relogin');
-      const {loggedIn, timeEnd} = getState().Auth;
-      if(loggedIn){
-        if(timeEnd < Date.now() / 1000){
-          //TODO: check cookies if it has been a day for refreshToken, refresh
-          console.log('relogin exchange');
-          //TODO: try exchange token
-          const time = 840 + Date.now() / 1000;
-          const firstname = 'Kevin';
-          const lastname = 'Wang';
-          const authTags = new Set('admin,user'.split(','));
-          const username = 'xorkevin';
-          const userid = 'userid';
-          dispatch(LoginSuccess(time, userid, username, firstname, lastname, authTags));
-          //TODO: if refresh fail or beyond a week, relogin true
-          //return {
-          //  relogin: true,
-          //};
-        }
-      } else {
+      const {loggedIn, timeEnd, timeRefresh} = getState().Auth;
+      if(!loggedIn){
         return {
           relogin: true,
         };
       }
+
+      if(timeEnd < Date.now() / 1000 + 15){
+        const refreshToken = getCookie('refresh_token');
+        if(!refreshToken){
+          throw new Error('Unable to refresh authentication');
+        }
+        if(timeRefresh && timeRefresh < Date.now() / 1000){
+          const response = await fetch(API.u.auth.refresh, {
+            method: 'POST',
+            //TODO: change to same-origin
+            credentials: 'include',
+          });
+          const status = response.status;
+          if(status < 200 || status >= 300){
+            throw new Error('Unable to refresh authentication');
+          }
+          const data = await response.json();
+          if(!data.valid){
+            throw new Error('Unable to refresh authentication');
+          }
+          dispatch(Refresh());
+        }
+        const response = await fetch(API.u.auth.exchange, {
+          method: 'POST',
+          //TODO: change to same-origin
+          credentials: 'include',
+        });
+        const status = response.status;
+        if(status < 200 || status >= 300){
+          throw new Error('Unable to refresh authentication');
+        }
+        const data = await response.json();
+        if(!data.valid){
+          throw new Error('Unable to refresh authentication');
+        }
+        const time = data.claims.exp;
+        const userid = data.claims.userid;
+        const authTags = new Set(data.claims.auth_tags.split(','));
+        const {username, firstname, lastname} = getState().Auth;
+        dispatch(LoginSuccess(time, userid, authTags, username, firstname, lastname));
+      }
     } catch(e){
       dispatch(LoginErr(e.message));
+      return {
+        relogin: true,
+      };
     }
     return {
       relogin: false,
@@ -101,6 +137,7 @@ const defaultState = {
   loading: false,
   loggedIn: false,
   timeEnd: false,
+  timeRefresh: false,
   err: false,
   userid: '',
   username: '',
@@ -110,8 +147,11 @@ const defaultState = {
 };
 
 const initState = ()=>{
-  //TODO: read cookies if refreshToken valid then loggedIn
-  return Object.assign({}, defaultState);
+  const k = {};
+  if(getCookie('refresh_token')){
+    k.loggedIn = true;
+  }
+  return Object.assign({}, defaultState, k);
 };
 
 const Auth = (state=initState(), action)=>{
@@ -120,6 +160,10 @@ const Auth = (state=initState(), action)=>{
     case RELOGIN:
       return Object.assign({}, state, {
         loading: true,
+      });
+    case LOGIN_REFRESH:
+      return Object.assign({}, state, {
+        timeRefresh: action.time,
       });
     case LOGIN_SUCCESS:
       return Object.assign({}, state, {
