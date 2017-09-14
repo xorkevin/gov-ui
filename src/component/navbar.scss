@@ -88,9 +88,9 @@ nav, .nav {
   }
 
   &.sidebar {
-    width           : $nav-width;
-    height          : 100vh;
-    border          : unset;
+    width:  $nav-width;
+    height: 100%;
+    border: unset;
 
     &>.nav-container {
       overflow-x: hidden;

@@ -2,6 +2,8 @@ import {h, Component} from 'preact';
 import {withRouter} from 'react-router-dom';
 import linkState from 'linkstate';
 import Section from 'component/section';
+import Menu from 'component/menu';
+import FaIcon from 'component/faicon';
 import Card from 'component/card';
 import Button from 'component/button';
 import Input from 'component/form';
@@ -46,7 +48,9 @@ class SigninContainer extends Component {
       <Card center size="md" restrictWidth titleBar title={[
         <h3>Sign in</h3>
       ]} bar={[
-        <Button text>Cancel</Button>, <Button primary onClick={this.login}>Login</Button>
+        <Menu icon={<Button text><FaIcon icon="ellipsis-v"/></Button>} size="md" align="left" position="bottom">
+          <span>Create Account</span>
+        </Menu>, <Button text>Cancel</Button>, <Button primary onClick={this.login}>Login</Button>
       ]}>
         <Input label="username" fullWidth onChange={linkState(this, 'username')}/>
         <Input label="password" type="password" error={!loading && err} fullWidth onChange={linkState(this, 'password')} onEnter={this.login}/>

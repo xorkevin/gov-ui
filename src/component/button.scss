@@ -3,7 +3,6 @@ $button-color-background: lighten($color-text-dark-4, 42%);
 
 button {
   padding         : $button-padding $button-padding-h;
-  min-width       : $button-min-width;
   background-color: transparent;
   border          : 0;
   border-radius   : 4px;

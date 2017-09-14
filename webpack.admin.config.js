@@ -90,6 +90,10 @@ const createConfig = (env, argv)=>{
     },
   };
 
+  if(env && env.development){
+    config.entry.admin.push('preact/devtools');
+  }
+
   if(env && env.production){
     config.plugins.push(new SWPrecachePlugin({
       minify: true,
