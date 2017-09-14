@@ -9,14 +9,13 @@ nav, .nav {
   display         : flex;
   justify-content : center;
   align-items     : center;
-  transition      : $transition-normal;
+  transition      : $transition-normal transform;
   font-family     : $typography-base-font;
   font-size       : 0.84rem;
   letter-spacing  : 2px;
   text-transform  : uppercase;
   box-shadow      : $shadow-box-2;
   z-index         : 64;
-  overflow        : hidden;
   border-top      : 4px solid $color-primary;
 
   &.hidden {

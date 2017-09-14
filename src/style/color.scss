@@ -30,8 +30,11 @@ $color-text-light-4  : rgba($white, 0.12) !default; // dividers
 $color-valid  : #61D095 !default;
 $color-invalid: #C62828 !default;
 
-$shadow-box : 0 2px 4px 0 $color-text-dark-4, 0 2px 8px 0 $color-text-dark-4;
-$shadow-box-2: 0 1px 2px 0 $color-text-dark-4, 0 1px 4px 0 $color-text-dark-4;
-$shadow-button: 0 2px 4px 0 $color-text-dark-4, 0 2px 8px 0 $color-text-dark-4;
+$shadow-box:           0 2px 4px 0 $color-text-dark-4, 0 2px 8px 0 $color-text-dark-4;
+$shadow-box-2:         0 1px 2px 0 $color-text-dark-4, 0 1px 4px 0 $color-text-dark-4;
+$shadow-button:        0 2px 4px 0 $color-text-dark-4, 0 2px 8px 0 $color-text-dark-4;
 $shadow-button-raised: 0 4px 8px 0 lighten($color-text-dark-4, 12.5%), 0 4px 16px 0 lighten($color-text-dark-4, 12.5%);
-$shadow-text: 0 2px 16px $color-text-dark-4, 0 2px 8px $color-text-dark-4, 0 2px 4px $color-text-dark-4;
+$shadow-text:          0 2px 16px $color-text-dark-4, 0 2px 8px $color-text-dark-4, 0 2px 4px $color-text-dark-4;
+$shadow-box-blur:      0 0 4px -1px $color-text-dark-4, 0 0 8px 0 $color-text-dark-4;
+$shadow-box-blur-dark: 0 0 4px 1px $color-text-dark-4, 0 0 8px 0 $color-text-dark-4, 0 0 16px 0 $color-text-dark-4;
+$shadow-box-dark:      0 1px 4px 0 $color-text-dark-4, 0 1px 8px 0 $color-text-dark-4;

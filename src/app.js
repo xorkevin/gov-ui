@@ -5,6 +5,7 @@ import Loader from 'loader';
 
 import MainContent from 'component/maincontent';
 import Navbar from 'component/navbar';
+import Menu from 'component/menu';
 import Footer from 'component/footer';
 import Grid from 'component/grid';
 import Anchor from 'component/anchor';
@@ -44,8 +45,10 @@ class App extends Component {
         {key: 'cards', component: <NavLink to="/cards">Cards</NavLink>},
         {key: 'health', component: <NavLink to="/health">Health</NavLink>},
       ]} right={[
-        {key: 'contact', component: <span onClick={()=>{this.toggleDark();}}><FaIcon icon="bolt"/> Dark Mode</span>},
-        {key: 'xorkevin', component: <Anchor ext href="https://github.com/xorkevin"><FaIcon icon="github"/> xorkevin</Anchor>},
+        {key: 'settings', component: <Menu icon={<span><FaIcon icon="cog"/> Settings</span>} size="md" fixed align="right" position="bottom">
+          <span onClick={()=>{this.toggleDark();}}><FaIcon icon="bolt"/> Dark Mode</span>
+          <Anchor ext href="https://github.com/xorkevin"><FaIcon icon="github"/> xorkevin</Anchor>
+        </Menu>},
       ]}>
       </Navbar>
 

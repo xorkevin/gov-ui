@@ -18,6 +18,11 @@ $card-padding  : 8px !default;
 $card-padding-h: 20px !default;
 $card-margin   : 8px !default;
 
+// Menu //
+$menu-sm-size: 128px !default;
+$menu-md-size: $menu-sm-size * 1.5 !default;
+$menu-lg-size: $menu-md-size * 1.5 !default;
+
 // Button //
 $button-padding  : 8px !default;
 $button-padding-h: $button-padding * 2 !default;
