@@ -24,8 +24,13 @@ class MenuContainer extends Component {
         });
       }
     };
+    this.handlerClick = (e)=>{
+      e.stopPropagation();
+      this.props.close();
+    }
     window.addEventListener('resize', this.handler, true);
     window.addEventListener('scroll', this.handler, true);
+    window.addEventListener('click', this.handlerClick, true);
   }
 
   componentWillUnmount(){
@@ -33,6 +38,10 @@ class MenuContainer extends Component {
       window.removeEventListener('resize', this.handler, true);
       window.removeEventListener('scroll', this.handler, true);
       this.handler = false;
+    }
+    if(this.handlerClick){
+      window.removeEventListener('click', this.handlerClick, true);
+      this.handlerClick = false;
     }
   }
 
@@ -113,26 +122,14 @@ class Menu extends Component {
     });
   }
 
-  componentDidMount(){
-    this.handler = ()=>{
-      this.setHidden();
-    };
-    window.addEventListener('click', this.handler, true);
-  }
-
-  componentWillUnmount(){
-    if(this.handler){
-      window.removeEventListener('click', this.handler, true);
-    }
-  }
-
   render({children, icon, size, align, position, fixed}, {hidden}){
     return <div onClick={this.toggleHidden} ref={(elem)=>{this.elem = elem;}}>
       <div className="menu-button">
         {icon}
       </div>
       {!hidden && <Portal into="body">
-        <MenuContainer size={size} align={align} position={position} fixed={fixed} reference={this.elem}>
+        <MenuContainer size={size} align={align} position={position} fixed={fixed}
+          reference={this.elem} close={this.setHidden}>
           {children}
         </MenuContainer>
       </Portal>}
