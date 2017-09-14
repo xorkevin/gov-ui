@@ -44,7 +44,7 @@ class Admin extends Component {
         {key: 'home', home: true, component: <NavLink exact to="/"><FaIcon icon="home"/><small>Home</small></NavLink>},
         {key: 'health', component: <NavLink to="/health"><FaIcon icon="server"/><small>Health</small></NavLink>},
       ]} right={[
-        {key: 'settings', component: <Menu icon={<FaIcon icon="cog"/>} size="md" fixed align="left" position="top">
+        {key: 'settings', component: <Menu icon={[<FaIcon icon="cog"/>, <small>Settings</small>]} size="md" fixed align="left" position="top">
           <span onClick={()=>{this.toggleDark();}}><FaIcon icon="bolt"/> Dark Mode</span>
           <Anchor ext href="https://github.com/xorkevin"><FaIcon icon="github"/> xorkevin</Anchor>
         </Menu>},

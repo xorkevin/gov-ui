@@ -124,9 +124,7 @@ class Menu extends Component {
 
   render({children, icon, size, align, position, fixed}, {hidden}){
     return <div onClick={this.toggleHidden} ref={(elem)=>{this.elem = elem;}}>
-      <div className="menu-button">
-        {icon}
-      </div>
+      {icon}
       {!hidden && <Portal into="body">
         <MenuContainer size={size} align={align} position={position} fixed={fixed}
           reference={this.elem} close={this.setHidden}>
