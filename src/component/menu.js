@@ -24,13 +24,12 @@ class MenuContainer extends Component {
         });
       }
     };
-    this.handlerClick = (e)=>{
-      e.stopPropagation();
+    this.handlerClick = ()=>{
       this.props.close();
     }
     window.addEventListener('resize', this.handler, true);
     window.addEventListener('scroll', this.handler, true);
-    window.addEventListener('click', this.handlerClick, true);
+    window.addEventListener('click', this.handlerClick);
   }
 
   componentWillUnmount(){
@@ -40,7 +39,7 @@ class MenuContainer extends Component {
       this.handler = false;
     }
     if(this.handlerClick){
-      window.removeEventListener('click', this.handlerClick, true);
+      window.removeEventListener('click', this.handlerClick);
       this.handlerClick = false;
     }
   }
@@ -116,7 +115,8 @@ class Menu extends Component {
     });
   }
 
-  toggleHidden(){
+  toggleHidden(e){
+    e.stopPropagation();
     this.setState((prevState)=>{
       return Object.assign({}, prevState, {hidden: !prevState.hidden});
     });
