@@ -1,5 +1,5 @@
 import {h, Component} from 'preact';
-import {Switch, Route, Redirect, NavLink} from 'react-router-dom';
+import {Switch, Route, Redirect, NavLink, withRouter} from 'react-router-dom';
 import {connect} from 'preact-redux';
 
 import {DarkMode} from 'reducer/settings';
@@ -82,5 +82,6 @@ const mapDispatchToProps = (dispatch)=>{
 };
 
 Admin = connect(mapStateToProps, mapDispatchToProps)(Admin);
+Admin = withRouter(Admin);
 
 export default Admin

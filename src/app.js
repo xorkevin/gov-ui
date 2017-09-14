@@ -1,5 +1,5 @@
 import {h, Component} from 'preact';
-import {Switch, Route, Redirect, NavLink} from 'react-router-dom';
+import {Switch, Route, Redirect, NavLink, withRouter} from 'react-router-dom';
 import {connect} from 'preact-redux';
 
 import {DarkMode} from 'reducer/settings';
@@ -84,5 +84,6 @@ const mapDispatchToProps = (dispatch)=>{
 };
 
 App = connect(mapStateToProps, mapDispatchToProps)(App);
+App = withRouter(App); // needed to force rerender on location change
 
 export default App
