@@ -1,5 +1,8 @@
 import {h, Component} from 'preact';
 import {Switch, Route, Redirect, NavLink} from 'react-router-dom';
+import {connect} from 'preact-redux';
+
+import {DarkMode} from 'reducer/settings';
 
 import Loader from 'loader';
 import Protected from 'protected';
@@ -15,27 +18,11 @@ import FaIcon from 'component/faicon';
 class Admin extends Component {
   constructor(props){
     super(props);
-    this.state = {
-      dark: !!props.dark,
-    };
-  }
-
-  setDark(){
-    this.setState((prevState)=>{
-      return Object.assign({}, prevState, {dark: true});
-    });
-  }
-
-  setLight(){
-    this.setState((prevState)=>{
-      return Object.assign({}, prevState, {dark: false});
-    });
+    this.toggleDark = this.toggleDark.bind(this);
   }
 
   toggleDark(){
-    this.setState((prevState)=>{
-      return Object.assign({}, prevState, {dark: !prevState.dark});
-    });
+    this.props.toggleDark();
   }
 
   render({}, {dark}){
@@ -45,12 +32,12 @@ class Admin extends Component {
         {key: 'health', component: <NavLink to="/health"><FaIcon icon="server"/><small>Health</small></NavLink>},
       ]} right={[
         {key: 'settings', component: <Menu icon={[<FaIcon icon="cog"/>, <small>Settings</small>]} size="md" fixed align="left" position="top">
-          <span onClick={()=>{this.toggleDark();}}><FaIcon icon="bolt"/> Dark Mode</span>
+          <span onClick={this.toggleDark}><FaIcon icon="bolt"/> Dark Mode</span>
           <Anchor ext href="https://github.com/xorkevin"><FaIcon icon="github"/> xorkevin</Anchor>
         </Menu>},
       ]}/>
 
-      <MainContent withSidebar sectionNoMargin dark={dark}>
+      <MainContent withSidebar sectionNoMargin>
         <Switch>
           <Route exact path="/" component={Protected(Loader(()=>{return import('container/admin');}))}/>
           <Route path="/login" component={Loader(()=>{return import('container/signin');})}/>
@@ -81,5 +68,19 @@ class Admin extends Component {
     </div>;
   }
 }
+
+const mapStateToProps = (state)=>{
+  return {};
+};
+
+const mapDispatchToProps = (dispatch)=>{
+  return {
+    toggleDark: ()=>{
+      dispatch(DarkMode());
+    },
+  };
+};
+
+Admin = connect(mapStateToProps, mapDispatchToProps)(Admin);
 
 export default Admin

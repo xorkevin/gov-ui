@@ -54,7 +54,7 @@ const initState = ()=>{
 };
 
 const Health = (state=initState(), action)=>{
-  switch (action.type) {
+  switch(action.type){
     case TIME_GET:
       return Object.assign({}, state, {
         loading: true,

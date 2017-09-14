@@ -1,5 +1,8 @@
 import {h, Component} from 'preact';
 import {Switch, Route, Redirect, NavLink} from 'react-router-dom';
+import {connect} from 'preact-redux';
+
+import {DarkMode} from 'reducer/settings';
 
 import Loader from 'loader';
 
@@ -14,27 +17,11 @@ import FaIcon from 'component/faicon';
 class App extends Component {
   constructor(props){
     super(props);
-    this.state = {
-      dark: !!props.dark,
-    };
-  }
-
-  setDark(){
-    this.setState((prevState)=>{
-      return Object.assign({}, prevState, {dark: true});
-    });
-  }
-
-  setLight(){
-    this.setState((prevState)=>{
-      return Object.assign({}, prevState, {dark: false});
-    });
+    this.toggleDark = this.toggleDark.bind(this);
   }
 
   toggleDark(){
-    this.setState((prevState)=>{
-      return Object.assign({}, prevState, {dark: !prevState.dark});
-    });
+    this.props.toggleDark();
   }
 
   render({}, {dark}){
@@ -46,7 +33,7 @@ class App extends Component {
         {key: 'health', component: <NavLink to="/health">Health</NavLink>},
       ]} right={[
         {key: 'settings', component: <Menu icon={<span><FaIcon icon="cog"/> Settings</span>} size="md" fixed align="right" position="bottom">
-          <span onClick={()=>{this.toggleDark();}}><FaIcon icon="bolt"/> Dark Mode</span>
+          <span onClick={this.toggleDark}><FaIcon icon="bolt"/> Dark Mode</span>
           <Anchor ext href="https://github.com/xorkevin"><FaIcon icon="github"/> xorkevin</Anchor>
         </Menu>},
       ]}>
@@ -84,5 +71,18 @@ class App extends Component {
     </div>;
   }
 }
+const mapStateToProps = (state)=>{
+  return {};
+};
+
+const mapDispatchToProps = (dispatch)=>{
+  return {
+    toggleDark: ()=>{
+      dispatch(DarkMode());
+    },
+  };
+};
+
+App = connect(mapStateToProps, mapDispatchToProps)(App);
 
 export default App
