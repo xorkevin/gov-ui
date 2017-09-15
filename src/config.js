@@ -1,9 +1,11 @@
 const apibase = 'http://localhost:8080/api';
 const healthzbase = apibase + '/healthz';
+const setupzbase = apibase + '/setupz';
 const ubase = apibase + '/u';
 const userbase = ubase + '/user';
 const authbase = ubase + '/auth';
 const API = {
+  setupz: setupzbase,
   healthz: {
     check: healthzbase + '/check',
   },
