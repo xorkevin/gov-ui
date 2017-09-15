@@ -2,18 +2,20 @@ $button-color-outline: lighten($color-primary-light, 12.5%);
 $button-color-background: lighten($color-text-dark-4, 42%);
 
 button {
-  padding         : $button-padding $button-padding-h;
+  padding:          $button-padding $button-padding-h;
   background-color: transparent;
-  border          : 0;
-  border-radius   : 4px;
-  font-weight     : 700;
-  font-size       : 0.85rem;
-  font-family     : $typography-base-font;
-  text-transform  : uppercase;
-  color           : $color-accent;
-  text-align      : center;
-  transition      : $transition-normal;
-  cursor          : pointer;
+  border:           0;
+  border-radius:    4px;
+  font-weight:      700;
+  font-size:        0.85rem;
+  font-family:      $typography-base-font;
+  text-transform:   uppercase;
+  color:            $color-accent;
+  text-align:       center;
+  transition:       $transition-normal;
+  cursor:           pointer;
+  margin-left:      8px;
+  margin-right:     8px;
 
   &:hover {
     background-color: $color-accent;
@@ -84,10 +86,6 @@ button {
 
   &:focus {
     outline: none;
-  }
-
-  & + button {
-    margin-left: 8px;
   }
 }
 

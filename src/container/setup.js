@@ -32,7 +32,7 @@ class SetupContainer extends Component {
   }
 
   navigateHome(){
-    this.props.history.replace('/');
+    this.props.history.push('/');
   }
 
   setup(){
@@ -60,7 +60,7 @@ class SetupContainer extends Component {
       <Card center size="md" restrictWidth titleBar title={[
         <h3>Setup</h3>
       ]} bar={[
-        <Button text>Cancel</Button>, <Button primary onClick={this.setup}>Submit</Button>
+        <Button text onClick={this.navigateHome}>Cancel</Button>, <Button primary onClick={this.setup}>Submit</Button>
       ]}>
         <Section subsection sectionTitle="Organization">
           <Input label="organization name" fullWidth onChange={linkState(this, 'form.orgname')}/>
@@ -78,7 +78,7 @@ class SetupContainer extends Component {
         {!success && !clienterr && err && <span>{err}</span>}
         {success && <span>
           <span>{config.orgname} has been created</span>
-          <Button text onClick={this.navigateHome}>Finish</Button>
+          <Button outline onClick={this.navigateHome}>Finish</Button>
         </span>}
       </Card>
     </Section>;
