@@ -3,6 +3,7 @@ const healthzbase = apibase + '/healthz';
 const setupzbase = apibase + '/setupz';
 const ubase = apibase + '/u';
 const userbase = ubase + '/user';
+const passwordbase = userbase + '/password';
 const authbase = ubase + '/auth';
 const API = {
   setupz: setupzbase,
@@ -13,6 +14,10 @@ const API = {
     user: {
       new: userbase,
       confirm: userbase + '/confirm',
+      password: {
+        forgot: passwordbase + '/forgot',
+        confirm: passwordbase + '/forgot/reset',
+      },
     },
     auth: {
       login: authbase + '/login',

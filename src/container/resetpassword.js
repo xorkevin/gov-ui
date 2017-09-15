@@ -9,15 +9,18 @@ import Button from 'component/button';
 import Input from 'component/form';
 
 import {connect} from 'preact-redux';
-import {ConfirmAccountReq} from 'reducer/createaccount';
+import {ConfirmResetReq} from 'reducer/forgotpassword';
 
-class ConfirmAccount extends Component {
+class ConfirmReset extends Component {
   constructor(props){
     super(props);
     this.state = {
       key: props.match.params.key || '',
+      newPassword: '',
+      clienterr: false,
+      passwordConfirm: '',
     };
-    this.confirmaccount = this.confirmaccount.bind(this);
+    this.resetpassword = this.resetpassword.bind(this);
     this.navigateLogin = this.navigateLogin.bind(this);
   }
 
@@ -25,26 +28,39 @@ class ConfirmAccount extends Component {
     this.props.history.push('/a/login');
   }
 
-  confirmaccount(){
-    this.props.confirmaccount(this.state.key);
+  resetpassword(){
+    const {newPassword, passwordConfirm, key} = this.state;
+    if(newPassword !== passwordConfirm){
+      this.setState((prevState)=>{
+        return Object.assign({}, prevState, {clienterr: 'passwords do not match'});
+      });
+    } else {
+      this.setState((prevState)=>{
+        return Object.assign({}, prevState, {clienterr: false});
+      });
+      this.props.resetpassword(key, newPassword);
+    }
   }
 
   render({success, config, err}, {key}){
     const bar = [];
     if(!success){
       bar.push(<Button text onClick={this.navigateLogin}>Cancel</Button>);
-      bar.push(<Button primary onClick={this.confirmaccount}>Submit</Button>);
+      bar.push(<Button primary onClick={this.resetpassword}>Submit</Button>);
     } else {
       bar.push(<Button outline onClick={this.navigateLogin}>Sign in</Button>);
     }
+
     return <Section container padded>
       <Card center size="md" restrictWidth titleBar title={[
-        <h3>Confirm account</h3>
+        <h3>Reset password</h3>
       ]} bar={bar}>
         <Input label="code" fullWidth value={key} onChange={linkState(this, 'key')}/>
+        <Input label="new password" type="password" fullWidth onChange={linkState(this, 'newPassword')}/>
+        <Input label="confirm password" type="password" fullWidth onEnter={this.resetpassword} onChange={linkState(this, 'passwordConfirm')}/>
         {!success && err && <span>{err}</span>}
         {success && <span>
-          <span>Your account has been created</span>
+          <span>Your password has been reset</span>
         </span>}
       </Card>
     </Section>;
@@ -52,23 +68,22 @@ class ConfirmAccount extends Component {
 }
 
 const mapStateToProps = (state)=>{
-  const {confirmsuccess, confirmconfig, confirmerr} = state.CreateAccount;
+  const {confirmsuccess, confirmerr} = state.ForgotPassword;
   return {
     success: confirmsuccess,
-    config: confirmconfig,
     err: confirmerr,
   };
 };
 
 const mapDispatchToProps = (dispatch)=>{
   return {
-    confirmaccount: (key)=>{
-      dispatch(ConfirmAccountReq(key));
+    resetpassword: (key, new_password)=>{
+      dispatch(ConfirmResetReq(key, new_password));
     },
   };
 };
 
-ConfirmAccount = connect(mapStateToProps, mapDispatchToProps)(ConfirmAccount);
-ConfirmAccount = withRouter(ConfirmAccount);
+ConfirmReset = connect(mapStateToProps, mapDispatchToProps)(ConfirmReset);
+ConfirmReset = withRouter(ConfirmReset);
 
-export default ConfirmAccount
+export default ConfirmReset

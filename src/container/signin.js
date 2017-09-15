@@ -20,10 +20,15 @@ class SigninContainer extends Component {
     };
     this.login = this.login.bind(this);
     this.navigateCreate = this.navigateCreate.bind(this);
+    this.navigateForgot = this.navigateForgot.bind(this);
   }
 
   navigateCreate(){
     this.props.history.push('/a/create');
+  }
+
+  navigateForgot(){
+    this.props.history.push('/a/forgot');
   }
 
   login(){
@@ -38,6 +43,7 @@ class SigninContainer extends Component {
       ]} bar={[
         <Menu icon={<Button text><FaIcon icon="ellipsis-v"/></Button>} size="md" align="left" position="bottom">
           <span onClick={this.navigateCreate}>Create Account</span>
+          <span onClick={this.navigateForgot}>Forgot Password</span>
         </Menu>, <Button text>Cancel</Button>, <Button primary onClick={this.login}>Login</Button>
       ]}>
         <Input label="username" fullWidth onChange={linkState(this, 'username')}/>

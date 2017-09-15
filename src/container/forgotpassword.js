@@ -9,42 +9,48 @@ import Button from 'component/button';
 import Input from 'component/form';
 
 import {connect} from 'preact-redux';
-import {ConfirmAccountReq} from 'reducer/createaccount';
+import {ForgotPasswordReq} from 'reducer/forgotpassword';
 
-class ConfirmAccount extends Component {
+class ForgotContainer extends Component {
   constructor(props){
     super(props);
     this.state = {
-      key: props.match.params.key || '',
+      username: '',
     };
-    this.confirmaccount = this.confirmaccount.bind(this);
+    this.forgotpassword = this.forgotpassword.bind(this);
     this.navigateLogin = this.navigateLogin.bind(this);
+    this.navigateConfirm = this.navigateConfirm.bind(this);
   }
 
   navigateLogin(){
     this.props.history.push('/a/login');
   }
 
-  confirmaccount(){
-    this.props.confirmaccount(this.state.key);
+  navigateConfirm(){
+    this.props.history.push('/a/forgotconfirm');
   }
 
-  render({success, config, err}, {key}){
+  forgotpassword(){
+    this.props.forgotpassword(this.state.username);
+  }
+
+  render({success, config, err}){
     const bar = [];
     if(!success){
       bar.push(<Button text onClick={this.navigateLogin}>Cancel</Button>);
       bar.push(<Button primary onClick={this.confirmaccount}>Submit</Button>);
     } else {
-      bar.push(<Button outline onClick={this.navigateLogin}>Sign in</Button>);
+      bar.push(<Button outline onClick={this.navigateConfirm}>Confirm</Button>);
     }
+
     return <Section container padded>
       <Card center size="md" restrictWidth titleBar title={[
-        <h3>Confirm account</h3>
+        <h3>Forgot password</h3>
       ]} bar={bar}>
-        <Input label="code" fullWidth value={key} onChange={linkState(this, 'key')}/>
+        <Input label="username" fullWidth onEnter={this.forgotpassword} onChange={linkState(this, 'username')}/>
         {!success && err && <span>{err}</span>}
         {success && <span>
-          <span>Your account has been created</span>
+          <span>Reset your password with a code emailed to you</span>
         </span>}
       </Card>
     </Section>;
@@ -52,23 +58,21 @@ class ConfirmAccount extends Component {
 }
 
 const mapStateToProps = (state)=>{
-  const {confirmsuccess, confirmconfig, confirmerr} = state.CreateAccount;
+  const {success, err} = state.ForgotPassword;
   return {
-    success: confirmsuccess,
-    config: confirmconfig,
-    err: confirmerr,
+    success, err,
   };
 };
 
 const mapDispatchToProps = (dispatch)=>{
   return {
-    confirmaccount: (key)=>{
-      dispatch(ConfirmAccountReq(key));
+    forgotpassword: (username)=>{
+      dispatch(ForgotPasswordReq(username));
     },
   };
 };
 
-ConfirmAccount = connect(mapStateToProps, mapDispatchToProps)(ConfirmAccount);
-ConfirmAccount = withRouter(ConfirmAccount);
+ForgotContainer = connect(mapStateToProps, mapDispatchToProps)(ForgotContainer);
+ForgotContainer = withRouter(ForgotContainer);
 
-export default ConfirmAccount
+export default ForgotContainer

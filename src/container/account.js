@@ -31,6 +31,8 @@ class AccountContainer extends Component {
       <Route path={`${match.path}/login`} component={Loader(()=>{return import('container/signin');})}/>
       <Route path={`${match.path}/create`} component={Loader(()=>{return import('container/createaccount');})}/>
       <Route path={`${match.path}/confirm/:key?`} component={Loader(()=>{return import('container/confirmaccount');})}/>
+      <Route path={`${match.path}/forgot`} component={Loader(()=>{return import('container/forgotpassword');})}/>
+      <Route path={`${match.path}/forgotconfirm/:key?`} component={Loader(()=>{return import('container/resetpassword');})}/>
     </Switch>;
   }
 }

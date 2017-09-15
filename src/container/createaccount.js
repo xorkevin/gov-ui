@@ -27,12 +27,12 @@ class CreateAccount extends Component {
       email_confirm: '',
     };
     this.createaccount = this.createaccount.bind(this);
-    this.navigateHome = this.navigateHome.bind(this);
+    this.navigateLogin = this.navigateLogin.bind(this);
     this.navigateConfirm = this.navigateConfirm.bind(this);
   }
 
-  navigateHome(){
-    this.props.history.push('/');
+  navigateLogin(){
+    this.props.history.push('/a/login');
   }
 
   navigateConfirm(){
@@ -59,12 +59,18 @@ class CreateAccount extends Component {
   }
 
   render({success, config, err}, {clienterr}){
+    const bar = [];
+    if(!success){
+      bar.push(<Button text onClick={this.navigateLogin}>Cancel</Button>);
+      bar.push(<Button primary onClick={this.createaccount}>Submit</Button>);
+    } else {
+      bar.push(<Button outline onClick={this.navigateConfirm}>Confirm</Button>);
+    }
+
     return <Section container padded>
       <Card center size="md" restrictWidth titleBar title={[
         <h3>Sign up</h3>
-      ]} bar={[
-        <Button text onClick={this.navigateHome}>Cancel</Button>, <Button primary onClick={this.createaccount}>Submit</Button>
-      ]}>
+      ]} bar={bar}>
         <Input label="first name" fullWidth onChange={linkState(this, 'form.first_name')}/>
         <Input label="last name" fullWidth onChange={linkState(this, 'form.last_name')}/>
         <Input label="username" fullWidth onChange={linkState(this, 'form.username')}/>
@@ -76,7 +82,6 @@ class CreateAccount extends Component {
         {!success && !clienterr && err && <span>{err}</span>}
         {success && <span>
           <span>Confirm your account with a code emailed to the address you provided above</span>
-          <Button outline onClick={this.navigateConfirm}>Confirm</Button>
         </span>}
       </Card>
     </Section>;
