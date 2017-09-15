@@ -56,4 +56,18 @@ body.dark {
       }
     }
   }
+
+  .card>.body {
+    section {
+      margin: 16px auto;
+
+      &.subsection {
+        &>.section-header, &>.container>.section-header {
+          &>* {
+            background-color: $color-primary-dark;
+          }
+        }
+      }
+    }
+  }
 }
