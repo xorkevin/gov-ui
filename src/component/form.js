@@ -20,9 +20,17 @@ class Input extends Component {
     }
   }
 
-  handleEnter(target) {
+  handleEnter(target){
     if(this.props.onEnter && target.charCode==13){
       this.props.onEnter();
+    }
+  }
+
+  componentWillReceiveProps(nextProps){
+    if(nextProps.value){
+      this.setState((prevState)=>{
+        return Object.assign({}, prevState, {value: nextProps.value});
+      });
     }
   }
 

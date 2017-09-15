@@ -10,6 +10,10 @@ const API = {
     check: healthzbase + '/check',
   },
   u: {
+    user: {
+      new: userbase,
+      confirm: userbase + '/confirm',
+    },
     auth: {
       login: authbase + '/login',
       exchange: authbase + '/exchange',

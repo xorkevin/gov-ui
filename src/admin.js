@@ -40,7 +40,7 @@ class Admin extends Component {
       <MainContent withSidebar sectionNoMargin>
         <Switch>
           <Route exact path="/" component={Protected(Loader(()=>{return import('container/admin');}))}/>
-          <Route path="/login" component={Loader(()=>{return import('container/signin');})}/>
+          <Route path="/a" component={Loader(()=>{return import('container/account');})}/>
           <Route path="/health" component={Protected(Loader(()=>{return import('container/health');}))}/>
           <Route path="/setup" component={Loader(()=>{return import('container/setup');})}/>
           <Redirect to="/"/>

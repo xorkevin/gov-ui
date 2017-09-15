@@ -27,8 +27,6 @@ const SetupReq = (options)=>{
       const response = await fetch(API.setupz, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        //TODO: change to same-origin
-        credentials: 'include',
         body: JSON.stringify(options),
       });
       const status = response.status;

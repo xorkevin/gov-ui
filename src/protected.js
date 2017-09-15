@@ -13,13 +13,13 @@ const Protected = (child)=>{
   return withRouter(connect(mapStateToProps)(class extends Component {
     componentWillMount(){
       if(!this.props.loggedIn){
-        this.props.history.replace('/login');
+        this.props.history.replace('/a/login');
       }
     }
 
     componentWillReceiveProps(nextProps){
       if(!nextProps.loggedIn){
-        this.props.history.replace('/login');
+        this.props.history.replace('/a/login');
       }
     }
 

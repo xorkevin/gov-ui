@@ -19,28 +19,16 @@ class SigninContainer extends Component {
       password: '',
     };
     this.login = this.login.bind(this);
-    this.navigateHome = this.navigateHome.bind(this);
+    this.navigateCreate = this.navigateCreate.bind(this);
   }
 
-  navigateHome(){
-    this.props.history.replace('/');
+  navigateCreate(){
+    this.props.history.push('/a/create');
   }
 
   login(){
     const {username, password} = this.state;
     this.props.login(username, password);
-  }
-
-  componentWillMount(){
-    if(this.props.loggedIn){
-      this.navigateHome();
-    }
-  }
-
-  componentWillReceiveProps(nextProps){
-    if(nextProps.loggedIn){
-      this.navigateHome();
-    }
   }
 
   render({loading, err}){
@@ -49,7 +37,7 @@ class SigninContainer extends Component {
         <h3>Sign in</h3>
       ]} bar={[
         <Menu icon={<Button text><FaIcon icon="ellipsis-v"/></Button>} size="md" align="left" position="bottom">
-          <span>Create Account</span>
+          <span onClick={this.navigateCreate}>Create Account</span>
         </Menu>, <Button text>Cancel</Button>, <Button primary onClick={this.login}>Login</Button>
       ]}>
         <Input label="username" fullWidth onChange={linkState(this, 'username')}/>
@@ -60,9 +48,9 @@ class SigninContainer extends Component {
 }
 
 const mapStateToProps = (state)=>{
-  const {loggedIn, loading, err} = state.Auth;
+  const {loading, err} = state.Auth;
   return {
-    loggedIn, loading, err,
+    loading, err,
   };
 };
 

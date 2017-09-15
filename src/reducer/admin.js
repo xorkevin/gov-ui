@@ -1,8 +1,9 @@
 import {Health} from './health';
 import {Auth} from './auth';
+import {CreateAccount} from './createaccount';
 import {Settings} from './settings';
 import {Setup} from './setup';
 
 export {
-  Auth, Health, Settings, Setup,
+  Health, Auth, CreateAccount, Settings, Setup,
 }
