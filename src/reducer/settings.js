@@ -3,13 +3,20 @@ import {isWeb, getCookie, setCookie} from 'utility';
 
 const DARK_MODE = Symbol('DARK_MODE');
 
+let root = false;
+if(isWeb()){
+  root = document.getElementsByTagName('html')[0];
+}
+
 const DarkMode = ()=>{
   return async (dispatch, getState)=>{
     const dark = getState().Settings.dark;
     if(dark){
+      root.classList.remove('dark');
       document.body.classList.remove('dark');
       setCookie('dark_mode', 'off');
     } else {
+      root.classList.add('dark');
       document.body.classList.add('dark');
       setCookie('dark_mode', 'on');
     }
@@ -28,6 +35,7 @@ const initState = ()=>{
   const k = {};
   if(isWeb() && getCookie('dark_mode') === 'on'){
     k.dark = true;
+    root.classList.add('dark');
     document.body.classList.add('dark');
   }
   return Object.assign({}, defaultState, k);
