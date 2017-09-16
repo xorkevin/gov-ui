@@ -158,7 +158,7 @@ const Logout = ()=>{
       const response = await fetch(API.u.auth.logout, {
         method: 'POST',
         //TODO: change to same-origin
-        credentials: 'include',
+        credentials: 'include', // required to set cookies
       });
       const status = response.status;
       if(status < 200 || status >= 300){
