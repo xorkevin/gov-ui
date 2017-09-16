@@ -1,5 +1,5 @@
 import {h, Component} from 'preact';
-import {Switch, Route, withRouter} from 'react-router-dom';
+import {Switch, Route, Redirect, withRouter} from 'react-router-dom';
 
 import {connect} from 'preact-redux';
 import Loader from 'loader';
@@ -33,6 +33,7 @@ class AccountContainer extends Component {
       <Route path={`${match.path}/confirm/:key?`} component={Loader(()=>{return import('container/confirmaccount');})}/>
       <Route path={`${match.path}/forgot`} component={Loader(()=>{return import('container/forgotpassword');})}/>
       <Route path={`${match.path}/forgotconfirm/:key?`} component={Loader(()=>{return import('container/resetpassword');})}/>
+      <Redirect to={`${match.path}/login`}/>
     </Switch>;
   }
 }
