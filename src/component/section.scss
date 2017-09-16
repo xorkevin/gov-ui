@@ -38,6 +38,12 @@ section {
   }
 }
 
+.card>.body {
+  section {
+    margin: 16px auto;
+  }
+}
+
 body.dark {
   section {
     &>.section-header, &>.container>.section-header {
@@ -59,8 +65,6 @@ body.dark {
 
   .card>.body {
     section {
-      margin: 16px auto;
-
       &.subsection {
         &>.section-header, &>.container>.section-header {
           &>* {

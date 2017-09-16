@@ -2,8 +2,6 @@ import {h, Component} from 'preact';
 import {withRouter} from 'react-router-dom';
 import linkState from 'linkstate';
 import Section from 'component/section';
-import Menu from 'component/menu';
-import FaIcon from 'component/faicon';
 import Card from 'component/card';
 import Button from 'component/button';
 import Input from 'component/form';

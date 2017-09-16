@@ -42,8 +42,8 @@ class SigninContainer extends Component {
         <h3>Sign in</h3>
       ]} bar={[
         <Menu icon={<Button text><FaIcon icon="ellipsis-v"/></Button>} size="md" align="left" position="bottom">
-          <span onClick={this.navigateCreate}>Create Account</span>
-          <span onClick={this.navigateForgot}>Forgot Password</span>
+          <span onClick={this.navigateCreate}><FaIcon icon="user-plus"/> Create Account</span>
+          <span onClick={this.navigateForgot}><FaIcon icon="unlock-alt"/> Forgot Password</span>
         </Menu>, <Button text>Cancel</Button>, <Button primary onClick={this.login}>Login</Button>
       ]}>
         <Input label="username" fullWidth onChange={linkState(this, 'username')}/>
