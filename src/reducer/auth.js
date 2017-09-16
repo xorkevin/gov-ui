@@ -1,11 +1,14 @@
 import {API} from 'config';
-import {isWeb, getCookie} from 'utility';
+import {isWeb, getCookie, setCookie} from 'utility';
 
 const LOGIN = Symbol('LOGIN');
 const RELOGIN = Symbol('RELOGIN');
 const LOGIN_REFRESH = Symbol('LOGIN_REFRESH');
 const LOGIN_SUCCESS = Symbol('LOGIN_SUCCESS');
 const LOGIN_ERR = Symbol('LOGIN_ERR');
+const LOGOUT = Symbol('LOGOUT');
+const LOGOUT_SUCCESS = Symbol('LOGOUT_SUCCESS');
+const LOGOUT_ERR = Symbol('LOGOUT_ERR');
 
 // timeEnd is in seconds
 const LoginSuccess = (timeEnd, userid, authTags, username, firstname, lastname)=>{
@@ -133,12 +136,53 @@ const ReLogin = ()=>{
   };
 };
 
+const LogoutSuccess = ()=>{
+  return {
+    type: LOGOUT_SUCCESS,
+  };
+};
+
+const LogoutErr = (err)=>{
+  return {
+    type: LOGOUT_ERR,
+    err,
+  };
+};
+
+const Logout = ()=>{
+  return async (dispatch)=>{
+    dispatch({
+      type: LOGOUT,
+    });
+    try {
+      const response = await fetch(API.u.auth.logout, {
+        method: 'POST',
+        //TODO: change to same-origin
+        credentials: 'include',
+      });
+      const status = response.status;
+      if(status < 200 || status >= 300){
+        const data = await response.json();
+        if(data && data.message){
+          throw new Error(data.message);
+        } else {
+          throw new Error('Unable to logout');
+        }
+      }
+      dispatch(LogoutSuccess());
+    } catch(e){
+      dispatch(LogoutErr(e.message));
+    }
+  };
+};
+
 const defaultState = {
   loading: false,
   loggedIn: false,
   timeEnd: false,
   timeRefresh: false,
   err: false,
+  logouterr: false,
   userid: '',
   username: '',
   firstname: '',
@@ -148,7 +192,7 @@ const defaultState = {
 
 const initState = ()=>{
   const k = {};
-  if(isWeb() && getCookie('refresh_valid')){
+  if(isWeb() && getCookie('refresh_valid') === 'valid'){
     k.loggedIn = true;
   }
   return Object.assign({}, defaultState, k);
@@ -158,6 +202,7 @@ const Auth = (state=initState(), action)=>{
   switch(action.type){
     case LOGIN:
     case RELOGIN:
+    case LOGOUT:
       return Object.assign({}, state, {
         loading: true,
       });
@@ -183,11 +228,17 @@ const Auth = (state=initState(), action)=>{
         loggedIn: false,
         err: action.err,
       });
+    case LOGOUT_SUCCESS:
+      return Object.assign({}, defaultState);
+    case LOGOUT_ERR:
+      return Object.assign({}, state, {
+        logouterr: action.err,
+      });
     default:
       return state;
   }
 };
 
 export {
-  Auth, Login, ReLogin,
+  Auth, Login, ReLogin, Logout,
 }

@@ -3,6 +3,7 @@ import {Switch, Route, Redirect, NavLink, withRouter} from 'react-router-dom';
 import {connect} from 'preact-redux';
 
 import {DarkMode} from 'reducer/settings';
+import {Logout} from 'reducer/auth';
 
 import Loader from 'loader';
 import Protected from 'protected';
@@ -19,13 +20,18 @@ class Admin extends Component {
   constructor(props){
     super(props);
     this.toggleDark = this.toggleDark.bind(this);
+    this.logout = this.logout.bind(this);
   }
 
   toggleDark(){
     this.props.toggleDark();
   }
 
-  render({}, {dark}){
+  logout(){
+    this.props.logout();
+  }
+
+  render({loggedIn}, {dark}){
     return <div>
       <Navbar sidebar left={[
         {key: 'home', home: true, component: <NavLink exact to="/"><FaIcon icon="home"/><small>Home</small></NavLink>},
@@ -34,6 +40,7 @@ class Admin extends Component {
         {key: 'settings', component: <Menu icon={[<FaIcon icon="cog"/>, <small>Settings</small>]} size="md" fixed align="left" position="top">
           <span onClick={this.toggleDark}><FaIcon icon="bolt"/> Dark Mode</span>
           <Anchor ext href="https://github.com/xorkevin"><FaIcon icon="github"/> xorkevin</Anchor>
+          {loggedIn && <span onClick={this.logout}><FaIcon icon="sign-out"/> Sign out</span>}
         </Menu>},
       ]}/>
 
@@ -71,13 +78,19 @@ class Admin extends Component {
 }
 
 const mapStateToProps = (state)=>{
-  return {};
+  const {loggedIn} = state.Auth;
+  return {
+    loggedIn,
+  };
 };
 
 const mapDispatchToProps = (dispatch)=>{
   return {
     toggleDark: ()=>{
       dispatch(DarkMode());
+    },
+    logout: ()=>{
+      dispatch(Logout());
     },
   };
 };

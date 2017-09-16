@@ -23,6 +23,7 @@ const API = {
       login: authbase + '/login',
       exchange: authbase + '/exchange',
       refresh: authbase + '/refresh',
+      logout: authbase + '/logout',
     },
   },
 };

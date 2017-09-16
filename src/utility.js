@@ -36,8 +36,8 @@ const getCookie = (key)=>{
   COOKIE.map = map;
   return map.get(key);
 };
-const setCookie = (key, value)=>{
-  document.cookie = `${key}=${value};path=/;max-age=31536000`;
+const setCookie = (key, value, age=31536000)=>{
+  document.cookie = `${key}=${value};path=/;max-age=${age}`;
 };
 
 export {
