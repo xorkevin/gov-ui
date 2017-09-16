@@ -6,9 +6,6 @@ const RELOGIN = Symbol('RELOGIN');
 const LOGIN_REFRESH = Symbol('LOGIN_REFRESH');
 const LOGIN_SUCCESS = Symbol('LOGIN_SUCCESS');
 const LOGIN_ERR = Symbol('LOGIN_ERR');
-const LOGOUT = Symbol('LOGOUT');
-const LOGOUT_SUCCESS = Symbol('LOGOUT_SUCCESS');
-const LOGOUT_ERR = Symbol('LOGOUT_ERR');
 
 // timeEnd is in seconds
 const LoginSuccess = (timeEnd, userid, authTags, username, firstname, lastname)=>{
@@ -136,42 +133,62 @@ const ReLogin = ()=>{
   };
 };
 
-const LogoutSuccess = ()=>{
-  return {
-    type: LOGOUT_SUCCESS,
+const LOGOUT = Symbol('LOGOUT');
+
+const Logout = ()=>{
+  return async (dispatch)=>{
+    setCookie('access_token', 'invalid', '/api', 0);
+    setCookie('refresh_token', 'invalid', '/api/u/auth', 0);
+    setCookie('refresh_valid', 'invalid', '/', 0);
+    dispatch({
+      type: LOGOUT,
+    });
   };
 };
 
-const LogoutErr = (err)=>{
+const GETUSER = Symbol('GETUSER');
+const GETUSER_SUCCESS = Symbol('GETUSER_SUCCESS');
+const GETUSER_ERR = Symbol('GETUSER_ERR');
+
+const GetUserSuccess = (data)=>{
   return {
-    type: LOGOUT_ERR,
+    type: GETUSER_SUCCESS,
+    data,
+  };
+};
+
+const GetUserErr = (err)=>{
+  return {
+    type: GETUSER_ERR,
     err,
   };
 };
 
-const Logout = ()=>{
+const GetUserAccount = ()=>{
   return async (dispatch)=>{
     dispatch({
-      type: LOGOUT,
+      type: GETUSER,
     });
     try {
-      const response = await fetch(API.u.auth.logout, {
-        method: 'POST',
+      const response = await fetch(API.u.user.get, {
+        method: 'GET',
         //TODO: change to same-origin
-        credentials: 'include', // required to set cookies
+        credentials: 'include',
       });
       const status = response.status;
+      const data = await response.json();
       if(status < 200 || status >= 300){
-        const data = await response.json();
         if(data && data.message){
           throw new Error(data.message);
         } else {
-          throw new Error('Unable to logout');
+          throw new Error('Unable to fetch user data');
         }
       }
-      dispatch(LogoutSuccess());
+      data.creation_time *= 1000;
+      data.auth_tags = new Set(data.auth_tags.split(','));
+      dispatch(GetUserSuccess(data));
     } catch(e){
-      dispatch(LogoutErr(e.message));
+      dispatch(GetUserErr(e));
     }
   };
 };
@@ -183,11 +200,14 @@ const defaultState = {
   timeRefresh: false,
   err: false,
   logouterr: false,
+  getusererr: false,
   userid: '',
   username: '',
   firstname: '',
   lastname: '',
   authTags: new Set(),
+  email: '',
+  creationTime: Date.now(),
 };
 
 const initState = ()=>{
@@ -202,7 +222,6 @@ const Auth = (state=initState(), action)=>{
   switch(action.type){
     case LOGIN:
     case RELOGIN:
-    case LOGOUT:
       return Object.assign({}, state, {
         loading: true,
       });
@@ -228,11 +247,28 @@ const Auth = (state=initState(), action)=>{
         loggedIn: false,
         err: action.err,
       });
-    case LOGOUT_SUCCESS:
+    case LOGOUT:
       return Object.assign({}, defaultState);
-    case LOGOUT_ERR:
+    case GETUSER:
       return Object.assign({}, state, {
-        logouterr: action.err,
+        loading: true,
+      });
+    case GETUSER_SUCCESS:
+      return Object.assign({}, state, {
+        loading: false,
+        getusererr: false,
+        userid: action.data.userid,
+        username: action.data.username,
+        firstname: action.data.first_name,
+        lastname: action.data.last_name,
+        authTags: action.data.auth_tags,
+        email: action.data.email,
+        creationTime: action.data.creation_time,
+      });
+    case GETUSER_ERR:
+      return Object.assign({}, state, {
+        loading: false,
+        getusererr: action.err,
       });
     default:
       return state;

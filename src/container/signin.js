@@ -47,7 +47,8 @@ class SigninContainer extends Component {
         </Menu>, <Button text>Cancel</Button>, <Button primary onClick={this.login}>Login</Button>
       ]}>
         <Input label="username" fullWidth onChange={linkState(this, 'username')}/>
-        <Input label="password" type="password" error={!loading && err} fullWidth onChange={linkState(this, 'password')} onEnter={this.login}/>
+        <Input label="password" type="password" fullWidth onChange={linkState(this, 'password')} onEnter={this.login}/>
+        {!loading && err && <span>{err}</span>}
       </Card>
     </Section>;
   }
