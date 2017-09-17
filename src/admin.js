@@ -1,5 +1,5 @@
 import {h, Component} from 'preact';
-import {Switch, Route, Redirect, NavLink, withRouter} from 'react-router-dom';
+import {Switch, Route, Redirect, NavLink, Link, withRouter} from 'react-router-dom';
 import {connect} from 'preact-redux';
 
 import {DarkMode} from 'reducer/settings';
@@ -38,9 +38,9 @@ class Admin extends Component {
         {key: 'health', component: <NavLink to="/health"><FaIcon icon="server"/><small>Health</small></NavLink>},
       ]} right={[
         {key: 'settings', component: <Menu icon={[<FaIcon icon="cog"/>, <small>Settings</small>]} size="md" fixed align="left" position="top">
+          <Link to="/u/account"><FaIcon icon="address-card-o"/> Account</Link>
           <span onClick={this.toggleDark}><FaIcon icon="bolt"/> Dark Mode</span>
           <Anchor ext href="https://github.com/xorkevin"><FaIcon icon="github"/> xorkevin</Anchor>
-          <span onClick={this.logout}><FaIcon icon="sign-out"/> Sign out</span>
         </Menu>},
       ]}/>}
 
