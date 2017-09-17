@@ -25,16 +25,16 @@ class UserAccount extends Component {
     this.getaccount();
   }
 
-  render({loading, getusererr, userid, username, firstname, lastname, authTags, email, creationTime}){
+  render({getuserloading, getusererr, userid, username, firstname, lastname, authTags, email, creationTime}){
     return <Section container narrow padded sectionTitle="Settings">
-      {!loading && getusererr && <span>{getusererr}</span>}
-      {!loading && <Card size="lg" restrictWidth center>
+      {!getuserloading && getusererr && <span>{getusererr}</span>}
+      {!getuserloading && <Card size="lg" restrictWidth center>
         <Section subsection sectionTitle="Account Details">
           <ListItem label="userid" item={userid}/>
           <ListItem label="username" item={username}/>
           <ListItem label="first name" item={firstname}/>
           <ListItem label="last name" item={lastname}/>
-          <ListItem label="roles" item={authTags && authTags.map((tag)=>{return <Chip>{tag}</Chip>;})}/>
+          <ListItem label="roles" item={authTags && authTags.split(',').map((tag)=>{return <Chip>{tag}</Chip>;})}/>
           <ListItem label="email" item={email}/>
           <ListItem label="creation time" item={<Time value={creationTime}/>}/>
         </Section>
@@ -44,12 +44,19 @@ class UserAccount extends Component {
 }
 
 const mapStateToProps = (state)=>{
-  const {loading, getusererr, userid, username, firstname, lastname, authTags, email, creationTime} = state.Auth;
-  return {
-    loading, getusererr,
+  const {
+    getuserloading, getusererr,
     userid, username,
     firstname, lastname,
-    authTags: Array.from(authTags),
+    authTags,
+    email,
+    creationTime
+  } = state.Auth;
+  return {
+    getuserloading, getusererr,
+    userid, username,
+    firstname, lastname,
+    authTags,
     email,
     creationTime,
   };

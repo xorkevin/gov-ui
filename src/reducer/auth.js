@@ -54,7 +54,7 @@ const Login = (username, password)=>{
       }
       const time = data.claims.exp;
       const userid = data.claims.userid;
-      const authTags = new Set(data.claims.auth_tags.split(','));
+      const authTags = data.claims.auth_tags;
       const firstname = data.first_name;
       const lastname = data.last_name;
       dispatch(Refresh());
@@ -114,7 +114,7 @@ const ReLogin = ()=>{
         }
         const time = data.claims.exp;
         const userid = data.claims.userid;
-        const authTags = new Set(data.claims.auth_tags.split(','));
+        const authTags = data.claims.auth_tags;
         dispatch(LoginSuccess(time, userid, authTags));
       }
     } catch(e){
@@ -187,7 +187,6 @@ const GetUserAccount = ()=>{
         }
       }
       data.creation_time *= 1000;
-      data.auth_tags = new Set(data.auth_tags.split(','));
       dispatch(GetUserSuccess(data));
     } catch(e){
       dispatch(GetUserErr(e));
@@ -197,6 +196,7 @@ const GetUserAccount = ()=>{
 
 const defaultState = {
   loading: false,
+  getuserloading: false,
   loggedIn: false,
   timeEnd: false,
   timeRefresh: false,
@@ -207,7 +207,7 @@ const defaultState = {
   username: '',
   firstname: '',
   lastname: '',
-  authTags: new Set(),
+  authTags: false,
   email: '',
   creationTime: Date.now(),
 };
@@ -216,7 +216,7 @@ const initState = ()=>{
   const k = {};
   if(isWeb() && getCookie('refresh_valid') === 'valid'){
     k.loggedIn = true;
-    k.authTags = new Set(getCookie('auth_tags').replace(/^"+|"*$/g, '').split(','));
+    k.authTags = getCookie('auth_tags').replace(/^"+|"*$/g, '');
   }
   return Object.assign({}, defaultState, k);
 };
@@ -251,11 +251,11 @@ const Auth = (state=initState(), action)=>{
       return Object.assign({}, defaultState);
     case GETUSER:
       return Object.assign({}, state, {
-        loading: true,
+        getuserloading: true,
       });
     case GETUSER_SUCCESS:
       return Object.assign({}, state, {
-        loading: false,
+        getuserloading: false,
         getusererr: false,
         userid: action.data.userid,
         username: action.data.username,
@@ -267,7 +267,7 @@ const Auth = (state=initState(), action)=>{
       });
     case GETUSER_ERR:
       return Object.assign({}, state, {
-        loading: false,
+        getuserloading: false,
         getusererr: action.err,
       });
     default:

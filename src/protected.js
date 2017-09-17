@@ -27,7 +27,7 @@ const Protected = (child, auth)=>{
       if(!loggedIn){
         return false;
       }
-      if(auth && !authTags.has(auth)){
+      if(auth && !(new Set(authTags.split(',')).has(auth))){
         return <div>Unauthorized</div>;
       }
       return h(child);
