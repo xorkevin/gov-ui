@@ -123,6 +123,18 @@ class Time extends Component {
     });
   }
 
+  componentWillReceiveProps(nextProps){
+    const k = new Date(nextProps.value);
+    this.setState((prevState)=>{
+      return Object.assign({}, prevState, {
+        date: k,
+        timeAgo: timeAgo(k),
+        isoString: k.toISOString(),
+        localeString: dateToLocale(k),
+      });
+    });
+  }
+
   componentDidMount(){
     this.interval = setInterval(()=>{this.tick();}, 60000);
   }
