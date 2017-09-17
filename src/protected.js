@@ -1,15 +1,15 @@
 import {h, Component} from 'preact';
-import {connect} from 'preact-redux';
 import {withRouter} from 'react-router-dom';
+import {connect} from 'preact-redux';
 
 const mapStateToProps = (state)=>{
-  const {loggedIn} = state.Auth;
+  const {loggedIn, authTags} = state.Auth;
   return {
-    loggedIn,
+    loggedIn, authTags,
   };
 };
 
-const Protected = (child)=>{
+const Protected = (child, auth)=>{
   return withRouter(connect(mapStateToProps)(class extends Component {
     componentWillMount(){
       if(!this.props.loggedIn){
@@ -23,11 +23,14 @@ const Protected = (child)=>{
       }
     }
 
-    render({loggedIn}){
-      if(loggedIn){
-        return h(child);
+    render({loggedIn, authTags}){
+      if(!loggedIn){
+        return false;
       }
-      return false;
+      if(auth && !authTags.has(auth)){
+        return <div>Unauthorized</div>;
+      }
+      return h(child);
     }
   }));
 };

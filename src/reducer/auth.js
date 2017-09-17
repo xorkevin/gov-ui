@@ -8,15 +8,12 @@ const LOGIN_SUCCESS = Symbol('LOGIN_SUCCESS');
 const LOGIN_ERR = Symbol('LOGIN_ERR');
 
 // timeEnd is in seconds
-const LoginSuccess = (timeEnd, userid, authTags, username, firstname, lastname)=>{
+const LoginSuccess = (timeEnd, userid, authTags)=>{
   return {
     type: LOGIN_SUCCESS,
     timeEnd,
     userid,
     authTags,
-    username,
-    firstname,
-    lastname,
   };
 };
 
@@ -118,8 +115,7 @@ const ReLogin = ()=>{
         const time = data.claims.exp;
         const userid = data.claims.userid;
         const authTags = new Set(data.claims.auth_tags.split(','));
-        const {username, firstname, lastname} = getState().Auth;
-        dispatch(LoginSuccess(time, userid, authTags, username, firstname, lastname));
+        dispatch(LoginSuccess(time, userid, authTags));
       }
     } catch(e){
       dispatch(LoginErr(e.message));
@@ -172,6 +168,7 @@ const GetUserAccount = ()=>{
     const {relogin} = await dispatch(ReLogin());
     if(relogin){
       dispatch(GetUserErr('Need to reauthenticate'));
+      return;
     }
     try {
       const response = await fetch(API.u.user.get, {
@@ -218,6 +215,7 @@ const initState = ()=>{
   const k = {};
   if(isWeb() && getCookie('refresh_valid') === 'valid'){
     k.loggedIn = true;
+    k.authTags = new Set(getCookie('auth_tags').replace(/^"+|"*$/g, '').split(','));
   }
   return Object.assign({}, defaultState, k);
 };
@@ -240,9 +238,6 @@ const Auth = (state=initState(), action)=>{
         timeEnd: action.timeEnd,
         err: false,
         userid: action.userid,
-        username: action.username,
-        firstname: action.firstname,
-        lastname: action.lastname,
         authTags: action.authTags,
       });
     case LOGIN_ERR:

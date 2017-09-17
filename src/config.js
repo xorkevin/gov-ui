@@ -19,7 +19,7 @@ const API = {
         confirm: passwordbase + '/forgot/reset',
       },
       id: userbase + '/id/{0}',
-      name: userbase + '/name',
+      name: userbase + '/name/{0}',
       idprivate: userbase + '/id/{0}/private',
       get: userbase,
       sessions: userbase + '/sessions',

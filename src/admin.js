@@ -41,6 +41,7 @@ class Admin extends Component {
           <Link to="/u/account"><FaIcon icon="address-card-o"/> Account</Link>
           <span onClick={this.toggleDark}><FaIcon icon="bolt"/> Dark Mode</span>
           <Anchor ext href="https://github.com/xorkevin"><FaIcon icon="github"/> xorkevin</Anchor>
+          <span onClick={this.logout}><FaIcon icon="sign-out"/> Sign out</span>
         </Menu>},
       ]}/>}
 
@@ -49,7 +50,7 @@ class Admin extends Component {
           <Route exact path="/" component={Protected(Loader(()=>{return import('container/admin');}))}/>
           <Route path="/a" component={Loader(()=>{return import('container/account');})}/>
           <Route path="/u" component={Protected(Loader(()=>{return import('container/user');}))}/>
-          <Route path="/health" component={Protected(Loader(()=>{return import('container/health');}))}/>
+          <Route path="/health" component={Protected(Loader(()=>{return import('container/health');}), 'admin')}/>
           <Route path="/setup" component={Loader(()=>{return import('container/setup');})}/>
           <Redirect to="/"/>
         </Switch>
