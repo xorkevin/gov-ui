@@ -24,7 +24,7 @@ const GetUserByName = (username)=>{
       };
     } catch(e){
       return {
-        err: e,
+        err: e.message,
       };
     }
   };
@@ -52,7 +52,7 @@ const GetUserByID = (userid)=>{
       };
     } catch(e){
       return {
-        err: e,
+        err: e.message,
       };
     }
   };
@@ -88,7 +88,7 @@ const GetUserByIDPrivate = (userid)=>{
       };
     } catch(e){
       return {
-        err: e,
+        err: e.message,
       };
     }
   };

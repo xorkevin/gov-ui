@@ -44,9 +44,9 @@ class UserDetails extends Component {
         <Column sm={8} md={6}>
           {user && <Card>
             <h4>{user.first_name} {user.last_name}</h4>
-            <h4>{user.username}</h4>
+            <h5>{user.username}</h5>
           </Card>}
-          {err && <span>err</span>}
+          {err && <span>{err}</span>}
         </Column>
         <Column sm={16} md={18}>
         </Column>
