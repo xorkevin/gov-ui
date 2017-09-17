@@ -50,7 +50,7 @@ class App extends Component {
       </MainContent>
 
       <Footer>
-        <Grid center sm={8}>
+        <Grid center map sm={8}>
           <div colkey="left" className="text-center">
            <h4>Nuke</h4>
            a reactive frontend for governor

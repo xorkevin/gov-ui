@@ -1,6 +1,6 @@
 import {h} from 'preact';
 
-const Grid = ({strict, center, verticalCenter, horizontalCenter, xs, sm, md, lg, children})=>{
+const Grid = ({strict, center, verticalCenter, horizontalCenter, xs, sm, md, lg, map, children})=>{
   const k = ["grid"];
   if(strict){
     k.push("strict");
@@ -23,7 +23,7 @@ const Grid = ({strict, center, verticalCenter, horizontalCenter, xs, sm, md, lg,
   };
 
   return <div className={k.join(" ")}>
-    {children.map((child)=>{
+    {map && children.map((child)=>{
       let key = "";
       if(child && child.attributes && child.attributes.colkey){
         key = child.attributes.colkey;
@@ -32,6 +32,7 @@ const Grid = ({strict, center, verticalCenter, horizontalCenter, xs, sm, md, lg,
       }
       return <Column key={key} {...childProps}>{child}</Column>;
     })}
+    {!map && children}
   </div>;
 };
 

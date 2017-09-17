@@ -50,6 +50,7 @@ class Admin extends Component {
           <Route exact path="/" component={Protected(Loader(()=>{return import('container/admin');}))}/>
           <Route path="/x" component={Loader(()=>{return import('container/login');})}/>
           <Route path="/a" component={Protected(Loader(()=>{return import('container/account');}))}/>
+          <Route path="/u" component={Loader(()=>{return import('container/user');})}/>
           <Route path="/health" component={Protected(Loader(()=>{return import('container/health');}), 'admin')}/>
           <Route path="/setup" component={Loader(()=>{return import('container/setup');})}/>
           <Redirect to="/"/>
@@ -57,7 +58,7 @@ class Admin extends Component {
       </MainContent>
 
       <Footer withSidebar={loggedIn}>
-        <Grid center sm={8}>
+        <Grid map center sm={8}>
           <div colkey="left" className="text-center">
            <h4>Nuke</h4>
            a reactive frontend for governor

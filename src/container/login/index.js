@@ -14,7 +14,7 @@ class LoginContainer extends Component {
     this.props.history.replace('/');
   }
 
-  componentWillMount(){
+  componentDidMount(){
     if(this.props.loggedIn){
       this.navigateHome();
     }

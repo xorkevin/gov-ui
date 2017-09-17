@@ -9,11 +9,8 @@ class MenuContainer extends Component {
     });
   }
 
-  componentWillMount(){
-    this.tick();
-  }
-
   componentDidMount(){
+    this.tick();
     this.running = false;
     this.handler = ()=>{
       if(!this.running){

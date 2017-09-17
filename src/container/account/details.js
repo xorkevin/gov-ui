@@ -21,7 +21,7 @@ class AccountDetails extends Component {
     this.props.getaccount();
   }
 
-  componentWillMount(){
+  componentDidMount(){
     this.getaccount();
   }
 

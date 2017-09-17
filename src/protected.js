@@ -11,7 +11,7 @@ const mapStateToProps = (state)=>{
 
 const Protected = (child, auth)=>{
   return withRouter(connect(mapStateToProps)(class extends Component {
-    componentWillMount(){
+    componentDidMount(){
       if(!this.props.loggedIn){
         this.props.history.replace('/x/login');
       }

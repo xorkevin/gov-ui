@@ -10,7 +10,7 @@ import {mountainPreview, thamesPreview} from 'config';
 const CardContainer = ()=>{
   return <div>
     <Section id="cards" sectionTitle="Cards anyone?" container padded>
-      <Grid md={8} sm={12}>
+      <Grid map md={8} sm={12}>
         <Card colkey="underground" size="md" restrictHeight background="https://xorkevin.github.io/stratosphere/assets/underground.jpg" title={[
             <h3>Lorem ipsum</h3>,<Button label="favorite"><FaIcon icon="heart"/></Button>
           ]} bar={[
