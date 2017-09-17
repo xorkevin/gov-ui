@@ -169,7 +169,10 @@ const GetUserAccount = ()=>{
     dispatch({
       type: GETUSER,
     });
-    await dispatch(ReLogin());
+    const {relogin} = await dispatch(ReLogin());
+    if(relogin){
+      dispatch(GetUserErr('Need to reauthenticate'));
+    }
     try {
       const response = await fetch(API.u.user.get, {
         method: 'GET',
