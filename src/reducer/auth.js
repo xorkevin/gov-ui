@@ -136,6 +136,7 @@ const Logout = ()=>{
     setCookie('access_token', 'invalid', '/api', 0);
     setCookie('refresh_token', 'invalid', '/api/u/auth', 0);
     setCookie('refresh_valid', 'invalid', '/', 0);
+    setCookie('auth_tags', 'invalid', '/', 0);
     dispatch({
       type: LOGOUT,
     });
