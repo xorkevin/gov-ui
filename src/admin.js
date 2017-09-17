@@ -48,6 +48,7 @@ class Admin extends Component {
         <Switch>
           <Route exact path="/" component={Protected(Loader(()=>{return import('container/admin');}))}/>
           <Route path="/a" component={Loader(()=>{return import('container/account');})}/>
+          <Route path="/u" component={Protected(Loader(()=>{return import('container/user');}))}/>
           <Route path="/health" component={Protected(Loader(()=>{return import('container/health');}))}/>
           <Route path="/setup" component={Loader(()=>{return import('container/setup');})}/>
           <Redirect to="/"/>

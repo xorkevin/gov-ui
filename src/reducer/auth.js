@@ -169,6 +169,7 @@ const GetUserAccount = ()=>{
     dispatch({
       type: GETUSER,
     });
+    await dispatch(ReLogin());
     try {
       const response = await fetch(API.u.user.get, {
         method: 'GET',
@@ -276,5 +277,5 @@ const Auth = (state=initState(), action)=>{
 };
 
 export {
-  Auth, Login, ReLogin, Logout,
+  Auth, Login, ReLogin, Logout, GetUserAccount,
 }
