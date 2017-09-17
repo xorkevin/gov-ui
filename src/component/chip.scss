@@ -1,7 +1,13 @@
 .chip {
   display:          inline-block;
   border-radius:    2em;
-  background-color: $color-text-light-4;
+  background-color: $color-text-dark-4;
   padding:          0 0.75em;
   margin:           0 0.25em;
+}
+
+body.dark {
+  .chip {
+    background-color: $color-text-light-4;
+  }
 }

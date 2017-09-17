@@ -33,18 +33,18 @@ class Admin extends Component {
 
   render({loggedIn}, {dark}){
     return <div>
-      <Navbar sidebar left={[
+      {loggedIn && <Navbar sidebar left={[
         {key: 'home', home: true, component: <NavLink exact to="/"><FaIcon icon="home"/><small>Home</small></NavLink>},
         {key: 'health', component: <NavLink to="/health"><FaIcon icon="server"/><small>Health</small></NavLink>},
       ]} right={[
         {key: 'settings', component: <Menu icon={[<FaIcon icon="cog"/>, <small>Settings</small>]} size="md" fixed align="left" position="top">
           <span onClick={this.toggleDark}><FaIcon icon="bolt"/> Dark Mode</span>
           <Anchor ext href="https://github.com/xorkevin"><FaIcon icon="github"/> xorkevin</Anchor>
-          {loggedIn && <span onClick={this.logout}><FaIcon icon="sign-out"/> Sign out</span>}
+          <span onClick={this.logout}><FaIcon icon="sign-out"/> Sign out</span>
         </Menu>},
-      ]}/>
+      ]}/>}
 
-      <MainContent withSidebar sectionNoMargin>
+      <MainContent withSidebar={loggedIn} sectionNoMargin>
         <Switch>
           <Route exact path="/" component={Protected(Loader(()=>{return import('container/admin');}))}/>
           <Route path="/a" component={Loader(()=>{return import('container/account');})}/>
@@ -55,7 +55,7 @@ class Admin extends Component {
         </Switch>
       </MainContent>
 
-      <Footer withSidebar>
+      <Footer withSidebar={loggedIn}>
         <Grid center sm={8}>
           <div colkey="left" className="text-center">
            <h4>Nuke</h4>

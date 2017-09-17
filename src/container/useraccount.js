@@ -1,5 +1,6 @@
 import {h, Component} from 'preact';
 import Section from 'component/section';
+import Card from 'component/card';
 import Menu from 'component/menu';
 import ListItem from 'component/list';
 import Chip from 'component/chip';
@@ -27,15 +28,17 @@ class UserAccount extends Component {
   render({loading, getusererr, userid, username, firstname, lastname, authTags, email, creationTime}){
     return <Section container narrow padded sectionTitle="Settings">
       {!loading && getusererr && <span>{getusererr}</span>}
-      {!loading && <Section subsection sectionTitle="Account Details">
-        <ListItem label="userid" item={userid}/>
-        <ListItem label="username" item={username}/>
-        <ListItem label="first name" item={firstname}/>
-        <ListItem label="last name" item={lastname}/>
-        <ListItem label="roles" item={authTags && authTags.map((tag)=>{return <Chip>{tag}</Chip>;})}/>
-        <ListItem label="email" item={email}/>
-        <ListItem label="creation time" item={<Time value={creationTime}/>}/>
-      </Section>}
+      {!loading && <Card size="lg" restrictWidth center>
+        <Section subsection sectionTitle="Account Details">
+          <ListItem label="userid" item={userid}/>
+          <ListItem label="username" item={username}/>
+          <ListItem label="first name" item={firstname}/>
+          <ListItem label="last name" item={lastname}/>
+          <ListItem label="roles" item={authTags && authTags.map((tag)=>{return <Chip>{tag}</Chip>;})}/>
+          <ListItem label="email" item={email}/>
+          <ListItem label="creation time" item={<Time value={creationTime}/>}/>
+        </Section>
+      </Card>}
     </Section>;
   }
 }

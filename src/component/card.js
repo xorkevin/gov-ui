@@ -34,7 +34,7 @@ const Card = ({size, square, restrictWidth, restrictHeight, center, titleBar, ba
   }
 
   return <div className={k.join(" ")}>
-    <div className={titleclass}>
+    {title && <div className={titleclass}>
       {!titleBar && <Img size="fill" src={background} preview={preview}>
         <div className="title-inner">
           {title}
@@ -43,13 +43,13 @@ const Card = ({size, square, restrictWidth, restrictHeight, center, titleBar, ba
       {titleBar && <div className="title-inner">
         {title}
       </div>}
-    </div>
+    </div>}
     <div className="body">
       {children}
     </div>
-    <div className="bar">
+    {bar && <div className="bar">
       {bar}
-    </div>
+    </div>}
   </div>;
 };
 
