@@ -3,7 +3,7 @@ import {Switch, Route, Redirect, NavLink, Link, withRouter} from 'react-router-d
 import {connect} from 'preact-redux';
 
 import {DarkMode} from 'reducer/settings';
-import {Logout} from 'reducer/auth';
+import {Logout} from 'reducer/account/auth';
 
 import Loader from 'loader';
 import Protected from 'protected';
@@ -38,7 +38,7 @@ class Admin extends Component {
         {key: 'health', component: <NavLink to="/health"><FaIcon icon="server"/><small>Health</small></NavLink>},
       ]} right={[
         {key: 'settings', component: <Menu icon={[<FaIcon icon="cog"/>, <small>Settings</small>]} size="md" fixed align="left" position="top">
-          <Link to="/u/account"><FaIcon icon="address-card-o"/> Account</Link>
+          <Link to="/a/account"><FaIcon icon="address-card-o"/> Account</Link>
           <span onClick={this.toggleDark}><FaIcon icon="bolt"/> Dark Mode</span>
           <Anchor ext href="https://github.com/xorkevin"><FaIcon icon="github"/> xorkevin</Anchor>
           <span onClick={this.logout}><FaIcon icon="sign-out"/> Sign out</span>
@@ -48,8 +48,8 @@ class Admin extends Component {
       <MainContent withSidebar={loggedIn} sectionNoMargin>
         <Switch>
           <Route exact path="/" component={Protected(Loader(()=>{return import('container/admin');}))}/>
-          <Route path="/a" component={Loader(()=>{return import('container/account');})}/>
-          <Route path="/u" component={Protected(Loader(()=>{return import('container/user');}))}/>
+          <Route path="/x" component={Loader(()=>{return import('container/login');})}/>
+          <Route path="/a" component={Protected(Loader(()=>{return import('container/account');}))}/>
           <Route path="/health" component={Protected(Loader(()=>{return import('container/health');}), 'admin')}/>
           <Route path="/setup" component={Loader(()=>{return import('container/setup');})}/>
           <Redirect to="/"/>

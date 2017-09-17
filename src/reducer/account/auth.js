@@ -207,7 +207,7 @@ const defaultState = {
   username: '',
   firstname: '',
   lastname: '',
-  authTags: false,
+  authTags: '',
   email: '',
   creationTime: Date.now(),
 };

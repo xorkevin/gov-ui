@@ -9,9 +9,9 @@ import Button from 'component/button';
 import Time from 'component/time';
 
 import {connect} from 'preact-redux';
-import {GetUserAccount} from 'reducer/auth';
+import {GetUserAccount} from 'reducer/account/auth';
 
-class UserAccount extends Component {
+class AccountDetails extends Component {
   constructor(props){
     super(props);
     this.getaccount = this.getaccount.bind(this);
@@ -70,6 +70,6 @@ const mapDispatchToProps = (dispatch)=>{
   };
 };
 
-UserAccount = connect(mapStateToProps, mapDispatchToProps)(UserAccount);
+AccountDetails = connect(mapStateToProps, mapDispatchToProps)(AccountDetails);
 
-export default UserAccount
+export default AccountDetails

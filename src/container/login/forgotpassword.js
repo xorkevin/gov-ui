@@ -1,5 +1,5 @@
 import {h, Component} from 'preact';
-import {withRouter} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import linkState from 'linkstate';
 import Section from 'component/section';
 import Menu from 'component/menu';
@@ -9,7 +9,7 @@ import Button from 'component/button';
 import Input from 'component/form';
 
 import {connect} from 'preact-redux';
-import {ForgotPasswordReq} from 'reducer/forgotpassword';
+import {ForgotPasswordReq} from 'reducer/account/forgotpassword';
 
 class ForgotContainer extends Component {
   constructor(props){
@@ -18,16 +18,6 @@ class ForgotContainer extends Component {
       username: '',
     };
     this.forgotpassword = this.forgotpassword.bind(this);
-    this.navigateLogin = this.navigateLogin.bind(this);
-    this.navigateConfirm = this.navigateConfirm.bind(this);
-  }
-
-  navigateLogin(){
-    this.props.history.push('/a/login');
-  }
-
-  navigateConfirm(){
-    this.props.history.push('/a/forgotconfirm');
   }
 
   forgotpassword(){
@@ -37,10 +27,10 @@ class ForgotContainer extends Component {
   render({success, config, err}){
     const bar = [];
     if(!success){
-      bar.push(<Button text onClick={this.navigateLogin}>Cancel</Button>);
+      bar.push(<Link to="/x/login"><Button text>Cancel</Button></Link>);
       bar.push(<Button primary onClick={this.confirmaccount}>Submit</Button>);
     } else {
-      bar.push(<Button outline onClick={this.navigateConfirm}>Confirm</Button>);
+      bar.push(<Link to="/x/forgotconfirm"><Button outline>Confirm</Button></Link>);
     }
 
     return <Section container padded>
@@ -73,6 +63,5 @@ const mapDispatchToProps = (dispatch)=>{
 };
 
 ForgotContainer = connect(mapStateToProps, mapDispatchToProps)(ForgotContainer);
-ForgotContainer = withRouter(ForgotContainer);
 
 export default ForgotContainer

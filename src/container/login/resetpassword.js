@@ -1,5 +1,5 @@
 import {h, Component} from 'preact';
-import {withRouter} from 'react-router-dom';
+import {Link, withRouter} from 'react-router-dom';
 import linkState from 'linkstate';
 import Section from 'component/section';
 import Menu from 'component/menu';
@@ -9,7 +9,7 @@ import Button from 'component/button';
 import Input from 'component/form';
 
 import {connect} from 'preact-redux';
-import {ConfirmResetReq} from 'reducer/forgotpassword';
+import {ConfirmResetReq} from 'reducer/account/forgotpassword';
 
 class ConfirmReset extends Component {
   constructor(props){
@@ -21,11 +21,6 @@ class ConfirmReset extends Component {
       passwordConfirm: '',
     };
     this.resetpassword = this.resetpassword.bind(this);
-    this.navigateLogin = this.navigateLogin.bind(this);
-  }
-
-  navigateLogin(){
-    this.props.history.push('/a/login');
   }
 
   resetpassword(){
@@ -45,10 +40,10 @@ class ConfirmReset extends Component {
   render({success, config, err}, {key}){
     const bar = [];
     if(!success){
-      bar.push(<Button text onClick={this.navigateLogin}>Cancel</Button>);
+      bar.push(<Link to="/x/login"><Button text>Cancel</Button></Link>);
       bar.push(<Button primary onClick={this.resetpassword}>Submit</Button>);
     } else {
-      bar.push(<Button outline onClick={this.navigateLogin}>Sign in</Button>);
+      bar.push(<Link to="/x/login"><Button outline>Sign in</Button></Link>);
     }
 
     return <Section container padded>

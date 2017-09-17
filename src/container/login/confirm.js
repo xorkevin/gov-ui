@@ -1,5 +1,5 @@
 import {h, Component} from 'preact';
-import {withRouter} from 'react-router-dom';
+import {Link, withRouter} from 'react-router-dom';
 import linkState from 'linkstate';
 import Section from 'component/section';
 import Menu from 'component/menu';
@@ -9,7 +9,7 @@ import Button from 'component/button';
 import Input from 'component/form';
 
 import {connect} from 'preact-redux';
-import {ConfirmAccountReq} from 'reducer/createaccount';
+import {ConfirmAccountReq} from 'reducer/account/create';
 
 class ConfirmAccount extends Component {
   constructor(props){
@@ -18,11 +18,6 @@ class ConfirmAccount extends Component {
       key: props.match.params.key || '',
     };
     this.confirmaccount = this.confirmaccount.bind(this);
-    this.navigateLogin = this.navigateLogin.bind(this);
-  }
-
-  navigateLogin(){
-    this.props.history.push('/a/login');
   }
 
   confirmaccount(){
@@ -32,10 +27,10 @@ class ConfirmAccount extends Component {
   render({success, config, err}, {key}){
     const bar = [];
     if(!success){
-      bar.push(<Button text onClick={this.navigateLogin}>Cancel</Button>);
+      bar.push(<Link to="/x/login"><Button text>Cancel</Button></Link>);
       bar.push(<Button primary onClick={this.confirmaccount}>Submit</Button>);
     } else {
-      bar.push(<Button outline onClick={this.navigateLogin}>Sign in</Button>);
+      bar.push(<Link to="/x/login"><Button outline>Sign in</Button></Link>);
     }
     return <Section container padded>
       <Card center size="md" restrictWidth titleBar title={[

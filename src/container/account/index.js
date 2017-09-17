@@ -3,7 +3,7 @@ import {Switch, Route, Redirect, withRouter} from 'react-router-dom';
 
 import Loader from 'loader';
 
-class UserContainer extends Component {
+class Account extends Component {
   constructor(props){
     super(props);
     this.navigateHome = this.navigateHome.bind(this);
@@ -15,12 +15,12 @@ class UserContainer extends Component {
 
   render({match}){
     return <Switch>
-      <Route path={`${match.path}/account`} component={Loader(()=>{return import('container/useraccount');})}/>
+      <Route path={`${match.path}/account`} component={Loader(()=>{return import('container/account/details');})}/>
       <Redirect to={`${match.path}/account`}/>
     </Switch>;
   }
 }
 
-UserContainer = withRouter(UserContainer);
+Account = withRouter(Account);
 
-export default UserContainer
+export default Account

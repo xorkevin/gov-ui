@@ -1,5 +1,5 @@
 import {h, Component} from 'preact';
-import {withRouter} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import linkState from 'linkstate';
 import Section from 'component/section';
 import Card from 'component/card';
@@ -7,7 +7,7 @@ import Button from 'component/button';
 import Input from 'component/form';
 
 import {connect} from 'preact-redux';
-import {CreateAccountReq} from 'reducer/createaccount';
+import {CreateAccountReq} from 'reducer/account/create';
 
 class CreateAccount extends Component {
   constructor(props){
@@ -25,16 +25,6 @@ class CreateAccount extends Component {
       email_confirm: '',
     };
     this.createaccount = this.createaccount.bind(this);
-    this.navigateLogin = this.navigateLogin.bind(this);
-    this.navigateConfirm = this.navigateConfirm.bind(this);
-  }
-
-  navigateLogin(){
-    this.props.history.push('/a/login');
-  }
-
-  navigateConfirm(){
-    this.props.history.push('/a/confirm');
   }
 
   createaccount(){
@@ -59,10 +49,10 @@ class CreateAccount extends Component {
   render({success, config, err}, {clienterr}){
     const bar = [];
     if(!success){
-      bar.push(<Button text onClick={this.navigateLogin}>Cancel</Button>);
+      bar.push(<Link to="/x/login"><Button text>Cancel</Button></Link>);
       bar.push(<Button primary onClick={this.createaccount}>Submit</Button>);
     } else {
-      bar.push(<Button outline onClick={this.navigateConfirm}>Confirm</Button>);
+      bar.push(<Link to="/x/confirm"><Button outline>Confirm</Button></Link>);
     }
 
     return <Section container padded>
@@ -102,6 +92,5 @@ const mapDispatchToProps = (dispatch)=>{
 };
 
 CreateAccount = connect(mapStateToProps, mapDispatchToProps)(CreateAccount);
-CreateAccount = withRouter(CreateAccount);
 
 export default CreateAccount
