@@ -86,11 +86,14 @@ class Img extends Component {
     this.unbind();
   }
 
-  render({preview, size, fixed, color, imgWidth, imgHeight, className, children}, {imgsrc, loaded}){
+  render({preview, size, fixed, color, rounded, imgWidth, imgHeight, className, children}, {imgsrc, loaded}){
     const k = ['img'];
 
     if(className){
       k.push(className);
+    }
+    if(rounded){
+      k.push("rounded");
     }
     if(!loaded){
       k.push('invisible');

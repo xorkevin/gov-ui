@@ -69,6 +69,26 @@ const EditProfileErr = (err)=>{
   };
 };
 
+const EditProfileImage = async (file)=>{
+  const formData  = new FormData();
+  formData.append('image', file);
+  const response = await fetch(API.profile.image, {
+    method: 'POST',
+    //TODO: change to same-origin
+    credentials: 'include',
+    body: formData,
+  });
+  const status = response.status;
+  if(status < 200 || status >= 300){
+    const data = await response.json();
+    if(data && data.message){
+      throw new Error(data.message);
+    } else {
+      throw new Error('Could not update image');
+    }
+  }
+};
+
 const EditProfileReq = (options)=>{
   return async (dispatch)=>{
     dispatch({
@@ -80,12 +100,13 @@ const EditProfileReq = (options)=>{
       return;
     }
     try {
+      const textoptions = Object.assign({}, options, {image: undefined});
       const response = await fetch(API.profile.edit, {
         method: 'PUT',
         headers: {'Content-Type': 'application/json'},
         //TODO: change to same-origin
         credentials: 'include',
-        body: JSON.stringify(options),
+        body: JSON.stringify(textoptions),
       });
       const status = response.status;
       if(status < 200 || status >= 300){
@@ -96,6 +117,11 @@ const EditProfileReq = (options)=>{
           throw new Error('Could not edit account');
         }
       }
+
+      if(options.image){
+        await EditProfileImage(options.image);
+      }
+
       dispatch(EditProfileSuccess());
     } catch(e){
       dispatch(EditProfileErr(e.message));

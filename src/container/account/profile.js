@@ -1,10 +1,12 @@
 import {h, Component} from 'preact';
+import {API} from 'config';
 import {Link} from 'react-router-dom';
 import linkstate from 'linkstate';
 import Section from 'component/section';
 import Card from 'component/card';
 import ListItem from 'component/list';
 import Button from 'component/button';
+import Img from 'component/image';
 
 import {connect} from 'preact-redux';
 import {CreateProfileReq, GetProfileReq} from 'reducer/account/profile';
@@ -28,7 +30,7 @@ class Profile extends Component {
     this.getprofile();
   }
 
-  render({loading, success, err, canCreate, profile}, {}){
+  render({loading, success, err, canCreate, profile, userid}, {}){
     const bar = [];
     if(profile){
       bar.push(<Link to="/a/profile/edit"><Button outline>Edit</Button></Link>);
@@ -41,6 +43,9 @@ class Profile extends Component {
         <Section subsection sectionTitle="Profile">
           <ListItem label="contact email" item={profile.contact_email}/>
           <ListItem label="bio" item={profile.bio}/>
+          <ListItem label="profile image" item={profile.image && 
+            <Img rounded preview={profile.image} imgWidth={384} imgHeight={384} src={API.profile.image}/>
+          }/>
         </Section>
       </Card>}
     </div>;
@@ -49,8 +54,9 @@ class Profile extends Component {
 
 const mapStateToProps = (state)=>{
   const {loading, success, err, canCreate, profile} = state.Profile;
+  const {userid} = state.Auth;
   return {
-    loading, success, err, canCreate, profile,
+    loading, success, err, canCreate, profile, userid,
   };
 };
 

@@ -1,7 +1,9 @@
 import {h} from "preact";
 import Img from "component/image";
 
-const Card = ({size, square, restrictWidth, restrictHeight, center, titleBar, background, preview, title, children, bar})=>{
+const Card = ({size, square, restrictWidth, restrictHeight, center,
+  background, preview, imgHeight, imgWidth,
+  titleBar, title, children, bar})=>{
   let k = ["card"];
   if(size){
     switch(size){
@@ -34,12 +36,15 @@ const Card = ({size, square, restrictWidth, restrictHeight, center, titleBar, ba
   }
 
   return <div className={k.join(" ")}>
-    {title && <div className={titleclass}>
-      {!titleBar && <Img size="fill" src={background} preview={preview}>
-        <div className="title-inner">
-          {title}
-        </div>
-      </Img>}
+    {(title || title === "") && <div className={titleclass}>
+      {!titleBar &&
+        <Img size={size && "fill"} src={background} preview={preview}
+        imgHeight={imgHeight} imgWidth={imgWidth}>
+          <div className="title-inner">
+            {title}
+          </div>
+        </Img>
+      }
       {titleBar && <div className="title-inner">
         {title}
       </div>}

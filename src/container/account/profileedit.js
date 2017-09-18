@@ -12,10 +12,11 @@ import {EditProfileReq} from 'reducer/account/profile';
 class ProfileEdit extends Component {
   constructor(props){
     super(props);
+    const {bio, contact_email} = props.profile;
     this.state = {
-      bio: '',
-      contact_email: '',
-      image: '',
+      bio,
+      contact_email,
+      image: undefined,
     };
     this.editprofile = this.editprofile.bind(this);
     this.navigateProfile = this.navigateProfile.bind(this);
@@ -41,7 +42,7 @@ class ProfileEdit extends Component {
     }
   }
 
-  render({profile, editloading, editsuccess, editerr}, {}){
+  render({profile, editloading, editsuccess, editerr}, {contact_email, bio}){
     if(!profile){
       return false;
     }
@@ -52,8 +53,9 @@ class ProfileEdit extends Component {
     return <div>
       <Card size="md" restrictWidth center bar={bar}>
         <Section subsection sectionTitle="Profile">
-          <Input fullWidth label="contact email" onChange={linkstate(this, 'contact_email')}/>
-          <Input textarea fullWidth label="bio" onChange={linkstate(this, 'bio')}/>
+          <Input fullWidth label="contact email" value={contact_email} onChange={linkstate(this, 'contact_email')}/>
+          <Input textarea fullWidth label="bio" value={bio} onChange={linkstate(this, 'bio')}/>
+          <Input type="file" fullWidth label="profile image" onChange={linkstate(this, 'image')}/>
         </Section>
         {editerr && <span>{editerr}</span>}
         {editsuccess && <span>Changes saved</span>}

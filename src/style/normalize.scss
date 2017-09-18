@@ -7,6 +7,11 @@
 html, body {
   margin : 0;
   padding: 0;
+
+  &.dark {
+    background-color: $background-dark;
+    color           : $color-text-light-2;
+  }
 }
 
 input, button, submit {
@@ -24,4 +29,8 @@ textarea, input {
 
 .text-center {
   text-align: center;
+}
+
+:root {
+  background-color: $background-dark;
 }

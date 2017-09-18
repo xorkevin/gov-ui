@@ -1,4 +1,10 @@
 .img {
+  overflow: hidden;
+
+  &.rounded {
+    border-radius: 4px;
+  }
+
   &>.inner {
     position  : relative;
     width     : 100%;

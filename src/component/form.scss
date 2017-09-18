@@ -103,6 +103,16 @@ input, textarea {
     }
   }
 
+  &>input[type="file"] {
+    border-bottom: none;
+
+    & + label, & + label:hover {
+      &:after {
+        content: none;
+      }
+    }
+  }
+
   &>textarea {
     padding      : 4px 0;
     border       : none;

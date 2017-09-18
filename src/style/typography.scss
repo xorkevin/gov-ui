@@ -1,10 +1,6 @@
 @import "vars";
 @import "color";
 
-:root {
-  background-color: $background-dark;
-}
-
 html, body {
   font-size       : $typography-base-size;
   font-family     : $typography-base-font;
@@ -17,9 +13,6 @@ html, body {
   transition      : $transition-normal;
 
   &.dark {
-    background-color: $background-dark;
-    color           : $color-text-light-2;
-
     h1, h2, h3, h4, h5, h6 {
       color: $color-text-light-1-5;
     }
