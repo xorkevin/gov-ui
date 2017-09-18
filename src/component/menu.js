@@ -1,4 +1,5 @@
 import {h, Component} from 'preact';
+import {isWeb} from 'utility';
 import Portal from 'preact-portal';
 
 class MenuContainer extends Component {
@@ -9,8 +10,13 @@ class MenuContainer extends Component {
     });
   }
 
+  componentWillMount(){
+    if(isWeb()){
+      this.tick();
+    }
+  }
+
   componentDidMount(){
-    this.tick();
     this.running = false;
     this.handler = ()=>{
       if(!this.running){
@@ -53,29 +59,28 @@ class MenuContainer extends Component {
         k.push(size);
     }
 
-    t.left = bounds.width / 2;
-
-    if(align === "right"){
-      s.left = bounds.right;
-      k.push("right");
-      t.left *= -1;
-    } else {
-      s.left = bounds.left;
-      k.push("left");
-    }
-    if(position === "top"){
-      s.top = bounds.top;
-      k.push("top");
-    } else {
-      s.top = bounds.bottom;
-      k.push("bottom");
-    }
-
-
-    if(fixed){
-      k.push("fixed");
-    } else {
-      s.top += scrollY;
+    if(bounds){
+      t.left = bounds.width / 2;
+      if(align === "right"){
+        s.left = bounds.right;
+        k.push("right");
+        t.left *= -1;
+      } else {
+        s.left = bounds.left;
+        k.push("left");
+      }
+      if(position === "top"){
+        s.top = bounds.top;
+        k.push("top");
+      } else {
+        s.top = bounds.bottom;
+        k.push("bottom");
+      }
+      if(fixed){
+        k.push("fixed");
+      } else {
+        s.top += scrollY;
+      }
     }
 
     return <div className={k.join(" ")} style={s}>

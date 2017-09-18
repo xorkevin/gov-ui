@@ -1,6 +1,10 @@
 @import "vars";
 @import "color";
 
+:root {
+  background-color: $background-dark;
+}
+
 html, body {
   font-size       : $typography-base-size;
   font-family     : $typography-base-font;
