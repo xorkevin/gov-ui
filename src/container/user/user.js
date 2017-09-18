@@ -39,7 +39,7 @@ class UserDetails extends Component {
     return <Section container padded>
       <Grid>
         <Column sm={8} md={6}>
-          {user && <Card title="" restrictHeight imgHeight={384} imgWidth={384} background={formatStr(API.profile.idimage, user.userid)} preview={user.image}>
+          {user && <Card title="" imgHeight={384} imgWidth={384} background={formatStr(API.profile.idimage, user.userid)} preview={user.image}>
             <h4>{user.first_name} {user.last_name}</h4>
             <h5>{user.username}</h5>
           </Card>}
