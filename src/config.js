@@ -5,6 +5,8 @@ const ubase = apibase + '/u';
 const userbase = ubase + '/user';
 const passwordbase = userbase + '/password';
 const authbase = ubase + '/auth';
+const profilebase = apibase + '/profile';
+
 const API = {
   setupz: setupzbase,
   healthz: {
@@ -36,6 +38,13 @@ const API = {
       exchange: authbase + '/exchange',
       refresh: authbase + '/refresh',
     },
+  },
+  profile: {
+    new: profilebase,
+    get: profilebase,
+    image: profilebase + '/image',
+    id: profilebase + '/{0}',
+    idimage: profilebase + '/{0}/image',
   },
 };
 

@@ -12,6 +12,7 @@ class UserDetails extends Component {
     super(props);
     this.state = {
       err: false,
+      errProf: false,
       username: props.match.params.username || '',
       user: false,
     };
@@ -20,16 +21,10 @@ class UserDetails extends Component {
 
   fetchUser(){
     if(this.state.username.length > 0){
-      this.props.userbyname(this.state.username, (err, user)=>{
-        if(err){
-          this.setState((prevState)=>{
-            return Object.assign({}, prevState, {err});
-          });
-        } else {
-          this.setState((prevState)=>{
-            return Object.assign({}, prevState, {err: false, user});
-          });
-        }
+      this.props.userbyname(this.state.username, (err, errProf, user)=>{
+        this.setState((prevState)=>{
+          return Object.assign({}, prevState, {err, errProf, user});
+        });
       });
     }
   }
@@ -38,7 +33,7 @@ class UserDetails extends Component {
     this.fetchUser();
   }
 
-  render({}, {err, username, user}){
+  render({}, {err, errProf, username, user}){
     return <Section container padded>
       <Grid>
         <Column sm={8} md={6}>
@@ -47,6 +42,7 @@ class UserDetails extends Component {
             <h5>{user.username}</h5>
           </Card>}
           {err && <span>{err}</span>}
+          {errProf && <span>{errProf}</span>}
         </Column>
         <Column sm={16} md={18}>
         </Column>
@@ -63,11 +59,7 @@ const mapDispatchToProps = (dispatch)=>{
   return {
     userbyname: async (username, callback)=>{
       const data = await dispatch(GetUserByName(username));
-      if(data.err){
-        callback(data.err);
-      } else {
-        callback(false, data.data);
-      }
+      callback(data.err, data.profileErr, data.data);
     },
   };
 };
