@@ -26,7 +26,7 @@ class AccountDetails extends Component {
   }
 
   render({getuserloading, getusererr, userid, username, firstname, lastname, authTags, email, creationTime}){
-    return <Section container narrow padded sectionTitle="Settings">
+    return <div>
       {!getuserloading && getusererr && <span>{getusererr}</span>}
       {!getuserloading && <Card size="lg" restrictWidth center>
         <Section subsection sectionTitle="Account Details">
@@ -39,7 +39,7 @@ class AccountDetails extends Component {
           <ListItem label="creation time" item={<Time value={creationTime}/>}/>
         </Section>
       </Card>}
-    </Section>;
+    </div>;
   }
 }
 
