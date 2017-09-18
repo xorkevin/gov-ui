@@ -41,6 +41,7 @@ const API = {
   },
   profile: {
     new: profilebase,
+    edit: profilebase,
     get: profilebase,
     image: profilebase + '/image',
     id: profilebase + '/{0}',

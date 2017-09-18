@@ -13,21 +13,31 @@ class Profile extends Component {
   constructor(props){
     super(props);
     this.getprofile = this.getprofile.bind(this);
+    this.createprofile = this.createprofile.bind(this);
   }
 
   getprofile(){
     this.props.getprofile();
   }
 
+  createprofile(){
+    this.props.createprofile();
+  }
+
   componentDidMount(){
     this.getprofile();
   }
 
-  render({loading, success, err, canCreate, profile, createloading, createsuccess, createerr}, {}){
+  render({loading, success, err, canCreate, profile}, {}){
+    const bar = [];
+    if(profile){
+      bar.push(<Link to="/a/profile/edit"><Button outline>Edit</Button></Link>);
+    }
+
     return <div>
       {!loading && err && <span>{err}</span>}
-      {!loading && canCreate && <Link to="/a/profile/create"><Button primary>Create Profile</Button></Link>}
-      {!loading && profile && <Card size="lg" restrictWidth center>
+      {!loading && canCreate && <Button primary onClick={this.createprofile}>Create Profile</Button>}
+      {!loading && profile && <Card size="lg" restrictWidth center bar={bar}>
         <Section subsection sectionTitle="Profile">
           <ListItem label="contact email" item={profile.contact_email}/>
           <ListItem label="bio" item={profile.bio}/>
@@ -49,8 +59,9 @@ const mapDispatchToProps = (dispatch)=>{
     getprofile: ()=>{
       dispatch(GetProfileReq());
     },
-    createprofile: (options)=>{
-      dispatch(CreateProfileReq(options));
+    createprofile: async ()=>{
+      await dispatch(CreateProfileReq());
+      dispatch(GetProfileReq());
     },
   };
 };

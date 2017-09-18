@@ -18,7 +18,7 @@ const CreateProfileErr = (err)=>{
   };
 };
 
-const CreateProfileReq = (options)=>{
+const CreateProfileReq = ()=>{
   return async (dispatch)=>{
     dispatch({
       type: CREATEPROFILE,
@@ -34,7 +34,7 @@ const CreateProfileReq = (options)=>{
         headers: {'Content-Type': 'application/json'},
         //TODO: change to same-origin
         credentials: 'include',
-        body: JSON.stringify(options),
+        body: JSON.stringify({}),
       });
       const status = response.status;
       if(status < 200 || status >= 300){
@@ -48,6 +48,57 @@ const CreateProfileReq = (options)=>{
       dispatch(CreateProfileSuccess());
     } catch(e){
       dispatch(CreateProfileErr(e.message));
+    }
+  };
+};
+
+const EDITPROFILE = Symbol('EDITPROFILE');
+const EDITPROFILE_SUCCESS = Symbol('EDITPROFILE_SUCCESS');
+const EDITPROFILE_ERR = Symbol('EDITPROFILE_ERR');
+
+const EditProfileSuccess = ()=>{
+  return {
+    type: EDITPROFILE_SUCCESS,
+  };
+};
+
+const EditProfileErr = (err)=>{
+  return {
+    type: EDITPROFILE_ERR,
+    err,
+  };
+};
+
+const EditProfileReq = (options)=>{
+  return async (dispatch)=>{
+    dispatch({
+      type: EDITPROFILE,
+    });
+    const {relogin} = await dispatch(ReLogin());
+    if(relogin){
+      dispatch(EditProfileErr('Need to reauthenticate'));
+      return;
+    }
+    try {
+      const response = await fetch(API.profile.edit, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        //TODO: change to same-origin
+        credentials: 'include',
+        body: JSON.stringify(options),
+      });
+      const status = response.status;
+      if(status < 200 || status >= 300){
+        const data = await response.json();
+        if(data && data.message){
+          throw new Error(data.message);
+        } else {
+          throw new Error('Could not edit account');
+        }
+      }
+      dispatch(EditProfileSuccess());
+    } catch(e){
+      dispatch(EditProfileErr(e.message));
     }
   };
 };
@@ -108,6 +159,9 @@ const defaultState = {
   createloading: false,
   createsuccess: false,
   createerr: false,
+  editloading: false,
+  editsuccess: false,
+  editerr: false,
   loading: false,
   success: false,
   profile: false,
@@ -137,6 +191,22 @@ const Profile = (state=initState(), action)=>{
         createsuccess: false,
         createerr: action.err,
       });
+    case EDITPROFILE:
+      return Object.assign({}, state, {
+        editloading: true,
+      });
+    case EDITPROFILE_SUCCESS:
+      return Object.assign({}, state, {
+        editloading: false,
+        editsuccess: true,
+        editerr: false,
+      });
+    case EDITPROFILE_ERR:
+      return Object.assign({}, state, {
+        editloading: false,
+        editsuccess: false,
+        editerr: action.err,
+      });
     case GETPROFILE:
       return Object.assign({}, state, {
         loading: true,
@@ -162,5 +232,5 @@ const Profile = (state=initState(), action)=>{
 };
 
 export {
-  Profile, CreateProfileReq, GetProfileReq,
+  Profile, CreateProfileReq, EditProfileReq, GetProfileReq,
 }

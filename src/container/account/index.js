@@ -9,7 +9,7 @@ class Account extends Component {
     return <Section container narrow padded sectionTitle="Settings">
       <Switch>
         <Route path={`${match.path}/account`} component={Loader(()=>{return import('container/account/details');})}/>
-        <Route path={`${match.path}/profile/create`} component={Loader(()=>{return import('container/account/profilenew');})}/>
+        <Route path={`${match.path}/profile/edit`} component={Loader(()=>{return import('container/account/profileedit');})}/>
         <Route path={`${match.path}/profile`} component={Loader(()=>{return import('container/account/profile');})}/>
         <Redirect to={`${match.path}/account`}/>
       </Switch>

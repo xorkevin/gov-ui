@@ -7,9 +7,9 @@ import Input from 'component/form';
 import Button from 'component/button';
 
 import {connect} from 'preact-redux';
-import {CreateProfileReq} from 'reducer/account/profile';
+import {EditProfileReq} from 'reducer/account/profile';
 
-class ProfileNew extends Component {
+class ProfileEdit extends Component {
   constructor(props){
     super(props);
     this.state = {
@@ -17,7 +17,7 @@ class ProfileNew extends Component {
       contact_email: '',
       image: '',
     };
-    this.createprofile = this.createprofile.bind(this);
+    this.editprofile = this.editprofile.bind(this);
     this.navigateProfile = this.navigateProfile.bind(this);
   }
 
@@ -25,34 +25,29 @@ class ProfileNew extends Component {
     this.props.history.replace('/a/profile');
   }
 
-  createprofile(){
-    console.log(this.state);
-    //this.props.createprofile(this.state);
+  editprofile(){
+    this.props.editprofile(this.state);
   }
 
   componentDidMount(){
-    if(!this.props.canCreate){
+    if(!this.props.profile){
       this.navigateProfile();
     }
   }
 
   componentWillReceiveProps(nextProps){
-    if(!nextProps.canCreate){
+    if(!nextProps.profile){
       this.navigateProfile();
     }
   }
 
-  render({canCreate, createsuccess, createerr}, {}){
-    if(!canCreate){
+  render({profile, editloading, editsuccess, editerr}, {}){
+    if(!profile){
       return false;
     }
     const bar = [];
-    if(createsuccess){
-      bar.push(<Link to="/a/profile"><Button outline>Back</Button></Link>);
-    } else {
-      bar.push(<Link to="/a/profile"><Button text>Cancel</Button></Link>);
-      bar.push(<Button primary onClick={this.createprofile}>Create</Button>);
-    }
+    bar.push(<Link to="/a/profile"><Button text>Back</Button></Link>);
+    bar.push(<Button primary onClick={this.editprofile}>Save</Button>);
 
     return <div>
       <Card size="md" restrictWidth center bar={bar}>
@@ -60,29 +55,29 @@ class ProfileNew extends Component {
           <Input fullWidth label="contact email" onChange={linkstate(this, 'contact_email')}/>
           <Input textarea fullWidth label="bio" onChange={linkstate(this, 'bio')}/>
         </Section>
-        {createerr && <span>{createerr}</span>}
-        {createsuccess && <span>Profile created</span>}
+        {editerr && <span>{editerr}</span>}
+        {editsuccess && <span>Changes saved</span>}
       </Card>
     </div>;
   }
 }
 
 const mapStateToProps = (state)=>{
-  const {canCreate, createsuccess, createerr} = state.Profile;
+  const {profile, editloading, editsuccess, editerr} = state.Profile;
   return {
-    canCreate, createsuccess, createerr,
+    profile, editloading, editsuccess, editerr,
   };
 };
 
 const mapDispatchToProps = (dispatch)=>{
   return {
-    createprofile: (options)=>{
-      dispatch(CreateProfileReq(options));
+    editprofile: (options)=>{
+      dispatch(EditProfileReq(options));
     },
   };
 };
 
-ProfileNew = connect(mapStateToProps, mapDispatchToProps)(ProfileNew);
-ProfileNew = withRouter(ProfileNew);
+ProfileEdit = connect(mapStateToProps, mapDispatchToProps)(ProfileEdit);
+ProfileEdit = withRouter(ProfileEdit);
 
-export default ProfileNew
+export default ProfileEdit
