@@ -61,6 +61,18 @@ html, body {
     font-size: 0.6em;
   }
 
+  h1, h2, h3 {
+    small {
+      font-size: 0.6em;
+    }
+  }
+
+  h4, h5, h6 {
+    small {
+      font-size: 0.8em;
+    }
+  }
+
   a {
     color          : $color-primary;
     text-decoration: unset;

@@ -5,6 +5,7 @@ import {withRouter} from 'react-router-dom';
 import {Grid, Column} from 'component/grid';
 import Section from 'component/section';
 import Card from 'component/card';
+import Time from 'component/time';
 
 import {connect} from 'preact-redux';
 import {GetUserByName} from 'reducer/user';
@@ -40,8 +41,9 @@ class UserDetails extends Component {
       <Grid>
         <Column sm={8} md={6}>
           {user && <Card title="" imgHeight={384} imgWidth={384} background={formatStr(API.profile.idimage, user.userid)} preview={user.image}>
-            <h4>{user.first_name} {user.last_name}</h4>
-            <h5>{user.username}</h5>
+            <h4>{user.first_name} {user.last_name} <small>@{user.username}</small></h4>
+            <h6>joined <Time value={user.creation_time}/></h6>
+            {user.bio && <p>{user.bio}</p>}
           </Card>}
           {err && <span>{err}</span>}
           {errProf && <span>{errProf}</span>}

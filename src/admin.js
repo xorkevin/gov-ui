@@ -50,7 +50,7 @@ class Admin extends Component {
           <Route exact path="/" component={Protected(Loader(()=>{return import('container/admin');}))}/>
           <Route path="/x" component={Loader(()=>{return import('container/login');})}/>
           <Route path="/a" component={Protected(Loader(()=>{return import('container/account');}))}/>
-          <Route path="/u" component={Loader(()=>{return import('container/user');})}/>
+          <Route path="/u" component={Protected(Loader(()=>{return import('container/user');}))}/>
           <Route path="/health" component={Protected(Loader(()=>{return import('container/health');}), 'admin')}/>
           <Route path="/setup" component={Loader(()=>{return import('container/setup');})}/>
           <Redirect to="/"/>
