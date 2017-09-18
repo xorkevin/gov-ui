@@ -38,7 +38,7 @@ const Card = ({size, square, restrictWidth, restrictHeight, center,
   return <div className={k.join(" ")}>
     {(title || title === "") && <div className={titleclass}>
       {!titleBar &&
-        <Img size={size && "fill"} src={background} preview={preview}
+        <Img className="card-title-image" size={size && "fill"} src={background} preview={preview}
         imgHeight={imgHeight} imgWidth={imgWidth}>
           <div className="title-inner">
             {title}
