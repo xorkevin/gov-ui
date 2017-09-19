@@ -1,4 +1,5 @@
 import {h, Component} from 'preact';
+import {formatStr} from 'utility';
 import {API} from 'config';
 import {Link} from 'react-router-dom';
 import linkstate from 'linkstate';
@@ -44,7 +45,7 @@ class Profile extends Component {
           <ListItem label="contact email" item={profile.contact_email}/>
           <ListItem label="bio" item={profile.bio}/>
           <ListItem label="profile image" item={profile.image && 
-            <Img rounded preview={profile.image} imgWidth={384} imgHeight={384} src={API.profile.image}/>
+            <Img rounded preview={profile.image} imgWidth={384} imgHeight={384} src={formatStr(API.profile.idimage, userid)}/>
           }/>
         </Section>
       </Card>}

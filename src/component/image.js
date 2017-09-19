@@ -26,6 +26,9 @@ class Img extends Component {
   }
 
   tick(){
+    if(!this.elem){
+      return false;
+    }
     const innerHeight = window.innerHeight;
     const {top: elemTop, bottom: elemBottom} = this.elem.getBoundingClientRect();
     const halfHeight = innerHeight / 4;
@@ -80,6 +83,10 @@ class Img extends Component {
       window.addEventListener('resize', this.handler);
       this.handler();
     }
+  }
+
+  componentWillReceiveProps(nextProps){
+    return Object.assign({}, prevState, {imgsrc: nextProps.src});
   }
 
   componentWillUnmount(){
