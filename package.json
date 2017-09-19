@@ -39,9 +39,9 @@
     "node-sass": "^4.5.3",
     "sass-loader": "^6.0.6",
     "sw-precache-webpack-plugin": "^0.11.4",
-    "webpack": "^3.5.5",
+    "webpack": "^3.6.0",
     "webpack-bundle-analyzer": "^2.9.0",
-    "webpack-dev-server": "^2.7.1",
+    "webpack-dev-server": "^2.8.2",
     "webpack-md5-hash": "0.0.5"
   },
   "dependencies": {

@@ -37,6 +37,9 @@ $hero-lg-size: $hero-md-size * 1.5 !default;
 $nav-height: 64px !default;
 $nav-width : 64px !default;
 
+// Tab //
+$tab-height: 32px !default;
+
 // Transitions //
 $transition-normal: 0.125s cubic-bezier(0.4, 0, 0.2, 1);
 $transition-fast  : 0.0625s cubic-bezier(0.4, 0, 0.2, 1);
