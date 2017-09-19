@@ -36,6 +36,7 @@ class Admin extends Component {
       {loggedIn && <Navbar sidebar left={[
         {key: 'home', home: true, component: <NavLink exact to="/"><FaIcon icon="home"/><small>Home</small></NavLink>},
         {key: 'health', component: <NavLink to="/health"><FaIcon icon="server"/><small>Health</small></NavLink>},
+        {key: 'manage', component: <NavLink to="/manage"><FaIcon icon="building-o"/><small>Manage</small></NavLink>},
       ]} right={[
         {key: 'settings', component: <Menu icon={[<FaIcon icon="cog"/>, <small>Settings</small>]} size="md" fixed align="left" position="top">
           <Link to="/a/account"><FaIcon icon="address-card-o"/> Account</Link>
@@ -51,6 +52,7 @@ class Admin extends Component {
           <Route path="/x" component={Loader(()=>{return import('container/login');})}/>
           <Route path="/a" component={Protected(Loader(()=>{return import('container/account');}))}/>
           <Route path="/u" component={Protected(Loader(()=>{return import('container/user');}))}/>
+          <Route path="/manage" component={Protected(Loader(()=>{return import('container/manage');}), 'admin')}/>
           <Route path="/health" component={Protected(Loader(()=>{return import('container/health');}), 'admin')}/>
           <Route path="/setup" component={Loader(()=>{return import('container/setup');})}/>
           <Redirect to="/"/>

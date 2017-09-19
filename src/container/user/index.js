@@ -3,9 +3,6 @@ import {Switch, Route, Redirect, withRouter} from 'react-router-dom';
 
 import Loader from 'loader';
 
-import {connect} from 'preact-redux';
-import {GetUserByName} from 'reducer/user';
-
 class UserContainer extends Component {
   render({match}){
     return <Switch>
