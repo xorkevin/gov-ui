@@ -101,9 +101,17 @@ const GetUserByID = (userid)=>{
 
 const GetUserAccountByName = (username)=>{
   return async (dispatch)=>{
+    const {relogin} = await dispatch(ReLogin());
+    if(relogin){
+      return {
+        err: 'Need to reauthenticate',
+      };
+    }
     try {
-      const response = await fetch(formatStr(API.u.user.name, username), {
+      const response = await fetch(formatStr(API.u.user.nameprivate, username), {
         method: 'GET',
+        //TODO: change to same-origin
+        credentials: 'include',
       });
       const status = response.status;
       const data = await response.json();
