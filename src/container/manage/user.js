@@ -54,10 +54,10 @@ class ManageUser extends Component {
   save(){
     const rank = {};
     if(this.state.rank.add.length > 0){
-      rank.add = this.state.rank.add;
+      rank.add = this.state.rank.add.split(',').map(tag=> tag.trim()).join(',');
     }
     if(this.state.rank.remove.length > 0){
-      rank.remove = this.state.rank.remove;
+      rank.remove = this.state.rank.remove.split(',').map(tag=> tag.trim()).join(',');
     }
     this.props.patchrank(this.state.user.userid, rank, (err)=>{
       if(err){
@@ -98,8 +98,8 @@ class ManageUser extends Component {
           <ListItem label="userid" item={user.userid}/>
           <ListItem label="username" item={user.username}/>
           <ListItem label="current roles" item={user.auth_tags.split(',').map((tag)=>{return <Chip>{tag}</Chip>;})}/>
-          <ListItem label="roles to add" item={rank.add.split(',').map((tag)=>{return <Chip>{tag}</Chip>;})}/>
-          <ListItem label="roles to remove" item={rank.remove.split(',').map((tag)=>{return <Chip>{tag}</Chip>;})}/>
+          <ListItem label="roles to add" item={rank.add.split(',').map((tag)=>{return <Chip>{tag.trim()}</Chip>;})}/>
+          <ListItem label="roles to remove" item={rank.remove.split(',').map((tag)=>{return <Chip>{tag.trim()}</Chip>;})}/>
           <Input fullWidth label="add" onChange={linkstate(this, 'rank.add')}/>
           <Input fullWidth label="remove" onChange={linkstate(this, 'rank.remove')}/>
           {err && <span>{err}</span>}
