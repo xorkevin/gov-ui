@@ -2,7 +2,6 @@ import {h, Component} from 'preact';
 import {formatStr} from 'utility';
 import {API} from 'config';
 import {Link} from 'react-router-dom';
-import linkstate from 'linkstate';
 import Section from 'component/section';
 import Card from 'component/card';
 import ListItem from 'component/list';

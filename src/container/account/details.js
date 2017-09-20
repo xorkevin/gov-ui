@@ -1,10 +1,9 @@
 import {h, Component} from 'preact';
+import {Link} from 'react-router-dom';
 import Section from 'component/section';
 import Card from 'component/card';
-import Menu from 'component/menu';
 import ListItem from 'component/list';
 import Chip from 'component/chip';
-import FaIcon from 'component/faicon';
 import Button from 'component/button';
 import Time from 'component/time';
 
@@ -26,9 +25,12 @@ class AccountDetails extends Component {
   }
 
   render({getuserloading, getusererr, userid, username, firstname, lastname, authTags, email, creationTime}){
+    const bar = [];
+    bar.push(<Link to="/a/account/edit"><Button outline>Edit</Button></Link>);
+
     return <div>
       {!getuserloading && getusererr && <span>{getusererr}</span>}
-      {!getuserloading && <Card size="lg" restrictWidth center>
+      {!getuserloading && <Card size="lg" restrictWidth center bar={bar}>
         <Section subsection sectionTitle="Account Details">
           <ListItem label="userid" item={userid}/>
           <ListItem label="username" item={username}/>

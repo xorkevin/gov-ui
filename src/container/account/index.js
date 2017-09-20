@@ -13,6 +13,7 @@ class Account extends Component {
         {key: 'profile', component: <NavLink to={`${match.path}/profile`}>Profile</NavLink>},
       ]}/>
       <Switch>
+        <Route path={`${match.path}/account/edit`} component={Loader(()=>{return import('container/account/detailsedit');})}/>
         <Route path={`${match.path}/account`} component={Loader(()=>{return import('container/account/details');})}/>
         <Route path={`${match.path}/profile/edit`} component={Loader(()=>{return import('container/account/profileedit');})}/>
         <Route path={`${match.path}/profile`} component={Loader(()=>{return import('container/account/profile');})}/>

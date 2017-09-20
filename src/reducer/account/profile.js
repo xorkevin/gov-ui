@@ -42,7 +42,7 @@ const CreateProfileReq = ()=>{
         if(data && data.message){
           throw new Error(data.message);
         } else {
-          throw new Error('Could not create account');
+          throw new Error('Could not create profile');
         }
       }
       dispatch(CreateProfileSuccess());
@@ -114,7 +114,7 @@ const EditProfileReq = (options)=>{
         if(data && data.message){
           throw new Error(data.message);
         } else {
-          throw new Error('Could not edit account');
+          throw new Error('Could not edit profile');
         }
       }
 
@@ -173,7 +173,7 @@ const GetProfileReq = ()=>{
       } else if(data && data.message){
         throw new Error(data.message);
       } else {
-        throw new Error('Could not get account');
+        throw new Error('Could not get profile');
       }
     } catch(e){
       dispatch(GetProfileErr(e.message));

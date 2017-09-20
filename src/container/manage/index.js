@@ -9,7 +9,7 @@ class ManageContainer extends Component {
   render({match}){
     return <Section container narrow padded sectionTitle="Settings">
       <Tabbar left={[
-        {key: 'user', component: <NavLink to={`${match.path}/user`}>Account</NavLink>},
+        {key: 'user', component: <NavLink to={`${match.path}/user`}>User</NavLink>},
       ]}/>
       <Switch>
         <Route path={`${match.url}/user/:username?`}

@@ -47,7 +47,7 @@ class ProfileEdit extends Component {
       return false;
     }
     const bar = [];
-    bar.push(<Link to="/a/profile"><Button text>Back</Button></Link>);
+    bar.push(<Link to="/a/profile"><Button text>Cancel</Button></Link>);
     bar.push(<Button primary onClick={this.editprofile}>Save</Button>);
 
     return <div>
