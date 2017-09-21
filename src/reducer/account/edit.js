@@ -102,6 +102,59 @@ const GetSessionReq = ()=>{
   };
 };
 
+const DELSESSION = Symbol('DELSESSION');
+const DELSESSION_SUCCESS = Symbol('DELSESSION_SUCCESS');
+const DELSESSION_ERR = Symbol('DELSESSION_ERR');
+
+const DelSessionSuccess = ()=>{
+  return {
+    type: DELSESSION_SUCCESS,
+  };
+};
+
+const DelSessionErr = (err)=>{
+  return {
+    type: DELSESSION_ERR,
+    err,
+  };
+};
+
+const DelSessionReq = (sessions)=>{
+  return async (dispatch)=>{
+    dispatch({
+      type: DELSESSION,
+    });
+    const {relogin} = await dispatch(ReLogin());
+    if(relogin){
+      dispatch(DelSessionErr('Need to reauthenticate'));
+      return;
+    }
+    try {
+      const response = await fetch(API.u.user.sessions, {
+        method: 'DELETE',
+        headers: {'Content-Type': 'application/json'},
+        //TODO: change to same-origin
+        credentials: 'include',
+        body: JSON.stringify({session_ids: sessions}),
+      });
+      const status = response.status;
+      if(status < 200 || status >= 300){
+        const data = await response.json();
+        if(data && data.message){
+          throw new Error(data.message);
+        } else {
+          throw new Error('Could not delete sessions');
+        }
+      }
+      dispatch(DelSessionSuccess());
+      return true;
+    } catch(e){
+      dispatch(DelSessionErr(e.message));
+    }
+    return false;
+  };
+};
+
 const defaultState = {
   loading: false,
   success: false,
@@ -117,6 +170,7 @@ const EditAccount = (state=initState(), action)=>{
   switch(action.type){
     case EDITACCOUNT:
     case GETSESSION:
+    case DELSESSION:
       return Object.assign({}, state, {
         loading: true,
       });
@@ -133,8 +187,15 @@ const EditAccount = (state=initState(), action)=>{
         err: false,
         sessions: action.sessions,
       });
+    case DELSESSION_SUCCESS:
+      return Object.assign({}, state, {
+        loading: false,
+        success: true,
+        err: false,
+      });
     case EDITACCOUNT_ERR:
     case GETSESSION_ERR:
+    case DELSESSION_ERR:
       return Object.assign({}, state, {
         loading: false,
         success: false,
@@ -146,5 +207,5 @@ const EditAccount = (state=initState(), action)=>{
 };
 
 export {
-  EditAccount, EditAccountReq, GetSessionReq,
+  EditAccount, EditAccountReq, GetSessionReq, DelSessionReq,
 }

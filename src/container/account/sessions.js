@@ -8,7 +8,7 @@ import ListItem from 'component/list';
 import Time from 'component/time';
 
 import {connect} from 'preact-redux';
-import {GetSessionReq} from 'reducer/account/edit';
+import {GetSessionReq, DelSessionReq} from 'reducer/account/edit';
 
 class AccountSessions extends Component {
   constructor(props){
@@ -21,8 +21,11 @@ class AccountSessions extends Component {
   }
 
   deletesessions(){
-    console.log('delete', Array.from(this.state.session_ids));
-    //this.props.deletesessions(this.state);
+    this.props.deletesessions(Array.from(this.state.session_ids), (success)=>{
+      if(success){
+        this.getsessions();
+      }
+    });
   }
 
   getsessions(){
@@ -79,6 +82,10 @@ const mapDispatchToProps = (dispatch)=>{
   return {
     getsessions: ()=>{
       dispatch(GetSessionReq());
+    },
+    deletesessions: async (sessions, callback)=>{
+      const success = await dispatch(DelSessionReq(sessions));
+      callback(success);
     },
   };
 };
