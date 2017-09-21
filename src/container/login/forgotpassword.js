@@ -16,21 +16,38 @@ class ForgotContainer extends Component {
     super(props);
     this.state = {
       username: '',
+      success: false,
+      err: false,
     };
     this.forgotpassword = this.forgotpassword.bind(this);
   }
 
-  forgotpassword(){
-    this.props.forgotpassword(this.state.username);
+  async forgotpassword(){
+    const {err} = await this.props.forgotpassword(this.state.username);
+    if(err){
+      this.setState((prevState)=>{
+        return Object.assign({}, prevState, {
+          success: false,
+          err,
+        });
+      });
+    } else {
+      this.setState((prevState)=>{
+        return Object.assign({}, prevState, {
+          success: true,
+          err: false,
+        });
+      });
+    }
   }
 
-  render({success, config, err}){
+  render({}, {success, err}){
     const bar = [];
-    if(!success){
+    if(success){
+      bar.push(<Link to="/x/forgotconfirm"><Button outline>Confirm</Button></Link>);
+    } else {
       bar.push(<Link to="/x/login"><Button text>Cancel</Button></Link>);
       bar.push(<Button primary onClick={this.confirmaccount}>Submit</Button>);
-    } else {
-      bar.push(<Link to="/x/forgotconfirm"><Button outline>Confirm</Button></Link>);
     }
 
     return <Section container padded>
@@ -38,7 +55,7 @@ class ForgotContainer extends Component {
         <h3>Forgot password</h3>
       ]} bar={bar}>
         <Input label="username" fullWidth onEnter={this.forgotpassword} onChange={linkState(this, 'username')}/>
-        {!success && err && <span>{err}</span>}
+        {err && <span>{err}</span>}
         {success && <span>
           <span>Reset your password with a code emailed to you</span>
         </span>}
@@ -48,16 +65,13 @@ class ForgotContainer extends Component {
 }
 
 const mapStateToProps = (state)=>{
-  const {success, err} = state.ForgotPassword;
-  return {
-    success, err,
-  };
+  return {};
 };
 
 const mapDispatchToProps = (dispatch)=>{
   return {
     forgotpassword: (username)=>{
-      dispatch(ForgotPasswordReq(username));
+      return dispatch(ForgotPasswordReq(username));
     },
   };
 };

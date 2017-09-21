@@ -19,11 +19,13 @@ class ConfirmReset extends Component {
       newPassword: '',
       clienterr: false,
       passwordConfirm: '',
+      success: false,
+      err: false,
     };
     this.resetpassword = this.resetpassword.bind(this);
   }
 
-  resetpassword(){
+  async resetpassword(){
     const {newPassword, passwordConfirm, key} = this.state;
     if(newPassword !== passwordConfirm){
       this.setState((prevState)=>{
@@ -33,17 +35,32 @@ class ConfirmReset extends Component {
       this.setState((prevState)=>{
         return Object.assign({}, prevState, {clienterr: false});
       });
-      this.props.resetpassword(key, newPassword);
+      const {err} = await this.props.resetpassword(key, newPassword);
+      if(err){
+        this.setState((prevState)=>{
+          return Object.assign({}, prevState, {
+            success: false,
+            err,
+          });
+        });
+      } else {
+        this.setState((prevState)=>{
+          return Object.assign({}, prevState, {
+            success: true,
+            err: false,
+          });
+        });
+      }
     }
   }
 
-  render({success, config, err}, {key}){
+  render({}, {success, err, key}){
     const bar = [];
-    if(!success){
+    if(success){
+      bar.push(<Link to="/x/login"><Button outline>Sign in</Button></Link>);
+    } else {
       bar.push(<Link to="/x/login"><Button text>Cancel</Button></Link>);
       bar.push(<Button primary onClick={this.resetpassword}>Submit</Button>);
-    } else {
-      bar.push(<Link to="/x/login"><Button outline>Sign in</Button></Link>);
     }
 
     return <Section container padded>
@@ -53,7 +70,7 @@ class ConfirmReset extends Component {
         <Input label="code" fullWidth value={key} onChange={linkState(this, 'key')}/>
         <Input label="new password" type="password" fullWidth onChange={linkState(this, 'newPassword')}/>
         <Input label="confirm password" type="password" fullWidth onEnter={this.resetpassword} onChange={linkState(this, 'passwordConfirm')}/>
-        {!success && err && <span>{err}</span>}
+        {err && <span>{err}</span>}
         {success && <span>
           <span>Your password has been reset</span>
         </span>}
@@ -63,17 +80,13 @@ class ConfirmReset extends Component {
 }
 
 const mapStateToProps = (state)=>{
-  const {confirmsuccess, confirmerr} = state.ForgotPassword;
-  return {
-    success: confirmsuccess,
-    err: confirmerr,
-  };
+  return {};
 };
 
 const mapDispatchToProps = (dispatch)=>{
   return {
     resetpassword: (key, new_password)=>{
-      dispatch(ConfirmResetReq(key, new_password));
+      return dispatch(ConfirmResetReq(key, new_password));
     },
   };
 };
