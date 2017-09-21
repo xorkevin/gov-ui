@@ -20,6 +20,8 @@ class CreateAccount extends Component {
         first_name: '',
         last_name: '',
       },
+      success: false,
+      err: false,
       clienterr: false,
       password_confirm: '',
       email_confirm: '',
@@ -27,7 +29,7 @@ class CreateAccount extends Component {
     this.createaccount = this.createaccount.bind(this);
   }
 
-  createaccount(){
+  async createaccount(){
     const {password, email} = this.state.form;
     const {password_confirm, email_confirm} = this.state;
     if(password !== password_confirm){
@@ -42,17 +44,32 @@ class CreateAccount extends Component {
       this.setState((prevState)=>{
         return Object.assign({}, prevState, {clienterr: false});
       });
-      this.props.createaccount(this.state.form);
+      const {err} = await this.props.createaccount(this.state.form);
+      if(err){
+        this.setState((prevState)=>{
+          return Object.assign({}, prevState, {
+            success: false,
+            err,
+          });
+        });
+      } else {
+        this.setState((prevState)=>{
+          return Object.assign({}, prevState, {
+            success: true,
+            err: false,
+          });
+        });
+      }
     }
   }
 
-  render({success, config, err}, {clienterr}){
+  render({}, {success, err, clienterr}){
     const bar = [];
-    if(!success){
+    if(success){
+      bar.push(<Link to="/x/confirm"><Button outline>Confirm</Button></Link>);
+    } else {
       bar.push(<Link to="/x/login"><Button text>Cancel</Button></Link>);
       bar.push(<Button primary onClick={this.createaccount}>Submit</Button>);
-    } else {
-      bar.push(<Link to="/x/confirm"><Button outline>Confirm</Button></Link>);
     }
 
     return <Section container padded>
@@ -77,16 +94,13 @@ class CreateAccount extends Component {
 }
 
 const mapStateToProps = (state)=>{
-  const {success, config, err} = state.CreateAccount;
-  return {
-    success, config, err,
-  };
+  return {};
 };
 
 const mapDispatchToProps = (dispatch)=>{
   return {
     createaccount: (options)=>{
-      dispatch(CreateAccountReq(options));
+      return dispatch(CreateAccountReq(options));
     },
   };
 };

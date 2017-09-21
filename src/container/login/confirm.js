@@ -15,16 +15,33 @@ class ConfirmAccount extends Component {
   constructor(props){
     super(props);
     this.state = {
+      success: false,
+      err: false,
       key: props.match.params.key || '',
     };
     this.confirmaccount = this.confirmaccount.bind(this);
   }
 
-  confirmaccount(){
-    this.props.confirmaccount(this.state.key);
+  async confirmaccount(){
+    const {err} = await this.props.confirmaccount(this.state.key);
+    if(err){
+      this.setState((prevState)=>{
+        return Object.assign({}, prevState, {
+          success: false,
+          err,
+        });
+      });
+    } else {
+      this.setState((prevState)=>{
+        return Object.assign({}, prevState, {
+          success: true,
+          err: false,
+        });
+      });
+    }
   }
 
-  render({success, config, err}, {key}){
+  render({}, {key, success, err}){
     const bar = [];
     if(!success){
       bar.push(<Link to="/x/login"><Button text>Cancel</Button></Link>);
@@ -47,18 +64,13 @@ class ConfirmAccount extends Component {
 }
 
 const mapStateToProps = (state)=>{
-  const {confirmsuccess, confirmconfig, confirmerr} = state.CreateAccount;
-  return {
-    success: confirmsuccess,
-    config: confirmconfig,
-    err: confirmerr,
-  };
+  return {};
 };
 
 const mapDispatchToProps = (dispatch)=>{
   return {
     confirmaccount: (key)=>{
-      dispatch(ConfirmAccountReq(key));
+      return dispatch(ConfirmAccountReq(key));
     },
   };
 };

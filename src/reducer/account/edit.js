@@ -1,23 +1,6 @@
 import {API} from 'config';
 import {ReLogin} from 'reducer/account/auth';
 
-const EDITACCOUNT = Symbol('EDITACCOUNT');
-const EDITACCOUNT_SUCCESS = Symbol('EDITACCOUNT_SUCCESS');
-const EDITACCOUNT_ERR = Symbol('EDITACCOUNT_ERR');
-
-const EditAccountSuccess = ()=>{
-  return {
-    type: EDITACCOUNT_SUCCESS,
-  };
-};
-
-const EditAccountErr = (err)=>{
-  return {
-    type: EDITACCOUNT_ERR,
-    err,
-  };
-};
-
 const EditAccountReq = (options)=>{
   return async (dispatch)=>{
     try {
@@ -52,24 +35,6 @@ const EditAccountReq = (options)=>{
   };
 };
 
-const GETSESSION = Symbol('GETSESSION');
-const GETSESSION_SUCCESS = Symbol('GETSESSION_SUCCESS');
-const GETSESSION_ERR = Symbol('GETSESSION_ERR');
-
-const GetSessionSuccess = (sessions)=>{
-  return {
-    type: GETSESSION_SUCCESS,
-    sessions,
-  };
-};
-
-const GetSessionErr = (err)=>{
-  return {
-    type: GETSESSION_ERR,
-    err,
-  };
-};
-
 const GetSessionReq = ()=>{
   return async (dispatch)=>{
     try {
@@ -100,23 +65,6 @@ const GetSessionReq = ()=>{
         err: e.message,
       };
     }
-  };
-};
-
-const DELSESSION = Symbol('DELSESSION');
-const DELSESSION_SUCCESS = Symbol('DELSESSION_SUCCESS');
-const DELSESSION_ERR = Symbol('DELSESSION_ERR');
-
-const DelSessionSuccess = ()=>{
-  return {
-    type: DELSESSION_SUCCESS,
-  };
-};
-
-const DelSessionErr = (err)=>{
-  return {
-    type: DELSESSION_ERR,
-    err,
   };
 };
 
