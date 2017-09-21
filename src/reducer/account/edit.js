@@ -52,10 +52,61 @@ const EditAccountReq = (options)=>{
   };
 };
 
+const GETSESSION = Symbol('GETSESSION');
+const GETSESSION_SUCCESS = Symbol('GETSESSION_SUCCESS');
+const GETSESSION_ERR = Symbol('GETSESSION_ERR');
+
+const GetSessionSuccess = (sessions)=>{
+  return {
+    type: GETSESSION_SUCCESS,
+    sessions,
+  };
+};
+
+const GetSessionErr = (err)=>{
+  return {
+    type: GETSESSION_ERR,
+    err,
+  };
+};
+
+const GetSessionReq = ()=>{
+  return async (dispatch)=>{
+    dispatch({
+      type: GETSESSION,
+    });
+    const {relogin} = await dispatch(ReLogin());
+    if(relogin){
+      dispatch(GetSessionErr('Need to reauthenticate'));
+      return;
+    }
+    try {
+      const response = await fetch(API.u.user.sessions, {
+        method: 'GET',
+        //TODO: change to same-origin
+        credentials: 'include',
+      });
+      const status = response.status;
+      const data = await response.json();
+      if(status < 200 || status >= 300){
+        if(data && data.message){
+          throw new Error(data.message);
+        } else {
+          throw new Error('Could not get sessions');
+        }
+      }
+      dispatch(GetSessionSuccess(data.active_sessions));
+    } catch(e){
+      dispatch(GetSessionErr(e.message));
+    }
+  };
+};
+
 const defaultState = {
   loading: false,
   success: false,
   err: false,
+  sessions: false,
 };
 
 const initState = ()=>{
@@ -65,6 +116,7 @@ const initState = ()=>{
 const EditAccount = (state=initState(), action)=>{
   switch(action.type){
     case EDITACCOUNT:
+    case GETSESSION:
       return Object.assign({}, state, {
         loading: true,
       });
@@ -74,7 +126,15 @@ const EditAccount = (state=initState(), action)=>{
         success: true,
         err: false,
       });
+    case GETSESSION_SUCCESS:
+      return Object.assign({}, state, {
+        loading: false,
+        success: true,
+        err: false,
+        sessions: action.sessions,
+      });
     case EDITACCOUNT_ERR:
+    case GETSESSION_ERR:
       return Object.assign({}, state, {
         loading: false,
         success: false,
@@ -86,5 +146,5 @@ const EditAccount = (state=initState(), action)=>{
 };
 
 export {
-  EditAccount, EditAccountReq,
+  EditAccount, EditAccountReq, GetSessionReq,
 }

@@ -9,6 +9,7 @@ class Input extends Component {
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleEnter = this.handleEnter.bind(this);
+    this.id = shortid.generate();
   }
 
   handleChange(event){
@@ -53,12 +54,15 @@ class Input extends Component {
   }
 
   render({valid, error, fullWidth, textarea, label, type, info}, {value}){
-    const id = shortid.generate();
     let k = ["input"];
     if(valid){
       k.push("valid");
     } else if(error){
       k.push("invalid");
+    }
+
+    if(type === 'checkbox'){
+      k.push("checkbox");
     }
 
     if(fullWidth){
@@ -67,16 +71,16 @@ class Input extends Component {
 
     let inp = false;
     if(textarea){
-      inp = <textarea id={id} value={value} onInput={this.handleChange} onKeyPress={this.handleEnter} placeholder=" "></textarea>;
-    } else if(type && type === 'file'){
-      inp = <input id={id} type={type} value={value} onChange={this.handleChange} onKeyPress={this.handleEnter} placeholder=" "/>;
+      inp = <textarea id={this.id} value={value} onInput={this.handleChange} onKeyPress={this.handleEnter} placeholder=" "></textarea>;
+    } else if(type && (type === 'file' || type === 'checkbox')){
+      inp = <input id={this.id} type={type} value={value} onChange={this.handleChange} onKeyPress={this.handleEnter} placeholder=" "/>;
     } else {
-      inp = <input id={id} type={type} value={value} onInput={this.handleChange} onKeyPress={this.handleEnter} placeholder=" "/>;
+      inp = <input id={this.id} type={type} value={value} onInput={this.handleChange} onKeyPress={this.handleEnter} placeholder=" "/>;
     }
 
     return <div className={k.join(" ")}>
       {inp}
-      <label htmlFor={id}>{label}</label>
+      <label htmlFor={this.id}>{label}</label>
       {!error && info && <span className="info">{info}</span>}
       {error && <span className="error">{error}</span>}
     </div>;

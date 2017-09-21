@@ -11,12 +11,14 @@ class Account extends Component {
       <Tabbar left={[
         {key: 'account', component: <NavLink to={`${match.path}/account`}>Account</NavLink>},
         {key: 'profile', component: <NavLink to={`${match.path}/profile`}>Profile</NavLink>},
+        {key: 'sessions', component: <NavLink to={`${match.path}/sessions`}>Sessions</NavLink>},
       ]}/>
       <Switch>
         <Route path={`${match.path}/account/edit`} component={Loader(()=>{return import('container/account/detailsedit');})}/>
         <Route path={`${match.path}/account`} component={Loader(()=>{return import('container/account/details');})}/>
         <Route path={`${match.path}/profile/edit`} component={Loader(()=>{return import('container/account/profileedit');})}/>
         <Route path={`${match.path}/profile`} component={Loader(()=>{return import('container/account/profile');})}/>
+        <Route path={`${match.path}/sessions`} component={Loader(()=>{return import('container/account/sessions');})}/>
         <Redirect to={`${match.path}/account`}/>
       </Switch>
     </Section>;

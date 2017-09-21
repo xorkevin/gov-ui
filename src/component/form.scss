@@ -16,7 +16,7 @@ input, textarea {
     width: 100%;
   }
 
-  &>input, &>textarea {
+  &>input:not([type="checkbox"]), &>textarea {
     font-size    : 1em;
     border-bottom: 1px solid $color-text-dark-3;
     width        : 100%;
@@ -103,13 +103,27 @@ input, textarea {
     }
   }
 
-  &>input[type="file"] {
+  &>input[type="file"], &>input[type="checkbox"] {
     border-bottom: none;
 
     & + label, & + label:hover {
       &:after {
         content: none;
       }
+    }
+  }
+
+  &.checkbox {
+    display:       flex;
+    align-content: center;
+  }
+
+  &>input[type="checkbox"] {
+    display: inline-block;
+    width:   32px;
+
+    & + label {
+      display: inline-block;
     }
   }
 

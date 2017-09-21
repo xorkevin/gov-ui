@@ -14,7 +14,7 @@ html, body {
   }
 }
 
-input, button, submit {
+input:not([type="checkbox"]), button, submit {
   -webkit-appearance: none;
   -moz-appearance   : none;
   appearance        : none;
