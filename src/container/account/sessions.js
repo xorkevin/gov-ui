@@ -14,29 +14,60 @@ class AccountSessions extends Component {
   constructor(props){
     super(props);
     this.state = {
+      success: false,
+      err: false,
       session_ids: new Set(),
+      sessions: false,
     };
     this.deletesessions = this.deletesessions.bind(this);
     this.getsessions = this.getsessions.bind(this);
   }
 
-  deletesessions(){
-    this.props.deletesessions(Array.from(this.state.session_ids), (success)=>{
-      if(success){
-        this.getsessions();
-      }
-    });
+  async deletesessions(){
+    const {err} = await this.props.deletesessions(Array.from(this.state.session_ids));
+    if(err){
+      this.setState((prevState)=>{
+        return Object.assign({}, prevState, {
+          success: false,
+          err,
+        });
+      });
+    } else {
+      this.setState((prevState)=>{
+        return Object.assign({}, prevState, {
+          success: true,
+          err: false,
+        });
+      });
+      this.getsessions();
+    }
   }
 
-  getsessions(){
-    this.props.getsessions();
+  async getsessions(){
+    const {err, sessions} = await this.props.getsessions();
+    if(err){
+      this.setState((prevState)=>{
+        return Object.assign({}, prevState, {
+          success: false,
+          err,
+        });
+      });
+    } else {
+      this.setState((prevState)=>{
+        return Object.assign({}, prevState, {
+          success: true,
+          err: false,
+          sessions,
+        });
+      });
+    }
   }
 
   componentDidMount(){
     this.getsessions();
   }
 
-  render({success, err, sessions}, {session_ids}){
+  render({}, {session_ids, success, err, sessions}){
     if(!sessions){
       return false;
     }
@@ -72,20 +103,16 @@ class AccountSessions extends Component {
 }
 
 const mapStateToProps = (state)=>{
-  const {success, err, sessions} = state.EditAccount;
-  return {
-    success, err, sessions,
-  };
+  return {};
 };
 
 const mapDispatchToProps = (dispatch)=>{
   return {
     getsessions: ()=>{
-      dispatch(GetSessionReq());
+      return dispatch(GetSessionReq());
     },
-    deletesessions: async (sessions, callback)=>{
-      const success = await dispatch(DelSessionReq(sessions));
-      callback(success);
+    deletesessions: (sessions)=>{
+      return dispatch(DelSessionReq(sessions));
     },
   };
 };

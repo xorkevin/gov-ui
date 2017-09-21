@@ -14,9 +14,13 @@ class AccountDetailsEdit extends Component {
   constructor(props){
     super(props);
     this.state = {
-      username: props.username,
-      first_name: props.firstname,
-      last_name: props.lastname,
+      options: {
+        username: props.username,
+        first_name: props.firstname,
+        last_name: props.lastname,
+      },
+      success: false,
+      err: false,
     };
     this.editaccount = this.editaccount.bind(this);
     this.navigateAccount = this.navigateAccount.bind(this);
@@ -26,8 +30,23 @@ class AccountDetailsEdit extends Component {
     this.props.history.replace('/a/account');
   }
 
-  editaccount(){
-    this.props.editaccount(this.state);
+  async editaccount(){
+    const {err} = await this.props.editaccount(this.state.options);
+    if(err){
+      this.setState((prevState)=>{
+        return Object.assign({}, prevState, {
+          success: false,
+          err,
+        });
+      });
+    } else {
+      this.setState((prevState)=>{
+        return Object.assign({}, prevState, {
+          success: true,
+          err: false,
+        });
+      });
+    }
   }
 
   componentDidMount(){
@@ -42,7 +61,7 @@ class AccountDetailsEdit extends Component {
     }
   }
 
-  render({success, err, userid}, {username, first_name, last_name}){
+  render({userid}, {success, err, options}){
     if(!userid){
       return false;
     }
@@ -52,9 +71,9 @@ class AccountDetailsEdit extends Component {
     return <Card size="md" restrictWidth center bar={bar}>
       <Section subsection sectionTitle="Account Details">
         <ListItem label="userid" item={userid}/>
-        <Input fullWidth label="username" value={username} onChange={linkstate(this, 'username')}/>
-        <Input fullWidth label="first name" value={first_name} onChange={linkstate(this, 'first_name')}/>
-        <Input fullWidth label="last name" value={last_name} onChange={linkstate(this, 'last_name')}/>
+        <Input fullWidth label="username" value={options.username} onChange={linkstate(this, 'options.username')}/>
+        <Input fullWidth label="first name" value={options.first_name} onChange={linkstate(this, 'options.first_name')}/>
+        <Input fullWidth label="last name" value={options.last_name} onChange={linkstate(this, 'options.last_name')}/>
       </Section>
       {err && <span>{err}</span>}
       {success && <span>Changes saved</span>}
@@ -63,17 +82,16 @@ class AccountDetailsEdit extends Component {
 }
 
 const mapStateToProps = (state)=>{
-  const {success, err} = state.EditAccount;
   const {userid, username, firstname, lastname} = state.Auth;
   return {
-    success, err, userid, username, firstname, lastname,
+    userid, username, firstname, lastname,
   };
 };
 
 const mapDispatchToProps = (dispatch)=>{
   return {
     editaccount: (options)=>{
-      dispatch(EditAccountReq(options));
+      return dispatch(EditAccountReq(options));
     },
   };
 };

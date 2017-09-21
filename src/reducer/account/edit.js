@@ -20,15 +20,11 @@ const EditAccountErr = (err)=>{
 
 const EditAccountReq = (options)=>{
   return async (dispatch)=>{
-    dispatch({
-      type: EDITACCOUNT,
-    });
-    const {relogin} = await dispatch(ReLogin());
-    if(relogin){
-      dispatch(EditAccountErr('Need to reauthenticate'));
-      return;
-    }
     try {
+      const {relogin} = await dispatch(ReLogin());
+      if(relogin){
+        throw new Error('Need to reauthenticate');
+      }
       const response = await fetch(API.u.user.edit, {
         method: 'PUT',
         headers: {'Content-Type': 'application/json'},
@@ -45,9 +41,13 @@ const EditAccountReq = (options)=>{
           throw new Error('Could not edit account');
         }
       }
-      dispatch(EditAccountSuccess());
+      return {
+        err: false,
+      };
     } catch(e){
-      dispatch(EditAccountErr(e.message));
+      return {
+        err: e.message,
+      };
     }
   };
 };
@@ -72,15 +72,11 @@ const GetSessionErr = (err)=>{
 
 const GetSessionReq = ()=>{
   return async (dispatch)=>{
-    dispatch({
-      type: GETSESSION,
-    });
-    const {relogin} = await dispatch(ReLogin());
-    if(relogin){
-      dispatch(GetSessionErr('Need to reauthenticate'));
-      return;
-    }
     try {
+      const {relogin} = await dispatch(ReLogin());
+      if(relogin){
+        throw new Error('Need to reauthenticate');
+      }
       const response = await fetch(API.u.user.sessions, {
         method: 'GET',
         //TODO: change to same-origin
@@ -95,9 +91,14 @@ const GetSessionReq = ()=>{
           throw new Error('Could not get sessions');
         }
       }
-      dispatch(GetSessionSuccess(data.active_sessions));
+      return {
+        err: false,
+        sessions: data.active_sessions,
+      };
     } catch(e){
-      dispatch(GetSessionErr(e.message));
+      return {
+        err: e.message,
+      };
     }
   };
 };
@@ -121,15 +122,11 @@ const DelSessionErr = (err)=>{
 
 const DelSessionReq = (sessions)=>{
   return async (dispatch)=>{
-    dispatch({
-      type: DELSESSION,
-    });
-    const {relogin} = await dispatch(ReLogin());
-    if(relogin){
-      dispatch(DelSessionErr('Need to reauthenticate'));
-      return;
-    }
     try {
+      const {relogin} = await dispatch(ReLogin());
+      if(relogin){
+        throw new Error('Need to reauthenticate');
+      }
       const response = await fetch(API.u.user.sessions, {
         method: 'DELETE',
         headers: {'Content-Type': 'application/json'},
@@ -146,66 +143,19 @@ const DelSessionReq = (sessions)=>{
           throw new Error('Could not delete sessions');
         }
       }
-      dispatch(DelSessionSuccess());
+      return {
+        err: false,
+      };
       return true;
     } catch(e){
-      dispatch(DelSessionErr(e.message));
+      return {
+        err: e.message,
+      };
     }
     return false;
   };
 };
 
-const defaultState = {
-  loading: false,
-  success: false,
-  err: false,
-  sessions: false,
-};
-
-const initState = ()=>{
-  return Object.assign({}, defaultState);
-};
-
-const EditAccount = (state=initState(), action)=>{
-  switch(action.type){
-    case EDITACCOUNT:
-    case GETSESSION:
-    case DELSESSION:
-      return Object.assign({}, state, {
-        loading: true,
-      });
-    case EDITACCOUNT_SUCCESS:
-      return Object.assign({}, state, {
-        loading: false,
-        success: true,
-        err: false,
-      });
-    case GETSESSION_SUCCESS:
-      return Object.assign({}, state, {
-        loading: false,
-        success: true,
-        err: false,
-        sessions: action.sessions,
-      });
-    case DELSESSION_SUCCESS:
-      return Object.assign({}, state, {
-        loading: false,
-        success: true,
-        err: false,
-      });
-    case EDITACCOUNT_ERR:
-    case GETSESSION_ERR:
-    case DELSESSION_ERR:
-      return Object.assign({}, state, {
-        loading: false,
-        success: false,
-        err: action.err,
-      });
-    default:
-      return state;
-  }
-};
-
 export {
-  EditAccount, EditAccountReq, GetSessionReq, DelSessionReq,
+  EditAccountReq, GetSessionReq, DelSessionReq,
 }
