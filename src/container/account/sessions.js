@@ -93,7 +93,7 @@ class AccountSessions extends Component {
                 }
               });
             }}/>
-            <span>{session.user_agent}</span>
+            <span>{session.user_agent} | {session.session_id}</span>
           </div>;
         })}
       </Section>
