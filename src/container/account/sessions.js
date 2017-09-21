@@ -42,22 +42,25 @@ class AccountSessions extends Component {
     return <Card size="lg" restrictWidth center bar={bar}>
       <Section subsection sectionTitle="Active Sessions">
         {sessions.map((session)=>{
-          return <Input fullWidth type="checkbox" label={
-            <span>{session.ip} | last accessed <Time value={session.time * 1000}/> | {session.user_agent}</span>
-          } onChange={(value)=>{
-            this.setState((prevState)=>{
-              if(prevState.session_ids.has(session.session_id)){
-                prevState.session_ids.delete(session.session_id);
-                return Object.assign({}, prevState, {
-                  session_ids: prevState.session_ids,
-                });
-              } else {
-                return Object.assign({}, prevState, {
-                  session_ids: prevState.session_ids.add(session.session_id),
-                });
-              }
-            });
-          }}/>;
+          return <div>
+            <Input fullWidth type="checkbox" label={
+              <span>{session.ip} | last accessed <Time value={session.time * 1000}/></span>
+            } onChange={(value)=>{
+              this.setState((prevState)=>{
+                if(prevState.session_ids.has(session.session_id)){
+                  prevState.session_ids.delete(session.session_id);
+                  return Object.assign({}, prevState, {
+                    session_ids: prevState.session_ids,
+                  });
+                } else {
+                  return Object.assign({}, prevState, {
+                    session_ids: prevState.session_ids.add(session.session_id),
+                  });
+                }
+              });
+            }}/>
+            <span>{session.user_agent}</span>
+          </div>;
         })}
       </Section>
       {err && <span>{err}</span>}

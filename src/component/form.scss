@@ -114,16 +114,16 @@ input, textarea {
   }
 
   &.checkbox {
-    display:       flex;
-    align-content: center;
+    padding-top:    8px;
+    padding-bottom: 8px;
   }
 
   &>input[type="checkbox"] {
-    display: inline-block;
-    width:   32px;
+    vertical-align: middle;
+    margin-right:   8px;
 
     & + label {
-      display: inline-block;
+      vertical-align: middle;
     }
   }
 
