@@ -83,19 +83,10 @@ const ReLogin = ()=>{
         if(refreshToken !== "valid"){
           throw new Error('Unable to refresh authentication');
         }
-        if(timeRefresh && timeRefresh < Date.now() / 1000){
-          const response = await fetch(API.u.auth.refresh, {
-            method: 'POST',
-            //TODO: change to same-origin
-            credentials: 'include',
-          });
-          const status = response.status;
-          if(status < 200 || status >= 300){
-            throw new Error('Unable to refresh authentication');
-          }
-          const data = await response.json();
-          if(!data.valid){
-            throw new Error('Unable to refresh authentication');
+        if(!timeRefresh || timeRefresh < Date.now() / 1000){
+          const {err} = await RefreshReq();
+          if(err){
+            throw new Error(err);
           }
           dispatch(Refresh());
         }
@@ -127,6 +118,31 @@ const ReLogin = ()=>{
       relogin: false,
     };
   };
+};
+
+const RefreshReq = async ()=>{
+  try {
+    const response = await fetch(API.u.auth.refresh, {
+      method: 'POST',
+      //TODO: change to same-origin
+      credentials: 'include',
+    });
+    const status = response.status;
+    if(status < 200 || status >= 300){
+      throw new Error('Unable to refresh authentication');
+    }
+    const data = await response.json();
+    if(!data.valid){
+      throw new Error('Unable to refresh authentication');
+    }
+    return {
+      err: false,
+    };
+  } catch(e){
+    return {
+      err: e.message,
+    };
+  }
 };
 
 const LOGOUT = Symbol('LOGOUT');
