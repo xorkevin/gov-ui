@@ -73,7 +73,7 @@ const EditProfileImage = async (file)=>{
   const formData  = new FormData();
   formData.append('image', file);
   const response = await fetch(API.profile.image, {
-    method: 'POST',
+    method: 'PUT',
     //TODO: change to same-origin
     credentials: 'include',
     body: formData,
