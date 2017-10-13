@@ -16,6 +16,7 @@ class Account extends Component {
       <Switch>
         <Route path={`${match.path}/account/email/confirm/:key?`} component={Loader(()=>{return import('container/account/emailconfirm');})}/>
         <Route path={`${match.path}/account/email`} component={Loader(()=>{return import('container/account/emailedit');})}/>
+        <Route path={`${match.path}/account/pass`} component={Loader(()=>{return import('container/account/passedit');})}/>
         <Route path={`${match.path}/account/edit`} component={Loader(()=>{return import('container/account/detailsedit');})}/>
         <Route path={`${match.path}/account`} component={Loader(()=>{return import('container/account/details');})}/>
         <Route path={`${match.path}/profile/edit`} component={Loader(()=>{return import('container/account/profileedit');})}/>

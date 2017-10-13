@@ -28,6 +28,7 @@ class AccountDetails extends Component {
     const bar = [];
     bar.push(<Link to="/a/account/edit"><Button outline>Edit</Button></Link>);
     bar.push(<Link to="/a/account/email"><Button outline>Change Email</Button></Link>);
+    bar.push(<Link to="/a/account/pass"><Button outline>Change Password</Button></Link>);
 
     return <div>
       {!getuserloading && getusererr && <span>{getusererr}</span>}

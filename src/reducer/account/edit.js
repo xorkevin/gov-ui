@@ -103,6 +103,40 @@ const ConfirmEmailReq = (key, password)=>{
   };
 };
 
+const EditPassReq = (old_password, new_password)=>{
+  return async (dispatch)=>{
+    try {
+      const {relogin} = await dispatch(ReLogin());
+      if(relogin){
+        throw new Error('Need to reauthenticate');
+      }
+      const response = await fetch(API.u.user.editpassword, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        //TODO: change to same-origin
+        credentials: 'include',
+        body: JSON.stringify({old_password, new_password}),
+      });
+      const status = response.status;
+      if(status < 200 || status >= 300){
+        const data = await response.json();
+        if(data && data.message){
+          throw new Error(data.message);
+        } else {
+          throw new Error('Could not edit password');
+        }
+      }
+      return {
+        err: false,
+      };
+    } catch(e){
+      return {
+        err: e.message,
+      };
+    }
+  };
+};
+
 const GetSessionReq = ()=>{
   return async (dispatch)=>{
     try {
@@ -173,5 +207,5 @@ const DelSessionReq = (sessions)=>{
 };
 
 export {
-  EditAccountReq, EditEmailReq, ConfirmEmailReq, GetSessionReq, DelSessionReq,
+  EditAccountReq, EditEmailReq, ConfirmEmailReq, EditPassReq, GetSessionReq, DelSessionReq,
 }

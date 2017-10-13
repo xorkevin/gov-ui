@@ -66,7 +66,11 @@ class AccountDetailsEdit extends Component {
       return false;
     }
     const bar = [];
-    bar.push(<Link to="/a/account"><Button text>Cancel</Button></Link>);
+    if(success){
+      bar.push(<Link to="/a/account"><Button text>Back</Button></Link>);
+    } else {
+      bar.push(<Link to="/a/account"><Button text>Cancel</Button></Link>);
+    }
     bar.push(<Button primary onClick={this.editaccount}>Save</Button>);
     return <Card size="md" restrictWidth center bar={bar}>
       <Section subsection sectionTitle="Account Details">

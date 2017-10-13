@@ -82,9 +82,9 @@ class AccountEmailEdit extends Component {
 }
 
 const mapStateToProps = (state)=>{
-  const {userid, username, firstname, lastname} = state.Auth;
+  const {userid} = state.Auth;
   return {
-    userid, username, firstname, lastname,
+    userid,
   };
 };
 

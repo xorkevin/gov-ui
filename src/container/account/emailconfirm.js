@@ -62,6 +62,7 @@ class AccountEmailConfirm extends Component {
 }
 
 const mapStateToProps = (state)=>{
+  return {};
 };
 
 const mapDispatchToProps = (dispatch)=>{
