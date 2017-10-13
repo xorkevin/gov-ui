@@ -14,6 +14,8 @@ class Account extends Component {
         {key: 'sessions', component: <NavLink to={`${match.path}/sessions`}>Sessions</NavLink>},
       ]}/>
       <Switch>
+        <Route path={`${match.path}/account/email/confirm/:key?`} component={Loader(()=>{return import('container/account/emailconfirm');})}/>
+        <Route path={`${match.path}/account/email`} component={Loader(()=>{return import('container/account/emailedit');})}/>
         <Route path={`${match.path}/account/edit`} component={Loader(()=>{return import('container/account/detailsedit');})}/>
         <Route path={`${match.path}/account`} component={Loader(()=>{return import('container/account/details');})}/>
         <Route path={`${match.path}/profile/edit`} component={Loader(()=>{return import('container/account/profileedit');})}/>

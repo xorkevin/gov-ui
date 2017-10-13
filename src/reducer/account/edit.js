@@ -35,6 +35,74 @@ const EditAccountReq = (options)=>{
   };
 };
 
+const EditEmailReq = (email, password)=>{
+  return async (dispatch)=>{
+    try {
+      const {relogin} = await dispatch(ReLogin());
+      if(relogin){
+        throw new Error('Need to reauthenticate');
+      }
+      const response = await fetch(API.u.user.email.edit, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        //TODO: change to same-origin
+        credentials: 'include',
+        body: JSON.stringify({email, password}),
+      });
+      const status = response.status;
+      if(status < 200 || status >= 300){
+        const data = await response.json();
+        if(data && data.message){
+          throw new Error(data.message);
+        } else {
+          throw new Error('Could not edit email');
+        }
+      }
+      return {
+        err: false,
+      };
+    } catch(e){
+      return {
+        err: e.message,
+      };
+    }
+  };
+};
+
+const ConfirmEmailReq = (key, password)=>{
+  return async (dispatch)=>{
+    try {
+      const {relogin} = await dispatch(ReLogin());
+      if(relogin){
+        throw new Error('Need to reauthenticate');
+      }
+      const response = await fetch(API.u.user.email.confirm, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        //TODO: change to same-origin
+        credentials: 'include',
+        body: JSON.stringify({key, password}),
+      });
+      const status = response.status;
+      if(status < 200 || status >= 300){
+        const data = await response.json();
+        if(data && data.message){
+          throw new Error(data.message);
+        } else {
+          throw new Error('Could not edit email');
+        }
+      }
+      return {
+        err: false,
+      };
+    } catch(e){
+      return {
+        err: e.message,
+      };
+    }
+  };
+};
+
 const GetSessionReq = ()=>{
   return async (dispatch)=>{
     try {
@@ -105,5 +173,5 @@ const DelSessionReq = (sessions)=>{
 };
 
 export {
-  EditAccountReq, GetSessionReq, DelSessionReq,
+  EditAccountReq, EditEmailReq, ConfirmEmailReq, GetSessionReq, DelSessionReq,
 }
