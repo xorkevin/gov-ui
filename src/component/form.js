@@ -53,7 +53,7 @@ class Input extends Component {
     }
   }
 
-  render({valid, error, fullWidth, textarea, label, type, info}, {value}){
+  render({valid, error, fullWidth, textarea, label, type, accept, capture, info}, {value}){
     let k = ["input"];
     if(valid){
       k.push("valid");
@@ -73,7 +73,7 @@ class Input extends Component {
     if(textarea){
       inp = <textarea id={this.id} value={value} onInput={this.handleChange} onKeyPress={this.handleEnter} placeholder=" "></textarea>;
     } else if(type && (type === 'file' || type === 'checkbox')){
-      inp = <input id={this.id} type={type} value={value} onChange={this.handleChange} onKeyPress={this.handleEnter} placeholder=" "/>;
+      inp = <input id={this.id} type={type} accept={accept} capture={capture} value={value} onChange={this.handleChange} onKeyPress={this.handleEnter} placeholder=" "/>;
     } else {
       inp = <input id={this.id} type={type} value={value} onInput={this.handleChange} onKeyPress={this.handleEnter} placeholder=" "/>;
     }

@@ -55,7 +55,7 @@ class ProfileEdit extends Component {
         <Section subsection sectionTitle="Profile">
           <Input fullWidth label="contact email" value={contact_email} onChange={linkstate(this, 'contact_email')}/>
           <Input textarea fullWidth label="bio" value={bio} onChange={linkstate(this, 'bio')}/>
-          <Input type="file" fullWidth label="profile image" onChange={linkstate(this, 'image')}/>
+          <Input type="file" accept="image/*" capture="environment" fullWidth label="profile image" onChange={linkstate(this, 'image')}/>
         </Section>
         {editerr && <span>{editerr}</span>}
         {editsuccess && <span>Changes saved</span>}
