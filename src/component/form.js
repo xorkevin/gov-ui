@@ -46,7 +46,7 @@ class Input extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.value) {
+    if (nextProps.value !== undefined) {
       this.setState(prevState => {
         return Object.assign({}, prevState, {value: nextProps.value});
       });
