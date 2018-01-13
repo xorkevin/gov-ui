@@ -1,8 +1,15 @@
+# METADATA
+VERSION=v0.1.0
+
+# CMD
 BIN_DIR=bin
 BIN_ADMIN_DIR=bin_admin
 SERVER_DIR=bin_server
 
-all: build
+# DOCKER
+IMAGE_NAME=nuke
+
+all: build build-admin build-server
 
 clean-bin:
 	if [ -d $(BIN_DIR) ]; then rm -r $(BIN_DIR); fi
@@ -34,8 +41,18 @@ start:
 	npm run serve
 
 start-admin:
-	npm run serve-admin
+	NUKE_MODE=admin npm run serve
 
 serve: build build-server start
 
 serve-admin: build-admin build-server start-admin
+
+## docker
+build-docker:
+	docker build -f ./Dockerfile -t $(IMAGE_NAME):$(VERSION) -t $(IMAGE_NAME):latest .
+
+produp:
+	docker-compose -f docker-compose.yaml up -d
+
+proddown:
+	docker-compose -f docker-compose.yaml down
