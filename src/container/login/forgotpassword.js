@@ -12,7 +12,7 @@ import {connect} from 'preact-redux';
 import {ForgotPasswordReq} from 'reducer/account/forgotpassword';
 
 class ForgotContainer extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       username: '',
@@ -22,17 +22,17 @@ class ForgotContainer extends Component {
     this.forgotpassword = this.forgotpassword.bind(this);
   }
 
-  async forgotpassword(){
+  async forgotpassword() {
     const {err} = await this.props.forgotpassword(this.state.username);
-    if(err){
-      this.setState((prevState)=>{
+    if (err) {
+      this.setState(prevState => {
         return Object.assign({}, prevState, {
           success: false,
           err,
         });
       });
     } else {
-      this.setState((prevState)=>{
+      this.setState(prevState => {
         return Object.assign({}, prevState, {
           success: true,
           err: false,
@@ -41,36 +41,61 @@ class ForgotContainer extends Component {
     }
   }
 
-  render({}, {success, err}){
+  render({}, {success, err}) {
     const bar = [];
-    if(success){
-      bar.push(<Link to="/x/forgotconfirm"><Button outline>Confirm</Button></Link>);
+    if (success) {
+      bar.push(
+        <Link to="/x/forgotconfirm">
+          <Button outline>Confirm</Button>
+        </Link>,
+      );
     } else {
-      bar.push(<Link to="/x/login"><Button text>Cancel</Button></Link>);
-      bar.push(<Button primary onClick={this.confirmaccount}>Submit</Button>);
+      bar.push(
+        <Link to="/x/login">
+          <Button text>Cancel</Button>
+        </Link>,
+      );
+      bar.push(
+        <Button primary onClick={this.forgotpassword}>
+          Submit
+        </Button>,
+      );
     }
 
-    return <Section container padded>
-      <Card center size="md" restrictWidth titleBar title={[
-        <h3>Forgot password</h3>
-      ]} bar={bar}>
-        <Input label="username" fullWidth onEnter={this.forgotpassword} onChange={linkState(this, 'username')}/>
-        {err && <span>{err}</span>}
-        {success && <span>
-          <span>Reset your password with a code emailed to you</span>
-        </span>}
-      </Card>
-    </Section>;
+    return (
+      <Section container padded>
+        <Card
+          center
+          size="md"
+          restrictWidth
+          titleBar
+          title={[<h3>Forgot password</h3>]}
+          bar={bar}>
+          <Input
+            label="username"
+            fullWidth
+            onEnter={this.forgotpassword}
+            onChange={linkState(this, 'username')}
+          />
+          {err && <span>{err}</span>}
+          {success && (
+            <span>
+              <span>Reset your password with a code emailed to you</span>
+            </span>
+          )}
+        </Card>
+      </Section>
+    );
   }
 }
 
-const mapStateToProps = (state)=>{
+const mapStateToProps = state => {
   return {};
 };
 
-const mapDispatchToProps = (dispatch)=>{
+const mapDispatchToProps = dispatch => {
   return {
-    forgotpassword: (username)=>{
+    forgotpassword: username => {
       return dispatch(ForgotPasswordReq(username));
     },
   };
@@ -78,4 +103,4 @@ const mapDispatchToProps = (dispatch)=>{
 
 ForgotContainer = connect(mapStateToProps, mapDispatchToProps)(ForgotContainer);
 
-export default ForgotContainer
+export default ForgotContainer;
