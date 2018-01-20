@@ -54,7 +54,19 @@ class Input extends Component {
   }
 
   render(
-    {valid, error, fullWidth, textarea, label, type, accept, capture, info},
+    {
+      label,
+      info,
+      valid,
+      error,
+      fullWidth,
+      type,
+      accept,
+      capture,
+      textarea,
+      dropdown,
+      multiple,
+    },
     {value},
   ) {
     let k = ['input'];
@@ -73,7 +85,20 @@ class Input extends Component {
     }
 
     let inp = false;
-    if (textarea) {
+    if (dropdown) {
+      inp = (
+        <select
+          id={this.id}
+          value={value}
+          multiple={multiple}
+          onChange={this.handleChange}>
+          {Array.isArray(dropdown) &&
+            dropdown.map((text, i) => {
+              return <option value={i}>{text}</option>;
+            })}
+        </select>
+      );
+    } else if (textarea) {
       inp = (
         <textarea
           id={this.id}
@@ -113,6 +138,7 @@ class Input extends Component {
       <div className={k.join(' ')}>
         {inp}
         <label htmlFor={this.id}>{label}</label>
+        {dropdown && <div className="dropdown-arrow" />}
         {!error && info && <span className="info">{info}</span>}
         {error && <span className="error">{error}</span>}
       </div>
