@@ -29,6 +29,15 @@ class Input extends Component {
           this.props.onChange(event.target.files[0]);
         }
       }
+    } else if (this.props.dropdown) {
+      this.setState(prevState => {
+        return Object.assign({}, prevState, {
+          value: event.target.selectedIndex,
+        });
+      });
+      if (this.props.onChange) {
+        this.props.onChange(event.target.selectedIndex);
+      }
     } else {
       this.setState(prevState => {
         return Object.assign({}, prevState, {value: event.target.value});
