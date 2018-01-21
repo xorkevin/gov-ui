@@ -1,19 +1,25 @@
-@import "vars";
-@import "color";
+@import 'vars';
+@import 'color';
 
-html, body {
-  font-size       : $typography-base-size;
-  font-family     : $typography-base-font;
-  line-height     : 1.5;
-  letter-spacing  : normal;
-  font-weight     : 400;
+html,
+body {
+  font-size: $typography-base-size;
+  font-family: $typography-base-font;
+  line-height: 1.5;
+  letter-spacing: normal;
+  font-weight: 400;
   background-color: $background;
-  color           : $color-text-dark-1;
-  overflow-wrap   : break-word;
-  transition      : $transition-normal;
+  color: $color-text-dark-1;
+  overflow-wrap: break-word;
+  transition: $transition-normal;
 
   &.dark {
-    h1, h2, h3, h4, h5, h6 {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
       color: $color-text-light-1-5;
     }
 
@@ -22,22 +28,27 @@ html, body {
     }
   }
 
-  @media (min-width: $grid-sm-breakpoint) and (max-width: $grid-md-breakpoint - 1px){
+  @media (min-width: $grid-sm-breakpoint) and (max-width: $grid-md-breakpoint - 1px) {
     font-size: $typography-base-size * 13 / 12;
   }
 
-  @media (min-width: $grid-md-breakpoint) and (max-width: $grid-lg-breakpoint - 1px){
+  @media (min-width: $grid-md-breakpoint) and (max-width: $grid-lg-breakpoint - 1px) {
     font-size: $typography-base-size * 7 / 6;
   }
 
-  @media (min-width: $grid-lg-breakpoint){
+  @media (min-width: $grid-lg-breakpoint) {
     font-size: $typography-base-size * 15 / 12;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    margin-top   : 0.42em;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin-top: 0.42em;
     margin-bottom: 0.25em;
-    font-weight  : 700;
+    font-weight: 700;
   }
   h1 {
     font-size: 4rem;
@@ -61,25 +72,29 @@ html, body {
     font-size: 0.6em;
   }
 
-  h1, h2, h3 {
+  h1,
+  h2,
+  h3 {
     small {
       font-size: 0.6em;
     }
   }
 
-  h4, h5, h6 {
+  h4,
+  h5,
+  h6 {
     small {
       font-size: 0.8em;
     }
   }
 
   a {
-    color          : $color-primary;
+    color: $color-primary;
     text-decoration: unset;
 
     &:hover {
       text-decoration: underline;
-      cursor         : pointer;
+      cursor: pointer;
     }
 
     &.no-style {
@@ -96,18 +111,23 @@ html, body {
     }
   }
 
+  p {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+
   .colossal {
-    font-size     : 96px;
-    margin        : 0;
-    line-height   : 1;
+    font-size: 96px;
+    margin: 0;
+    line-height: 1;
     letter-spacing: 2px;
     text-transform: uppercase;
   }
 
   .mammoth {
-    font-size     : 256px;
-    margin        : 0;
-    line-height   : 1;
+    font-size: 256px;
+    margin: 0;
+    line-height: 1;
     letter-spacing: 2px;
     text-transform: uppercase;
     text-transform: uppercase;
