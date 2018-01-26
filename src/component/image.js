@@ -108,6 +108,8 @@ class Img extends Component {
       preview,
       size,
       fixed,
+      light,
+      noShadow,
       color,
       rounded,
       imgWidth,
@@ -121,6 +123,12 @@ class Img extends Component {
 
     if (className) {
       k.push(className);
+    }
+    if (light) {
+      k.push('light');
+    }
+    if (noShadow) {
+      k.push('no-shadow');
     }
     if (rounded) {
       k.push('rounded');

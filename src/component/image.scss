@@ -5,20 +5,21 @@
     border-radius: 4px;
   }
 
-  &>.inner {
-    position  : relative;
-    width     : 100%;
-    max-width : 100%;
+  & > .inner {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
     max-height: 100%;
 
-    &>.image, &>noscript>.image {
-      position  : absolute;
-      top       : 0;
-      left      : 0;
-      display   : block;
-      width     : 100%;
-      height    : 100%;
-      z-index   : 1;
+    & > .image,
+    & > noscript > .image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
       transition: $transition-slow;
       transition-property: opacity;
 
@@ -27,38 +28,39 @@
       }
     }
 
-    &>div.image {
-      background-repeat    : no-repeat;
-      background-position  : center;
-      background-size      : cover;
+    & > div.image {
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
       background-blend-mode: luminosity;
       background-attachment: fixed;
     }
 
-    &>img.image, &>noscript>img.image {
+    & > img.image,
+    & > noscript > img.image {
       object-fit: cover;
     }
 
-    &>.children {
-      position       : absolute;
-      top            : 0;
-      left           : 0;
-      height         : 100%;
-      width          : 100%;
-      display        : flex;
+    & > .children {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      display: flex;
       justify-content: center;
-      align-content  : center;
-      align-items    : center;
-      z-index        : 2;
-      overflow       : hidden;
-      color          : $color-text-light-1;
-      text-shadow    : $shadow-text;
+      align-content: center;
+      align-items: center;
+      z-index: 2;
+      overflow: hidden;
+      color: $color-text-light-1;
+      text-shadow: $shadow-text;
     }
   }
 
-  &.invisible>.inner {
-    &>.image:not(.noscript):not(.preview) {
-      opacity   : 0;
+  &.invisible > .inner {
+    & > .image:not(.noscript):not(.preview) {
+      opacity: 0;
       visibility: hidden;
     }
   }
@@ -88,8 +90,20 @@
   }
 
   &.sized {
-    &>.inner {
+    & > .inner {
       height: 100%;
+    }
+  }
+
+  &.light {
+    & > .inner > .children {
+      color: $color-text-dark-1;
+    }
+  }
+
+  &.no-shadow {
+    & > .inner > .children {
+      text-shadow: unset;
     }
   }
 }
