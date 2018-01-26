@@ -25,6 +25,10 @@ class App extends Component {
   }
 
   render({dark}, {}) {
+    let darkmodetext = 'Dark';
+    if (dark) {
+      darkmodetext = 'Light';
+    }
     return (
       <div>
         <Navbar
@@ -58,7 +62,7 @@ class App extends Component {
                   align="right"
                   position="bottom">
                   <span onClick={this.toggleDark}>
-                    <FaIcon icon="bolt" /> Dark Mode
+                    <FaIcon icon="bolt" /> {darkmodetext} Mode
                   </span>
                   <Anchor ext href="https://github.com/xorkevin">
                     <FaIcon icon="github" /> xorkevin
