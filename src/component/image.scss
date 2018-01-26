@@ -107,3 +107,13 @@
     }
   }
 }
+
+body.dark {
+  .img {
+    &.light {
+      & > .inner > .children {
+        color: $color-text-light-1;
+      }
+    }
+  }
+}
