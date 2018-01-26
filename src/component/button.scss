@@ -2,20 +2,20 @@ $button-color-outline: lighten($color-primary-light, 12.5%);
 $button-color-background: lighten($color-text-dark-4, 42%);
 
 button {
-  padding:          $button-padding $button-padding-h;
+  padding: $button-padding $button-padding-h;
   background-color: transparent;
-  border:           0;
-  border-radius:    4px;
-  font-weight:      700;
-  font-size:        0.85rem;
-  font-family:      $typography-base-font;
-  text-transform:   uppercase;
-  color:            $color-accent;
-  text-align:       center;
-  transition:       $transition-normal;
-  cursor:           pointer;
-  margin-left:      8px;
-  margin-right:     8px;
+  border: 0;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  font-family: $typography-base-font;
+  text-transform: uppercase;
+  color: $color-accent;
+  text-align: center;
+  transition: $transition-normal;
+  cursor: pointer;
+  margin-left: 8px;
+  margin-right: 8px;
 
   &:hover {
     background-color: $color-accent;
@@ -29,42 +29,42 @@ button {
 
   &.primary {
     background-color: $color-primary-light;
-    color           : $white;
+    color: $white;
 
     &:hover {
       background-color: lighten($color-primary-light, 12.5%);
-      color           : $white;
+      color: $white;
     }
   }
 
   &.outline {
     background-color: $white;
-    color           : $color-primary-light;
-    border          : 1px solid $button-color-outline;
+    color: $color-primary-light;
+    border: 1px solid $button-color-outline;
 
     &:hover {
       background-color: $white;
-      color           : lighten($color-primary-light, 12.5%);
-      border-color    : lighten($button-color-outline, 12.5%);
+      color: lighten($color-primary-light, 12.5%);
+      border-color: lighten($button-color-outline, 12.5%);
     }
   }
 
   &.text {
     background-color: transparent;
-    color           : $color-text-dark-3;
+    color: $color-text-dark-3;
 
     &:hover {
       background-color: $button-color-background;
-      color           : $color-text-dark-3;
+      color: $color-text-dark-3;
     }
 
     &.raised {
       background-color: $white;
-      color           : $color-text-dark-3;
+      color: $color-text-dark-3;
 
       &:hover {
         background-color: $white;
-        color           : $color-text-dark-3;
+        color: $color-text-dark-3;
       }
     }
   }
@@ -75,9 +75,13 @@ button {
 
     &:hover {
       box-shadow: $shadow-button-raised;
-      transform : translateY(-1px);
+      transform: translateY(-1px);
       border: 0;
     }
+  }
+
+  &.cta {
+    font-size: 1.5rem;
   }
 
   &.fixed-width {
@@ -93,11 +97,11 @@ body.dark {
   button {
     &.outline {
       background-color: transparent;
-      color           : $color-text-light-2;
-      border-color    : $color-text-light-2;
+      color: $color-text-light-2;
+      border-color: $color-text-light-2;
 
       &:hover {
-        color       : $color-text-light-1-5;
+        color: $color-text-light-1-5;
         border-color: $color-text-light-1-5;
       }
 
@@ -112,20 +116,20 @@ body.dark {
 
     &.text {
       background-color: transparent;
-      color           : $color-text-light-3;
+      color: $color-text-light-3;
 
       &:hover {
         background-color: $color-text-light-4;
-        color           : $color-text-light-2;
+        color: $color-text-light-2;
       }
 
       &.raised {
         background-color: transparent;
-        color           : $color-text-light-3;
+        color: $color-text-light-3;
 
         &:hover {
           background-color: $color-text-light-4;
-          color           : $color-text-light-2;
+          color: $color-text-light-2;
         }
       }
     }
