@@ -12,7 +12,7 @@ import {connect} from 'preact-redux';
 import {ConfirmResetReq} from 'reducer/account/forgotpassword';
 
 class ConfirmReset extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       key: props.match.params.key || '',
@@ -25,26 +25,28 @@ class ConfirmReset extends Component {
     this.resetpassword = this.resetpassword.bind(this);
   }
 
-  async resetpassword(){
+  async resetpassword() {
     const {newPassword, passwordConfirm, key} = this.state;
-    if(newPassword !== passwordConfirm){
-      this.setState((prevState)=>{
-        return Object.assign({}, prevState, {clienterr: 'passwords do not match'});
+    if (newPassword !== passwordConfirm) {
+      this.setState(prevState => {
+        return Object.assign({}, prevState, {
+          clienterr: 'passwords do not match',
+        });
       });
     } else {
-      this.setState((prevState)=>{
+      this.setState(prevState => {
         return Object.assign({}, prevState, {clienterr: false});
       });
       const {err} = await this.props.resetpassword(key, newPassword);
-      if(err){
-        this.setState((prevState)=>{
+      if (err) {
+        this.setState(prevState => {
           return Object.assign({}, prevState, {
             success: false,
             err,
           });
         });
       } else {
-        this.setState((prevState)=>{
+        this.setState(prevState => {
           return Object.assign({}, prevState, {
             success: true,
             err: false,
@@ -54,38 +56,75 @@ class ConfirmReset extends Component {
     }
   }
 
-  render({}, {success, err, key}){
+  render({}, {success, err, key}) {
     const bar = [];
-    if(success){
-      bar.push(<Link to="/x/login"><Button outline>Sign in</Button></Link>);
+    if (success) {
+      bar.push(
+        <Link to="/x/login">
+          <Button outline>Sign in</Button>
+        </Link>,
+      );
     } else {
-      bar.push(<Link to="/x/login"><Button text>Cancel</Button></Link>);
-      bar.push(<Button primary onClick={this.resetpassword}>Submit</Button>);
+      bar.push(
+        <Link to="/x/login">
+          <Button text>Cancel</Button>
+        </Link>,
+      );
+      bar.push(
+        <Button primary onClick={this.resetpassword}>
+          Submit
+        </Button>,
+      );
     }
 
-    return <Section container padded>
-      <Card center size="md" restrictWidth titleBar title={[
-        <h3>Reset password</h3>
-      ]} bar={bar}>
-        <Input label="code" fullWidth value={key} onChange={linkState(this, 'key')}/>
-        <Input label="new password" type="password" fullWidth onChange={linkState(this, 'newPassword')}/>
-        <Input label="confirm password" type="password" fullWidth onEnter={this.resetpassword} onChange={linkState(this, 'passwordConfirm')}/>
-        {err && <span>{err}</span>}
-        {success && <span>
-          <span>Your password has been reset</span>
-        </span>}
-      </Card>
-    </Section>;
+    return (
+      <Section container padded>
+        <Card
+          center
+          size="md"
+          restrictWidth
+          titleBar
+          title={[<h3>Reset password</h3>]}
+          bar={bar}>
+          <Input
+            label="code"
+            fullWidth
+            value={key}
+            onChange={linkState(this, 'key')}
+          />
+          <Input
+            label="new password"
+            type="password"
+            fullWidth
+            onChange={linkState(this, 'newPassword')}
+          />
+          <Input
+            label="confirm password"
+            type="password"
+            fullWidth
+            onEnter={this.resetpassword}
+            onChange={linkState(this, 'passwordConfirm')}
+          />
+          {!success && clienterr && <span>{clienterr}</span>}
+          {!success && !clienterr && err && <span>{err}</span>}
+          {success && (
+            <span>
+              <span>Your password has been reset</span>
+            </span>
+          )}
+        </Card>
+      </Section>
+    );
   }
 }
 
-const mapStateToProps = (state)=>{
+const mapStateToProps = state => {
   return {};
 };
 
-const mapDispatchToProps = (dispatch)=>{
+const mapDispatchToProps = dispatch => {
   return {
-    resetpassword: (key, new_password)=>{
+    resetpassword: (key, new_password) => {
       return dispatch(ConfirmResetReq(key, new_password));
     },
   };
@@ -94,4 +133,4 @@ const mapDispatchToProps = (dispatch)=>{
 ConfirmReset = connect(mapStateToProps, mapDispatchToProps)(ConfirmReset);
 ConfirmReset = withRouter(ConfirmReset);
 
-export default ConfirmReset
+export default ConfirmReset;
