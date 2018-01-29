@@ -12,7 +12,7 @@ import {connect} from 'preact-redux';
 import {Login} from 'reducer/account/auth';
 
 class SigninContainer extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       username: '',
@@ -21,39 +21,71 @@ class SigninContainer extends Component {
     this.login = this.login.bind(this);
   }
 
-  login(){
+  login() {
     const {username, password} = this.state;
     this.props.login(username, password);
   }
 
-  render({loading, err}){
-    return <Section container padded>
-      <Card center size="md" restrictWidth titleBar title={[
-        <h3>Sign in</h3>
-      ]} bar={[
-        <Menu icon={<Button text><FaIcon icon="ellipsis-v"/></Button>} size="md" align="left" position="bottom">
-          <Link to="/x/create"><FaIcon icon="user-plus"/> Create Account</Link>
-          <Link to="/x/forgot"><FaIcon icon="unlock-alt"/> Forgot Password</Link>
-        </Menu>, <Button primary onClick={this.login}>Login</Button>
-      ]}>
-        <Input label="username" fullWidth onChange={linkState(this, 'username')}/>
-        <Input label="password" type="password" fullWidth onChange={linkState(this, 'password')} onEnter={this.login}/>
-        {!loading && err && <span>{err}</span>}
-      </Card>
-    </Section>;
+  render({loading, err}) {
+    return (
+      <Section container padded>
+        <Card
+          center
+          size="md"
+          restrictWidth
+          titleBar
+          title={[<h3>Sign in</h3>]}
+          bar={[
+            <Menu
+              icon={
+                <Button text>
+                  <FaIcon icon="ellipsis-v" />
+                </Button>
+              }
+              size="md"
+              align="left"
+              position="bottom">
+              <Link to="/x/create">
+                <FaIcon icon="user-plus" /> Create Account
+              </Link>
+              <Link to="/x/forgot">
+                <FaIcon icon="unlock-alt" /> Forgot Password
+              </Link>
+            </Menu>,
+            <Button primary onClick={this.login}>
+              Login
+            </Button>,
+          ]}>
+          <Input
+            label="username / email"
+            fullWidth
+            onChange={linkState(this, 'username')}
+          />
+          <Input
+            label="password"
+            type="password"
+            fullWidth
+            onChange={linkState(this, 'password')}
+            onEnter={this.login}
+          />
+          {!loading && err && <span>{err}</span>}
+        </Card>
+      </Section>
+    );
   }
 }
 
-const mapStateToProps = (state)=>{
+const mapStateToProps = state => {
   const {loading, err} = state.Auth;
   return {
-    loading, err,
+    loading,
+    err,
   };
 };
 
-const mapDispatchToProps = (dispatch)=>{
+const mapDispatchToProps = dispatch => {
   return {
-    login: (username, password)=>{
+    login: (username, password) => {
       dispatch(Login(username, password));
     },
   };
@@ -61,4 +93,4 @@ const mapDispatchToProps = (dispatch)=>{
 
 SigninContainer = connect(mapStateToProps, mapDispatchToProps)(SigninContainer);
 
-export default SigninContainer
+export default SigninContainer;

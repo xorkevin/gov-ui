@@ -72,7 +72,7 @@ class ForgotContainer extends Component {
           title={[<h3>Forgot password</h3>]}
           bar={bar}>
           <Input
-            label="username"
+            label="username / email"
             fullWidth
             onEnter={this.forgotpassword}
             onChange={linkState(this, 'username')}
