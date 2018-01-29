@@ -9,7 +9,7 @@ const BundleAnalyzer = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const extractScss = new ExtractTextPlugin('static/[name].[contenthash].css');
 
-const createConfig = (env, argv)=>{
+const createConfig = (env, argv) => {
   const config = {
     target: 'web',
 
@@ -20,28 +20,33 @@ const createConfig = (env, argv)=>{
     resolve: {
       modules: [path.resolve(__dirname, 'src'), 'node_modules'],
       alias: {
-        'react': 'preact-compat',
+        react: 'preact-compat',
         'react-dom': 'preact-compat',
-      }
+      },
     },
     module: {
       rules: [
         {test: /\.js$/, loader: 'babel-loader', exclude: /node_modules/},
-        {test: /\.s?css$/,
+        {
+          test: /\.s?css$/,
           use: extractScss.extract({
             use: [
               {loader: 'css-loader', options: {minimize: true}},
               {loader: 'sass-loader'},
-            ]
+            ],
           }),
         },
-        {test: /\.(eot|svg|ttf|woff(2)?)(\?v=\d+\.\d+\.\d+)?/,
-          use: {loader: 'file-loader', options: {
-            name: '/[name].[hash].[ext]',
-            outputPath: 'static/fonts',
-          }},
+        {
+          test: /\.(eot|svg|ttf|woff(2)?)(\?v=\d+\.\d+\.\d+)?/,
+          use: {
+            loader: 'file-loader',
+            options: {
+              name: '/[name].[hash].[ext]',
+              outputPath: 'static/fonts',
+            },
+          },
         },
-      ]
+      ],
     },
 
     plugins: [
@@ -56,15 +61,17 @@ const createConfig = (env, argv)=>{
       extractScss,
       new webpack.optimize.CommonsChunkPlugin({
         name: 'vendor',
-        minChunks: ({ resource }) => /node_modules/.test(resource),
+        minChunks: ({resource}) => /node_modules/.test(resource),
       }),
       new webpack.optimize.CommonsChunkPlugin({
         name: 'runtime',
         filename: 'static/runtime.[hash].js',
       }),
-      new CopyPlugin([{
-        from: '../public',
-      }]),
+      new CopyPlugin([
+        {
+          from: '../public',
+        },
+      ]),
     ],
 
     output: {
@@ -90,28 +97,35 @@ const createConfig = (env, argv)=>{
     },
   };
 
-  if(env && env.development){
+  if (env && env.development) {
+    config.plugins.push(
+      new webpack.DefinePlugin({
+        APIBASE_URL: JSON.stringify('http://localhost:8080/api'),
+      }),
+    );
     config.entry.admin.push('preact/devtools');
-  }
-
-  if(env && env.production){
-    config.plugins.push(new SWPrecachePlugin({
-      minify: true,
-      cacheId: 'nukeadmin',
-      filename: 'service-worker.js',
-      staticFileGlobsIgnorePatterns: [/\.html$/],
-      dontCacheBustUrlsMatching: /\/static\//,
-      navigateFallback: '/',
-      navigateFallbackWhitelist: [/^(?!\/api\/)(?!\/static\/).*/],
-      runtimeCaching: [
-        {urlPattern: '/*', handler: 'networkFirst'},
-      ],
-    }));
+  } else {
+    config.plugins.push(
+      new webpack.DefinePlugin({
+        APIBASE_URL: JSON.stringify('/api'),
+      }),
+    );
+    config.plugins.push(
+      new SWPrecachePlugin({
+        minify: true,
+        cacheId: 'nukeadmin',
+        filename: 'service-worker.js',
+        staticFileGlobsIgnorePatterns: [/\.html$/],
+        dontCacheBustUrlsMatching: /\/static\//,
+        navigateFallback: '/',
+        navigateFallbackWhitelist: [/^(?!\/api\/)(?!\/static\/).*/],
+        runtimeCaching: [{urlPattern: '/*', handler: 'networkFirst'}],
+      }),
+    );
     //config.plugins.push(new BundleAnalyzer({analyzerMode: 'static', openAnalyzer: true}));
   }
 
   return config;
 };
-
 
 module.exports = createConfig;
