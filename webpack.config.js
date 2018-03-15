@@ -2,9 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlPlugin = require('html-webpack-plugin');
-const SWPrecachePlugin = require('sw-precache-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
-const MD5Hash = require('webpack-md5-hash');
 const BundleAnalyzer = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const extractScss = new ExtractTextPlugin('static/[name].[contenthash].css');
@@ -50,7 +48,6 @@ const createConfig = (env, argv) => {
     },
 
     plugins: [
-      new MD5Hash(),
       new webpack.HashedModuleIdsPlugin(),
       new HtmlPlugin({
         title: 'Nuke',
@@ -108,18 +105,6 @@ const createConfig = (env, argv) => {
     config.plugins.push(
       new webpack.DefinePlugin({
         APIBASE_URL: JSON.stringify('/api'),
-      }),
-    );
-    config.plugins.push(
-      new SWPrecachePlugin({
-        minify: true,
-        cacheId: 'nuke',
-        filename: 'service-worker.js',
-        staticFileGlobsIgnorePatterns: [/\.html$/],
-        dontCacheBustUrlsMatching: /\/static\//,
-        navigateFallback: '/',
-        navigateFallbackWhitelist: [/^(?!\/api\/)(?!\/static\/).*/],
-        runtimeCaching: [{urlPattern: '/*', handler: 'networkFirst'}],
       }),
     );
     //config.plugins.push(new BundleAnalyzer({analyzerMode: 'static', openAnalyzer: true}));

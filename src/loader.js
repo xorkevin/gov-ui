@@ -1,13 +1,12 @@
 import {h, Component} from 'preact';
-import {isWeb} from 'utility';
 
-const loadingDefault = ()=>{
+const loadingDefault = () => {
   return <div>LOADING</div>;
 };
 
-const Loader = (loader, callback, args, loading)=>{
+const Loader = (loader, callback, args, loading) => {
   return class extends Component {
-    constructor(props){
+    constructor(props) {
       super(props);
       this.state = {
         loaded: false,
@@ -15,44 +14,34 @@ const Loader = (loader, callback, args, loading)=>{
       };
     }
 
-    load(){
-      if(!this.state.loaded){
-        if(isWeb()){
-          Promise.resolve(loader()).then((mod)=>{
+    load() {
+      if (!this.state.loaded) {
+        loader()
+          .then(mod => {
             let k = mod;
-            if(mod.default){
+            if (mod.default) {
               k = mod.default;
             }
             this.setState({
               loaded: true,
               mod: k,
             });
-          }).catch((err)=>{
-          });
-        } else {
-          let k = loader();
-          if(k.default){
-            k = k.default;
-          }
-          this.setState({
-            loaded: true,
-            mod: k,
-          });
-        }
+          })
+          .catch(err => {});
       }
     }
 
-    componentWillMount(){
+    componentWillMount() {
       this.load();
     }
 
-    render({}, {loaded, mod}){
-      if(loaded){
-        return callback && callback(mod) || h(mod, args);
+    render({}, {loaded, mod}) {
+      if (loaded) {
+        return (callback && callback(mod)) || h(mod, args);
       }
-      return loading && loading() || loadingDefault();
+      return (loading && loading()) || loadingDefault();
     }
   };
 };
 
-export default Loader
+export default Loader;

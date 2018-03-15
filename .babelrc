@@ -26,22 +26,5 @@
         }],
       ],
     },
-    "dev": {
-      "plugins": [
-        "transform-import-to-require",
-      ],
-    },
-    "server": {
-      "presets": [
-        ["env", {
-          "targets": {
-            "node": "current",
-          },
-        }],
-      ],
-      "plugins": [
-        "transform-import-to-require",
-      ],
-    },
   },
 }

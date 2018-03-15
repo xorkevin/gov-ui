@@ -1,6 +1,5 @@
 import {h, Component} from 'preact';
 import renderToString from 'preact-render-to-string';
-import {isWeb} from 'utility';
 
 const deferLoadImage = src => {
   return new Promise(resolve => {
@@ -21,10 +20,6 @@ class Img extends Component {
     };
 
     this.imgLoaded = this.imgLoaded.bind(this);
-
-    this.noscript = !isWeb()
-      ? renderToString(<img className="image" src={props.src} />)
-      : '';
   }
 
   tick() {
@@ -200,7 +195,6 @@ class Img extends Component {
           {children.length > 0 && <div className="children">{children}</div>}
           {image}
           {previewImage}
-          <noscript dangerouslySetInnerHTML={{__html: this.noscript}} />
         </div>
       </div>
     );
