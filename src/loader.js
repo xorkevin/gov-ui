@@ -4,7 +4,7 @@ const loadingDefault = () => {
   return <div>LOADING</div>;
 };
 
-const Loader = (loader, callback, args, loading) => {
+const Loader = (loader, args, loading, callback) => {
   return class extends Component {
     constructor(props) {
       super(props);
@@ -14,20 +14,21 @@ const Loader = (loader, callback, args, loading) => {
       };
     }
 
-    load() {
+    async load() {
       if (!this.state.loaded) {
-        loader()
-          .then(mod => {
-            let k = mod;
-            if (mod.default) {
-              k = mod.default;
-            }
-            this.setState({
-              loaded: true,
-              mod: k,
-            });
-          })
-          .catch(err => {});
+        try {
+          const mod = await loader();
+          let k = mod;
+          if (mod.default) {
+            k = mod.default;
+          }
+          this.setState({
+            loaded: true,
+            mod: k,
+          });
+        } catch (err) {
+          console.error(err);
+        }
       }
     }
 
