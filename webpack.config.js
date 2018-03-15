@@ -1,11 +1,9 @@
 const path = require('path');
 const webpack = require('webpack');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const ExtractTextPlugin = require('mini-css-extract-plugin');
 const HtmlPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const BundleAnalyzer = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-
-const extractScss = new ExtractTextPlugin('static/[name].[contenthash].css');
 
 const createConfig = (env, argv) => {
   const config = {
@@ -27,12 +25,11 @@ const createConfig = (env, argv) => {
         {test: /\.js$/, loader: 'babel-loader', exclude: /node_modules/},
         {
           test: /\.s?css$/,
-          use: extractScss.extract({
-            use: [
-              {loader: 'css-loader', options: {minimize: true}},
-              {loader: 'sass-loader'},
-            ],
-          }),
+          use: [
+            ExtractTextPlugin.loader,
+            {loader: 'css-loader', options: {minimize: true}},
+            {loader: 'sass-loader'},
+          ],
         },
         {
           test: /\.(eot|svg|ttf|woff(2)?)(\?v=\d+\.\d+\.\d+)?/,
@@ -47,6 +44,13 @@ const createConfig = (env, argv) => {
       ],
     },
 
+    optimization: {
+      runtimeChunk: true,
+      splitChunks: {
+        chunks: 'all',
+      },
+    },
+
     plugins: [
       new webpack.HashedModuleIdsPlugin(),
       new HtmlPlugin({
@@ -55,14 +59,9 @@ const createConfig = (env, argv) => {
         inject: 'body',
         template: '../template/index.html',
       }),
-      extractScss,
-      new webpack.optimize.CommonsChunkPlugin({
-        name: 'vendor',
-        minChunks: ({resource}) => /node_modules/.test(resource),
-      }),
-      new webpack.optimize.CommonsChunkPlugin({
-        name: 'runtime',
-        filename: 'static/runtime.[hash].js',
+      new ExtractTextPlugin({
+        filename: 'static/[name].[hash].css',
+        chunkFilename: 'static/chunk.[name].[chunkhash].css',
       }),
       new CopyPlugin([
         {
@@ -74,8 +73,8 @@ const createConfig = (env, argv) => {
     output: {
       path: path.resolve(__dirname, 'bin'),
       publicPath: '/',
-      filename: 'static/[name].[chunkhash].js',
-      chunkFilename: 'static/chunk.[id].[chunkhash].js',
+      filename: 'static/[name].[hash].js',
+      chunkFilename: 'static/chunk.[name].[chunkhash].js',
     },
 
     watchOptions: {
