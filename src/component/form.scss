@@ -17,7 +17,7 @@ textarea {
     width: 100%;
   }
 
-  & > input:not([type='checkbox']),
+  & > input:not([type='radio']):not([type='checkbox']),
   & > textarea,
   & > select {
     font-size: 1em;
@@ -107,6 +107,7 @@ textarea {
   }
 
   & > input[type='file'],
+  & > input[type='radio'],
   & > input[type='checkbox'] {
     border-bottom: none;
 
@@ -118,11 +119,13 @@ textarea {
     }
   }
 
+  &.radio,
   &.checkbox {
     padding-top: 8px;
     padding-bottom: 8px;
   }
 
+  & > input[type='radio'],
   & > input[type='checkbox'] {
     vertical-align: middle;
     margin-right: 8px;
