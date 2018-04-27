@@ -1,31 +1,36 @@
-*, *:before, *:after {
+*,
+*:before,
+*:after {
   box-sizing: border-box;
-  margin    : 0;
-  padding   : 0;
+  margin: 0;
+  padding: 0;
 }
 
-html, body {
-  margin : 0;
+html,
+body {
+  margin: 0;
   padding: 0;
 
   &.dark {
     background-color: $background-dark;
-    color           : $color-text-light-2;
+    color: $color-text-light-2;
   }
 }
 
-input:not([type="checkbox"]), button, submit {
+input:not([type='radio']):not([type='checkbox']),
+button,
+submit {
   -webkit-appearance: none;
-  -moz-appearance   : none;
-  appearance        : none;
-  border            : none;
-  font-family       : unset;
-}
-
-textarea, input {
+  -moz-appearance: none;
+  appearance: none;
+  border: none;
   font-family: unset;
 }
 
+textarea,
+input {
+  font-family: unset;
+}
 
 .text-center {
   text-align: center;
