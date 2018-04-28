@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const UglifyPlugin = require('uglifyjs-webpack-plugin');
 const ExtractTextPlugin = require('mini-css-extract-plugin');
 const HtmlPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
@@ -99,8 +100,19 @@ const createConfig = (env, argv) => {
         APIBASE_URL: JSON.stringify('http://localhost:8080/api'),
       }),
     );
-    //config.entry.main.push('preact/devtools');
   } else {
+    config.optimization.minimizer = [
+      new UglifyPlugin({
+        cache: true,
+        parallel: true,
+        sourceMap: false,
+        uglifyOptions: {
+          compress: {
+            unused: false,
+          },
+        },
+      }),
+    ];
     config.plugins.push(
       new webpack.DefinePlugin({
         APIBASE_URL: JSON.stringify('/api'),
