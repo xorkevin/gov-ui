@@ -99,7 +99,7 @@ const createConfig = (env, argv) => {
         APIBASE_URL: JSON.stringify('http://localhost:8080/api'),
       }),
     );
-    config.entry.main.push('preact/devtools');
+    //config.entry.main.push('preact/devtools');
   } else {
     config.plugins.push(
       new webpack.DefinePlugin({

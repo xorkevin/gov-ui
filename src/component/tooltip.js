@@ -1,6 +1,6 @@
 import {h, Component} from 'preact';
 
-const Tooltip = ({position, tooltip, children}) => {
+const Tooltip = ({position, display, width, tooltip, children}) => {
   const k = ['tooltip'];
   switch (position) {
     case 'left':
@@ -18,6 +18,11 @@ const Tooltip = ({position, tooltip, children}) => {
     case 'inline':
     case 'block':
       j.push(display);
+  }
+
+  const s = {};
+  if (width) {
+    s.width = width;
   }
 
   return (
