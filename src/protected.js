@@ -2,37 +2,27 @@ import {h, Component} from 'preact';
 import {withRouter} from 'react-router-dom';
 import {connect} from 'preact-redux';
 
-const mapStateToProps = (state)=>{
+const mapStateToProps = state => {
   const {loggedIn, authTags} = state.Auth;
   return {
-    loggedIn, authTags,
+    loggedIn,
+    authTags,
   };
 };
 
-const Protected = (child, auth)=>{
-  return withRouter(connect(mapStateToProps)(class extends Component {
-    componentDidMount(){
-      if(!this.props.loggedIn){
-        this.props.history.replace('/x/login');
+const Protected = (child, auth, args) => {
+  return connect(mapStateToProps)(
+    class extends Component {
+      // '/x/login'
+      render(props) {
+        const {loggedIn, authTags} = props;
+        if (!loggedIn || (auth && !new Set(authTags.split(',')).has(auth))) {
+          return <div>Unauthorized</div>;
+        }
+        return h(child, Object.assign({}, props, args));
       }
-    }
-
-    componentWillReceiveProps(nextProps){
-      if(!nextProps.loggedIn){
-        this.props.history.replace('/x/login');
-      }
-    }
-
-    render({loggedIn, authTags}){
-      if(!loggedIn){
-        return false;
-      }
-      if(auth && !(new Set(authTags.split(',')).has(auth))){
-        return <div>Unauthorized</div>;
-      }
-      return h(child);
-    }
-  }));
+    },
+  );
 };
 
-export default Protected
+export default Protected;

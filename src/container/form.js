@@ -11,6 +11,9 @@ const FormContainer = () => {
       <Input label="Email" error="not an email" />
       <Input label="Phone" valid />
       <Input label="Tagline" info="What describes you?" />
+      <Input type="checkbox" label="Check me" info="This is a checkbox" />
+      <Input type="radio" label="Radio" info="Radio button" />
+      <Input type="file" label="File" info="Choose a file" />
       <Input
         label="Language"
         info="Your favorite language"

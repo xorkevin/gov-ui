@@ -36,9 +36,12 @@ const Loader = (loader, args, loading, callback) => {
       this.load();
     }
 
-    render({}, {loaded, mod}) {
+    render(props, {loaded, mod}) {
       if (loaded) {
-        return (callback && callback(mod)) || h(mod, args);
+        return (
+          (callback && callback(mod, props)) ||
+          h(mod, Object.assign({}, props, args))
+        );
       }
       return (loading && loading()) || loadingDefault();
     }

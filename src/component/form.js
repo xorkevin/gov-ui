@@ -85,7 +85,9 @@ class Input extends Component {
       k.push('invalid');
     }
 
-    if (type === 'radio') {
+    if (type === 'file') {
+      k.push('file');
+    } else if (type === 'radio') {
       k.push('radio');
     } else if (type === 'checkbox') {
       k.push('checkbox');

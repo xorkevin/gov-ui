@@ -28,7 +28,6 @@ textarea {
 
     & + label {
       transition: $transition-normal;
-
       bottom: 0;
       color: $color-text-dark-2;
       font-size: 1em;
@@ -106,32 +105,62 @@ textarea {
     }
   }
 
-  & > input[type='file'],
-  & > input[type='radio'],
-  & > input[type='checkbox'] {
-    border-bottom: none;
+  &.file {
+    padding-top: 20px;
+    padding-bottom: 20px;
 
-    & + label,
-    & + label:hover {
-      &:after {
-        content: none;
+    & > input[type='file'] {
+      border-bottom: none;
+
+      & + label,
+      & + label:hover {
+        &:after {
+          content: none;
+        }
       }
     }
   }
 
   &.radio,
   &.checkbox {
-    padding-top: 8px;
-    padding-bottom: 8px;
+    padding-top: 10px;
+    padding-bottom: 20px;
   }
 
   & > input[type='radio'],
   & > input[type='checkbox'] {
+    border-bottom: none;
     vertical-align: middle;
     margin-right: 8px;
 
-    & + label {
+    & + label,
+    & + label:hover {
       vertical-align: middle;
+
+      &:after {
+        content: none;
+      }
+    }
+
+    & ~ .info {
+      color: $color-text-dark-3;
+      position: absolute;
+      font-size: 0.75em;
+      margin-top: 2px;
+      display: block;
+    }
+
+    &:focus ~ .info {
+      color: $color-text-dark-2;
+    }
+
+    & ~ .error {
+      color: $color-invalid;
+      position: absolute;
+      font-size: 0.75em;
+      margin-top: 2px;
+      visibility: hidden;
+      display: block;
     }
   }
 
@@ -210,6 +239,7 @@ textarea {
 
 body.dark {
   .input {
+    & > input:not([type='radio']):not([type='checkbox']),
     & > input,
     & > textarea,
     & > select {
