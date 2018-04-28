@@ -73,7 +73,7 @@ class App extends Component {
           ]}
         />
 
-        <MainContent dark={dark}>
+        <MainContent>
           <Switch>
             <Route
               exact
