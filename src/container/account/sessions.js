@@ -1,5 +1,5 @@
 import {h, Component} from 'preact';
-import {Link, withRouter} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import Section from 'component/section';
 import Card from 'component/card';
 import Input from 'component/form';
@@ -11,7 +11,7 @@ import {connect} from 'preact-redux';
 import {GetSessionReq, DelSessionReq} from 'reducer/account/edit';
 
 class AccountSessions extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       success: false,
@@ -23,17 +23,19 @@ class AccountSessions extends Component {
     this.getsessions = this.getsessions.bind(this);
   }
 
-  async deletesessions(){
-    const {err} = await this.props.deletesessions(Array.from(this.state.session_ids));
-    if(err){
-      this.setState((prevState)=>{
+  async deletesessions() {
+    const {err} = await this.props.deletesessions(
+      Array.from(this.state.session_ids),
+    );
+    if (err) {
+      this.setState(prevState => {
         return Object.assign({}, prevState, {
           success: false,
           err,
         });
       });
     } else {
-      this.setState((prevState)=>{
+      this.setState(prevState => {
         return Object.assign({}, prevState, {
           success: true,
           err: false,
@@ -43,17 +45,17 @@ class AccountSessions extends Component {
     }
   }
 
-  async getsessions(){
+  async getsessions() {
     const {err, sessions} = await this.props.getsessions();
-    if(err){
-      this.setState((prevState)=>{
+    if (err) {
+      this.setState(prevState => {
         return Object.assign({}, prevState, {
           success: false,
           err,
         });
       });
     } else {
-      this.setState((prevState)=>{
+      this.setState(prevState => {
         return Object.assign({}, prevState, {
           success: true,
           err: false,
@@ -63,61 +65,80 @@ class AccountSessions extends Component {
     }
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.getsessions();
   }
 
-  render({}, {session_ids, success, err, sessions}){
-    if(!sessions){
+  render({}, {session_ids, success, err, sessions}) {
+    if (!sessions) {
       return false;
     }
     const bar = [];
-    bar.push(<Button primary onClick={this.deletesessions}>Delete</Button>);
-    return <Card size="lg" restrictWidth center bar={bar}>
-      <Section subsection sectionTitle="Active Sessions">
-        {sessions.map((session)=>{
-          return <div>
-            <Input fullWidth type="checkbox" label={
-              <span>{session.ip} | last accessed <Time value={session.time * 1000}/></span>
-            } onChange={(value)=>{
-              this.setState((prevState)=>{
-                if(prevState.session_ids.has(session.session_id)){
-                  prevState.session_ids.delete(session.session_id);
-                  return Object.assign({}, prevState, {
-                    session_ids: prevState.session_ids,
-                  });
-                } else {
-                  return Object.assign({}, prevState, {
-                    session_ids: prevState.session_ids.add(session.session_id),
-                  });
-                }
-              });
-            }}/>
-            <span>{session.user_agent} | {session.session_id}</span>
-          </div>;
-        })}
-      </Section>
-      {err && <span>{err}</span>}
-    </Card>;
+    bar.push(
+      <Button primary onClick={this.deletesessions}>
+        Delete
+      </Button>,
+    );
+    return (
+      <Card size="lg" restrictWidth center bar={bar}>
+        <Section subsection sectionTitle="Active Sessions">
+          {sessions.map(session => {
+            return (
+              <div>
+                <Input
+                  fullWidth
+                  type="checkbox"
+                  label={
+                    <span>
+                      {session.ip} | last accessed{' '}
+                      <Time value={session.time * 1000} />
+                    </span>
+                  }
+                  onChange={value => {
+                    this.setState(prevState => {
+                      if (prevState.session_ids.has(session.session_id)) {
+                        prevState.session_ids.delete(session.session_id);
+                        return Object.assign({}, prevState, {
+                          session_ids: prevState.session_ids,
+                        });
+                      } else {
+                        return Object.assign({}, prevState, {
+                          session_ids: prevState.session_ids.add(
+                            session.session_id,
+                          ),
+                        });
+                      }
+                    });
+                  }}
+                />
+                <span>
+                  {session.user_agent} | {session.session_id}
+                </span>
+              </div>
+            );
+          })}
+        </Section>
+        {err && <span>{err}</span>}
+      </Card>
+    );
   }
 }
 
-const mapStateToProps = (state)=>{
+const mapStateToProps = state => {
   return {};
 };
 
-const mapDispatchToProps = (dispatch)=>{
+const mapDispatchToProps = dispatch => {
   return {
-    getsessions: ()=>{
+    getsessions: () => {
       return dispatch(GetSessionReq());
     },
-    deletesessions: (sessions)=>{
+    deletesessions: sessions => {
       return dispatch(DelSessionReq(sessions));
     },
   };
 };
 
 AccountSessions = connect(mapStateToProps, mapDispatchToProps)(AccountSessions);
-AccountSessions = withRouter(AccountSessions);
 
-export default AccountSessions
+export default AccountSessions;

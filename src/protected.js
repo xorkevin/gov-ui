@@ -1,5 +1,4 @@
 import {h, Component} from 'preact';
-import {withRouter} from 'react-router-dom';
 import {connect} from 'preact-redux';
 
 const mapStateToProps = state => {

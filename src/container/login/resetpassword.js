@@ -1,5 +1,5 @@
 import {h, Component} from 'preact';
-import {Link, withRouter} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import linkState from 'linkstate';
 import Section from 'component/section';
 import Menu from 'component/menu';
@@ -131,6 +131,5 @@ const mapDispatchToProps = dispatch => {
 };
 
 ConfirmReset = connect(mapStateToProps, mapDispatchToProps)(ConfirmReset);
-ConfirmReset = withRouter(ConfirmReset);
 
 export default ConfirmReset;
