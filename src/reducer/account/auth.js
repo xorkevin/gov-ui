@@ -213,6 +213,7 @@ const GetUserAccount = () => {
 };
 
 const defaultState = {
+  valid: false,
   loading: false,
   getuserloading: false,
   loggedIn: false,
@@ -231,7 +232,7 @@ const defaultState = {
 };
 
 const initState = () => {
-  const k = {};
+  const k = {valid: true};
   if (getCookie('refresh_valid') === 'valid') {
     k.loggedIn = true;
     k.authTags = getCookie('auth_tags').replace(/^"+|"*$/g, '');
@@ -266,7 +267,7 @@ const Auth = (state = initState(), action) => {
         err: action.err,
       });
     case LOGOUT:
-      return Object.assign({}, defaultState);
+      return Object.assign({}, defaultState, {valid: true});
     case GETUSER:
       return Object.assign({}, state, {
         getuserloading: true,

@@ -5,8 +5,10 @@ import FaIcon from 'component/faicon';
 import {connect} from 'preact-redux';
 
 const mapStateToProps = state => {
-  const {loggedIn, authTags} = state.Auth;
+  const {valid, loading, loggedIn, authTags} = state.Auth;
   return {
+    valid,
+    loading,
     loggedIn,
     authTags,
   };
@@ -15,20 +17,20 @@ const mapStateToProps = state => {
 const Protected = (child, auth, args) => {
   return connect(mapStateToProps)(
     class extends Component {
-      render(props) {
-        const {loggedIn, authTags} = props;
-        if (!loggedIn) {
-          return (
-            <div>
-              <h4>Not Logged In</h4>
-              <Link to="/x/login">
-                <Button outline>
-                  Login <FaIcon icon="chevron-right" />
-                </Button>
-              </Link>
-            </div>
-          );
+      componentDidMount() {
+        if (this.props.valid && !this.props.loading && !this.props.loggedIn) {
+          this.props.history.replace('/x/login');
         }
+      }
+
+      componentWillReceiveProps(nextProps) {
+        if (nextProps.valid && !nextProps.loading && !nextProps.loggedIn) {
+          this.props.history.replace('/x/login');
+        }
+      }
+
+      render(props) {
+        const {authTags} = props;
         if (auth && !new Set(authTags.split(',')).has(auth)) {
           return (
             <div>
