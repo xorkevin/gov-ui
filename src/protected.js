@@ -19,13 +19,17 @@ const Protected = (child, auth, args) => {
     class extends Component {
       componentDidMount() {
         if (this.props.valid && !this.props.loading && !this.props.loggedIn) {
-          this.props.history.replace('/x/login');
+          if (this.props.history && this.props.history.replace) {
+            this.props.history.replace('/x/login');
+          }
         }
       }
 
       componentWillReceiveProps(nextProps) {
         if (nextProps.valid && !nextProps.loading && !nextProps.loggedIn) {
-          this.props.history.replace('/x/login');
+          if (this.props.history && this.props.history.replace) {
+            this.props.history.replace('/x/login');
+          }
         }
       }
 
