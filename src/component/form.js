@@ -29,15 +29,6 @@ class Input extends Component {
           this.props.onChange(event.target.files[0]);
         }
       }
-    } else if (this.props.dropdown) {
-      this.setState(prevState => {
-        return Object.assign({}, prevState, {
-          value: event.target.selectedIndex,
-        });
-      });
-      if (this.props.onChange) {
-        this.props.onChange(event.target.selectedIndex);
-      }
     } else {
       this.setState(prevState => {
         return Object.assign({}, prevState, {value: event.target.value});
@@ -106,8 +97,8 @@ class Input extends Component {
           multiple={multiple}
           onChange={this.handleChange}>
           {Array.isArray(dropdown) &&
-            dropdown.map((text, i) => {
-              return <option value={i}>{text}</option>;
+            dropdown.map(i => {
+              return <option value={i.value}>{i.text}</option>;
             })}
         </select>
       );
