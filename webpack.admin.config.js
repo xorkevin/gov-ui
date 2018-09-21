@@ -1,6 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
-const UglifyPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const ExtractTextPlugin = require('mini-css-extract-plugin');
 const HtmlPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
@@ -12,7 +12,7 @@ const createConfig = (env, argv) => {
 
     context: path.resolve(__dirname, 'src'),
     entry: {
-      admin: ['babel-polyfill', 'adminmain.js'],
+      admin: ['@babel/polyfill', 'adminmain.js'],
     },
     resolve: {
       modules: [path.resolve(__dirname, 'src'), 'node_modules'],
@@ -23,7 +23,11 @@ const createConfig = (env, argv) => {
     },
     module: {
       rules: [
-        {test: /\.js$/, loader: 'babel-loader', exclude: /node_modules/},
+        {
+          test: /\.js$/,
+          exclude: /node_modules/,
+          use: 'babel-loader',
+        },
         {
           test: /\.s?css$/,
           use: [
@@ -46,10 +50,24 @@ const createConfig = (env, argv) => {
     },
 
     optimization: {
-      runtimeChunk: true,
+      runtimeChunk: 'single',
       splitChunks: {
         chunks: 'all',
+        cacheGroups: {
+          vendor: {
+            test: /node_modules/,
+            name: 'vendors',
+            chunks: 'all',
+          },
+        },
       },
+      minimizer: [
+        new TerserPlugin({
+          cache: true,
+          parallel: true,
+          sourceMap: false,
+        }),
+      ],
     },
 
     plugins: [
@@ -100,20 +118,7 @@ const createConfig = (env, argv) => {
         APIBASE_URL: JSON.stringify('http://localhost:8080/api'),
       }),
     );
-    config.entry.admin.push('preact/devtools');
   } else {
-    config.optimization.minimizer = [
-      new UglifyPlugin({
-        cache: true,
-        parallel: true,
-        sourceMap: false,
-        uglifyOptions: {
-          compress: {
-            unused: false,
-          },
-        },
-      }),
-    ];
     config.plugins.push(
       new webpack.DefinePlugin({
         APIBASE_URL: JSON.stringify('/api'),
