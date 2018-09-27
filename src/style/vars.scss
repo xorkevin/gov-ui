@@ -1,8 +1,8 @@
 // Grid //
-$grid-sm-breakpoint   : 512px * 1.5 !default;
-$grid-md-breakpoint   : $grid-sm-breakpoint * 1.5 !default;
-$grid-lg-breakpoint   : $grid-md-breakpoint * 1.5 !default;
-$grid-gutter-padding  : 8px !default;
+$grid-sm-breakpoint: 512px * 1.5 !default;
+$grid-md-breakpoint: $grid-sm-breakpoint * 1.5 !default;
+$grid-lg-breakpoint: $grid-md-breakpoint * 1.5 !default;
+$grid-gutter-padding: 8px !default;
 $grid-vertical-padding: 8px !default;
 
 // Typography //
@@ -11,12 +11,12 @@ $typography-base-size: 12px !default;
 $typography-article-font: 'Source Serif Pro', Palatino, Georgia, serif;
 
 // Card //
-$card-sm-size  : 256px !default;
-$card-md-size  : $card-sm-size * 1.5 !default;
-$card-lg-size  : $card-md-size * 1.5 !default;
-$card-padding  : 8px !default;
+$card-sm-size: 256px !default;
+$card-md-size: $card-sm-size * 1.5 !default;
+$card-lg-size: $card-md-size * 1.5 !default;
+$card-padding: 8px !default;
 $card-padding-h: 20px !default;
-$card-margin   : 8px !default;
+$card-margin: 8px !default;
 
 // Menu //
 $menu-sm-size: 128px !default;
@@ -24,7 +24,7 @@ $menu-md-size: $menu-sm-size * 1.5 !default;
 $menu-lg-size: $menu-md-size * 1.5 !default;
 
 // Button //
-$button-padding  : 8px !default;
+$button-padding: 8px !default;
 $button-padding-h: $button-padding * 2 !default;
 $button-min-width: 48px !default;
 
@@ -35,12 +35,12 @@ $hero-lg-size: $hero-md-size * 1.5 !default;
 
 // Nav //
 $nav-height: 64px !default;
-$nav-width : 64px !default;
+$nav-width: 64px !default;
 
 // Tab //
 $tab-height: 32px !default;
 
 // Transitions //
 $transition-normal: 0.125s cubic-bezier(0.4, 0, 0.2, 1);
-$transition-fast  : 0.0625s cubic-bezier(0.4, 0, 0.2, 1);
-$transition-slow  : 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-fast: 0.0625s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);

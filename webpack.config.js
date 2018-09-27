@@ -79,8 +79,8 @@ const createConfig = (env, argv) => {
         template: '../template/index.html',
       }),
       new ExtractTextPlugin({
-        filename: 'static/[name].[hash].css',
-        chunkFilename: 'static/chunk.[name].[chunkhash].css',
+        filename: 'static/[name].[contenthash].css',
+        chunkFilename: 'static/chunk.[name].[contenthash].css',
       }),
       new CopyPlugin([
         {
