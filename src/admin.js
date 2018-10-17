@@ -23,6 +23,40 @@ import Grid from 'component/grid';
 import Anchor from 'component/anchor';
 import FaIcon from 'component/faicon';
 
+const loadAdminContainer = Protected(
+  Loader(() => {
+    return import('container/admin');
+  }),
+);
+const loadLoginContainer = Loader(() => {
+  return import('container/login');
+});
+const loadAccountContainer = Protected(
+  Loader(() => {
+    return import('container/account');
+  }),
+);
+const loadUserContainer = Protected(
+  Loader(() => {
+    return import('container/user');
+  }),
+);
+const loadManageContainer = Protected(
+  Loader(() => {
+    return import('container/manage');
+  }),
+  'admin',
+);
+const loadHealthContainer = Protected(
+  Loader(() => {
+    return import('container/health');
+  }),
+  'admin',
+);
+const loadSetupContainer = Loader(() => {
+  return import('container/setup');
+});
+
 class Admin extends Component {
   constructor(props) {
     super(props);
@@ -105,61 +139,13 @@ class Admin extends Component {
 
         <MainContent withSidebar={loggedIn} sectionNoMargin>
           <Switch>
-            <Route
-              exact
-              path="/"
-              component={Protected(
-                Loader(() => {
-                  return import('container/admin');
-                }),
-              )}
-            />
-            <Route
-              path="/x"
-              component={Loader(() => {
-                return import('container/login');
-              })}
-            />
-            <Route
-              path="/a"
-              component={Protected(
-                Loader(() => {
-                  return import('container/account');
-                }),
-              )}
-            />
-            <Route
-              path="/u"
-              component={Protected(
-                Loader(() => {
-                  return import('container/user');
-                }),
-              )}
-            />
-            <Route
-              path="/manage"
-              component={Protected(
-                Loader(() => {
-                  return import('container/manage');
-                }),
-                'admin',
-              )}
-            />
-            <Route
-              path="/health"
-              component={Protected(
-                Loader(() => {
-                  return import('container/health');
-                }),
-                'admin',
-              )}
-            />
-            <Route
-              path="/setup"
-              component={Loader(() => {
-                return import('container/setup');
-              })}
-            />
+            <Route exact path="/" component={loadAdminContainer} />
+            <Route path="/x" component={loadLoginContainer} />
+            <Route path="/a" component={loadAccountContainer} />
+            <Route path="/u" component={loadUserContainer} />
+            <Route path="/manage" component={loadManageContainer} />
+            <Route path="/health" component={loadHealthContainer} />
+            <Route path="/setup" component={loadSetupContainer} />
             <Redirect to="/" />
           </Switch>
         </MainContent>
@@ -167,8 +153,7 @@ class Admin extends Component {
         <Footer withSidebar={loggedIn}>
           <Grid map center sm={8}>
             <div colkey="left" className="text-center">
-              <h4>Nuke</h4>
-              a reactive frontend for governor
+              <h4>Nuke</h4>a reactive frontend for governor
             </div>
             <div colkey="center" className="text-center">
               <ul>
@@ -203,14 +188,14 @@ class Admin extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const {loggedIn} = state.Auth;
   return {
     loggedIn,
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
     toggleDark: () => {
       dispatch(DarkMode());
@@ -221,7 +206,10 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-Admin = connect(mapStateToProps, mapDispatchToProps)(Admin);
+Admin = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Admin);
 Admin = withRouter(Admin);
 
 export default Admin;

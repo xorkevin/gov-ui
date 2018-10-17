@@ -14,6 +14,19 @@ import Grid from 'component/grid';
 import Anchor from 'component/anchor';
 import FaIcon from 'component/faicon';
 
+const loadHomeContainer = Loader(() => {
+  return import('container/home');
+});
+const loadFormContainer = Loader(() => {
+  return import('container/form');
+});
+const loadCardContainer = Loader(() => {
+  return import('container/card');
+});
+const loadHealthContainer = Loader(() => {
+  return import('container/health');
+});
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -75,31 +88,10 @@ class App extends Component {
 
         <MainContent>
           <Switch>
-            <Route
-              exact
-              path="/"
-              component={Loader(() => {
-                return import('container/home');
-              })}
-            />
-            <Route
-              path="/form"
-              component={Loader(() => {
-                return import('container/form');
-              })}
-            />
-            <Route
-              path="/cards"
-              component={Loader(() => {
-                return import('container/card');
-              })}
-            />
-            <Route
-              path="/health"
-              component={Loader(() => {
-                return import('container/health');
-              })}
-            />
+            <Route exact path="/" component={loadHomeContainer} />
+            <Route path="/form" component={loadFormContainer} />
+            <Route path="/cards" component={loadCardContainer} />
+            <Route path="/health" component={loadHealthContainer} />
             <Redirect to="/" />
           </Switch>
         </MainContent>
@@ -107,8 +99,7 @@ class App extends Component {
         <Footer>
           <Grid center map sm={8}>
             <div colkey="left" className="text-center">
-              <h4>Nuke</h4>
-              a reactive frontend for governor
+              <h4>Nuke</h4>a reactive frontend for governor
             </div>
             <div colkey="center" className="text-center">
               <ul>
@@ -142,14 +133,14 @@ class App extends Component {
     );
   }
 }
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const {dark} = state.Settings;
   return {
     dark,
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
     toggleDark: () => {
       dispatch(DarkMode());
@@ -157,7 +148,10 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-App = connect(mapStateToProps, mapDispatchToProps)(App);
+App = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(App);
 App = withRouter(App); // needed to force rerender on location change
 
 export default App;

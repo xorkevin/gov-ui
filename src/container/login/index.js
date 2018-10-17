@@ -4,6 +4,22 @@ import {Switch, Route, Redirect} from 'react-router-dom';
 import {connect} from 'preact-redux';
 import Loader from 'loader';
 
+const loadSigninContainer = Loader(() => {
+  return import('container/login/signin');
+});
+const loadCreateContainer = Loader(() => {
+  return import('container/login/create');
+});
+const loadCreateConfirmContainer = Loader(() => {
+  return import('container/login/confirm');
+});
+const loadForgotPassContainer = Loader(() => {
+  return import('container/login/forgotpassword');
+});
+const loadResetPassContainer = Loader(() => {
+  return import('container/login/resetpassword');
+});
+
 class LoginContainer extends Component {
   constructor(props) {
     super(props);
@@ -29,35 +45,19 @@ class LoginContainer extends Component {
   render({match}) {
     return (
       <Switch>
-        <Route
-          path={`${match.path}/login`}
-          component={Loader(() => {
-            return import('container/login/signin');
-          })}
-        />
-        <Route
-          path={`${match.path}/create`}
-          component={Loader(() => {
-            return import('container/login/create');
-          })}
-        />
+        <Route path={`${match.path}/login`} component={loadSigninContainer} />
+        <Route path={`${match.path}/create`} component={loadCreateContainer} />
         <Route
           path={`${match.path}/confirm/:key?`}
-          component={Loader(() => {
-            return import('container/login/confirm');
-          })}
+          component={loadCreateConfirmContainer}
         />
         <Route
           path={`${match.path}/forgot`}
-          component={Loader(() => {
-            return import('container/login/forgotpassword');
-          })}
+          component={loadForgotPassContainer}
         />
         <Route
           path={`${match.path}/forgotconfirm/:key?`}
-          component={Loader(() => {
-            return import('container/login/resetpassword');
-          })}
+          component={loadResetPassContainer}
         />
         <Redirect to={`${match.path}/login`} />
       </Switch>
@@ -65,7 +65,7 @@ class LoginContainer extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const {loggedIn} = state.Auth;
   return {
     loggedIn,

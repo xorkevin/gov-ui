@@ -5,6 +5,10 @@ import Tabbar from 'component/tabbar';
 
 import Loader from 'loader';
 
+const loadManageUserContainer = Loader(() => {
+  return import('container/manage/user');
+});
+
 class ManageContainer extends Component {
   render({match}) {
     return (
@@ -20,9 +24,7 @@ class ManageContainer extends Component {
         <Switch>
           <Route
             path={`${match.url}/user/:username?`}
-            component={Loader(() => {
-              return import('container/manage/user');
-            })}
+            component={loadManageUserContainer}
           />
           <Redirect to={`${match.url}/user`} />
         </Switch>
