@@ -73,7 +73,8 @@ class App extends Component {
                   size="md"
                   fixed
                   align="right"
-                  position="bottom">
+                  position="bottom"
+                >
                   <span onClick={this.toggleDark}>
                     <FaIcon icon="bolt" /> {darkmodetext} Mode
                   </span>
@@ -113,7 +114,8 @@ class App extends Component {
                   <Anchor
                     noColor
                     ext
-                    href="https://github.com/hackform/governor">
+                    href="https://github.com/hackform/governor"
+                  >
                     hackform/governor
                   </Anchor>
                 </li>

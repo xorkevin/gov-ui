@@ -4,22 +4,22 @@ const SETUP = Symbol('SETUP');
 const SETUP_SUCCESS = Symbol('SETUP_SUCCESS');
 const SETUP_ERR = Symbol('SETUP_ERR');
 
-const SetupSuccess = (config)=>{
+const SetupSuccess = (config) => {
   return {
     type: SETUP_SUCCESS,
     config,
   };
 };
 
-const SetupErr = (err)=>{
+const SetupErr = (err) => {
   return {
     type: SETUP_ERR,
     err,
   };
 };
 
-const SetupReq = (options)=>{
-  return async (dispatch)=>{
+const SetupReq = (options) => {
+  return async (dispatch) => {
     dispatch({
       type: SETUP,
     });
@@ -31,19 +31,18 @@ const SetupReq = (options)=>{
       });
       const status = response.status;
       const data = await response.json();
-      if(status >= 200 && status < 300){
+      if (status >= 200 && status < 300) {
         dispatch(SetupSuccess(data));
-      } else if(data && data.message){
+      } else if (data && data.message) {
         throw new Error(data.message);
       } else {
         throw new Error('Could not setup server');
       }
-    } catch(e) {
+    } catch (e) {
       dispatch(SetupErr(e.message));
     }
   };
 };
-
 
 const defaultState = {
   loading: false,
@@ -52,12 +51,12 @@ const defaultState = {
   err: false,
 };
 
-const initState = ()=>{
+const initState = () => {
   return Object.assign({}, defaultState);
 };
 
-const Setup = (state=initState(), action)=>{
-  switch(action.type){
+const Setup = (state = initState(), action) => {
+  switch (action.type) {
     case SETUP:
       return Object.assign({}, state, {
         loading: true,
@@ -81,6 +80,4 @@ const Setup = (state=initState(), action)=>{
   }
 };
 
-export {
-  Setup, SetupReq,
-}
+export {Setup, SetupReq};

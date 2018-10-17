@@ -11,19 +11,19 @@ class Comment extends Component {
   }
 
   hide() {
-    this.setState(prevState => {
+    this.setState((prevState) => {
       return Object.assign({}, prevState, {hidden: true});
     });
   }
 
   show() {
-    this.setState(prevState => {
+    this.setState((prevState) => {
       return Object.assign({}, prevState, {hidden: false});
     });
   }
 
   toggleHidden() {
-    this.setState(prevState => {
+    this.setState((prevState) => {
       return Object.assign({}, prevState, {hidden: !prevState.hidden});
     });
   }
@@ -42,7 +42,8 @@ class Comment extends Component {
                 className="no-color"
                 onClick={() => {
                   this.toggleHidden();
-                }}>
+                }}
+              >
                 [{hidden && '+'}
                 {!hidden && '-'}]
               </a>
@@ -75,7 +76,7 @@ class Comment extends Component {
           children && (
             <div className="children">
               {depth > 0 &&
-                children.map(child => {
+                children.map((child) => {
                   child.attributes.depth = depth - 1;
                   return child;
                 })}
@@ -105,7 +106,7 @@ const DEPTH = {
   md: 12,
 };
 
-const widthToDepth = width => {
+const widthToDepth = (width) => {
   if (width > WIDTH.md) {
     return DEPTH.md;
   } else if (width > WIDTH.sm) {
@@ -126,7 +127,7 @@ class CommentSection extends Component {
   }
 
   tick() {
-    this.setState(prevState => {
+    this.setState((prevState) => {
       return Object.assign({}, prevState, {
         depth: widthToDepth(window.innerWidth),
       });
@@ -160,7 +161,7 @@ class CommentSection extends Component {
         <h5>Comments</h5>
         <div className="comment-section">
           {children &&
-            children.map(child => {
+            children.map((child) => {
               child.attributes.depth = depth - 1;
               return child;
             })}

@@ -38,17 +38,17 @@ class SetupContainer extends Component {
     const {password, email} = this.state.form;
     const {password_confirm, email_confirm} = this.state;
     if (password !== password_confirm) {
-      this.setState(prevState => {
+      this.setState((prevState) => {
         return Object.assign({}, prevState, {
           clienterr: 'passwords do not match',
         });
       });
     } else if (email !== email_confirm) {
-      this.setState(prevState => {
+      this.setState((prevState) => {
         return Object.assign({}, prevState, {clienterr: 'emails do not match'});
       });
     } else {
-      this.setState(prevState => {
+      this.setState((prevState) => {
         return Object.assign({}, prevState, {clienterr: false});
       });
       this.props.setup(this.state.form);
@@ -71,7 +71,8 @@ class SetupContainer extends Component {
             <Button primary onClick={this.setup}>
               Submit
             </Button>,
-          ]}>
+          ]}
+        >
           <Section subsection sectionTitle="Organization">
             <Input
               label="organization name"
@@ -135,7 +136,7 @@ class SetupContainer extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const {success, config, err} = state.Setup;
   return {
     success,
@@ -144,14 +145,17 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    setup: options => {
+    setup: (options) => {
       dispatch(SetupReq(options));
     },
   };
 };
 
-SetupContainer = connect(mapStateToProps, mapDispatchToProps)(SetupContainer);
+SetupContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(SetupContainer);
 
 export default SetupContainer;

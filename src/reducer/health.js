@@ -4,22 +4,22 @@ const TIME_GET = Symbol('TIME_GET');
 const TIME_UPDATE = Symbol('TIME_UPDATE');
 const TIME_UPDATE_ERR = Symbol('TIME_UPDATE_ERR');
 
-const TimeUpdate = (time)=>{
+const TimeUpdate = (time) => {
   return {
     type: TIME_UPDATE,
     time,
   };
 };
 
-const TimeUpdateErr = (err)=>{
+const TimeUpdateErr = (err) => {
   return {
     type: TIME_UPDATE_ERR,
     err,
   };
 };
 
-const TimeGet = ()=>{
-  return async (dispatch)=>{
+const TimeGet = () => {
+  return async (dispatch) => {
     dispatch({
       type: TIME_GET,
     });
@@ -29,18 +29,17 @@ const TimeGet = ()=>{
         mode: 'cors',
       });
       const status = response.status;
-      if(status >= 200 && status < 300){
+      if (status >= 200 && status < 300) {
         const data = await response.json();
         dispatch(TimeUpdate(data.time));
       } else {
         throw new Error('Could not get time from api server');
       }
-    } catch(e) {
+    } catch (e) {
       dispatch(TimeUpdateErr(e.message));
     }
   };
 };
-
 
 const defaultState = {
   loading: false,
@@ -49,12 +48,12 @@ const defaultState = {
   err: '',
 };
 
-const initState = ()=>{
+const initState = () => {
   return Object.assign({}, defaultState);
 };
 
-const Health = (state=initState(), action)=>{
-  switch(action.type){
+const Health = (state = initState(), action) => {
+  switch (action.type) {
     case TIME_GET:
       return Object.assign({}, state, {
         loading: true,
@@ -81,6 +80,4 @@ const Health = (state=initState(), action)=>{
   }
 };
 
-export {
-  Health, TimeGet,
-}
+export {Health, TimeGet};

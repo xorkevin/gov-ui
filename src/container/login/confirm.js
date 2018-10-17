@@ -25,14 +25,14 @@ class ConfirmAccount extends Component {
   async confirmaccount() {
     const {err} = await this.props.confirmaccount(this.state.key);
     if (err) {
-      this.setState(prevState => {
+      this.setState((prevState) => {
         return Object.assign({}, prevState, {
           success: false,
           err,
         });
       });
     } else {
-      this.setState(prevState => {
+      this.setState((prevState) => {
         return Object.assign({}, prevState, {
           success: true,
           err: false,
@@ -69,7 +69,8 @@ class ConfirmAccount extends Component {
           restrictWidth
           titleBar
           title={[<h3>Confirm account</h3>]}
-          bar={bar}>
+          bar={bar}
+        >
           <Input
             label="code"
             fullWidth
@@ -88,18 +89,21 @@ class ConfirmAccount extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {};
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    confirmaccount: key => {
+    confirmaccount: (key) => {
       return dispatch(ConfirmAccountReq(key));
     },
   };
 };
 
-ConfirmAccount = connect(mapStateToProps, mapDispatchToProps)(ConfirmAccount);
+ConfirmAccount = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(ConfirmAccount);
 
 export default ConfirmAccount;

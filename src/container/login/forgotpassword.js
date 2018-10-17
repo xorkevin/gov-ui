@@ -25,14 +25,14 @@ class ForgotContainer extends Component {
   async forgotpassword() {
     const {err} = await this.props.forgotpassword(this.state.username);
     if (err) {
-      this.setState(prevState => {
+      this.setState((prevState) => {
         return Object.assign({}, prevState, {
           success: false,
           err,
         });
       });
     } else {
-      this.setState(prevState => {
+      this.setState((prevState) => {
         return Object.assign({}, prevState, {
           success: true,
           err: false,
@@ -70,7 +70,8 @@ class ForgotContainer extends Component {
           restrictWidth
           titleBar
           title={[<h3>Forgot password</h3>]}
-          bar={bar}>
+          bar={bar}
+        >
           <Input
             label="username / email"
             fullWidth
@@ -89,18 +90,21 @@ class ForgotContainer extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {};
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    forgotpassword: username => {
+    forgotpassword: (username) => {
       return dispatch(ForgotPasswordReq(username));
     },
   };
 };
 
-ForgotContainer = connect(mapStateToProps, mapDispatchToProps)(ForgotContainer);
+ForgotContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(ForgotContainer);
 
 export default ForgotContainer;

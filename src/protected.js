@@ -4,7 +4,7 @@ import Button from 'component/button';
 import FaIcon from 'component/faicon';
 import {connect} from 'preact-redux';
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const {valid, loading, loggedIn, authTags} = state.Auth;
   return {
     valid,

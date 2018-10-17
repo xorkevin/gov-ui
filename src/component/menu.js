@@ -4,7 +4,7 @@ import Portal from 'preact-portal';
 class MenuContainer extends Component {
   tick() {
     const bounds = this.props.reference.getBoundingClientRect();
-    this.setState(prevState => {
+    this.setState((prevState) => {
       return Object.assign({}, prevState, {bounds, scrollY: window.scrollY});
     });
   }
@@ -83,7 +83,7 @@ class MenuContainer extends Component {
     return (
       <div className={k.join(' ')} style={s}>
         <div className="menu-container">
-          {children.map(child => {
+          {children.map((child) => {
             return <div className="item">{child}</div>;
           })}
         </div>
@@ -105,20 +105,20 @@ class Menu extends Component {
   }
 
   setHidden() {
-    this.setState(prevState => {
+    this.setState((prevState) => {
       return Object.assign({}, prevState, {hidden: true});
     });
   }
 
   setVisible() {
-    this.setState(prevState => {
+    this.setState((prevState) => {
       return Object.assign({}, prevState, {hidden: false});
     });
   }
 
   toggleHidden(e) {
     e.stopPropagation();
-    this.setState(prevState => {
+    this.setState((prevState) => {
       return Object.assign({}, prevState, {hidden: !prevState.hidden});
     });
   }
@@ -128,9 +128,10 @@ class Menu extends Component {
       <div
         className="menu-button"
         onClick={this.toggleHidden}
-        ref={elem => {
+        ref={(elem) => {
           this.elem = elem;
-        }}>
+        }}
+      >
         {icon}
         {!hidden && (
           <Portal into="body">
@@ -140,7 +141,8 @@ class Menu extends Component {
               position={position}
               fixed={fixed}
               reference={this.elem}
-              close={this.setHidden}>
+              close={this.setHidden}
+            >
               {children}
             </MenuContainer>
           </Portal>

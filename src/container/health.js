@@ -20,7 +20,7 @@ class HealthContainer extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const {time, err, loading, success} = state.Health;
   return {
     loading,
@@ -30,7 +30,7 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
     getTime: () => {
       dispatch(TimeGet());
@@ -38,6 +38,9 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-HealthContainer = connect(mapStateToProps, mapDispatchToProps)(HealthContainer);
+HealthContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(HealthContainer);
 
 export default HealthContainer;

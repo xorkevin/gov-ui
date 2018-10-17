@@ -5,26 +5,26 @@ const CREATEPROFILE = Symbol('CREATEPROFILE');
 const CREATEPROFILE_SUCCESS = Symbol('CREATEPROFILE_SUCCESS');
 const CREATEPROFILE_ERR = Symbol('CREATEPROFILE_ERR');
 
-const CreateProfileSuccess = ()=>{
+const CreateProfileSuccess = () => {
   return {
     type: CREATEPROFILE_SUCCESS,
   };
 };
 
-const CreateProfileErr = (err)=>{
+const CreateProfileErr = (err) => {
   return {
     type: CREATEPROFILE_ERR,
     err,
   };
 };
 
-const CreateProfileReq = ()=>{
-  return async (dispatch)=>{
+const CreateProfileReq = () => {
+  return async (dispatch) => {
     dispatch({
       type: CREATEPROFILE,
     });
     const {relogin} = await dispatch(ReLogin());
-    if(relogin){
+    if (relogin) {
       dispatch(CreateProfileErr('Need to reauthenticate'));
       return;
     }
@@ -37,16 +37,16 @@ const CreateProfileReq = ()=>{
         body: JSON.stringify({}),
       });
       const status = response.status;
-      if(status < 200 || status >= 300){
+      if (status < 200 || status >= 300) {
         const data = await response.json();
-        if(data && data.message){
+        if (data && data.message) {
           throw new Error(data.message);
         } else {
           throw new Error('Could not create profile');
         }
       }
       dispatch(CreateProfileSuccess());
-    } catch(e){
+    } catch (e) {
       dispatch(CreateProfileErr(e.message));
     }
   };
@@ -56,21 +56,21 @@ const EDITPROFILE = Symbol('EDITPROFILE');
 const EDITPROFILE_SUCCESS = Symbol('EDITPROFILE_SUCCESS');
 const EDITPROFILE_ERR = Symbol('EDITPROFILE_ERR');
 
-const EditProfileSuccess = ()=>{
+const EditProfileSuccess = () => {
   return {
     type: EDITPROFILE_SUCCESS,
   };
 };
 
-const EditProfileErr = (err)=>{
+const EditProfileErr = (err) => {
   return {
     type: EDITPROFILE_ERR,
     err,
   };
 };
 
-const EditProfileImage = async (file)=>{
-  const formData  = new FormData();
+const EditProfileImage = async (file) => {
+  const formData = new FormData();
   formData.append('image', file);
   const response = await fetch(API.profile.image, {
     method: 'PUT',
@@ -79,9 +79,9 @@ const EditProfileImage = async (file)=>{
     body: formData,
   });
   const status = response.status;
-  if(status < 200 || status >= 300){
+  if (status < 200 || status >= 300) {
     const data = await response.json();
-    if(data && data.message){
+    if (data && data.message) {
       throw new Error(data.message);
     } else {
       throw new Error('Could not update image');
@@ -89,13 +89,13 @@ const EditProfileImage = async (file)=>{
   }
 };
 
-const EditProfileReq = (options)=>{
-  return async (dispatch)=>{
+const EditProfileReq = (options) => {
+  return async (dispatch) => {
     dispatch({
       type: EDITPROFILE,
     });
     const {relogin} = await dispatch(ReLogin());
-    if(relogin){
+    if (relogin) {
       dispatch(EditProfileErr('Need to reauthenticate'));
       return;
     }
@@ -109,21 +109,21 @@ const EditProfileReq = (options)=>{
         body: JSON.stringify(textoptions),
       });
       const status = response.status;
-      if(status < 200 || status >= 300){
+      if (status < 200 || status >= 300) {
         const data = await response.json();
-        if(data && data.message){
+        if (data && data.message) {
           throw new Error(data.message);
         } else {
           throw new Error('Could not edit profile');
         }
       }
 
-      if(options.image){
+      if (options.image) {
         await EditProfileImage(options.image);
       }
 
       dispatch(EditProfileSuccess());
-    } catch(e){
+    } catch (e) {
       dispatch(EditProfileErr(e.message));
     }
   };
@@ -133,14 +133,14 @@ const GETPROFILE = Symbol('GETPROFILE');
 const GETPROFILE_SUCCESS = Symbol('GETPROFILE_SUCCESS');
 const GETPROFILE_ERR = Symbol('GETPROFILE_ERR');
 
-const GetProfileSuccess = (profile)=>{
+const GetProfileSuccess = (profile) => {
   return {
     type: GETPROFILE_SUCCESS,
     profile,
   };
 };
 
-const GetProfileErr = (err, canCreate=false)=>{
+const GetProfileErr = (err, canCreate = false) => {
   return {
     type: GETPROFILE_ERR,
     canCreate,
@@ -148,13 +148,13 @@ const GetProfileErr = (err, canCreate=false)=>{
   };
 };
 
-const GetProfileReq = ()=>{
-  return async (dispatch)=>{
+const GetProfileReq = () => {
+  return async (dispatch) => {
     dispatch({
       type: GETPROFILE,
     });
     const {relogin} = await dispatch(ReLogin());
-    if(relogin){
+    if (relogin) {
       dispatch(GetProfileErr('Need to reauthenticate'));
       return;
     }
@@ -166,16 +166,16 @@ const GetProfileReq = ()=>{
       });
       const status = response.status;
       const data = await response.json();
-      if(status >= 200 && status < 300){
+      if (status >= 200 && status < 300) {
         dispatch(GetProfileSuccess(data));
-      } else if(data && data.code === 2){
+      } else if (data && data.code === 2) {
         dispatch(GetProfileErr(data.message, true));
-      } else if(data && data.message){
+      } else if (data && data.message) {
         throw new Error(data.message);
       } else {
         throw new Error('Could not get profile');
       }
-    } catch(e){
+    } catch (e) {
       dispatch(GetProfileErr(e.message));
     }
   };
@@ -195,12 +195,12 @@ const defaultState = {
   canCreate: false,
 };
 
-const initState = ()=>{
+const initState = () => {
   return Object.assign({}, defaultState);
 };
 
-const Profile = (state=initState(), action)=>{
-  switch(action.type){
+const Profile = (state = initState(), action) => {
+  switch (action.type) {
     case CREATEPROFILE:
       return Object.assign({}, state, {
         createloading: true,
@@ -257,6 +257,4 @@ const Profile = (state=initState(), action)=>{
   }
 };
 
-export {
-  Profile, CreateProfileReq, EditProfileReq, GetProfileReq,
-}
+export {Profile, CreateProfileReq, EditProfileReq, GetProfileReq};

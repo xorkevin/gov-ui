@@ -44,7 +44,8 @@ class SigninContainer extends Component {
               }
               size="md"
               align="left"
-              position="bottom">
+              position="bottom"
+            >
               <Link to="/x/create">
                 <FaIcon icon="user-plus" /> Create Account
               </Link>
@@ -55,7 +56,8 @@ class SigninContainer extends Component {
             <Button primary onClick={this.login}>
               Login
             </Button>,
-          ]}>
+          ]}
+        >
           <Input
             label="username / email"
             fullWidth
@@ -75,7 +77,7 @@ class SigninContainer extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const {loading, err} = state.Auth;
   return {
     loading,
@@ -83,7 +85,7 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
     login: (username, password) => {
       dispatch(Login(username, password));
@@ -91,6 +93,9 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-SigninContainer = connect(mapStateToProps, mapDispatchToProps)(SigninContainer);
+SigninContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(SigninContainer);
 
 export default SigninContainer;

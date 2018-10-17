@@ -92,7 +92,7 @@ class ProfileEdit extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const {profile, editloading, editsuccess, editerr} = state.Profile;
   return {
     profile,
@@ -102,14 +102,17 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    editprofile: options => {
+    editprofile: (options) => {
       dispatch(EditProfileReq(options));
     },
   };
 };
 
-ProfileEdit = connect(mapStateToProps, mapDispatchToProps)(ProfileEdit);
+ProfileEdit = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(ProfileEdit);
 
 export default ProfileEdit;

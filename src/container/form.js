@@ -52,7 +52,8 @@ class FormContainer extends Component {
             <Button fixedWidth primary>
               Submit
             </Button>,
-          ]}>
+          ]}
+        >
           <Input
             textarea
             fullWidth

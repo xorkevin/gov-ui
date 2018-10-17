@@ -24,7 +24,7 @@ class UserDetails extends Component {
   fetchUser() {
     if (this.state.username.length > 0) {
       this.props.userbyname(this.state.username, (err, errProf, user) => {
-        this.setState(prevState => {
+        this.setState((prevState) => {
           return Object.assign({}, prevState, {err, errProf, user});
         });
       });
@@ -46,7 +46,8 @@ class UserDetails extends Component {
                 imgHeight={384}
                 imgWidth={384}
                 background={formatStr(API.profile.idimage, user.userid)}
-                preview={user.image}>
+                preview={user.image}
+              >
                 <h4>
                   {user.first_name} {user.last_name}{' '}
                   <small>@{user.username}</small>
@@ -67,11 +68,11 @@ class UserDetails extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {};
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
     userbyname: async (username, callback) => {
       const data = await dispatch(GetUserByName(username));
@@ -80,6 +81,9 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-UserDetails = connect(mapStateToProps, mapDispatchToProps)(UserDetails);
+UserDetails = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(UserDetails);
 
 export default UserDetails;

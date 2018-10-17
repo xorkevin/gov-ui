@@ -1,11 +1,11 @@
 import {API} from 'config';
 import {ReLogin} from 'reducer/account/auth';
 
-const EditAccountReq = (options)=>{
-  return async (dispatch)=>{
+const EditAccountReq = (options) => {
+  return async (dispatch) => {
     try {
       const {relogin} = await dispatch(ReLogin());
-      if(relogin){
+      if (relogin) {
         throw new Error('Need to reauthenticate');
       }
       const response = await fetch(API.u.user.edit, {
@@ -16,9 +16,9 @@ const EditAccountReq = (options)=>{
         body: JSON.stringify(options),
       });
       const status = response.status;
-      if(status < 200 || status >= 300){
+      if (status < 200 || status >= 300) {
         const data = await response.json();
-        if(data && data.message){
+        if (data && data.message) {
           throw new Error(data.message);
         } else {
           throw new Error('Could not edit account');
@@ -27,7 +27,7 @@ const EditAccountReq = (options)=>{
       return {
         err: false,
       };
-    } catch(e){
+    } catch (e) {
       return {
         err: e.message,
       };
@@ -35,11 +35,11 @@ const EditAccountReq = (options)=>{
   };
 };
 
-const EditEmailReq = (email, password)=>{
-  return async (dispatch)=>{
+const EditEmailReq = (email, password) => {
+  return async (dispatch) => {
     try {
       const {relogin} = await dispatch(ReLogin());
-      if(relogin){
+      if (relogin) {
         throw new Error('Need to reauthenticate');
       }
       const response = await fetch(API.u.user.email.edit, {
@@ -50,9 +50,9 @@ const EditEmailReq = (email, password)=>{
         body: JSON.stringify({email, password}),
       });
       const status = response.status;
-      if(status < 200 || status >= 300){
+      if (status < 200 || status >= 300) {
         const data = await response.json();
-        if(data && data.message){
+        if (data && data.message) {
           throw new Error(data.message);
         } else {
           throw new Error('Could not edit email');
@@ -61,7 +61,7 @@ const EditEmailReq = (email, password)=>{
       return {
         err: false,
       };
-    } catch(e){
+    } catch (e) {
       return {
         err: e.message,
       };
@@ -69,11 +69,11 @@ const EditEmailReq = (email, password)=>{
   };
 };
 
-const ConfirmEmailReq = (key, password)=>{
-  return async (dispatch)=>{
+const ConfirmEmailReq = (key, password) => {
+  return async (dispatch) => {
     try {
       const {relogin} = await dispatch(ReLogin());
-      if(relogin){
+      if (relogin) {
         throw new Error('Need to reauthenticate');
       }
       const response = await fetch(API.u.user.email.confirm, {
@@ -84,9 +84,9 @@ const ConfirmEmailReq = (key, password)=>{
         body: JSON.stringify({key, password}),
       });
       const status = response.status;
-      if(status < 200 || status >= 300){
+      if (status < 200 || status >= 300) {
         const data = await response.json();
-        if(data && data.message){
+        if (data && data.message) {
           throw new Error(data.message);
         } else {
           throw new Error('Could not edit email');
@@ -95,7 +95,7 @@ const ConfirmEmailReq = (key, password)=>{
       return {
         err: false,
       };
-    } catch(e){
+    } catch (e) {
       return {
         err: e.message,
       };
@@ -103,11 +103,11 @@ const ConfirmEmailReq = (key, password)=>{
   };
 };
 
-const EditPassReq = (old_password, new_password)=>{
-  return async (dispatch)=>{
+const EditPassReq = (old_password, new_password) => {
+  return async (dispatch) => {
     try {
       const {relogin} = await dispatch(ReLogin());
-      if(relogin){
+      if (relogin) {
         throw new Error('Need to reauthenticate');
       }
       const response = await fetch(API.u.user.editpassword, {
@@ -118,9 +118,9 @@ const EditPassReq = (old_password, new_password)=>{
         body: JSON.stringify({old_password, new_password}),
       });
       const status = response.status;
-      if(status < 200 || status >= 300){
+      if (status < 200 || status >= 300) {
         const data = await response.json();
-        if(data && data.message){
+        if (data && data.message) {
           throw new Error(data.message);
         } else {
           throw new Error('Could not edit password');
@@ -129,7 +129,7 @@ const EditPassReq = (old_password, new_password)=>{
       return {
         err: false,
       };
-    } catch(e){
+    } catch (e) {
       return {
         err: e.message,
       };
@@ -137,11 +137,11 @@ const EditPassReq = (old_password, new_password)=>{
   };
 };
 
-const GetSessionReq = ()=>{
-  return async (dispatch)=>{
+const GetSessionReq = () => {
+  return async (dispatch) => {
     try {
       const {relogin} = await dispatch(ReLogin());
-      if(relogin){
+      if (relogin) {
         throw new Error('Need to reauthenticate');
       }
       const response = await fetch(API.u.user.sessions, {
@@ -151,8 +151,8 @@ const GetSessionReq = ()=>{
       });
       const status = response.status;
       const data = await response.json();
-      if(status < 200 || status >= 300){
-        if(data && data.message){
+      if (status < 200 || status >= 300) {
+        if (data && data.message) {
           throw new Error(data.message);
         } else {
           throw new Error('Could not get sessions');
@@ -162,7 +162,7 @@ const GetSessionReq = ()=>{
         err: false,
         sessions: data.active_sessions,
       };
-    } catch(e){
+    } catch (e) {
       return {
         err: e.message,
       };
@@ -170,11 +170,11 @@ const GetSessionReq = ()=>{
   };
 };
 
-const DelSessionReq = (sessions)=>{
-  return async (dispatch)=>{
+const DelSessionReq = (sessions) => {
+  return async (dispatch) => {
     try {
       const {relogin} = await dispatch(ReLogin());
-      if(relogin){
+      if (relogin) {
         throw new Error('Need to reauthenticate');
       }
       const response = await fetch(API.u.user.sessions, {
@@ -185,9 +185,9 @@ const DelSessionReq = (sessions)=>{
         body: JSON.stringify({session_ids: sessions}),
       });
       const status = response.status;
-      if(status < 200 || status >= 300){
+      if (status < 200 || status >= 300) {
         const data = await response.json();
-        if(data && data.message){
+        if (data && data.message) {
           throw new Error(data.message);
         } else {
           throw new Error('Could not delete sessions');
@@ -197,7 +197,7 @@ const DelSessionReq = (sessions)=>{
         err: false,
       };
       return true;
-    } catch(e){
+    } catch (e) {
       return {
         err: e.message,
       };
@@ -207,5 +207,10 @@ const DelSessionReq = (sessions)=>{
 };
 
 export {
-  EditAccountReq, EditEmailReq, ConfirmEmailReq, EditPassReq, GetSessionReq, DelSessionReq,
-}
+  EditAccountReq,
+  EditEmailReq,
+  ConfirmEmailReq,
+  EditPassReq,
+  GetSessionReq,
+  DelSessionReq,
+};

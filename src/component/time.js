@@ -2,8 +2,8 @@ import {h, Component} from 'preact';
 import {formatStr} from 'utility';
 import Tooltip from 'component/tooltip';
 
-const Formatter = ()=>{
-  if(Intl && Intl.DateTimeFormat) {
+const Formatter = () => {
+  if (Intl && Intl.DateTimeFormat) {
     return new Intl.DateTimeFormat(undefined, {
       weekday: 'short',
       month: 'short',
@@ -16,30 +16,30 @@ const Formatter = ()=>{
     });
   }
   return {
-    format: (date)=>{
+    format: (date) => {
       return date.toString();
-    }
+    },
   };
 };
 
 const timeFormatter = Formatter();
-const dateToLocale = (date)=>{
+const dateToLocale = (date) => {
   return timeFormatter.format(date);
 };
 
 const timeAgoFormatStrings = [
-/*0*/  ['just now',       'right now'],
-/*1*/  ['{0} seconds ago', 'in {0} seconds'],
-/*2*/  ['a minute ago',   'in 1 minute'],
-/*3*/  ['{0} minutes ago', 'in {0} minutes'],
-/*4*/  ['an hour ago',    'in 1 hour'],
-/*5*/  ['{0} hours ago',   'in {0} hours'],
-/*6*/  ['1 day ago',      'in 1 day'],
-/*7*/  ['{0} days ago',    'in {0} days'],
-/*8*/  ['1 month ago',    'in 1 month'],
-/*9*/  ['{0} months ago',  'in {0} months'],
-/*0*/  ['1 year ago',     'in 1 year'],
-/*1*/  ['{0} years ago',   'in {0} years'],
+  /*0*/ ['just now', 'right now'],
+  /*1*/ ['{0} seconds ago', 'in {0} seconds'],
+  /*2*/ ['a minute ago', 'in 1 minute'],
+  /*3*/ ['{0} minutes ago', 'in {0} minutes'],
+  /*4*/ ['an hour ago', 'in 1 hour'],
+  /*5*/ ['{0} hours ago', 'in {0} hours'],
+  /*6*/ ['1 day ago', 'in 1 day'],
+  /*7*/ ['{0} days ago', 'in {0} days'],
+  /*8*/ ['1 month ago', 'in 1 month'],
+  /*9*/ ['{0} months ago', 'in {0} months'],
+  /*0*/ ['1 year ago', 'in 1 year'],
+  /*1*/ ['{0} years ago', 'in {0} years'],
 ];
 
 const sec15 = 15;
@@ -54,10 +54,10 @@ const month2 = 5184000;
 const year1 = 31556952;
 const year1_1 = 34689600;
 
-const timeAgo = (date)=>{
+const timeAgo = (date) => {
   let diff = Date.now() - date.getTime();
   let future = 0;
-  if(diff < 0){
+  if (diff < 0) {
     future = 1;
     diff *= -1;
   }
@@ -66,35 +66,35 @@ const timeAgo = (date)=>{
   let k = 0;
   let num = diff;
 
-  if(diff < sec15){
+  if (diff < sec15) {
     k = 0;
-  } else if(diff < min1){
+  } else if (diff < min1) {
     k = 1;
-  } else if(diff < min2){
+  } else if (diff < min2) {
     k = 2;
     num = Math.floor(num / min1);
-  } else if(diff < hour1){
+  } else if (diff < hour1) {
     k = 3;
     num = Math.floor(num / min1);
-  } else if(diff < hour2){
+  } else if (diff < hour2) {
     k = 4;
     num = Math.floor(num / hour1);
-  } else if(diff < day1){
+  } else if (diff < day1) {
     k = 5;
     num = Math.floor(num / hour1);
-  } else if(diff < day2){
+  } else if (diff < day2) {
     k = 6;
     num = Math.floor(num / day1);
-  } else if(diff < month1){
+  } else if (diff < month1) {
     k = 7;
     num = Math.floor(num / day1);
-  } else if(diff < month2){
+  } else if (diff < month2) {
     k = 8;
     num = Math.floor(num / month1);
-  } else if(diff < year1){
+  } else if (diff < year1) {
     k = 9;
     num = Math.floor(num / month1);
-  } else if(diff < year1_1){
+  } else if (diff < year1_1) {
     k = 10;
     num = Math.floor(num / year1);
   } else {
@@ -106,7 +106,7 @@ const timeAgo = (date)=>{
 };
 
 class Time extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     const k = new Date(props.value);
     this.state = {
@@ -117,15 +117,15 @@ class Time extends Component {
     };
   }
 
-  tick(){
-    this.setState((prevState)=>{
+  tick() {
+    this.setState((prevState) => {
       return Object.assign({}, prevState, {timeAgo: timeAgo(prevState.date)});
     });
   }
 
-  componentWillReceiveProps(nextProps){
+  componentWillReceiveProps(nextProps) {
     const k = new Date(nextProps.value);
-    this.setState((prevState)=>{
+    this.setState((prevState) => {
       return Object.assign({}, prevState, {
         date: k,
         timeAgo: timeAgo(k),
@@ -135,21 +135,23 @@ class Time extends Component {
     });
   }
 
-  componentDidMount(){
-    this.interval = setInterval(()=>{this.tick();}, 60000);
+  componentDidMount() {
+    this.interval = setInterval(() => {
+      this.tick();
+    }, 60000);
   }
 
-  componentWillUnmount(){
+  componentWillUnmount() {
     clearInterval(this.interval);
   }
 
-  render({}, {isoString, localeString, timeAgo}){
-    return <Tooltip tooltip={this.state.localeString}>
-      <time dateTime={this.state.isoString}>
-        {this.state.timeAgo}
-      </time>
-    </Tooltip>;
+  render({}, {isoString, localeString, timeAgo}) {
+    return (
+      <Tooltip tooltip={this.state.localeString}>
+        <time dateTime={this.state.isoString}>{this.state.timeAgo}</time>
+      </Tooltip>
+    );
   }
 }
 
-export default Time
+export default Time;

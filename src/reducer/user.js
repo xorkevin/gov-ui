@@ -2,16 +2,16 @@ import {API} from 'config';
 import {formatStr} from 'utility';
 import {ReLogin} from 'reducer/account/auth';
 
-const GetProfile = (userid)=>{
-  return async (dispatch)=>{
+const GetProfile = (userid) => {
+  return async (dispatch) => {
     try {
       const response = await fetch(formatStr(API.profile.id, userid), {
         method: 'GET',
       });
       const status = response.status;
       const data = await response.json();
-      if(status < 200 || status >= 300){
-        if(data && data.message){
+      if (status < 200 || status >= 300) {
+        if (data && data.message) {
           throw new Error(data.message);
         } else {
           throw new Error('Unable to fetch profile data');
@@ -21,7 +21,7 @@ const GetProfile = (userid)=>{
         err: false,
         data,
       };
-    } catch(e){
+    } catch (e) {
       return {
         err: e.message,
       };
@@ -29,16 +29,16 @@ const GetProfile = (userid)=>{
   };
 };
 
-const GetUserByName = (username)=>{
-  return async (dispatch)=>{
+const GetUserByName = (username) => {
+  return async (dispatch) => {
     try {
       const response = await fetch(formatStr(API.u.user.name, username), {
         method: 'GET',
       });
       const status = response.status;
       const data = await response.json();
-      if(status < 200 || status >= 300){
-        if(data && data.message){
+      if (status < 200 || status >= 300) {
+        if (data && data.message) {
           throw new Error(data.message);
         } else {
           throw new Error('Unable to fetch user data');
@@ -46,8 +46,10 @@ const GetUserByName = (username)=>{
       }
       data.creation_time *= 1000;
 
-      const {err: profileErr, data: profile} = await dispatch(GetProfile(data.userid));
-      if(!profileErr){
+      const {err: profileErr, data: profile} = await dispatch(
+        GetProfile(data.userid),
+      );
+      if (!profileErr) {
         Object.assign(data, profile);
       }
 
@@ -56,7 +58,7 @@ const GetUserByName = (username)=>{
         profileErr,
         data,
       };
-    } catch(e){
+    } catch (e) {
       return {
         err: e.message,
       };
@@ -64,16 +66,16 @@ const GetUserByName = (username)=>{
   };
 };
 
-const GetUserByID = (userid)=>{
-  return async (dispatch)=>{
+const GetUserByID = (userid) => {
+  return async (dispatch) => {
     try {
       const response = await fetch(formatStr(API.u.user.id, userid), {
         method: 'GET',
       });
       const status = response.status;
       const data = await response.json();
-      if(status < 200 || status >= 300){
-        if(data && data.message){
+      if (status < 200 || status >= 300) {
+        if (data && data.message) {
           throw new Error(data.message);
         } else {
           throw new Error('Unable to fetch user data');
@@ -81,8 +83,10 @@ const GetUserByID = (userid)=>{
       }
       data.creation_time *= 1000;
 
-      const {err: profileErr, data: profile} = await dispatch(GetProfile(data.userid));
-      if(!profileErr){
+      const {err: profileErr, data: profile} = await dispatch(
+        GetProfile(data.userid),
+      );
+      if (!profileErr) {
         Object.assign(data, profile);
       }
 
@@ -91,7 +95,7 @@ const GetUserByID = (userid)=>{
         profileErr,
         data,
       };
-    } catch(e){
+    } catch (e) {
       return {
         err: e.message,
       };
@@ -99,24 +103,27 @@ const GetUserByID = (userid)=>{
   };
 };
 
-const GetUserAccountByName = (username)=>{
-  return async (dispatch)=>{
+const GetUserAccountByName = (username) => {
+  return async (dispatch) => {
     const {relogin} = await dispatch(ReLogin());
-    if(relogin){
+    if (relogin) {
       return {
         err: 'Need to reauthenticate',
       };
     }
     try {
-      const response = await fetch(formatStr(API.u.user.nameprivate, username), {
-        method: 'GET',
-        //TODO: change to same-origin
-        credentials: 'include',
-      });
+      const response = await fetch(
+        formatStr(API.u.user.nameprivate, username),
+        {
+          method: 'GET',
+          //TODO: change to same-origin
+          credentials: 'include',
+        },
+      );
       const status = response.status;
       const data = await response.json();
-      if(status < 200 || status >= 300){
-        if(data && data.message){
+      if (status < 200 || status >= 300) {
+        if (data && data.message) {
           throw new Error(data.message);
         } else {
           throw new Error('Unable to fetch user data');
@@ -128,7 +135,7 @@ const GetUserAccountByName = (username)=>{
         err: false,
         data,
       };
-    } catch(e){
+    } catch (e) {
       return {
         err: e.message,
       };
@@ -136,10 +143,10 @@ const GetUserAccountByName = (username)=>{
   };
 };
 
-const GetUserByIDPrivate = (userid)=>{
-  return async (dispatch)=>{
+const GetUserByIDPrivate = (userid) => {
+  return async (dispatch) => {
     const {relogin} = await dispatch(ReLogin());
-    if(relogin){
+    if (relogin) {
       return {
         err: 'Need to reauthenticate',
       };
@@ -152,8 +159,8 @@ const GetUserByIDPrivate = (userid)=>{
       });
       const status = response.status;
       const data = await response.json();
-      if(status < 200 || status >= 300){
-        if(data && data.message){
+      if (status < 200 || status >= 300) {
+        if (data && data.message) {
           throw new Error(data.message);
         } else {
           throw new Error('Unable to fetch user data');
@@ -164,7 +171,7 @@ const GetUserByIDPrivate = (userid)=>{
         err: false,
         data,
       };
-    } catch(e){
+    } catch (e) {
       return {
         err: e.message,
       };
@@ -172,6 +179,4 @@ const GetUserByIDPrivate = (userid)=>{
   };
 };
 
-export {
-  GetUserByName, GetUserByID, GetUserAccountByName, GetUserByIDPrivate,
-}
+export {GetUserByName, GetUserByID, GetUserAccountByName, GetUserByIDPrivate};

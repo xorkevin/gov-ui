@@ -1,8 +1,8 @@
 import {h, Component} from 'preact';
 import renderToString from 'preact-render-to-string';
 
-const deferLoadImage = src => {
-  return new Promise(resolve => {
+const deferLoadImage = (src) => {
+  return new Promise((resolve) => {
     const img = new Image();
     img.onload = () => {
       resolve(src);
@@ -39,14 +39,14 @@ class Img extends Component {
       (elemBottom < bottomBound && elemBottom > topBound)
     ) {
       if (this.props.fixed) {
-        deferLoadImage(this.props.src).then(src => {
-          this.setState(prevState => {
+        deferLoadImage(this.props.src).then((src) => {
+          this.setState((prevState) => {
             return Object.assign({}, prevState, {imgsrc: src});
           });
           this.imgLoaded();
         });
       } else {
-        this.setState(prevState => {
+        this.setState((prevState) => {
           return Object.assign({}, prevState, {imgsrc: this.props.src});
         });
       }
@@ -55,7 +55,7 @@ class Img extends Component {
   }
 
   imgLoaded() {
-    this.setState(prevState => {
+    this.setState((prevState) => {
       return Object.assign({}, prevState, {loaded: true});
     });
   }
@@ -89,7 +89,7 @@ class Img extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState(prevState => {
+    this.setState((prevState) => {
       return Object.assign({}, prevState, {imgsrc: nextProps.src});
     });
   }
@@ -188,9 +188,10 @@ class Img extends Component {
     return (
       <div
         className={k.join(' ')}
-        ref={elem => {
+        ref={(elem) => {
           this.elem = elem;
-        }}>
+        }}
+      >
         <div className="inner" style={j}>
           {children.length > 0 && <div className="children">{children}</div>}
           {image}

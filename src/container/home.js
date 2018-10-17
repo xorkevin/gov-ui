@@ -15,7 +15,8 @@ const HomeContainer = () => {
         imgWidth={1920}
         imgHeight={1080}
         src="https://xorkevin.github.io/stratosphere/assets/mountain.jpg"
-        preview={mountainPreview}>
+        preview={mountainPreview}
+      >
         <header style={{width: '100%'}}>
           <Container padded narrow>
             <h1 className="colossal">Nuke</h1>
@@ -29,7 +30,8 @@ const HomeContainer = () => {
         sectionTitle="Typography"
         container
         padded
-        narrow>
+        narrow
+      >
         <h1>
           Heading 1 <small>small</small>
         </h1>
@@ -56,7 +58,8 @@ const HomeContainer = () => {
       <Article
         title="Lorem ipsum"
         author="Kevin Wang"
-        time={Date.now() - 86400000}>
+        time={Date.now() - 86400000}
+      >
         <p>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
           fringilla aliquet condimentum. Nunc facilisis orci dui, sit amet
@@ -109,12 +112,14 @@ const HomeContainer = () => {
           username="xorkevin"
           score={256}
           time={Date.now() - 0.5 * 86400000}
-          content="Lorem ipsum dolor sit amet">
+          content="Lorem ipsum dolor sit amet"
+        >
           <Comment
             username="xorkevin"
             score={32}
             time={Date.now() - 0.25 * 86400000}
-            content="Consectetur adipiscing elit">
+            content="Consectetur adipiscing elit"
+          >
             <Comment
               username="xorkevin"
               score={16}
@@ -126,7 +131,8 @@ const HomeContainer = () => {
             username="xorkevin"
             score={128}
             time={Date.now() - 0.325 * 86400000}
-            content="Nunc facilisis orci dui, sit amet dictum massa porta at">
+            content="Nunc facilisis orci dui, sit amet dictum massa porta at"
+          >
             <Comment
               username="xorkevin"
               score={16}
@@ -137,12 +143,14 @@ const HomeContainer = () => {
               username="xorkevin"
               score={16}
               time={Date.now()}
-              content="Mauris augue nisi, scelerisque ac suscipit sit amet, egestas ut risus">
+              content="Mauris augue nisi, scelerisque ac suscipit sit amet, egestas ut risus"
+            >
               <Comment
                 username="xorkevin"
                 score={16}
                 time={Date.now()}
-                content="Mauris augue nisi, scelerisque ac suscipit sit amet, egestas ut risus">
+                content="Mauris augue nisi, scelerisque ac suscipit sit amet, egestas ut risus"
+              >
                 <Comment
                   username="xorkevin"
                   score={16}
@@ -163,7 +171,8 @@ const HomeContainer = () => {
           username="xorkevin"
           score={64}
           time={Date.now() - 0.75 * 86400000}
-          content="Integer fringilla aliquet condimentum">
+          content="Integer fringilla aliquet condimentum"
+        >
           <Comment
             username="xorkevin"
             score={8}
@@ -181,47 +190,56 @@ const HomeContainer = () => {
           username="xorkevin"
           score={1}
           time={Date.now() - 180000}
-          content="Vivamus nibh enim, dignissim quis consequat at, sagittis in magna">
+          content="Vivamus nibh enim, dignissim quis consequat at, sagittis in magna"
+        >
           <Comment
             username="xorkevin"
             score={16}
             time={Date.now()}
-            content="Mauris augue nisi, scelerisque ac suscipit sit amet, egestas ut risus">
+            content="Mauris augue nisi, scelerisque ac suscipit sit amet, egestas ut risus"
+          >
             <Comment
               username="xorkevin"
               score={16}
               time={Date.now()}
-              content="Mauris augue nisi, scelerisque ac suscipit sit amet, egestas ut risus">
+              content="Mauris augue nisi, scelerisque ac suscipit sit amet, egestas ut risus"
+            >
               <Comment
                 username="xorkevin"
                 score={16}
                 time={Date.now()}
-                content="Mauris augue nisi, scelerisque ac suscipit sit amet, egestas ut risus">
+                content="Mauris augue nisi, scelerisque ac suscipit sit amet, egestas ut risus"
+              >
                 <Comment
                   username="xorkevin"
                   score={16}
                   time={Date.now()}
-                  content="Mauris augue nisi, scelerisque ac suscipit sit amet, egestas ut risus">
+                  content="Mauris augue nisi, scelerisque ac suscipit sit amet, egestas ut risus"
+                >
                   <Comment
                     username="xorkevin"
                     score={16}
                     time={Date.now()}
-                    content="Mauris augue nisi, scelerisque ac suscipit sit amet, egestas ut risus">
+                    content="Mauris augue nisi, scelerisque ac suscipit sit amet, egestas ut risus"
+                  >
                     <Comment
                       username="xorkevin"
                       score={16}
                       time={Date.now()}
-                      content="Mauris augue nisi, scelerisque ac suscipit sit amet, egestas ut risus">
+                      content="Mauris augue nisi, scelerisque ac suscipit sit amet, egestas ut risus"
+                    >
                       <Comment
                         username="xorkevin"
                         score={16}
                         time={Date.now()}
-                        content="Mauris augue nisi, scelerisque ac suscipit sit amet, egestas ut risus">
+                        content="Mauris augue nisi, scelerisque ac suscipit sit amet, egestas ut risus"
+                      >
                         <Comment
                           username="xorkevin"
                           score={16}
                           time={Date.now()}
-                          content="Mauris augue nisi, scelerisque ac suscipit sit amet, egestas ut risus">
+                          content="Mauris augue nisi, scelerisque ac suscipit sit amet, egestas ut risus"
+                        >
                           <Comment
                             username="xorkevin"
                             score={16}

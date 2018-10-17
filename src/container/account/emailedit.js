@@ -33,14 +33,14 @@ class AccountEmailEdit extends Component {
       this.state.password,
     );
     if (err) {
-      this.setState(prevState => {
+      this.setState((prevState) => {
         return Object.assign({}, prevState, {
           success: false,
           err,
         });
       });
     } else {
-      this.setState(prevState => {
+      this.setState((prevState) => {
         return Object.assign({}, prevState, {
           success: true,
           err: false,
@@ -114,14 +114,14 @@ class AccountEmailEdit extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const {userid} = state.Auth;
   return {
     userid,
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
     editemail: (email, password) => {
       return dispatch(EditEmailReq(email, password));
@@ -129,8 +129,9 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-AccountEmailEdit = connect(mapStateToProps, mapDispatchToProps)(
-  AccountEmailEdit,
-);
+AccountEmailEdit = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(AccountEmailEdit);
 
 export default AccountEmailEdit;

@@ -117,7 +117,8 @@ class Admin extends Component {
                     size="md"
                     fixed
                     align="left"
-                    position="top">
+                    position="top"
+                  >
                     <Link to="/a/account">
                       <FaIcon icon="address-card-o" /> Account
                     </Link>
@@ -167,7 +168,8 @@ class Admin extends Component {
                   <Anchor
                     noColor
                     ext
-                    href="https://github.com/hackform/governor">
+                    href="https://github.com/hackform/governor"
+                  >
                     hackform/governor
                   </Anchor>
                 </li>

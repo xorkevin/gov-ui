@@ -7,7 +7,7 @@ const navHeight = 64;
 const scrollDistanceCap = 4096;
 const scrollTriggerMargin = 8;
 
-const easing = t => {
+const easing = (t) => {
   if (t < 0.5) {
     return 4 * t * t * t;
   } else {
@@ -15,7 +15,7 @@ const easing = t => {
   }
 };
 
-const scrollTo = element => {
+const scrollTo = (element) => {
   const startingY = window.pageYOffset;
   let elementY = 0;
   if (element) {
@@ -38,7 +38,8 @@ const scrollTo = element => {
     return;
   }
   const duration = Math.min(
-    Math.sqrt(Math.abs(diff) * scrollTime / scrollDistanceCap) * scrollTimeSqrt,
+    Math.sqrt((Math.abs(diff) * scrollTime) / scrollDistanceCap) *
+      scrollTimeSqrt,
     scrollTime,
   );
   window.requestAnimationFrame(function step(timestamp) {
@@ -53,8 +54,8 @@ const scrollTo = element => {
   });
 };
 
-const generateItemList = list => {
-  return list.map(item => {
+const generateItemList = (list) => {
+  return list.map((item) => {
     const className = ['item'];
     if (item.home) {
       className.push('nav-home');
@@ -86,7 +87,7 @@ class Navbar extends Component {
     const nextPosition = window.pageYOffset;
     const diff = nextPosition - this.position;
     if (Math.abs(diff) > scrollTriggerMargin) {
-      this.setState(prevState => {
+      this.setState((prevState) => {
         return Object.assign({}, prevState, {hidden: diff > 0});
       });
       this.position = nextPosition;

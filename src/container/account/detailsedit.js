@@ -33,14 +33,14 @@ class AccountDetailsEdit extends Component {
   async editaccount() {
     const {err} = await this.props.editaccount(this.state.options);
     if (err) {
-      this.setState(prevState => {
+      this.setState((prevState) => {
         return Object.assign({}, prevState, {
           success: false,
           err,
         });
       });
     } else {
-      this.setState(prevState => {
+      this.setState((prevState) => {
         return Object.assign({}, prevState, {
           success: true,
           err: false,
@@ -114,7 +114,7 @@ class AccountDetailsEdit extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const {userid, username, firstname, lastname} = state.Auth;
   return {
     userid,
@@ -124,16 +124,17 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    editaccount: options => {
+    editaccount: (options) => {
       return dispatch(EditAccountReq(options));
     },
   };
 };
 
-AccountDetailsEdit = connect(mapStateToProps, mapDispatchToProps)(
-  AccountDetailsEdit,
-);
+AccountDetailsEdit = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(AccountDetailsEdit);
 
 export default AccountDetailsEdit;

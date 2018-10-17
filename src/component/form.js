@@ -15,14 +15,14 @@ class Input extends Component {
   handleChange(event) {
     if (this.props.type && this.props.type === 'file') {
       if (event.target.files.length < 1) {
-        this.setState(prevState => {
+        this.setState((prevState) => {
           return Object.assign({}, prevState, {value: undefined});
         });
         if (this.props.onChange) {
           this.props.onChange(undefined);
         }
       } else {
-        this.setState(prevState => {
+        this.setState((prevState) => {
           return Object.assign({}, prevState, {value: event.target.files[0]});
         });
         if (this.props.onChange) {
@@ -30,7 +30,7 @@ class Input extends Component {
         }
       }
     } else {
-      this.setState(prevState => {
+      this.setState((prevState) => {
         return Object.assign({}, prevState, {value: event.target.value});
       });
       if (this.props.onChange) {
@@ -47,7 +47,7 @@ class Input extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.value !== undefined) {
-      this.setState(prevState => {
+      this.setState((prevState) => {
         return Object.assign({}, prevState, {value: nextProps.value});
       });
     }
@@ -95,9 +95,10 @@ class Input extends Component {
           id={this.id}
           value={value}
           multiple={multiple}
-          onChange={this.handleChange}>
+          onChange={this.handleChange}
+        >
           {Array.isArray(dropdown) &&
-            dropdown.map(i => {
+            dropdown.map((i) => {
               return <option value={i.value}>{i.text}</option>;
             })}
         </select>

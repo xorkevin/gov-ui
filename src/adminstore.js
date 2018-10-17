@@ -3,11 +3,11 @@ import thunk from 'redux-thunk';
 
 import * as reducers from 'reducer/admin';
 
-const makeStore = ()=>{
+const makeStore = () => {
   return createStore(
     combineReducers(Object.assign({}, reducers)),
-    applyMiddleware(thunk)
+    applyMiddleware(thunk),
   );
 };
 
-export default makeStore
+export default makeStore;

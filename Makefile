@@ -8,6 +8,8 @@ BIN_ADMIN_DIR=bin_admin
 # DOCKER
 IMAGE_NAME=nuke
 
+.PHONY: all clean-bin clean-bin-admin clean format dev dev-admin build build-admin start start-admin serve serve-admin build-docker produp proddown
+
 all: build build-admin
 
 clean-bin:
@@ -17,6 +19,9 @@ clean-bin-admin:
 	if [ -d $(BIN_ADMIN_DIR) ]; then rm -r $(BIN_ADMIN_DIR); fi
 
 clean: clean-bin clean-bin-admin
+
+format:
+	npx prettier --write --arrow-parens always --single-quote --trailing-comma all --no-bracket-spacing "src/**/*.js"
 
 dev:
 	BABEL_ENV=dev npm run build-dev

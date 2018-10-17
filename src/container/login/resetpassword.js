@@ -28,25 +28,25 @@ class ConfirmReset extends Component {
   async resetpassword() {
     const {newPassword, passwordConfirm, key} = this.state;
     if (newPassword !== passwordConfirm) {
-      this.setState(prevState => {
+      this.setState((prevState) => {
         return Object.assign({}, prevState, {
           clienterr: 'passwords do not match',
         });
       });
     } else {
-      this.setState(prevState => {
+      this.setState((prevState) => {
         return Object.assign({}, prevState, {clienterr: false});
       });
       const {err} = await this.props.resetpassword(key, newPassword);
       if (err) {
-        this.setState(prevState => {
+        this.setState((prevState) => {
           return Object.assign({}, prevState, {
             success: false,
             err,
           });
         });
       } else {
-        this.setState(prevState => {
+        this.setState((prevState) => {
           return Object.assign({}, prevState, {
             success: true,
             err: false,
@@ -85,7 +85,8 @@ class ConfirmReset extends Component {
           restrictWidth
           titleBar
           title={[<h3>Reset password</h3>]}
-          bar={bar}>
+          bar={bar}
+        >
           <Input
             label="code"
             fullWidth
@@ -118,11 +119,11 @@ class ConfirmReset extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {};
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
     resetpassword: (key, new_password) => {
       return dispatch(ConfirmResetReq(key, new_password));
@@ -130,6 +131,9 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-ConfirmReset = connect(mapStateToProps, mapDispatchToProps)(ConfirmReset);
+ConfirmReset = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(ConfirmReset);
 
 export default ConfirmReset;

@@ -33,14 +33,14 @@ class AccountEmailConfirm extends Component {
       this.state.password,
     );
     if (err) {
-      this.setState(prevState => {
+      this.setState((prevState) => {
         return Object.assign({}, prevState, {
           success: false,
           err,
         });
       });
     } else {
-      this.setState(prevState => {
+      this.setState((prevState) => {
         return Object.assign({}, prevState, {
           success: true,
           err: false,
@@ -85,11 +85,11 @@ class AccountEmailConfirm extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {};
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
     confirmemail: (key, password) => {
       return dispatch(ConfirmEmailReq(key, password));
@@ -97,8 +97,9 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-AccountEmailConfirm = connect(mapStateToProps, mapDispatchToProps)(
-  AccountEmailConfirm,
-);
+AccountEmailConfirm = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(AccountEmailConfirm);
 
 export default AccountEmailConfirm;

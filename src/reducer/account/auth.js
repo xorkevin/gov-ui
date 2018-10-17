@@ -17,7 +17,7 @@ const LoginSuccess = (timeEnd, userid, authTags) => {
   };
 };
 
-const LoginErr = err => {
+const LoginErr = (err) => {
   return {
     type: LOGIN_ERR,
     err,
@@ -32,7 +32,7 @@ const Refresh = () => {
 };
 
 const Login = (username, password) => {
-  return async dispatch => {
+  return async (dispatch) => {
     dispatch({
       type: LOGIN,
     });
@@ -150,7 +150,7 @@ const RefreshReq = async () => {
 const LOGOUT = Symbol('LOGOUT');
 
 const Logout = () => {
-  return async dispatch => {
+  return async (dispatch) => {
     setCookie('access_token', 'invalid', '/api', 0);
     setCookie('refresh_token', 'invalid', '/api/u/auth', 0);
     setCookie('refresh_valid', 'invalid', '/', 0);
@@ -165,14 +165,14 @@ const GETUSER = Symbol('GETUSER');
 const GETUSER_SUCCESS = Symbol('GETUSER_SUCCESS');
 const GETUSER_ERR = Symbol('GETUSER_ERR');
 
-const GetUserSuccess = data => {
+const GetUserSuccess = (data) => {
   return {
     type: GETUSER_SUCCESS,
     data,
   };
 };
 
-const GetUserErr = err => {
+const GetUserErr = (err) => {
   return {
     type: GETUSER_ERR,
     err,
@@ -180,7 +180,7 @@ const GetUserErr = err => {
 };
 
 const GetUserAccount = () => {
-  return async dispatch => {
+  return async (dispatch) => {
     dispatch({
       type: GETUSER,
     });

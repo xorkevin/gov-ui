@@ -39,13 +39,13 @@ class ManageUser extends Component {
   }
 
   edit() {
-    this.setState(prevState => {
+    this.setState((prevState) => {
       return Object.assign({}, prevState, {edit: true});
     });
   }
 
   cancel() {
-    this.setState(prevState => {
+    this.setState((prevState) => {
       return Object.assign({}, prevState, {edit: false});
     });
   }
@@ -55,22 +55,22 @@ class ManageUser extends Component {
     if (this.state.rank.add.length > 0) {
       rank.add = this.state.rank.add
         .split(',')
-        .map(tag => tag.trim())
+        .map((tag) => tag.trim())
         .join(',');
     }
     if (this.state.rank.remove.length > 0) {
       rank.remove = this.state.rank.remove
         .split(',')
-        .map(tag => tag.trim())
+        .map((tag) => tag.trim())
         .join(',');
     }
-    this.props.patchrank(this.state.user.userid, rank, err => {
+    this.props.patchrank(this.state.user.userid, rank, (err) => {
       if (err) {
-        this.setState(prevState => {
+        this.setState((prevState) => {
           return Object.assign({}, prevState, {err});
         });
       } else {
-        this.setState(prevState => {
+        this.setState((prevState) => {
           return Object.assign({}, prevState, {edit: false});
         });
         this.fetchUser();
@@ -81,7 +81,7 @@ class ManageUser extends Component {
   fetchUser() {
     if (this.state.username.length > 0) {
       this.props.userbyname(this.state.username, (err, user) => {
-        this.setState(prevState => {
+        this.setState((prevState) => {
           return Object.assign({}, prevState, {err, user});
         });
       });
@@ -113,19 +113,19 @@ class ManageUser extends Component {
             <ListItem label="username" item={user.username} />
             <ListItem
               label="current roles"
-              item={user.auth_tags.split(',').map(tag => {
+              item={user.auth_tags.split(',').map((tag) => {
                 return <Chip>{tag}</Chip>;
               })}
             />
             <ListItem
               label="roles to add"
-              item={rank.add.split(',').map(tag => {
+              item={rank.add.split(',').map((tag) => {
                 return <Chip>{tag.trim()}</Chip>;
               })}
             />
             <ListItem
               label="roles to remove"
-              item={rank.remove.split(',').map(tag => {
+              item={rank.remove.split(',').map((tag) => {
                 return <Chip>{tag.trim()}</Chip>;
               })}
             />
@@ -161,7 +161,7 @@ class ManageUser extends Component {
             <ListItem label="last name" item={user.last_name} />
             <ListItem
               label="roles"
-              item={user.auth_tags.split(',').map(tag => {
+              item={user.auth_tags.split(',').map((tag) => {
                 return <Chip>{tag}</Chip>;
               })}
             />
@@ -196,11 +196,11 @@ class ManageUser extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {};
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
     userbyname: async (username, callback) => {
       const data = await dispatch(GetUserAccountByName(username));
@@ -213,6 +213,9 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-ManageUser = connect(mapStateToProps, mapDispatchToProps)(ManageUser);
+ManageUser = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(ManageUser);
 
 export default ManageUser;

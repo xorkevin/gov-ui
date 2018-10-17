@@ -1,7 +1,7 @@
 import {h} from 'preact';
 
-const Chip = ({children})=>{
+const Chip = ({children}) => {
   return <span className="chip">{children}</span>;
 };
 
-export default Chip
+export default Chip;

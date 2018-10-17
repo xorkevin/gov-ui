@@ -28,14 +28,14 @@ class AccountSessions extends Component {
       Array.from(this.state.session_ids),
     );
     if (err) {
-      this.setState(prevState => {
+      this.setState((prevState) => {
         return Object.assign({}, prevState, {
           success: false,
           err,
         });
       });
     } else {
-      this.setState(prevState => {
+      this.setState((prevState) => {
         return Object.assign({}, prevState, {
           success: true,
           err: false,
@@ -48,14 +48,14 @@ class AccountSessions extends Component {
   async getsessions() {
     const {err, sessions} = await this.props.getsessions();
     if (err) {
-      this.setState(prevState => {
+      this.setState((prevState) => {
         return Object.assign({}, prevState, {
           success: false,
           err,
         });
       });
     } else {
-      this.setState(prevState => {
+      this.setState((prevState) => {
         return Object.assign({}, prevState, {
           success: true,
           err: false,
@@ -82,7 +82,7 @@ class AccountSessions extends Component {
     return (
       <Card size="lg" restrictWidth center bar={bar}>
         <Section subsection sectionTitle="Active Sessions">
-          {sessions.map(session => {
+          {sessions.map((session) => {
             return (
               <div>
                 <Input
@@ -94,8 +94,8 @@ class AccountSessions extends Component {
                       <Time value={session.time * 1000} />
                     </span>
                   }
-                  onChange={value => {
-                    this.setState(prevState => {
+                  onChange={(value) => {
+                    this.setState((prevState) => {
                       if (prevState.session_ids.has(session.session_id)) {
                         prevState.session_ids.delete(session.session_id);
                         return Object.assign({}, prevState, {
@@ -124,21 +124,24 @@ class AccountSessions extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {};
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
     getsessions: () => {
       return dispatch(GetSessionReq());
     },
-    deletesessions: sessions => {
+    deletesessions: (sessions) => {
       return dispatch(DelSessionReq(sessions));
     },
   };
 };
 
-AccountSessions = connect(mapStateToProps, mapDispatchToProps)(AccountSessions);
+AccountSessions = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(AccountSessions);
 
 export default AccountSessions;

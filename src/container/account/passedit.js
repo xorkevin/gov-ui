@@ -32,13 +32,13 @@ class AccountPassEdit extends Component {
   async editpass() {
     const {new_password, password_confirm} = this.state;
     if (new_password !== password_confirm) {
-      this.setState(prevState => {
+      this.setState((prevState) => {
         return Object.assign({}, prevState, {
           clienterr: 'passwords do not match',
         });
       });
     } else {
-      this.setState(prevState => {
+      this.setState((prevState) => {
         return Object.assign({}, prevState, {clienterr: false});
       });
       const {err} = await this.props.editpass(
@@ -46,14 +46,14 @@ class AccountPassEdit extends Component {
         this.state.new_password,
       );
       if (err) {
-        this.setState(prevState => {
+        this.setState((prevState) => {
           return Object.assign({}, prevState, {
             success: false,
             err,
           });
         });
       } else {
-        this.setState(prevState => {
+        this.setState((prevState) => {
           return Object.assign({}, prevState, {
             success: true,
             err: false,
@@ -135,14 +135,14 @@ class AccountPassEdit extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const {userid} = state.Auth;
   return {
     userid,
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
     editpass: (old_password, new_password) => {
       return dispatch(EditPassReq(old_password, new_password));
@@ -150,6 +150,9 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-AccountPassEdit = connect(mapStateToProps, mapDispatchToProps)(AccountPassEdit);
+AccountPassEdit = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(AccountPassEdit);
 
 export default AccountPassEdit;

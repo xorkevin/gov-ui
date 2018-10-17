@@ -12,66 +12,99 @@ import {connect} from 'preact-redux';
 import {CreateProfileReq, GetProfileReq} from 'reducer/account/profile';
 
 class Profile extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.getprofile = this.getprofile.bind(this);
     this.createprofile = this.createprofile.bind(this);
   }
 
-  getprofile(){
+  getprofile() {
     this.props.getprofile();
   }
 
-  createprofile(){
+  createprofile() {
     this.props.createprofile();
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.getprofile();
   }
 
-  render({loading, success, err, canCreate, profile, userid}, {}){
+  render({loading, success, err, canCreate, profile, userid}, {}) {
     const bar = [];
-    if(profile){
-      bar.push(<Link to="/a/profile/edit"><Button outline>Edit</Button></Link>);
+    if (profile) {
+      bar.push(
+        <Link to="/a/profile/edit">
+          <Button outline>Edit</Button>
+        </Link>,
+      );
     }
 
-    return <div>
-      {!loading && err && <span>{err}</span>}
-      {!loading && canCreate && <Button primary onClick={this.createprofile}>Create Profile</Button>}
-      {!loading && profile && <Card size="lg" restrictWidth center bar={bar}>
-        <Section subsection sectionTitle="Profile">
-          <ListItem label="contact email" item={profile.contact_email}/>
-          <ListItem label="bio" item={profile.bio}/>
-          <ListItem label="profile image" item={profile.image && 
-            <Img rounded preview={profile.image} imgWidth={384} imgHeight={384} src={formatStr(API.profile.idimage, userid)}/>
-          }/>
-        </Section>
-      </Card>}
-    </div>;
+    return (
+      <div>
+        {!loading && err && <span>{err}</span>}
+        {!loading &&
+          canCreate && (
+            <Button primary onClick={this.createprofile}>
+              Create Profile
+            </Button>
+          )}
+        {!loading &&
+          profile && (
+            <Card size="lg" restrictWidth center bar={bar}>
+              <Section subsection sectionTitle="Profile">
+                <ListItem label="contact email" item={profile.contact_email} />
+                <ListItem label="bio" item={profile.bio} />
+                <ListItem
+                  label="profile image"
+                  item={
+                    profile.image && (
+                      <Img
+                        rounded
+                        preview={profile.image}
+                        imgWidth={384}
+                        imgHeight={384}
+                        src={formatStr(API.profile.idimage, userid)}
+                      />
+                    )
+                  }
+                />
+              </Section>
+            </Card>
+          )}
+      </div>
+    );
   }
 }
 
-const mapStateToProps = (state)=>{
+const mapStateToProps = (state) => {
   const {loading, success, err, canCreate, profile} = state.Profile;
   const {userid} = state.Auth;
   return {
-    loading, success, err, canCreate, profile, userid,
+    loading,
+    success,
+    err,
+    canCreate,
+    profile,
+    userid,
   };
 };
 
-const mapDispatchToProps = (dispatch)=>{
+const mapDispatchToProps = (dispatch) => {
   return {
-    getprofile: ()=>{
+    getprofile: () => {
       dispatch(GetProfileReq());
     },
-    createprofile: async ()=>{
+    createprofile: async () => {
       await dispatch(CreateProfileReq());
       dispatch(GetProfileReq());
     },
   };
 };
 
-Profile = connect(mapStateToProps, mapDispatchToProps)(Profile);
+Profile = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Profile);
 
-export default Profile
+export default Profile;
