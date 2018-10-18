@@ -35,6 +35,7 @@ class ManageUser extends Component {
   navigateUser() {
     if (this.state.username.length > 0) {
       this.props.history.push(`/manage/user/${this.state.username}`);
+      this.fetchUser();
     }
   }
 
