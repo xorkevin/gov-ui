@@ -1,15 +1,12 @@
-version: "3.3"
+version: "3.7"
 
 services:
-  base:
+  app:
     image: nuke:latest
     volumes:
       - ./bin:/app/bin
       - ./bin_admin:/app/bin_admin
       - ./bin_server:/app/bin_server
-    ports:
-      - 3030:3030
-    restart: unless-stopped
   admin:
     image: nuke:latest
     volumes:
@@ -17,6 +14,3 @@ services:
       - ./bin_admin:/app/bin_admin
     environment:
       NUKE_MODE: admin
-    ports:
-      - 3031:3031
-    restart: unless-stopped

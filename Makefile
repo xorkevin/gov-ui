@@ -50,7 +50,7 @@ build-docker:
 	docker build -f ./Dockerfile -t $(IMAGE_NAME):$(VERSION) -t $(IMAGE_NAME):latest .
 
 produp:
-	docker-compose -f docker-compose.yaml up -d
+	docker-compose -f dc.main.yaml -f dc.compose.yaml up -d
 
 proddown:
-	docker-compose -f docker-compose.yaml down
+	docker-compose -f dc.main.yaml -f dc.compose.yaml down
