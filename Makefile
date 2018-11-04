@@ -45,6 +45,12 @@ serve: build start
 
 serve-admin: build-admin start-admin
 
+## gen
+.PHONY: gen
+
+gen:
+	./servicedef-gen.sh
+
 ## docker
 build-docker:
 	docker build -f ./Dockerfile -t $(IMAGE_NAME):$(VERSION) -t $(IMAGE_NAME):latest .
@@ -54,3 +60,12 @@ produp:
 
 proddown:
 	docker-compose -f dc.main.yaml -f dc.compose.yaml down
+
+## service
+SERVICE_STACK=nuke
+.PHONY: launch danger-land
+launch:
+	docker stack deploy -c defs/dc.nuke.yaml $(SERVICE_STACK)
+
+danger-land:
+	docker stack rm $(SERVICE_STACK)

@@ -6,7 +6,6 @@ services:
     volumes:
       - ./bin:/app/bin
       - ./bin_admin:/app/bin_admin
-      - ./bin_server:/app/bin_server
   admin:
     image: nuke:latest
     volumes:

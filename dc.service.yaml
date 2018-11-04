@@ -1,0 +1,29 @@
+version: "3.7"
+
+services:
+  app:
+    networks:
+      - launch-net
+      - default
+    deploy:
+      mode: replicated
+      replicas: 1
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=launch-net"
+        - "traefik.port=3030"
+  admin:
+    networks:
+      - launch-net
+      - default
+    deploy:
+      mode: replicated
+      replicas: 1
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=launch-net"
+        - "traefik.port=3031"
+
+networks:
+  launch-net:
+    external: true

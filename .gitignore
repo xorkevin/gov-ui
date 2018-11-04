@@ -22,3 +22,5 @@ node_modules
 
 bin
 bin_admin
+
+defs/
