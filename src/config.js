@@ -53,6 +53,8 @@ const API = {
   courier: {
     link: {
       get: courierlink + '?amount={0}&offset={1}',
+      new: courierlink,
+      id: courierlink + '/{0}',
     },
   },
 };
