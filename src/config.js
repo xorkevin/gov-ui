@@ -6,6 +6,8 @@ const userbase = ubase + '/user';
 const passwordbase = userbase + '/password';
 const authbase = ubase + '/auth';
 const profilebase = apibase + '/profile';
+const courierbase = apibase + '/courier';
+const courierlink = courierbase + '/link';
 
 const API = {
   setupz: setupzbase,
@@ -47,6 +49,11 @@ const API = {
     image: profilebase + '/image',
     id: profilebase + '/{0}',
     idimage: profilebase + '/{0}/image',
+  },
+  courier: {
+    link: {
+      get: courierlink + '?amount={0}&offset={1}',
+    },
   },
 };
 
