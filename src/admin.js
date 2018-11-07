@@ -108,7 +108,7 @@ class Admin extends Component {
                 key: 'manage',
                 component: (
                   <NavLink to="/manage">
-                    <FaIcon icon="building-o" />
+                    <FaIcon icon="building" />
                     <small>Manage</small>
                   </NavLink>
                 ),
@@ -117,7 +117,7 @@ class Admin extends Component {
                 key: 'courier',
                 component: (
                   <NavLink to="/courier">
-                    <FaIcon icon="building-o" />
+                    <FaIcon icon="paper-plane" />
                     <small>Courier</small>
                   </NavLink>
                 ),

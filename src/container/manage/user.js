@@ -72,7 +72,10 @@ class ManageUser extends Component {
         });
       } else {
         this.setState((prevState) => {
-          return Object.assign({}, prevState, {edit: false});
+          return Object.assign({}, prevState, {
+            err: false,
+            edit: false,
+          });
         });
         this.fetchUser();
       }

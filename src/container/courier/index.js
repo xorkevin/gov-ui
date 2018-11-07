@@ -2,6 +2,7 @@ import {h, Component} from 'preact';
 import {Switch, Route, Redirect, NavLink} from 'react-router-dom';
 import Section from 'component/section';
 import Tabbar from 'component/tabbar';
+import FaIcon from 'component/faicon';
 
 import Loader from 'loader';
 
@@ -12,12 +13,16 @@ const loadCourierLink = Loader(() => {
 class CourierContainer extends Component {
   render({match}) {
     return (
-      <Section container narrow padded sectionTitle="Settings">
+      <Section container narrow padded sectionTitle="Courier">
         <Tabbar
           left={[
             {
               key: 'link',
-              component: <NavLink to={`${match.path}/link`}>Link</NavLink>,
+              component: (
+                <NavLink to={`${match.path}/link`}>
+                  <FaIcon icon="link" /> Link
+                </NavLink>
+              ),
             },
           ]}
         />
