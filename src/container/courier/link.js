@@ -5,3 +5,5 @@ class CourierLink extends Component {
     return <div>CourierLink</div>;
   }
 }
+
+export default CourierLink;

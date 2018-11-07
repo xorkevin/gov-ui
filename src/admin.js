@@ -53,6 +53,12 @@ const loadHealthContainer = Protected(
   }),
   'admin',
 );
+const loadCourierContainer = Protected(
+  Loader(() => {
+    return import('container/courier');
+  }),
+  'admin',
+);
 const loadSetupContainer = Loader(() => {
   return import('container/setup');
 });
@@ -107,6 +113,15 @@ class Admin extends Component {
                   </NavLink>
                 ),
               },
+              {
+                key: 'courier',
+                component: (
+                  <NavLink to="/courier">
+                    <FaIcon icon="building-o" />
+                    <small>Courier</small>
+                  </NavLink>
+                ),
+              },
             ]}
             right={[
               {
@@ -146,6 +161,7 @@ class Admin extends Component {
             <Route path="/u" component={loadUserContainer} />
             <Route path="/manage" component={loadManageContainer} />
             <Route path="/health" component={loadHealthContainer} />
+            <Route path="/courier" component={loadCourierContainer} />
             <Route path="/setup" component={loadSetupContainer} />
             <Redirect to="/" />
           </Switch>
