@@ -1,6 +1,7 @@
 import {h, Component} from 'preact';
 import linkstate from 'linkstate';
 import Section from 'component/section';
+import Table from 'component/table';
 import Button from 'component/button';
 import Input from 'component/form';
 import Time from 'component/time';
@@ -93,7 +94,7 @@ class CourierLink extends Component {
         <Section subsection sectionTitle="Add Link">
           <Input
             label="link id"
-            info="usage: /link/:linkid; (optional, if not present, will be randomly generated)"
+            info="usage: /link/:linkid; (optional)"
             value={newLink.id}
             onChange={linkstate(this, 'newLink.id')}
           />
@@ -110,27 +111,41 @@ class CourierLink extends Component {
         </Section>
         {err && <span>Error: {err}</span>}
         <Section subsection sectionTitle="Links">
-          {links.map((link) => {
-            return (
-              <div>
-                <span>
-                  Linkid:{' '}
-                  <Anchor ext href={COURIER.base + '/' + link.linkid}>
-                    {COURIER.base + '/' + link.linkid}
-                  </Anchor>
-                </span>
-                <span>
-                  Link url:{' '}
-                  <Anchor ext href={link.url}>
-                    {link.url}
-                  </Anchor>
-                </span>
-                <span>
-                  Link creation time: <Time value={link.creation_time * 1000} />
-                </span>
-              </div>
-            );
-          })}
+          <Table
+            fullWidth
+            head={[
+              {key: 'shortlink', component: 'shortlink'},
+              {key: 'url', component: 'url'},
+              {key: 'time', component: 'creation time'},
+            ]}
+            data={links.map(({linkid, url, creation_time}) => {
+              return {
+                key: linkid,
+                row: [
+                  {
+                    key: 'shortlink',
+                    component: (
+                      <Anchor ext href={COURIER.base + '/' + linkid}>
+                        {COURIER.base + '/' + linkid}
+                      </Anchor>
+                    ),
+                  },
+                  {
+                    key: 'url',
+                    component: (
+                      <Anchor ext href={url}>
+                        {url}
+                      </Anchor>
+                    ),
+                  },
+                  {
+                    key: 'time',
+                    component: <Time value={creation_time * 1000} />,
+                  },
+                ],
+              };
+            })}
+          />
         </Section>
       </div>
     );
