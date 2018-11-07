@@ -8,7 +8,7 @@ import Time from 'component/time';
 import Anchor from 'component/anchor';
 
 import {connect} from 'preact-redux';
-import {GetLinkGroup, CreateLink} from 'reducer/courier/link';
+import {GetLinkGroup, CreateLink, DeleteLink} from 'reducer/courier/link';
 import {COURIER} from 'config';
 
 class CourierLink extends Component {
@@ -26,6 +26,7 @@ class CourierLink extends Component {
     };
     this.fetchLinkGroup = this.fetchLinkGroup.bind(this);
     this.clearLink = this.clearLink.bind(this);
+    this.deleteLink = this.deleteLink.bind(this);
     this.createLink = this.createLink.bind(this);
   }
 
@@ -84,6 +85,24 @@ class CourierLink extends Component {
     });
   }
 
+  deleteLink(linkid) {
+    this.props.deleteLink(linkid, (err) => {
+      if (err) {
+        return this.setState((prevState) => {
+          return Object.assign({}, prevState, {
+            err,
+          });
+        });
+      }
+      this.setState((prevState) => {
+        return Object.assign({}, prevState, {
+          err: false,
+        });
+      });
+      this.fetchLinkGroup();
+    });
+  }
+
   componentDidMount() {
     this.fetchLinkGroup();
   }
@@ -117,6 +136,7 @@ class CourierLink extends Component {
               {key: 'shortlink', component: 'shortlink'},
               {key: 'url', component: 'url'},
               {key: 'time', component: 'creation time'},
+              {key: 'delete', component: ''},
             ]}
             data={links.map(({linkid, url, creation_time}) => {
               return {
@@ -142,6 +162,14 @@ class CourierLink extends Component {
                     key: 'time',
                     component: <Time value={creation_time * 1000} />,
                   },
+                  {
+                    key: 'delete',
+                    component: (
+                      <Button text onClick={() => this.deleteLink(linkid)}>
+                        Delete
+                      </Button>
+                    ),
+                  },
                 ],
               };
             })}
@@ -165,6 +193,10 @@ const mapDispatchToProps = (dispatch) => {
     createLink: async (linkid, url, callback) => {
       const data = await dispatch(CreateLink(linkid, url));
       callback(data.err, data.data);
+    },
+    deleteLink: async (linkid, callback) => {
+      const data = await dispatch(DeleteLink(linkid));
+      callback(data.err);
     },
   };
 };
