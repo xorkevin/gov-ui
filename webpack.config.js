@@ -116,7 +116,7 @@ const createConfig = (env, argv) => {
     config.plugins.push(
       new webpack.DefinePlugin({
         APIBASE_URL: JSON.stringify('http://localhost:8080/api'),
-        COURIERBASE_URL: JSON.stringify('http://localhost:8080/api/link'),
+        COURIERBASE_URL: JSON.stringify('http://localhost:8080/link'),
       }),
     );
   } else {
