@@ -163,7 +163,7 @@ class CourierLink extends Component {
                     key: 'image',
                     component: (
                       <Anchor ext href={COURIER.base + '/' + linkid + '/image'}>
-                        {COURIER.base + '/' + linkid + '/image'}
+                        image
                       </Anchor>
                     ),
                   },
