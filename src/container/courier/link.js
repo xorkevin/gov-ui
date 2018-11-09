@@ -135,6 +135,7 @@ class CourierLink extends Component {
             head={[
               {key: 'shortlink', component: 'shortlink'},
               {key: 'url', component: 'url'},
+              {key: 'image', component: 'qr code'},
               {key: 'time', component: 'creation time'},
               {key: 'delete', component: ''},
             ]}
@@ -155,6 +156,14 @@ class CourierLink extends Component {
                     component: (
                       <Anchor ext href={url}>
                         {url}
+                      </Anchor>
+                    ),
+                  },
+                  {
+                    key: 'image',
+                    component: (
+                      <Anchor ext href={COURIER.base + '/' + linkid + '/image'}>
+                        {COURIER.base + '/' + linkid + '/image'}
                       </Anchor>
                     ),
                   },
