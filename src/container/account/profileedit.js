@@ -7,49 +7,75 @@ import Input from 'component/form';
 import Button from 'component/button';
 
 import {connect} from 'preact-redux';
-import {EditProfileReq} from 'reducer/account/profile';
+import {GetProfileReq, EditProfileReq} from 'reducer/account/profile';
 
 class ProfileEdit extends Component {
   constructor(props) {
     super(props);
-    const {bio, contact_email} = props.profile;
     this.state = {
-      bio,
-      contact_email,
-      image: undefined,
+      err: false,
+      success: false,
+      profile: {
+        bio: '',
+        contact_email: '',
+        image: undefined,
+      },
     };
+    this.getprofile = this.getprofile.bind(this);
     this.editprofile = this.editprofile.bind(this);
-    this.navigateProfile = this.navigateProfile.bind(this);
   }
 
-  navigateProfile() {
-    this.props.history.replace('/a/profile');
+  getprofile() {
+    this.props.getprofile((err, data) => {
+      if (err) {
+        return this.setState((prevState) => {
+          return Object.assign({}, prevState, {
+            err,
+            success: false,
+          });
+        });
+      }
+      return this.setState((prevState) => {
+        return Object.assign({}, prevState, {
+          err: false,
+          profile: {
+            bio: data.bio,
+            contact_email: data.contact_email,
+            image: undefined,
+          },
+        });
+      });
+    });
   }
 
   editprofile() {
-    this.props.editprofile(this.state);
+    this.props.editprofile(this.state.profile, (err) => {
+      if (err) {
+        return this.setState((prevState) => {
+          return Object.assign({}, prevState, {
+            err,
+            success: false,
+          });
+        });
+      }
+      return this.setState((prevState) => {
+        return Object.assign({}, prevState, {
+          err: false,
+          success: true,
+        });
+      });
+    });
   }
 
   componentDidMount() {
-    if (!this.props.profile) {
-      this.navigateProfile();
-    }
+    this.getprofile();
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!nextProps.profile) {
-      this.navigateProfile();
-    }
-  }
-
-  render({profile, editloading, editsuccess, editerr}, {contact_email, bio}) {
-    if (!profile) {
-      return false;
-    }
+  render({}, {err, success, profile}) {
     const bar = [];
     bar.push(
       <Link to="/a/profile">
-        <Button text>Cancel</Button>
+        <Button text>{success ? 'Back' : 'Cancel'}</Button>
       </Link>,
     );
     bar.push(
@@ -65,15 +91,15 @@ class ProfileEdit extends Component {
             <Input
               fullWidth
               label="contact email"
-              value={contact_email}
-              onChange={linkstate(this, 'contact_email')}
+              value={profile.contact_email}
+              onChange={linkstate(this, 'profile.contact_email')}
             />
             <Input
               textarea
               fullWidth
               label="bio"
-              value={bio}
-              onChange={linkstate(this, 'bio')}
+              value={profile.bio}
+              onChange={linkstate(this, 'profile.bio')}
             />
             <Input
               type="file"
@@ -81,11 +107,11 @@ class ProfileEdit extends Component {
               capture="environment"
               fullWidth
               label="profile image"
-              onChange={linkstate(this, 'image')}
+              onChange={linkstate(this, 'profile.image')}
             />
           </Section>
-          {editerr && <span>{editerr}</span>}
-          {editsuccess && <span>Changes saved</span>}
+          {err && <span>{err}</span>}
+          {success && <span>Changes saved</span>}
         </Card>
       </div>
     );
@@ -93,19 +119,18 @@ class ProfileEdit extends Component {
 }
 
 const mapStateToProps = (state) => {
-  const {profile, editloading, editsuccess, editerr} = state.Profile;
-  return {
-    profile,
-    editloading,
-    editsuccess,
-    editerr,
-  };
+  return {};
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    editprofile: (options) => {
-      dispatch(EditProfileReq(options));
+    getprofile: async (callback) => {
+      const data = await dispatch(GetProfileReq());
+      callback(data.err, data.data);
+    },
+    editprofile: async (options, callback) => {
+      const data = await dispatch(EditProfileReq(options));
+      callback(data.err);
     },
   };
 };

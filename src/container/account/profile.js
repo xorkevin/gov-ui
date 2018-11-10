@@ -9,28 +9,67 @@ import Button from 'component/button';
 import Img from 'component/image';
 
 import {connect} from 'preact-redux';
-import {CreateProfileReq, GetProfileReq} from 'reducer/account/profile';
+import {GetProfileReq, CreateProfileReq} from 'reducer/account/profile';
 
 class Profile extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      err: false,
+      canCreate: false,
+      profile: false,
+    };
     this.getprofile = this.getprofile.bind(this);
     this.createprofile = this.createprofile.bind(this);
   }
 
   getprofile() {
-    this.props.getprofile();
+    this.props.getprofile((err, canCreate, data) => {
+      if (canCreate) {
+        return this.setState((prevState) => {
+          return Object.assign({}, prevState, {
+            err: err,
+            canCreate: true,
+          });
+        });
+      }
+      if (err) {
+        return this.setState((prevState) => {
+          return Object.assign({}, prevState, {
+            err,
+            canCreate: false,
+          });
+        });
+      }
+      return this.setState((prevState) => {
+        return Object.assign({}, prevState, {
+          err: false,
+          canCreate: false,
+          profile: data,
+        });
+      });
+    });
   }
 
   createprofile() {
-    this.props.createprofile();
+    this.props.createprofile((err) => {
+      if (err) {
+        return this.setState((prevState) => {
+          return Object.assign({}, prevState, {err});
+        });
+      }
+      this.setState((prevState) => {
+        return Object.assign({}, prevState, {err: false});
+      });
+      this.getprofile();
+    });
   }
 
   componentDidMount() {
     this.getprofile();
   }
 
-  render({loading, success, err, canCreate, profile, userid}, {}) {
+  render({userid}, {err, canCreate, profile}) {
     const bar = [];
     if (profile) {
       bar.push(
@@ -42,62 +81,55 @@ class Profile extends Component {
 
     return (
       <div>
-        {!loading && err && <span>{err}</span>}
-        {!loading &&
-          canCreate && (
-            <Button primary onClick={this.createprofile}>
-              Create Profile
-            </Button>
-          )}
-        {!loading &&
-          profile && (
-            <Card size="lg" restrictWidth center bar={bar}>
-              <Section subsection sectionTitle="Profile">
-                <ListItem label="contact email" item={profile.contact_email} />
-                <ListItem label="bio" item={profile.bio} />
-                <ListItem
-                  label="profile image"
-                  item={
-                    profile.image && (
-                      <Img
-                        rounded
-                        preview={profile.image}
-                        imgWidth={384}
-                        imgHeight={384}
-                        src={formatStr(API.profile.idimage, userid)}
-                      />
-                    )
-                  }
-                />
-              </Section>
-            </Card>
-          )}
+        {err && <span>{err}</span>}
+        {canCreate && (
+          <Button primary onClick={this.createprofile}>
+            Create Profile
+          </Button>
+        )}
+        {profile && (
+          <Card size="lg" restrictWidth center bar={bar}>
+            <Section subsection sectionTitle="Profile">
+              <ListItem label="contact email" item={profile.contact_email} />
+              <ListItem label="bio" item={profile.bio} />
+              <ListItem
+                label="profile image"
+                item={
+                  profile.image && (
+                    <Img
+                      rounded
+                      preview={profile.image}
+                      imgWidth={384}
+                      imgHeight={384}
+                      src={formatStr(API.profile.idimage, userid)}
+                    />
+                  )
+                }
+              />
+            </Section>
+          </Card>
+        )}
       </div>
     );
   }
 }
 
 const mapStateToProps = (state) => {
-  const {loading, success, err, canCreate, profile} = state.Profile;
   const {userid} = state.Auth;
   return {
-    loading,
-    success,
-    err,
-    canCreate,
-    profile,
     userid,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getprofile: () => {
-      dispatch(GetProfileReq());
+    getprofile: async (callback) => {
+      const data = await dispatch(GetProfileReq());
+      callback(data.err, data.canCreate, data.data);
     },
-    createprofile: async () => {
-      await dispatch(CreateProfileReq());
-      dispatch(GetProfileReq());
+    createprofile: async (callback) => {
+      const data = await dispatch(CreateProfileReq());
+      callback(data.err);
     },
   };
 };
