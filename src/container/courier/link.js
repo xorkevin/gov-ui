@@ -122,6 +122,7 @@ class CourierLink extends Component {
             info="destination url"
             value={newLink.url}
             onChange={linkstate(this, 'newLink.url')}
+            onEnter={this.createLink}
           />
           <Button text onClick={this.clearLink}>
             Clear
