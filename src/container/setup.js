@@ -22,9 +22,11 @@ class SetupContainer extends Component {
         last_name: '',
         orgname: '',
       },
-      clienterr: false,
+      err: false,
       password_confirm: '',
       email_confirm: '',
+      success: false,
+      config: false,
     };
     this.setup = this.setup.bind(this);
     this.navigateHome = this.navigateHome.bind(this);
@@ -38,24 +40,42 @@ class SetupContainer extends Component {
     const {password, email} = this.state.form;
     const {password_confirm, email_confirm} = this.state;
     if (password !== password_confirm) {
-      this.setState((prevState) => {
+      return this.setState((prevState) => {
         return Object.assign({}, prevState, {
-          clienterr: 'passwords do not match',
+          err: 'passwords do not match',
+          success: false,
         });
       });
-    } else if (email !== email_confirm) {
-      this.setState((prevState) => {
-        return Object.assign({}, prevState, {clienterr: 'emails do not match'});
-      });
-    } else {
-      this.setState((prevState) => {
-        return Object.assign({}, prevState, {clienterr: false});
-      });
-      this.props.setup(this.state.form);
     }
+    if (email !== email_confirm) {
+      return this.setState((prevState) => {
+        return Object.assign({}, prevState, {
+          err: 'emails do not match',
+          success: false,
+        });
+      });
+    }
+    this.setState((prevState) => {
+      return Object.assign({}, prevState, {err: false});
+    });
+
+    this.props.setup(this.state.form, (err, config) => {
+      if (err) {
+        return this.setState((prevState) => {
+          return Object.assign({}, prevState, {err, success: false});
+        });
+      }
+      this.setState((prevState) => {
+        return Object.assign({}, prevState, {
+          err: false,
+          config,
+          success: true,
+        });
+      });
+    });
   }
 
-  render({success, config, err}, {clienterr}) {
+  render({}, {success, config, err}) {
     return (
       <Section container padded>
         <Card
@@ -120,8 +140,7 @@ class SetupContainer extends Component {
               onEnter={this.setup}
             />
           </Section>
-          {!success && clienterr && <span>{clienterr}</span>}
-          {!success && !clienterr && err && <span>{err}</span>}
+          {err && <span>{err}</span>}
           {success && (
             <span>
               <span>{config.orgname} has been created</span>
@@ -137,18 +156,14 @@ class SetupContainer extends Component {
 }
 
 const mapStateToProps = (state) => {
-  const {success, config, err} = state.Setup;
-  return {
-    success,
-    config,
-    err,
-  };
+  return {};
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setup: (options) => {
-      dispatch(SetupReq(options));
+    setup: async (options, callback) => {
+      const data = await dispatch(SetupReq(options));
+      callback(data.err, data.data);
     },
   };
 };
