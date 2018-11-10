@@ -103,6 +103,37 @@ const GetUserByID = (userid) => {
   };
 };
 
+const GetUserInfoBulk = (userids) => {
+  return async (dispatch) => {
+    try {
+      const response = await fetch(
+        formatStr(API.u.user.ids, userids.join(',')),
+        {
+          method: 'GET',
+        },
+      );
+      const status = response.status;
+      const data = await response.json();
+      if (status < 200 || status >= 300) {
+        if (data && data.message) {
+          throw new Error(data.message);
+        } else {
+          throw new Error('Unable to fetch user info');
+        }
+      }
+
+      return {
+        err: false,
+        data,
+      };
+    } catch (e) {
+      return {
+        err: e.message,
+      };
+    }
+  };
+};
+
 const GetUserAccountByName = (username) => {
   return async (dispatch) => {
     const {relogin} = await dispatch(ReLogin());
@@ -179,4 +210,10 @@ const GetUserByIDPrivate = (userid) => {
   };
 };
 
-export {GetUserByName, GetUserByID, GetUserAccountByName, GetUserByIDPrivate};
+export {
+  GetUserByName,
+  GetUserByID,
+  GetUserInfoBulk,
+  GetUserAccountByName,
+  GetUserByIDPrivate,
+};

@@ -25,6 +25,7 @@ const API = {
       id: userbase + '/id/{0}',
       name: userbase + '/name/{0}',
       idprivate: userbase + '/id/{0}/private',
+      ids: userbase + '/ids?ids={0}',
       nameprivate: userbase + '/name/{0}/private',
       get: userbase,
       sessions: userbase + '/sessions',
