@@ -72,22 +72,21 @@ class Comment extends Component {
             </span>
           </div>
         </div>
-        {!hidden &&
-          children && (
-            <div className="children">
-              {depth > 0 &&
-                children.map((child) => {
-                  child.attributes.depth = depth - 1;
-                  return child;
-                })}
-              {depth <= 0 && (
-                <span>
-                  <a className="no-color">continue &gt;</a>
-                </span>
-              )}
-              {!depth && typeof depth !== 'number' && children}
-            </div>
-          )}
+        {!hidden && children && (
+          <div className="children">
+            {depth > 0 &&
+              children.map((child) => {
+                child.attributes.depth = depth - 1;
+                return child;
+              })}
+            {depth <= 0 && (
+              <span>
+                <a className="no-color">continue &gt;</a>
+              </span>
+            )}
+            {!depth && typeof depth !== 'number' && children}
+          </div>
+        )}
       </div>
     );
   }

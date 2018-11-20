@@ -1,5 +1,5 @@
 main {
-  min-height : 100vh;
+  min-height: 100vh;
   padding-top: 1px; // to force align main to top
 
   @media (max-width: $grid-sm-breakpoint - 1) {
@@ -15,8 +15,8 @@ main {
   }
 
   &.section-no-margin {
-    &>section {
-      margin-top   : 0;
+    & > section {
+      margin-top: 0;
       margin-bottom: 0;
     }
   }

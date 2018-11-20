@@ -22,6 +22,7 @@ clean: clean-bin clean-bin-admin
 
 format:
 	npx prettier --write --arrow-parens always --single-quote --trailing-comma all --no-bracket-spacing "src/**/*.js"
+	npx prettier --write --arrow-parens always --single-quote --trailing-comma all --no-bracket-spacing "src/**/*.scss"
 
 dev:
 	npm run build-dev

@@ -1,5 +1,5 @@
 .container {
-  width : 100%;
+  width: 100%;
   margin: auto;
 
   &.padded {
@@ -14,7 +14,7 @@
     max-width: $grid-md-breakpoint * 15 / 16;
   }
 
-  &:not(.narrow){
+  &:not(.narrow) {
     @media (min-width: $grid-lg-breakpoint) {
       max-width: $grid-lg-breakpoint * 15 / 16;
     }

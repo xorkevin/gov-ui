@@ -26,8 +26,9 @@ class Tabbar extends Component {
       <div className={className.join(' ')}>
         <Container>
           <div className="element">{j}</div>
-          {children &&
-            children.length > 0 && <div className="element">{children}</div>}
+          {children && children.length > 0 && (
+            <div className="element">{children}</div>
+          )}
           <div className="element">{k}</div>
         </Container>
       </div>

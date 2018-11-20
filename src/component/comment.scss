@@ -1,52 +1,52 @@
 .comment {
   margin: 16px 0;
-  width : 100%;
+  width: 100%;
 
-  &>.inner {
-    width    : 42rem;
+  & > .inner {
+    width: 42rem;
     max-width: 100%;
 
-    &>.info {
-      &>* + * {
+    & > .info {
+      & > * + * {
         margin-left: 8px;
       }
 
       .data {
         font-family: monospace;
-        font-size  : 0.85rem;
-        color      : $color-text-dark-2;
+        font-size: 0.85rem;
+        color: $color-text-dark-2;
       }
     }
 
-    &>.content {
+    & > .content {
       font-size: 1rem;
-      color    : $color-text-dark-1-5;
+      color: $color-text-dark-1-5;
     }
 
-    &>.options {
+    & > .options {
       font-size: 0.85rem;
-      color    : $color-text-dark-2;
+      color: $color-text-dark-2;
 
-      &>* + * {
+      & > * + * {
         margin-left: 8px;
       }
     }
   }
 
-  &>.children {
-    margin     : 0 0 0 12px;
+  & > .children {
+    margin: 0 0 0 12px;
     border-left: 1px solid $color-text-dark-4;
-    padding    : 0 0 0 12px;
+    padding: 0 0 0 12px;
   }
 
   &.hidden {
-    &>.inner {
-      &>:not(.info) {
+    & > .inner {
+      & > :not(.info) {
         display: none;
       }
     }
 
-    &>:not(.inner) {
+    & > :not(.inner) {
       display: none;
     }
   }
@@ -55,41 +55,41 @@
 .comment-section {
   width: 100%;
 
-  &>.comment {
+  & > .comment {
     margin: 0;
     padding: 16px 0;
   }
 
-  &>.comment + .comment {
-    border-top : 2px solid $color-text-dark-4;
+  & > .comment + .comment {
+    border-top: 2px solid $color-text-dark-4;
   }
 }
 
 body.dark {
   .comment {
-    &>.inner {
-      &>.info {
+    & > .inner {
+      & > .info {
         .data {
           color: $color-text-light-3;
         }
       }
 
-      &>.content {
+      & > .content {
         color: $color-text-light-2;
       }
 
-      &>.options {
+      & > .options {
         color: $color-text-light-3;
       }
     }
 
-    &>.children {
+    & > .children {
       border-color: $color-text-light-4;
     }
   }
 
   .comment-section {
-    &>.comment + .comment {
+    & > .comment + .comment {
       border-color: $color-text-light-4;
     }
   }

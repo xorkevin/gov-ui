@@ -143,8 +143,9 @@ class Navbar extends Component {
         <div className="nav-container">
           <Container>
             <div className="element">{j}</div>
-            {children &&
-              children.length > 0 && <div className="element">{children}</div>}
+            {children && children.length > 0 && (
+              <div className="element">{children}</div>
+            )}
             <div className="element">{k}</div>
           </Container>
         </div>

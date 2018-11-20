@@ -3,130 +3,129 @@
 }
 
 .menu {
-  position:       absolute;
-  width:          0;
-  height:         0;
-  z-index:        128;
+  position: absolute;
+  width: 0;
+  height: 0;
+  z-index: 128;
   letter-spacing: 1px;
   text-transform: uppercase;
-  font-size:      0.75rem;
+  font-size: 0.75rem;
 
   &.fixed {
     position: fixed;
   }
 
-  &>.menu-container {
-    position:         absolute;
+  & > .menu-container {
+    position: absolute;
     background-color: $white;
-    box-shadow:       $shadow-box-dark;
-    display:          flex;
-    justify-content:  flex-start;
-    align-items:      flex-start;
-    flex-direction:   column;
-    z-index:          1;
-    border-radius:    4px;
+    box-shadow: $shadow-box-dark;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+    z-index: 1;
+    border-radius: 4px;
 
-    &>.item {
-      display:         flex;
-      align-items:     center;
+    & > .item {
+      display: flex;
+      align-items: center;
       justify-content: center;
-      width:           100%;
-      transition:      $transition-normal;
-      color:           $color-text-dark-1;
+      width: 100%;
+      transition: $transition-normal;
+      color: $color-text-dark-1;
 
-      &>* {
-        width:           100%;
-        display:         block;
-        padding:         8px 16px;
-        color:           unset;
+      & > * {
+        width: 100%;
+        display: block;
+        padding: 8px 16px;
+        color: unset;
         text-decoration: unset;
       }
 
       &:hover {
         cursor: pointer;
-        color:  $color-primary-light;
+        color: $color-primary-light;
       }
     }
   }
 
-  &>.triangle {
-    position:  absolute;
-    width:     32px;
-    height:    16px;
-    z-index:   2;
+  & > .triangle {
+    position: absolute;
+    width: 32px;
+    height: 16px;
+    z-index: 2;
     transform: translateX(-50%);
-    overflow:  hidden;
+    overflow: hidden;
 
     &:before {
-      content:          '';
-      position:         absolute;
-      width:            12px;
-      height:           12px;
-      left:             50%;
-      z-index:          1;
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      left: 50%;
+      z-index: 1;
       background-color: $white;
     }
   }
 
-
   &.left {
-    &>.menu-container {
+    & > .menu-container {
       left: 0;
     }
   }
 
   &.right {
-    &>.menu-container {
+    & > .menu-container {
       right: 0;
     }
   }
 
   &.top {
-    &>.menu-container {
+    & > .menu-container {
       bottom: 16px;
     }
 
-    &>.triangle {
+    & > .triangle {
       bottom: 0;
 
       &:before {
-        top:        0;
-        transform:  translateX(-50%) translateY(-50%) rotateZ(45deg);
+        top: 0;
+        transform: translateX(-50%) translateY(-50%) rotateZ(45deg);
         box-shadow: $shadow-box-blur-dark;
       }
     }
   }
 
   &.bottom {
-    &>.menu-container {
+    & > .menu-container {
       top: 16px;
     }
 
-    &>.triangle {
+    & > .triangle {
       top: 0;
 
       &:before {
-        bottom:     0;
-        transform:  translateX(-50%) translateY(50%) rotateZ(45deg);
+        bottom: 0;
+        transform: translateX(-50%) translateY(50%) rotateZ(45deg);
         box-shadow: $shadow-box-blur;
       }
     }
   }
 
   &.lg {
-    &>.menu-container {
+    & > .menu-container {
       width: $menu-lg-size;
     }
   }
 
   &.md {
-    &>.menu-container {
+    & > .menu-container {
       width: $menu-md-size;
     }
   }
 
   &.sm {
-    &>.menu-container {
+    & > .menu-container {
       width: $menu-sm-size;
     }
   }
@@ -134,20 +133,20 @@
 
 body.dark {
   .menu {
-    &>.menu-container {
+    & > .menu-container {
       background-color: lighten($color-primary-dark, 6.25%);
 
-      &>.item {
+      & > .item {
         color: $color-text-light-1-5;
 
         &:hover {
-          color:            $color-accent;
+          color: $color-accent;
           background-color: lighten($color-primary-dark, 3.125%);
         }
       }
     }
 
-    &>.triangle {
+    & > .triangle {
       &:before {
         background-color: lighten($color-primary-dark, 6.25%);
       }

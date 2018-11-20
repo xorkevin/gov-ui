@@ -7,24 +7,24 @@
 }
 
 .grid {
-  width          : 100%;
-  display        : flex;
-  flex-direction : row;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
   justify-content: flex-start;
-  align-items    : flex-start;
-  flex-wrap      : wrap;
+  align-items: flex-start;
+  flex-wrap: wrap;
 
   &:after {
-    content: "";
+    content: '';
     display: block;
-    clear  : both;
+    clear: both;
   }
 
-  &>.col {
-    float    : left;
-    width    : 100%;
+  & > .col {
+    float: left;
+    width: 100%;
     max-width: 100%;
-    padding  : $grid-vertical-padding $grid-gutter-padding;
+    padding: $grid-vertical-padding $grid-gutter-padding;
 
     @include col-list(24, 'xs');
 
@@ -42,7 +42,7 @@
   }
 
   &.strict {
-    &>.col {
+    & > .col {
       padding: 0;
     }
   }
