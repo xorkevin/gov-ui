@@ -27,7 +27,9 @@ const Tooltip = ({position, display, width, tooltip, children}) => {
 
   return (
     <span className={j.join(' ')}>
-      <span className={k.join(' ')}>{tooltip}</span>
+      <span className={k.join(' ')} style={s}>
+        {tooltip}
+      </span>
       {children && children.length > 0 && children[0]}
     </span>
   );
