@@ -24,16 +24,16 @@ format:
 	npx prettier --write --arrow-parens always --single-quote --trailing-comma all --no-bracket-spacing "src/**/*.js"
 
 dev:
-	BABEL_ENV=dev npm run build-dev
+	npm run build-dev
 
 dev-admin:
-	BABEL_ENV=dev npm run build-admin-dev
+	npm run build-admin-dev
 
 build: clean-bin
-	BABEL_ENV=web npm run build
+	npm run build
 
 build-admin: clean-bin-admin
-	BABEL_ENV=web npm run build-admin
+	npm run build-admin
 
 start:
 	npm run serve
