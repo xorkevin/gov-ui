@@ -220,7 +220,7 @@ textarea {
   }
 
   & > .error {
-    visibility: visible;
+    visibility: visible !important;
   }
 }
 
