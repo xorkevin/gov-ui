@@ -3,6 +3,7 @@ import {getCookie, setCookie} from 'utility';
 
 const LOGIN = Symbol('LOGIN');
 const RELOGIN = Symbol('RELOGIN');
+const NOT_LOGGEDIN = Symbol('NOT_LOGGEDIN');
 const LOGIN_REFRESH = Symbol('LOGIN_REFRESH');
 const LOGIN_SUCCESS = Symbol('LOGIN_SUCCESS');
 const LOGIN_ERR = Symbol('LOGIN_ERR');
@@ -75,6 +76,9 @@ const ReLogin = () => {
     try {
       const {loggedIn, timeEnd, timeRefresh} = getState().Auth;
       if (!loggedIn) {
+        dispatch({
+          type: NOT_LOGGEDIN,
+        });
         return {
           relogin: true,
         };
@@ -220,7 +224,6 @@ const defaultState = {
   timeEnd: false,
   timeRefresh: false,
   err: false,
-  logouterr: false,
   getusererr: false,
   userid: '',
   username: '',
@@ -246,6 +249,13 @@ const Auth = (state = initState(), action) => {
     case RELOGIN:
       return Object.assign({}, state, {
         loading: true,
+      });
+    case NOT_LOGGEDIN:
+      return Object.assign({}, state, {
+        valid: true,
+        loading: false,
+        loggedIn: false,
+        err: false,
       });
     case LOGIN_REFRESH:
       return Object.assign({}, state, {
