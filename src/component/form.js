@@ -66,6 +66,7 @@ class Input extends Component {
       textarea,
       dropdown,
       multiple,
+      checked,
     },
     {value},
   ) {
@@ -124,6 +125,7 @@ class Input extends Component {
           accept={accept}
           capture={capture}
           value={value}
+          checked={checked}
           onChange={this.handleChange}
           onKeyPress={this.handleEnter}
           placeholder=" "
