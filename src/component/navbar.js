@@ -1,4 +1,5 @@
 import {h, Component} from 'preact';
+import {withRouter} from 'react-router-dom';
 import Container from 'component/container';
 
 const scrollTime = 384;
@@ -154,7 +155,7 @@ class Navbar extends Component {
     this.unbind();
   }
 
-  render({sidebar, left, right, children}, {top, hidden}) {
+  render({sidebar, left, right, location, children}, {top, hidden}) {
     const className = [];
     if (sidebar) {
       className.push('sidebar');
@@ -162,7 +163,7 @@ class Navbar extends Component {
     if (!sidebar && !top && hidden) {
       className.push('hidden');
     }
-    if (top) {
+    if (location.pathname == '/' && top) {
       className.push('top');
     }
     let j = false;
@@ -189,4 +190,4 @@ class Navbar extends Component {
   }
 }
 
-export default Navbar;
+export default withRouter(Navbar);
