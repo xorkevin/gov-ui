@@ -78,9 +78,23 @@ class Navbar extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      top: false,
       hidden: false,
     };
     this.position = window.pageYOffset;
+  }
+
+  tickTop() {
+    const position = window.pageYOffset;
+    if (position < 256) {
+      this.setState((prevState) => {
+        return Object.assign({}, prevState, {top: true});
+      });
+    } else {
+      this.setState((prevState) => {
+        return Object.assign({}, prevState, {top: false});
+      });
+    }
   }
 
   tick() {
@@ -95,6 +109,10 @@ class Navbar extends Component {
   }
 
   unbind() {
+    if (this.handlerTop) {
+      window.removeEventListener('scroll', this.handlerTop);
+      this.handlerTop = false;
+    }
     if (this.handler) {
       window.removeEventListener('scroll', this.handler);
       this.handler = false;
@@ -102,6 +120,20 @@ class Navbar extends Component {
   }
 
   componentDidMount() {
+    if (!this.props.sidebar) {
+      this.runningTop = false;
+      this.handlerTop = () => {
+        if (!this.runningTop) {
+          this.runningTop = true;
+          window.requestAnimationFrame(() => {
+            this.tickTop();
+            this.runningTop = false;
+          });
+        }
+      };
+      window.addEventListener('scroll', this.handlerTop);
+      this.handlerTop();
+    }
     if (!this.props.sidebar && this.props.hideOnScroll) {
       this.running = false;
       this.handler = () => {
@@ -122,13 +154,16 @@ class Navbar extends Component {
     this.unbind();
   }
 
-  render({sidebar, left, right, children}, {hidden}) {
+  render({sidebar, left, right, children}, {top, hidden}) {
     const className = [];
     if (sidebar) {
       className.push('sidebar');
     }
-    if (hidden) {
+    if (!sidebar && !top && hidden) {
       className.push('hidden');
+    }
+    if (top) {
+      className.push('top');
     }
     let j = false;
     let k = false;

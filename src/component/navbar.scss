@@ -10,7 +10,8 @@ nav,
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: $transition-normal transform;
+  transition: $transition-normal transform, $transition-slow background-color,
+    $transition-slow box-shadow;
   font-family: $typography-base-font;
   font-size: 0.84rem;
   letter-spacing: 2px;
@@ -24,7 +25,12 @@ nav,
   }
 
   &.top {
-    background-color: transparent;
+    background-color: $background-full-transparent;
+    box-shadow: none;
+
+    & > .nav-container > .container > .element > .item {
+      color: $color-text-dark-1;
+    }
   }
 
   & > .nav-container {
@@ -142,6 +148,26 @@ body.dark {
   .nav {
     background-color: $color-primary-dark;
     border-color: $color-accent;
+
+    &.top {
+      background-color: $background-dark-transparent;
+
+      & > .nav-container > .container > .element > .item {
+        & > * {
+          &.active {
+            background-color: $background-dark-transparent;
+          }
+        }
+
+        &:hover {
+          background-color: $background-dark-transparent;
+        }
+
+        &:active {
+          background-color: $background-dark-transparent;
+        }
+      }
+    }
 
     & > .nav-container > .container > .element > .item {
       color: $color-text-light-2;
