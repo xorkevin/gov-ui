@@ -1,6 +1,12 @@
 main {
   min-height: 100vh;
-  padding-top: 1px; // to force align main to top
+
+  // to force align main to top
+  &:before {
+    content: '';
+    display: table;
+    clear: both;
+  }
 
   @media (max-width: $grid-sm-breakpoint - 1) {
     min-height: $hero-lg-size * 2 / 3;
