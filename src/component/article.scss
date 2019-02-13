@@ -9,7 +9,7 @@ article,
     max-width: 100%;
     margin-left: auto;
     margin-right: auto;
-    width: 42rem;
+    width: 48rem;
     display: block;
   }
 
@@ -23,6 +23,7 @@ article,
 
   .info {
     font-size: 1rem;
+    color: $color-text-dark-1-5;
 
     time {
       font-size: 0.85rem;
@@ -35,6 +36,22 @@ article,
     margin-bottom: 2rem;
   }
 
+  ul,
+  ol {
+    font-family: $typography-article-font;
+    list-style-position: outside;
+    padding-left: 64px;
+    padding-right: 32px;
+  }
+
+  & > .title {
+    line-height: 1.25;
+  }
+
+  & > .subtitle {
+    color: $color-text-dark-1-5;
+  }
+
   h1,
   h2,
   h3,
@@ -45,5 +62,18 @@ article,
   p {
     padding-left: 8px;
     padding-right: 8px;
+  }
+}
+
+body.dark {
+  article,
+  .article {
+    & > .subtitle {
+      color: $color-text-light-2;
+    }
+
+    .info {
+      color: $color-text-light-2;
+    }
   }
 }

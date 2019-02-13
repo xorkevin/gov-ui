@@ -57,6 +57,7 @@ const HomeContainer = () => {
 
       <Article
         title="Lorem ipsum"
+        subtitle="Dolor sit amet"
         author="Kevin Wang"
         time={Date.now() - 86400000}
       >
