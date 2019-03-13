@@ -23,6 +23,7 @@ const Card = ({
       case 'md':
       case 'lg':
         k.push(size);
+        break;
       default:
         k.push('sm');
     }
