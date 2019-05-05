@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import {withRouter} from 'react-router-dom';
 import Container from 'component/container';
 
 const scrollTime = 384;
@@ -19,7 +18,7 @@ const easing = (t) => {
 const scrollTo = (element) => {
   const startingY = window.pageYOffset;
   let elementY = 0;
-  if (element) {
+  if (typeof element === 'string') {
     elementY =
       window.scrollY +
       document.getElementById(element).getBoundingClientRect().top;
@@ -55,24 +54,22 @@ const scrollTo = (element) => {
   });
 };
 
-const generateItemList = (list) => {
-  return list.map((item) => {
-    const className = ['item'];
-    if (item.home) {
-      className.push('nav-home');
-    }
-    const itemProps = {};
-    if (item.scroll) {
-      itemProps.onClick = () => {
-        scrollTo(item.target);
-      };
-    }
-    return (
-      <div key={item.key} className={className.join(' ')} {...itemProps}>
-        {item.component}
-      </div>
-    );
-  });
+const Navitem = ({home, scroll, children}) => {
+  const className = ['item'];
+  if (home) {
+    className.push('nav-home');
+  }
+  const itemProps = {};
+  if (scroll) {
+    itemProps.onClick = () => {
+      scrollTo(scroll);
+    };
+  }
+  return (
+    <div className={className.join(' ')} {...itemProps}>
+      {children}
+    </div>
+  );
 };
 
 class Navbar extends Component {
@@ -168,23 +165,14 @@ class Navbar extends Component {
     if (styletop && top) {
       className.push('top');
     }
-    let j = false;
-    let k = false;
-    if (left) {
-      j = generateItemList(left);
-    }
-    if (right) {
-      k = generateItemList(right);
-    }
+
     return (
       <nav className={className.join(' ')}>
         <div className="nav-container">
           <Container>
-            <div className="element">{j}</div>
-            {children && children.length > 0 && (
-              <div className="element">{children}</div>
-            )}
-            <div className="element">{k}</div>
+            <div className="element">{left}</div>
+            {children && <div className="element">{children}</div>}
+            <div className="element">{right}</div>
           </Container>
         </div>
       </nav>
@@ -192,4 +180,7 @@ class Navbar extends Component {
   }
 }
 
-export default Navbar;
+const Components = {Navbar, Navitem};
+
+export {Navbar, Navitem};
+export default Components;

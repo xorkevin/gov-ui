@@ -1,7 +1,6 @@
 import React, {Component, Fragment} from 'react';
 import linkState from 'linkstate';
 import Section from 'component/section';
-import Menu from 'component/menu';
 import FaIcon from 'component/faicon';
 import Card from 'component/card';
 import Button from 'component/button';

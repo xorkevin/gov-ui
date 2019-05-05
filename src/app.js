@@ -7,7 +7,7 @@ import {DarkMode} from 'reducer/settings';
 import Loader from 'loader';
 
 import MainContent from 'component/maincontent';
-import Navbar from 'component/navbar';
+import {Navbar, Navitem} from 'component/navbar';
 import Menu from 'component/menu';
 import Footer from 'component/footer';
 import Grid from 'component/grid';
@@ -50,24 +50,30 @@ class App extends Component {
         <Navbar
           hideOnScroll
           styletop={styletoppaths.includes(location.pathname)}
-          left={[
-            {
-              key: 'home',
-              home: true,
-              component: (
+          left={
+            <Fragment>
+              <Navitem home scroll>
                 <NavLink exact to="/">
                   Home
                 </NavLink>
-              ),
-            },
-            {key: 'form', component: <NavLink to="/form">Form</NavLink>},
-            {key: 'cards', component: <NavLink to="/cards">Cards</NavLink>},
-            {key: 'health', component: <NavLink to="/health">Health</NavLink>},
-          ]}
-          right={[
-            {
-              key: 'settings',
-              component: (
+              </Navitem>
+              <Navitem scroll="typography">
+                <div>Typography</div>
+              </Navitem>
+              <Navitem>
+                <NavLink to="/form">Form</NavLink>
+              </Navitem>
+              <Navitem>
+                <NavLink to="/cards">Cards</NavLink>
+              </Navitem>
+              <Navitem>
+                <NavLink to="/health">Health</NavLink>
+              </Navitem>
+            </Fragment>
+          }
+          right={
+            <Fragment>
+              <Navitem>
                 <Menu
                   icon={
                     <Fragment>
@@ -86,9 +92,9 @@ class App extends Component {
                     <FaIcon icon="github" /> xorkevin
                   </Anchor>
                 </Menu>
-              ),
-            },
-          ]}
+              </Navitem>
+            </Fragment>
+          }
         />
 
         <MainContent>

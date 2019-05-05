@@ -16,7 +16,7 @@ import Loader from 'loader';
 import Protected from 'protected';
 
 import MainContent from 'component/maincontent';
-import Navbar from 'component/navbar';
+import {Navbar, Navitem} from 'component/navbar';
 import Menu from 'component/menu';
 import Footer from 'component/footer';
 import Grid from 'component/grid';
@@ -85,49 +85,37 @@ class Admin extends Component {
         {loggedIn && (
           <Navbar
             sidebar
-            left={[
-              {
-                key: 'home',
-                home: true,
-                component: (
+            left={
+              <Fragment>
+                <Navitem home>
                   <NavLink exact to="/">
                     <FaIcon icon="home" />
                     <small>Home</small>
                   </NavLink>
-                ),
-              },
-              {
-                key: 'health',
-                component: (
+                </Navitem>
+                <Navitem>
                   <NavLink to="/health">
                     <FaIcon icon="server" />
                     <small>Health</small>
                   </NavLink>
-                ),
-              },
-              {
-                key: 'manage',
-                component: (
+                </Navitem>
+                <Navitem>
                   <NavLink to="/manage">
                     <FaIcon icon="building" />
                     <small>Manage</small>
                   </NavLink>
-                ),
-              },
-              {
-                key: 'courier',
-                component: (
+                </Navitem>
+                <Navitem>
                   <NavLink to="/courier">
                     <FaIcon icon="paper-plane" />
                     <small>Courier</small>
                   </NavLink>
-                ),
-              },
-            ]}
-            right={[
-              {
-                key: 'settings',
-                component: (
+                </Navitem>
+              </Fragment>
+            }
+            right={
+              <Fragment>
+                <Navitem>
                   <Menu
                     icon={
                       <Fragment>
@@ -152,9 +140,9 @@ class Admin extends Component {
                       <FaIcon icon="sign-out" /> Sign out
                     </span>
                   </Menu>
-                ),
-              },
-            ]}
+                </Navitem>
+              </Fragment>
+            }
           />
         )}
 
