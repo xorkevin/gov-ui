@@ -1,4 +1,4 @@
-import {h, Component} from 'preact';
+import React, {Component} from 'react';
 import {formatStr} from 'utility';
 import {API} from 'config';
 import {Link} from 'react-router-dom';
@@ -8,7 +8,7 @@ import ListItem from 'component/list';
 import Button from 'component/button';
 import Img from 'component/image';
 
-import {connect} from 'preact-redux';
+import {connect} from 'react-redux';
 import {GetProfileReq, CreateProfileReq} from 'reducer/account/profile';
 
 class Profile extends Component {

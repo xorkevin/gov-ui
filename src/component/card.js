@@ -1,4 +1,4 @@
-import {h} from 'preact';
+import React from 'react';
 import Img from 'component/image';
 
 const Card = ({

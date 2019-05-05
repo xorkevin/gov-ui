@@ -1,4 +1,4 @@
-import {h, Component} from 'preact';
+import React, {Component} from 'react';
 import Container from 'component/container';
 
 const generateItemList = (list) => {

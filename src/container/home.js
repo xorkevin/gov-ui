@@ -1,4 +1,4 @@
-import {h} from 'preact';
+import React from 'react';
 import Section from 'component/section';
 import Container from 'component/container';
 import Article from 'component/article';

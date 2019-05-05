@@ -1,4 +1,4 @@
-import {h, Component} from 'preact';
+import React, {Component} from 'react';
 import shortid from 'shortid';
 
 class Input extends Component {

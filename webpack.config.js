@@ -16,10 +16,6 @@ const createConfig = (env, argv) => {
     },
     resolve: {
       modules: [path.resolve(__dirname, 'src'), 'node_modules'],
-      alias: {
-        react: 'preact-compat',
-        'react-dom': 'preact-compat',
-      },
     },
     module: {
       rules: [
@@ -32,7 +28,7 @@ const createConfig = (env, argv) => {
           test: /\.s?css$/,
           use: [
             ExtractTextPlugin.loader,
-            {loader: 'css-loader', options: {minimize: true}},
+            {loader: 'css-loader'},
             {loader: 'sass-loader'},
           ],
         },

@@ -1,5 +1,4 @@
-import {h, Component} from 'preact';
-import renderToString from 'preact-render-to-string';
+import React, {Component} from 'react';
 
 const deferLoadImage = (src) => {
   return new Promise((resolve) => {

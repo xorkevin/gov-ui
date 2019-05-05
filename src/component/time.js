@@ -1,4 +1,4 @@
-import {h, Component} from 'preact';
+import React, {Component} from 'react';
 import {formatStr} from 'utility';
 import Tooltip from 'component/tooltip';
 

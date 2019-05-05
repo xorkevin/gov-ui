@@ -1,7 +1,7 @@
-import {h, Component} from 'preact';
+import React, {Component} from 'react';
 import {Switch, Route, Redirect} from 'react-router-dom';
 
-import {connect} from 'preact-redux';
+import {connect} from 'react-redux';
 import Loader from 'loader';
 
 const loadSigninContainer = Loader(() => {

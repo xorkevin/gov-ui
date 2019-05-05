@@ -1,4 +1,4 @@
-import {h, Component} from 'preact';
+import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import linkstate from 'linkstate';
 import Section from 'component/section';
@@ -7,7 +7,7 @@ import Input from 'component/form';
 import Button from 'component/button';
 import ListItem from 'component/list';
 
-import {connect} from 'preact-redux';
+import {connect} from 'react-redux';
 import {ConfirmEmailReq} from 'reducer/account/edit';
 
 class AccountEmailConfirm extends Component {

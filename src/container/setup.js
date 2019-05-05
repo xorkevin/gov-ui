@@ -1,4 +1,4 @@
-import {h, Component} from 'preact';
+import React, {Component} from 'react';
 import linkState from 'linkstate';
 import Section from 'component/section';
 import Menu from 'component/menu';
@@ -7,7 +7,7 @@ import Card from 'component/card';
 import Button from 'component/button';
 import Input from 'component/form';
 
-import {connect} from 'preact-redux';
+import {connect} from 'react-redux';
 import {SetupReq} from 'reducer/setup';
 
 class SetupContainer extends Component {

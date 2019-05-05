@@ -1,4 +1,4 @@
-import {h, Component} from 'preact';
+import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import Section from 'component/section';
 import Card from 'component/card';
@@ -7,7 +7,7 @@ import Button from 'component/button';
 import ListItem from 'component/list';
 import Time from 'component/time';
 
-import {connect} from 'preact-redux';
+import {connect} from 'react-redux';
 import {GetSessionReq, DelSessionReq} from 'reducer/account/edit';
 
 class AccountSessions extends Component {

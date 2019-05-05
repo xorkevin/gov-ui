@@ -1,4 +1,4 @@
-import {h, Component} from 'preact';
+import React, {Component} from 'react';
 import {
   Switch,
   Route,
@@ -7,7 +7,7 @@ import {
   Link,
   withRouter,
 } from 'react-router-dom';
-import {connect} from 'preact-redux';
+import {connect} from 'react-redux';
 
 import {DarkMode} from 'reducer/settings';
 import {Logout} from 'reducer/account/auth';

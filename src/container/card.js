@@ -1,4 +1,4 @@
-import {h} from 'preact';
+import React from 'react';
 import Section from 'component/section';
 import Grid from 'component/grid';
 import Card from 'component/card';

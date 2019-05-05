@@ -1,7 +1,7 @@
-import {h, Component} from 'preact';
+import React, {Component} from 'react';
 import Section from 'component/section';
 
-import {connect} from 'preact-redux';
+import {connect} from 'react-redux';
 import {TimeGet} from 'reducer/health';
 
 class HealthContainer extends Component {

@@ -1,4 +1,4 @@
-import {h, Component} from 'preact';
+import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
 import Container from 'component/container';
 
@@ -155,7 +155,7 @@ class Navbar extends Component {
     this.unbind();
   }
 
-  render({sidebar, left, right, location, children}, {top, hidden}) {
+  render({sidebar, left, right, styletop, children}, {top, hidden}) {
     const className = [];
     if (sidebar) {
       className.push('sidebar');
@@ -163,7 +163,7 @@ class Navbar extends Component {
     if (!sidebar && !top && hidden) {
       className.push('hidden');
     }
-    if (location.pathname == '/' && top) {
+    if (styletop && top) {
       className.push('top');
     }
     let j = false;
@@ -190,4 +190,4 @@ class Navbar extends Component {
   }
 }
 
-export default withRouter(Navbar);
+export default Navbar;

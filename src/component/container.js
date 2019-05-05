@@ -1,4 +1,4 @@
-import {h} from 'preact';
+import React from 'react';
 
 const Container = ({padded, narrow, children}) => {
   const k = ['container'];

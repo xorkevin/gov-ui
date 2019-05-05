@@ -1,6 +1,6 @@
-import {h, Component} from 'preact';
+import React, {Component} from 'react';
 import {Switch, Route, Redirect, NavLink, withRouter} from 'react-router-dom';
-import {connect} from 'preact-redux';
+import {connect} from 'react-redux';
 
 import {DarkMode} from 'reducer/settings';
 
@@ -27,6 +27,8 @@ const loadHealthContainer = Loader(() => {
   return import('container/health');
 });
 
+const styletoppaths = ['/'];
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -37,7 +39,7 @@ class App extends Component {
     this.props.toggleDark();
   }
 
-  render({dark}, {}) {
+  render({dark, location}, {}) {
     let darkmodetext = 'Dark';
     if (dark) {
       darkmodetext = 'Light';
@@ -46,6 +48,7 @@ class App extends Component {
       <div>
         <Navbar
           hideOnScroll
+          styletop={styletoppaths.includes(location.pathname)}
           left={[
             {
               key: 'home',

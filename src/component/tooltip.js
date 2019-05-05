@@ -1,4 +1,4 @@
-import {h, Component} from 'preact';
+import React, {Component} from 'react';
 
 const Tooltip = ({position, display, width, tooltip, children}) => {
   const k = ['tooltip'];

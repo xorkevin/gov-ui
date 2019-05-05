@@ -1,8 +1,8 @@
-import {h, Component} from 'preact';
+import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import Button from 'component/button';
 import FaIcon from 'component/faicon';
-import {connect} from 'preact-redux';
+import {connect} from 'react-redux';
 
 const mapStateToProps = (state) => {
   const {valid, loading, loggedIn, authTags} = state.Auth;

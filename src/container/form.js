@@ -1,4 +1,4 @@
-import {h, Component} from 'preact';
+import React, {Component} from 'react';
 import linkState from 'linkstate';
 import Section from 'component/section';
 import Input from 'component/form';

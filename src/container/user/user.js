@@ -1,4 +1,4 @@
-import {h, Component} from 'preact';
+import React, {Component} from 'react';
 import {API} from 'config';
 import {formatStr} from 'utility';
 import {Grid, Column} from 'component/grid';
@@ -6,7 +6,7 @@ import Section from 'component/section';
 import Card from 'component/card';
 import Time from 'component/time';
 
-import {connect} from 'preact-redux';
+import {connect} from 'react-redux';
 import {GetUserByName} from 'reducer/user';
 
 class UserDetails extends Component {

@@ -2,6 +2,7 @@ const createConfig = (api) => {
   api.cache.never();
   return {
     presets: [
+      '@babel/preset-react',
       [
         '@babel/env',
         {
@@ -20,10 +21,7 @@ const createConfig = (api) => {
         },
       ],
     ],
-    plugins: [
-      ['@babel/plugin-transform-react-jsx', {pragma: 'h'}],
-      '@babel/syntax-dynamic-import',
-    ],
+    plugins: ['@babel/syntax-dynamic-import'],
   };
 };
 

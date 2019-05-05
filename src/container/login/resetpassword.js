@@ -1,4 +1,4 @@
-import {h, Component} from 'preact';
+import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import linkState from 'linkstate';
 import Section from 'component/section';
@@ -8,7 +8,7 @@ import Card from 'component/card';
 import Button from 'component/button';
 import Input from 'component/form';
 
-import {connect} from 'preact-redux';
+import {connect} from 'react-redux';
 import {ConfirmResetReq} from 'reducer/account/forgotpassword';
 
 class ConfirmReset extends Component {

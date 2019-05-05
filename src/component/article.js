@@ -1,4 +1,4 @@
-import {h} from 'preact';
+import React from 'react';
 import Container from 'component/container';
 import Time from 'component/time';
 

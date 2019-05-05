@@ -1,5 +1,5 @@
-import {h, Component} from 'preact';
-import Portal from 'preact-portal';
+import React, {Component} from 'react';
+import ReactDOM from 'react-dom';
 
 class MenuContainer extends Component {
   tick() {
@@ -133,8 +133,8 @@ class Menu extends Component {
         }}
       >
         {icon}
-        {!hidden && (
-          <Portal into="body">
+        {!hidden &&
+          ReactDOM.createPortal(
             <MenuContainer
               size={size}
               align={align}
@@ -144,9 +144,9 @@ class Menu extends Component {
               close={this.setHidden}
             >
               {children}
-            </MenuContainer>
-          </Portal>
-        )}
+            </MenuContainer>,
+            document.body,
+          )}
       </div>
     );
   }

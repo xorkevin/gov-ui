@@ -1,4 +1,4 @@
-import {h, Component} from 'preact';
+import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import linkstate from 'linkstate';
 import Section from 'component/section';
@@ -6,7 +6,7 @@ import Card from 'component/card';
 import Input from 'component/form';
 import Button from 'component/button';
 
-import {connect} from 'preact-redux';
+import {connect} from 'react-redux';
 import {GetProfileReq, EditProfileReq} from 'reducer/account/profile';
 
 class ProfileEdit extends Component {

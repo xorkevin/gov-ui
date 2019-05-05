@@ -1,4 +1,4 @@
-import {h, Component} from 'preact';
+import React, {Component} from 'react';
 import linkstate from 'linkstate';
 import Section from 'component/section';
 import Card from 'component/card';
@@ -8,7 +8,7 @@ import Time from 'component/time';
 import Button from 'component/button';
 import Input from 'component/form';
 
-import {connect} from 'preact-redux';
+import {connect} from 'react-redux';
 import {GetUserAccountByName} from 'reducer/user';
 import {PatchRank} from 'reducer/manage/user';
 

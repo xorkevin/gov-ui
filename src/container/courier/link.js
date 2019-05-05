@@ -1,4 +1,4 @@
-import {h, Component} from 'preact';
+import React, {Component} from 'react';
 import linkstate from 'linkstate';
 import Section from 'component/section';
 import Table from 'component/table';
@@ -7,7 +7,7 @@ import Input from 'component/form';
 import Time from 'component/time';
 import Anchor from 'component/anchor';
 
-import {connect} from 'preact-redux';
+import {connect} from 'react-redux';
 import {GetLinkGroup, CreateLink, DeleteLink} from 'reducer/courier/link';
 import {GetUserInfoBulk} from 'reducer/user';
 import {COURIER} from 'config';
