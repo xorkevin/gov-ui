@@ -31,7 +31,8 @@ const loadAccountSessionsContainer = Loader(() => {
 });
 
 class Account extends Component {
-  render({match}) {
+  render() {
+    const {match} = this.props;
     return (
       <Section container narrow padded sectionTitle="Settings">
         <Tabbar

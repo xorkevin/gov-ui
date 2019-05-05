@@ -65,7 +65,8 @@ class CreateAccount extends Component {
     }
   }
 
-  render({}, {success, err, clienterr}) {
+  render() {
+    const {success, err, clienterr} = this.state;
     const bar = [];
     if (success) {
       bar.push(

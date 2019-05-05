@@ -11,7 +11,8 @@ const loadCourierLink = Loader(() => {
 });
 
 class CourierContainer extends Component {
-  render({match}) {
+  render() {
+    const {match} = this.props;
     return (
       <Section container narrow padded sectionTitle="Courier">
         <Tabbar

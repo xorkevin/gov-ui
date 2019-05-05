@@ -78,7 +78,9 @@ class Admin extends Component {
     this.props.logout();
   }
 
-  render({loggedIn}, {dark}) {
+  render() {
+    const {loggedIn} = this.props;
+    const {dark} = this.state;
     return (
       <div>
         {loggedIn && (

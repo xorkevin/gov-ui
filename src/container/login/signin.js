@@ -26,7 +26,8 @@ class SigninContainer extends Component {
     this.props.login(username, password);
   }
 
-  render({loading, err}) {
+  render() {
+    const {loading, err} = this.props;
     return (
       <Section container padded>
         <Card

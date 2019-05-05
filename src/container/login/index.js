@@ -42,7 +42,8 @@ class LoginContainer extends Component {
     }
   }
 
-  render({match}) {
+  render() {
+    const {match} = this.props;
     return (
       <Switch>
         <Route path={`${match.path}/login`} component={loadSigninContainer} />

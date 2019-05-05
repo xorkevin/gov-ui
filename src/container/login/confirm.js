@@ -41,7 +41,8 @@ class ConfirmAccount extends Component {
     }
   }
 
-  render({}, {key, success, err}) {
+  render() {
+    const {key, success, err} = this.state;
     const bar = [];
     if (!success) {
       bar.push(

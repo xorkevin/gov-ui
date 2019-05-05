@@ -41,7 +41,8 @@ class ForgotContainer extends Component {
     }
   }
 
-  render({}, {success, err}) {
+  render() {
+    const {success, err} = this.state;
     const bar = [];
     if (success) {
       bar.push(

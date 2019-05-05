@@ -56,7 +56,8 @@ class ConfirmReset extends Component {
     }
   }
 
-  render({}, {success, err, clienterr, key}) {
+  render() {
+    const {success, err, clienterr, key} = this.state;
     const bar = [];
     if (success) {
       bar.push(

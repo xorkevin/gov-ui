@@ -69,7 +69,9 @@ class Profile extends Component {
     this.getprofile();
   }
 
-  render({userid}, {err, canCreate, profile}) {
+  render() {
+    const {userid} = this.props;
+    const {err, canCreate, profile} = this.state;
     const bar = [];
     if (profile) {
       bar.push(

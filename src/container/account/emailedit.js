@@ -61,7 +61,9 @@ class AccountEmailEdit extends Component {
     }
   }
 
-  render({userid}, {success, err, email, password}) {
+  render() {
+    const {userid} = this.props;
+    const {success, err, email, password} = this.state;
     if (!userid) {
       return false;
     }

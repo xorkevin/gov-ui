@@ -8,7 +8,8 @@ const loadUserDetailsContainer = Loader(() => {
 });
 
 class UserContainer extends Component {
-  render({match}) {
+  render() {
+    const {match} = this.props;
     return (
       <Switch>
         <Route

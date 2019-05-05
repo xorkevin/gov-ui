@@ -9,7 +9,8 @@ class HealthContainer extends Component {
     this.props.getTime();
   }
 
-  render({loading, success, time, err}) {
+  render() {
+    const {loading, success, time, err} = this.props;
     return (
       <Section sectionTitle="Health Check" container padded>
         <span>{loading && 'loading'}</span>

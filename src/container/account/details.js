@@ -24,17 +24,18 @@ class AccountDetails extends Component {
     this.getaccount();
   }
 
-  render({
-    getuserloading,
-    getusererr,
-    userid,
-    username,
-    firstname,
-    lastname,
-    authTags,
-    email,
-    creationTime,
-  }) {
+  render() {
+    const {
+      getuserloading,
+      getusererr,
+      userid,
+      username,
+      firstname,
+      lastname,
+      authTags,
+      email,
+      creationTime,
+    } = this.props;
     const bar = [];
     bar.push(
       <Link to="/a/account/edit">

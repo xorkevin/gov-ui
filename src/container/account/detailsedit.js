@@ -61,7 +61,9 @@ class AccountDetailsEdit extends Component {
     }
   }
 
-  render({userid}, {success, err, options}) {
+  render() {
+    const {userid} = this.props;
+    const {success, err, options} = this.state;
     if (!userid) {
       return false;
     }

@@ -35,7 +35,8 @@ class UserDetails extends Component {
     this.fetchUser();
   }
 
-  render({}, {err, errProf, username, user}) {
+  render() {
+    const {err, errProf, username, user} = this.state;
     return (
       <Section container padded>
         <Grid>

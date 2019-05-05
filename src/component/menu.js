@@ -44,7 +44,9 @@ class MenuContainer extends Component {
     }
   }
 
-  render({size, align, position, fixed, children}, {bounds, scrollY}) {
+  render() {
+    const {size, align, position, fixed, children} = this.props;
+    const {bounds, scrollY} = this.state;
     const k = ['menu'];
     const s = {};
     const t = {};

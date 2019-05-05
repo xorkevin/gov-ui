@@ -155,7 +155,9 @@ class Navbar extends Component {
     this.unbind();
   }
 
-  render({sidebar, left, right, styletop, children}, {top, hidden}) {
+  render() {
+    const {sidebar, left, right, styletop, children} = this.props;
+    const {top, hidden} = this.state;
     const className = [];
     if (sidebar) {
       className.push('sidebar');

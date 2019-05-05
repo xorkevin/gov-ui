@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import Container from 'component/container';
 
 const generateItemList = (list) => {
@@ -11,29 +11,28 @@ const generateItemList = (list) => {
   });
 };
 
-class Tabbar extends Component {
-  render({left, right, children}) {
-    const className = ['tabbar'];
-    let j = false;
-    let k = false;
-    if (left) {
-      j = generateItemList(left);
-    }
-    if (right) {
-      k = generateItemList(right);
-    }
-    return (
-      <div className={className.join(' ')}>
-        <Container>
-          <div className="element">{j}</div>
-          {children && children.length > 0 && (
-            <div className="element">{children}</div>
-          )}
-          <div className="element">{k}</div>
-        </Container>
-      </div>
-    );
+const Tabbar = ({left, right, children}) => {
+  const {left, right, children} = this.props;
+  const className = ['tabbar'];
+  let j = false;
+  let k = false;
+  if (left) {
+    j = generateItemList(left);
   }
-}
+  if (right) {
+    k = generateItemList(right);
+  }
+  return (
+    <div className={className.join(' ')}>
+      <Container>
+        <div className="element">{j}</div>
+        {children && children.length > 0 && (
+          <div className="element">{children}</div>
+        )}
+        <div className="element">{k}</div>
+      </Container>
+    </div>
+  );
+};
 
 export default Tabbar;

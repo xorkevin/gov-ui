@@ -33,8 +33,8 @@ const Protected = (child, auth, args) => {
         }
       }
 
-      render(props) {
-        const {authTags} = props;
+      render() {
+        const {authTags} = this.props;
         if (auth && !new Set(authTags.split(',')).has(auth)) {
           return (
             <div>
@@ -42,7 +42,7 @@ const Protected = (child, auth, args) => {
             </div>
           );
         }
-        return h(child, Object.assign({}, props, args));
+        return h(child, Object.assign({}, this.props, args));
       }
     },
   );

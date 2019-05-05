@@ -36,11 +36,12 @@ const Loader = (loader, args, loading, callback) => {
       this.load();
     }
 
-    render(props, {loaded, mod}) {
+    render() {
+      const {loaded, mod} = this.state;
       if (loaded) {
         return (
-          (callback && callback(mod, props)) ||
-          h(mod, Object.assign({}, props, args))
+          (callback && callback(mod, this.props)) ||
+          React.createElement(mod, Object.assign({}, this.props, args))
         );
       }
       return (loading && loading()) || loadingDefault();

@@ -148,7 +148,8 @@ class FormContainer extends Component {
     };
   }
 
-  render({}, {lang}) {
+  render() {
+    const {lang} = this.state;
     return (
       <Section id="form" sectionTitle="Form" container padded narrow>
         <Input label="Name" />

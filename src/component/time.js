@@ -145,7 +145,8 @@ class Time extends Component {
     clearInterval(this.interval);
   }
 
-  render({}, {isoString, localeString, timeAgo}) {
+  render() {
+    const {isoString, localeString, timeAgo} = this.state;
     return (
       <Tooltip tooltip={this.state.localeString}>
         <time dateTime={this.state.isoString}>{this.state.timeAgo}</time>

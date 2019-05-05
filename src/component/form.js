@@ -53,8 +53,8 @@ class Input extends Component {
     }
   }
 
-  render(
-    {
+  render() {
+    const {
       label,
       info,
       valid,
@@ -67,9 +67,9 @@ class Input extends Component {
       dropdown,
       multiple,
       checked,
-    },
-    {value},
-  ) {
+    } = this.props;
+    const {value} = this.state;
+
     let k = ['input'];
     if (valid) {
       k.push('valid');

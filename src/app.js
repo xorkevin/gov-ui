@@ -39,7 +39,8 @@ class App extends Component {
     this.props.toggleDark();
   }
 
-  render({dark, location}, {}) {
+  render() {
+    const {dark, location} = this.props;
     let darkmodetext = 'Dark';
     if (dark) {
       darkmodetext = 'Light';

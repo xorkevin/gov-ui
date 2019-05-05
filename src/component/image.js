@@ -97,8 +97,8 @@ class Img extends Component {
     this.unbind();
   }
 
-  render(
-    {
+  render() {
+    const {
       preview,
       size,
       fixed,
@@ -110,9 +110,9 @@ class Img extends Component {
       imgHeight,
       className,
       children,
-    },
-    {imgsrc, loaded},
-  ) {
+    } = this.props;
+    const {imgsrc, loaded} = this.state;
+
     const k = ['img'];
 
     if (className) {

@@ -10,7 +10,8 @@ const loadManageUserContainer = Loader(() => {
 });
 
 class ManageContainer extends Component {
-  render({match}) {
+  render() {
+    const {match} = this.props;
     return (
       <Section container narrow padded sectionTitle="Settings">
         <Tabbar

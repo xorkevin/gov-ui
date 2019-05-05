@@ -75,7 +75,8 @@ class SetupContainer extends Component {
     });
   }
 
-  render({}, {success, config, err}) {
+  render() {
+    const {success, config, err} = this.state;
     return (
       <Section container padded>
         <Card

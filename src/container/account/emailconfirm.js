@@ -49,7 +49,8 @@ class AccountEmailConfirm extends Component {
     }
   }
 
-  render({}, {success, err, key, password}) {
+  render() {
+    const {success, err, key, password} = this.state;
     const bar = [];
     bar.push(
       <Link to="/a/account">

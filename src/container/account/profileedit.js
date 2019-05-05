@@ -71,7 +71,8 @@ class ProfileEdit extends Component {
     this.getprofile();
   }
 
-  render({}, {err, success, profile}) {
+  render() {
+    const {err, success, profile} = this.state;
     const bar = [];
     bar.push(
       <Link to="/a/profile">

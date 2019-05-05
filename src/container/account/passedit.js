@@ -75,10 +75,16 @@ class AccountPassEdit extends Component {
     }
   }
 
-  render(
-    {userid},
-    {success, err, clienterr, old_password, new_password, password_confirm},
-  ) {
+  render() {
+    const {userid} = this.props;
+    const {
+      success,
+      err,
+      clienterr,
+      old_password,
+      new_password,
+      password_confirm,
+    } = this.state;
     if (!userid) {
       return false;
     }

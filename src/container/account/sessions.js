@@ -69,7 +69,8 @@ class AccountSessions extends Component {
     this.getsessions();
   }
 
-  render({}, {session_ids, success, err, sessions}) {
+  render() {
+    const {session_ids, success, err, sessions} = this.state;
     if (!sessions) {
       return false;
     }

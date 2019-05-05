@@ -96,7 +96,8 @@ class ManageUser extends Component {
     this.fetchUser();
   }
 
-  render({}, {err, username, user, edit, rank}) {
+  render() {
+    const {err, username, user, edit, rank} = this.state;
     const bar = [];
     if (edit) {
       bar.push(

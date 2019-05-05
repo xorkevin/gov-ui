@@ -28,7 +28,9 @@ class Comment extends Component {
     });
   }
 
-  render({depth, username, score, time, content, children}, {hidden}) {
+  render() {
+    const {depth, username, score, time, content, children} = this.props;
+    const {hidden} = this.state;
     const k = ['comment'];
     if (hidden) {
       k.push('hidden');
@@ -154,7 +156,9 @@ class CommentSection extends Component {
     }
   }
 
-  render({children}, {depth}) {
+  render() {
+    const {children} = this.props;
+    const {depth} = this.state;
     return (
       <Container padded narrow>
         <h5>Comments</h5>

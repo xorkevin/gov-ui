@@ -132,7 +132,8 @@ class CourierLink extends Component {
     this.fetchLinkGroup();
   }
 
-  render({}, {err, links, usernames, newLink}) {
+  render() {
+    const {err, links, usernames, newLink} = this.state;
     return (
       <div>
         <Section subsection sectionTitle="Add Link">
