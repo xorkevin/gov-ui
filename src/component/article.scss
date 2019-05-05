@@ -5,6 +5,12 @@ article,
   font-family: $typography-base-font;
   width: 100%;
 
+  &:before {
+    content: '';
+    display: table;
+    clear: both;
+  }
+
   & > * {
     max-width: 100%;
     margin-left: auto;
@@ -28,6 +34,11 @@ article,
     time {
       font-size: 0.85rem;
     }
+
+    &.small,
+    .small {
+      font-size: 0.85rem;
+    }
   }
 
   p {
@@ -49,7 +60,7 @@ article,
   }
 
   & > .subtitle {
-    color: $color-text-dark-1-5;
+    color: $color-text-dark-2;
   }
 
   h1,
