@@ -84,11 +84,7 @@ class MenuContainer extends Component {
 
     return (
       <div className={k.join(' ')} style={s}>
-        <div className="menu-container">
-          {React.Children.map(children, (child) => {
-            return <div className="item">{child}</div>;
-          })}
-        </div>
+        <div className="menu-container">{children}</div>
         <div className="triangle" style={t} />
       </div>
     );

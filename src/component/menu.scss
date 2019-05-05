@@ -26,21 +26,13 @@
     z-index: 1;
     border-radius: 4px;
 
-    & > .item {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    & > * {
+      display: block;
       width: 100%;
+      padding: 8px 16px;
       transition: $transition-normal;
       color: $color-text-dark-1;
-
-      & > * {
-        width: 100%;
-        display: block;
-        padding: 8px 16px;
-        color: unset;
-        text-decoration: unset;
-      }
+      text-decoration: unset;
 
       &:hover {
         cursor: pointer;
@@ -136,7 +128,7 @@ body.dark {
     & > .menu-container {
       background-color: lighten($color-primary-dark, 6.25%);
 
-      & > .item {
+      & > * {
         color: $color-text-light-1-5;
 
         &:hover {
