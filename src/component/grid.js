@@ -39,7 +39,7 @@ const Grid = ({
   return (
     <div className={k.join(' ')}>
       {map &&
-        children.map((child) => {
+        React.Children.map(children, (child) => {
           let key = '';
           if (child && child.attributes && child.attributes.colkey) {
             key = child.attributes.colkey;

@@ -17,5 +17,5 @@ ReactDOM.render(
       </BrowserRouter>
     </Provider>
   </div>,
-  document.body,
+  document.getElementById('mount'),
 );

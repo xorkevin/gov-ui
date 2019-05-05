@@ -21,7 +21,9 @@ const Section = ({
 
   if (sectionTitle) {
     titleElement = (
-      <div className="section-header">{h(headingClass, {}, sectionTitle)}</div>
+      <div className="section-header">
+        {React.createElement(headingClass, {}, sectionTitle)}
+      </div>
     );
   }
 

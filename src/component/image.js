@@ -192,7 +192,7 @@ class Img extends Component {
         }}
       >
         <div className="inner" style={j}>
-          {children.length > 0 && <div className="children">{children}</div>}
+          {children && <div className="children">{children}</div>}
           {image}
           {previewImage}
         </div>

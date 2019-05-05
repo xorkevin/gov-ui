@@ -85,7 +85,7 @@ class MenuContainer extends Component {
     return (
       <div className={k.join(' ')} style={s}>
         <div className="menu-container">
-          {children.map((child) => {
+          {React.Children.map(children, (child) => {
             return <div className="item">{child}</div>;
           })}
         </div>
@@ -125,7 +125,9 @@ class Menu extends Component {
     });
   }
 
-  render({children, icon, size, align, position, fixed}, {hidden}) {
+  render() {
+    const {children, icon, size, align, position, fixed} = this.props;
+    const {hidden} = this.state;
     return (
       <div
         className="menu-button"

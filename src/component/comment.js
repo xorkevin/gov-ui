@@ -77,9 +77,10 @@ class Comment extends Component {
         {!hidden && children && (
           <div className="children">
             {depth > 0 &&
-              children.map((child) => {
-                child.attributes.depth = depth - 1;
-                return child;
+              React.Children.map(children, (child) => {
+                return React.cloneElement(child, {
+                  depth: depth - 1,
+                });
               })}
             {depth <= 0 && (
               <span>
@@ -164,9 +165,10 @@ class CommentSection extends Component {
         <h5>Comments</h5>
         <div className="comment-section">
           {children &&
-            children.map((child) => {
-              child.attributes.depth = depth - 1;
-              return child;
+            React.Children.map(children, (child) => {
+              return React.cloneElement(child, {
+                depth: depth - 1,
+              });
             })}
           {!children && <span>No comments</span>}
         </div>

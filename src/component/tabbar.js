@@ -12,7 +12,6 @@ const generateItemList = (list) => {
 };
 
 const Tabbar = ({left, right, children}) => {
-  const {left, right, children} = this.props;
   const className = ['tabbar'];
   let j = false;
   let k = false;
