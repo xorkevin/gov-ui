@@ -5,12 +5,6 @@ article,
   font-family: $typography-base-font;
   width: 100%;
 
-  &:before {
-    content: '';
-    display: table;
-    clear: both;
-  }
-
   & > * {
     max-width: 100%;
     margin-left: auto;
