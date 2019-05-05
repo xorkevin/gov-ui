@@ -65,7 +65,7 @@ class AccountDetails extends Component {
                 item={
                   authTags &&
                   authTags.split(',').map((tag) => {
-                    return <Chip>{tag}</Chip>;
+                    return <Chip key={tag}>{tag}</Chip>;
                   })
                 }
               />

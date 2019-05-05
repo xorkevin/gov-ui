@@ -80,7 +80,6 @@ class Admin extends Component {
 
   render() {
     const {loggedIn} = this.props;
-    const {dark} = this.state;
     return (
       <div>
         {loggedIn && (

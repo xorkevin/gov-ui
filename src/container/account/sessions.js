@@ -87,7 +87,7 @@ class AccountSessions extends Component {
         <Section subsection sectionTitle="Active Sessions">
           {sessions.map((session) => {
             return (
-              <div>
+              <div key={session.session_id}>
                 <Input
                   fullWidth
                   type="checkbox"

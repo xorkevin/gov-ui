@@ -4,9 +4,6 @@ import shortid from 'shortid';
 class Input extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      value: props.value,
-    };
     this.handleChange = this.handleChange.bind(this);
     this.handleEnter = this.handleEnter.bind(this);
     this.id = shortid.generate();
@@ -15,24 +12,15 @@ class Input extends Component {
   handleChange(event) {
     if (this.props.type && this.props.type === 'file') {
       if (event.target.files.length < 1) {
-        this.setState((prevState) => {
-          return Object.assign({}, prevState, {value: undefined});
-        });
         if (this.props.onChange) {
           this.props.onChange(undefined);
         }
       } else {
-        this.setState((prevState) => {
-          return Object.assign({}, prevState, {value: event.target.files[0]});
-        });
         if (this.props.onChange) {
           this.props.onChange(event.target.files[0]);
         }
       }
     } else {
-      this.setState((prevState) => {
-        return Object.assign({}, prevState, {value: event.target.value});
-      });
       if (this.props.onChange) {
         this.props.onChange(event.target.value);
       }
@@ -45,16 +33,9 @@ class Input extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.value !== undefined) {
-      this.setState((prevState) => {
-        return Object.assign({}, prevState, {value: nextProps.value});
-      });
-    }
-  }
-
   render() {
     const {
+      value,
       label,
       info,
       valid,
@@ -68,7 +49,6 @@ class Input extends Component {
       multiple,
       checked,
     } = this.props;
-    const {value} = this.state;
 
     let k = ['input'];
     if (valid) {
@@ -113,7 +93,7 @@ class Input extends Component {
         <textarea
           id={this.id}
           value={value}
-          onInput={this.handleChange}
+          onChange={this.handleChange}
           onKeyPress={this.handleEnter}
           placeholder=" "
         />
@@ -141,7 +121,7 @@ class Input extends Component {
           id={this.id}
           type={type}
           value={value}
-          onInput={this.handleChange}
+          onChange={this.handleChange}
           onKeyPress={this.handleEnter}
           placeholder=" "
         />

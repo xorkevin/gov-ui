@@ -46,8 +46,8 @@ class Comment extends Component {
                   this.toggleHidden();
                 }}
               >
-                {hidden && '+'}
-                {!hidden && '-'}
+                [{hidden && '+'}
+                {!hidden && '-'}]
               </a>
             </span>
             <span className="username">

@@ -42,7 +42,7 @@ const Protected = (child, auth, args) => {
             </div>
           );
         }
-        return h(child, Object.assign({}, this.props, args));
+        return React.createElement(child, Object.assign({}, this.props, args));
       }
     },
   );
