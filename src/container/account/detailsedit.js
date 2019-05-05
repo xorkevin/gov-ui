@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import {Link} from 'react-router-dom';
 import linkstate from 'linkstate';
 import Section from 'component/section';
@@ -67,24 +67,22 @@ class AccountDetailsEdit extends Component {
     if (!userid) {
       return false;
     }
-    const bar = [];
-    if (success) {
-      bar.push(
-        <Link to="/a/account">
-          <Button text>Back</Button>
-        </Link>,
-      );
-    } else {
-      bar.push(
-        <Link to="/a/account">
-          <Button text>Cancel</Button>
-        </Link>,
-      );
-    }
-    bar.push(
-      <Button primary onClick={this.editaccount}>
-        Save
-      </Button>,
+    const bar = (
+      <Fragment>
+        {success && (
+          <Link to="/a/account">
+            <Button text>Back</Button>
+          </Link>
+        )}
+        {!success && (
+          <Link to="/a/account">
+            <Button text>Cancel</Button>
+          </Link>
+        )}
+        <Button primary onClick={this.editaccount}>
+          Save
+        </Button>
+      </Fragment>
     );
     return (
       <Card size="md" restrictWidth center bar={bar}>

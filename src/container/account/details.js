@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import {Link} from 'react-router-dom';
 import Section from 'component/section';
 import Card from 'component/card';
@@ -36,21 +36,18 @@ class AccountDetails extends Component {
       email,
       creationTime,
     } = this.props;
-    const bar = [];
-    bar.push(
-      <Link to="/a/account/edit">
-        <Button outline>Edit</Button>
-      </Link>,
-    );
-    bar.push(
-      <Link to="/a/account/email">
-        <Button outline>Change Email</Button>
-      </Link>,
-    );
-    bar.push(
-      <Link to="/a/account/pass">
-        <Button outline>Change Password</Button>
-      </Link>,
+    const bar = (
+      <Fragment>
+        <Link to="/a/account/edit">
+          <Button outline>Edit</Button>
+        </Link>
+        <Link to="/a/account/email">
+          <Button outline>Change Email</Button>
+        </Link>
+        <Link to="/a/account/pass">
+          <Button outline>Change Password</Button>
+        </Link>
+      </Fragment>
     );
 
     return (

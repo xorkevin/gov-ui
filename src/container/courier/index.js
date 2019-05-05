@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import {Switch, Route, Redirect, NavLink} from 'react-router-dom';
 import Section from 'component/section';
 import Tabbar from 'component/tabbar';
@@ -16,16 +16,13 @@ class CourierContainer extends Component {
     return (
       <Section container narrow padded sectionTitle="Courier">
         <Tabbar
-          left={[
-            {
-              key: 'link',
-              component: (
-                <NavLink to={`${match.path}/link`}>
-                  <FaIcon icon="link" /> Link
-                </NavLink>
-              ),
-            },
-          ]}
+          left={
+            <Fragment>
+              <NavLink to={`${match.path}/link`}>
+                <FaIcon icon="link" /> Link
+              </NavLink>
+            </Fragment>
+          }
         />
         <Switch>
           <Route path={`${match.url}/link`} component={loadCourierLink} />

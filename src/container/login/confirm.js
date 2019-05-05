@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import {Link} from 'react-router-dom';
 import linkState from 'linkstate';
 import Section from 'component/section';
@@ -43,25 +43,26 @@ class ConfirmAccount extends Component {
 
   render() {
     const {key, success, err} = this.state;
-    const bar = [];
-    if (!success) {
-      bar.push(
-        <Link to="/x/login">
-          <Button text>Cancel</Button>
-        </Link>,
-      );
-      bar.push(
-        <Button primary onClick={this.confirmaccount}>
-          Submit
-        </Button>,
-      );
-    } else {
-      bar.push(
-        <Link to="/x/login">
-          <Button outline>Sign in</Button>
-        </Link>,
-      );
-    }
+    const bar = (
+      <Fragment>
+        {!success && (
+          <Link to="/x/login">
+            <Button text>Cancel</Button>
+          </Link>
+        )}
+        {!success && (
+          <Button primary onClick={this.confirmaccount}>
+            Submit
+          </Button>
+        )}
+        {success && (
+          <Link to="/x/login">
+            <Button outline>Sign in</Button>
+          </Link>
+        )}
+      </Fragment>
+    );
+
     return (
       <Section container padded>
         <Card
@@ -69,7 +70,7 @@ class ConfirmAccount extends Component {
           size="md"
           restrictWidth
           titleBar
-          title={[<h3>Confirm account</h3>]}
+          title={<h3>Confirm account</h3>}
           bar={bar}
         >
           <Input

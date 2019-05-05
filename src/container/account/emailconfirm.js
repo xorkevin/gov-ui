@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import {Link} from 'react-router-dom';
 import linkstate from 'linkstate';
 import Section from 'component/section';
@@ -51,16 +51,15 @@ class AccountEmailConfirm extends Component {
 
   render() {
     const {success, err, key, password} = this.state;
-    const bar = [];
-    bar.push(
-      <Link to="/a/account">
-        <Button text>Cancel</Button>
-      </Link>,
-    );
-    bar.push(
-      <Button primary onClick={this.confirmemail}>
-        Update
-      </Button>,
+    const bar = (
+      <Fragment>
+        <Link to="/a/account">
+          <Button text>Cancel</Button>
+        </Link>
+        <Button primary onClick={this.confirmemail}>
+          Update
+        </Button>
+      </Fragment>
     );
     return (
       <Card size="md" restrictWidth center bar={bar}>

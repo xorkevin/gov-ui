@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import linkstate from 'linkstate';
 import Section from 'component/section';
 import Card from 'component/card';
@@ -98,17 +98,16 @@ class ManageUser extends Component {
 
   render() {
     const {err, username, user, edit, rank} = this.state;
-    const bar = [];
     if (edit) {
-      bar.push(
-        <Button text onClick={this.cancel}>
-          Cancel
-        </Button>,
-      );
-      bar.push(
-        <Button outline onClick={this.save}>
-          Save
-        </Button>,
+      const bar = (
+        <Fragment>
+          <Button text onClick={this.cancel}>
+            Cancel
+          </Button>
+          <Button outline onClick={this.save}>
+            Save
+          </Button>
+        </Fragment>
       );
 
       return (
@@ -151,10 +150,12 @@ class ManageUser extends Component {
     }
 
     if (user) {
-      bar.push(
-        <Button outline onClick={this.edit}>
-          Edit
-        </Button>,
+      const bar = (
+        <Fragment>
+          <Button outline onClick={this.edit}>
+            Edit
+          </Button>
+        </Fragment>
       );
 
       return (
@@ -179,10 +180,12 @@ class ManageUser extends Component {
       );
     }
 
-    bar.push(
-      <Button primary onClick={this.navigateUser}>
-        Search
-      </Button>,
+    const bar = (
+      <Fragment>
+        <Button primary onClick={this.navigateUser}>
+          Search
+        </Button>
+      </Fragment>
     );
 
     return (

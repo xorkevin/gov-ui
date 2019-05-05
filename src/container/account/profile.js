@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import {formatStr} from 'utility';
 import {API} from 'config';
 import {Link} from 'react-router-dom';
@@ -72,14 +72,15 @@ class Profile extends Component {
   render() {
     const {userid} = this.props;
     const {err, canCreate, profile} = this.state;
-    const bar = [];
-    if (profile) {
-      bar.push(
-        <Link to="/a/profile/edit">
-          <Button outline>Edit</Button>
-        </Link>,
-      );
-    }
+    const bar = (
+      <Fragment>
+        {profile && (
+          <Link to="/a/profile/edit">
+            <Button outline>Edit</Button>
+          </Link>
+        )}
+      </Fragment>
+    );
 
     return (
       <div>

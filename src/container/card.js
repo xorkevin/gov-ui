@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Fragment} from 'react';
 import Section from 'component/section';
 import Grid from 'component/grid';
 import Card from 'component/card';
@@ -17,13 +17,15 @@ const CardContainer = () => {
             size="md"
             restrictHeight
             background="https://xorkevin.github.io/stratosphere/assets/underground.jpg"
-            title={[
-              <h3>Lorem ipsum</h3>,
-              <Button label="favorite">
-                <FaIcon icon="heart" />
-              </Button>,
-            ]}
-            bar={[<Button>View</Button>]}
+            title={
+              <Fragment>
+                <h3>Lorem ipsum</h3>
+                <Button label="favorite">
+                  <FaIcon icon="heart" />
+                </Button>
+              </Fragment>
+            }
+            bar={<Button>View</Button>}
           >
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
           </Card>
@@ -33,13 +35,15 @@ const CardContainer = () => {
             restrictHeight
             background="https://xorkevin.github.io/stratosphere/assets/mountain.jpg"
             preview={mountainPreview}
-            title={[
-              <h3>Dolor sit amet</h3>,
-              <Button label="favorite">
-                <FaIcon icon="heart" />
-              </Button>,
-            ]}
-            bar={[<Button>View</Button>]}
+            title={
+              <Fragment>
+                <h3>Dolor sit amet</h3>
+                <Button label="favorite">
+                  <FaIcon icon="heart" />
+                </Button>
+              </Fragment>
+            }
+            bar={<Button>View</Button>}
           >
             <p>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
@@ -54,13 +58,15 @@ const CardContainer = () => {
             size="md"
             restrictHeight
             background="https://xorkevin.github.io/stratosphere/assets/forest.jpg"
-            title={[
-              <h3>Consectetur</h3>,
-              <Button label="favorite">
-                <FaIcon icon="heart" />
-              </Button>,
-            ]}
-            bar={[<Button>View</Button>]}
+            title={
+              <Fragment>
+                <h3>Consectetur</h3>
+                <Button label="favorite">
+                  <FaIcon icon="heart" />
+                </Button>
+              </Fragment>
+            }
+            bar={<Button>View</Button>}
           >
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
           </Card>
@@ -69,13 +75,15 @@ const CardContainer = () => {
             size="md"
             restrictHeight
             background="https://xorkevin.github.io/stratosphere/assets/flower.jpg"
-            title={[
-              <h3>Adipiscing elit</h3>,
-              <Button label="favorite">
-                <FaIcon icon="heart" />
-              </Button>,
-            ]}
-            bar={[<Button>View</Button>]}
+            title={
+              <Fragment>
+                <h3>Adipiscing elit</h3>
+                <Button label="favorite">
+                  <FaIcon icon="heart" />
+                </Button>
+              </Fragment>
+            }
+            bar={<Button>View</Button>}
           >
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
           </Card>
@@ -84,13 +92,15 @@ const CardContainer = () => {
             size="md"
             restrictHeight
             background="https://xorkevin.github.io/stratosphere/assets/climb.jpg"
-            title={[
-              <h3>Integer fringilla</h3>,
-              <Button label="favorite">
-                <FaIcon icon="heart" />
-              </Button>,
-            ]}
-            bar={[<Button>View</Button>]}
+            title={
+              <Fragment>
+                <h3>Integer fringilla</h3>
+                <Button label="favorite">
+                  <FaIcon icon="heart" />
+                </Button>
+              </Fragment>
+            }
+            bar={<Button>View</Button>}
           >
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
           </Card>
@@ -100,13 +110,15 @@ const CardContainer = () => {
             restrictHeight
             background="https://xorkevin.github.io/stratosphere/assets/thames.jpg"
             preview={thamesPreview}
-            title={[
-              <h3>Aliquet</h3>,
-              <Button label="favorite">
-                <FaIcon icon="heart" />
-              </Button>,
-            ]}
-            bar={[<Button>View</Button>]}
+            title={
+              <Fragment>
+                <h3>Aliquet</h3>,
+                <Button label="favorite">
+                  <FaIcon icon="heart" />
+                </Button>
+              </Fragment>
+            }
+            bar={<Button>View</Button>}
           >
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
           </Card>
@@ -116,13 +128,15 @@ const CardContainer = () => {
             size="lg"
             square
             background="https://xorkevin.github.io/stratosphere/assets/climb.jpg"
-            title={[
-              <h3>Vivamus nibh enim</h3>,
-              <Button label="favorite">
-                <FaIcon icon="heart" />
-              </Button>,
-            ]}
-            bar={[<Button>Share</Button>]}
+            title={
+              <Fragment>
+                <h3>Vivamus nibh enim</h3>,
+                <Button label="favorite">
+                  <FaIcon icon="heart" />
+                </Button>
+              </Fragment>
+            }
+            bar={<Button>Share</Button>}
           >
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
             fringilla aliquet condimentum. Nunc facilisis orci dui, sit amet
@@ -134,13 +148,15 @@ const CardContainer = () => {
             size="md"
             square
             background="https://xorkevin.github.io/stratosphere/assets/flower.jpg"
-            title={[
-              <h3>Vivamus nibh enim</h3>,
-              <Button label="favorite">
-                <FaIcon icon="heart" />
-              </Button>,
-            ]}
-            bar={[<Button>Share</Button>]}
+            title={
+              <Fragment>
+                <h3>Vivamus nibh enim</h3>,
+                <Button label="favorite">
+                  <FaIcon icon="heart" />
+                </Button>
+              </Fragment>
+            }
+            bar={<Button>Share</Button>}
           >
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
             fringilla aliquet condimentum. Nunc facilisis orci dui, sit amet
@@ -152,13 +168,15 @@ const CardContainer = () => {
             size="sm"
             square
             background="https://xorkevin.github.io/stratosphere/assets/underground.jpg"
-            title={[
-              <h3>Vivamus nibh enim</h3>,
-              <Button label="favorite">
-                <FaIcon icon="heart" />
-              </Button>,
-            ]}
-            bar={[<Button>Share</Button>]}
+            title={
+              <Fragment>
+                <h3>Vivamus nibh enim</h3>,
+                <Button label="favorite">
+                  <FaIcon icon="heart" />
+                </Button>
+              </Fragment>
+            }
+            bar={<Button>Share</Button>}
           >
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
             fringilla aliquet condimentum. Nunc facilisis orci dui, sit amet
@@ -170,13 +188,15 @@ const CardContainer = () => {
             size="md"
             restrictWidth
             titleBar
-            title={[
-              <h3>Vivamus nibh enim</h3>,
-              <Button label="favorite">
-                <FaIcon icon="heart" />
-              </Button>,
-            ]}
-            bar={[<Button>Share</Button>]}
+            title={
+              <Fragment>
+                <h3>Vivamus nibh enim</h3>,
+                <Button label="favorite">
+                  <FaIcon icon="heart" />
+                </Button>
+              </Fragment>
+            }
+            bar={<Button>Share</Button>}
           >
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
             fringilla aliquet condimentum. Nunc facilisis orci dui, sit amet

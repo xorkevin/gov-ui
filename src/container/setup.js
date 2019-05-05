@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import linkState from 'linkstate';
 import Section from 'component/section';
 import Menu from 'component/menu';
@@ -84,15 +84,17 @@ class SetupContainer extends Component {
           size="md"
           restrictWidth
           titleBar
-          title={[<h3>Setup</h3>]}
-          bar={[
-            <Button text onClick={this.navigateHome}>
-              Cancel
-            </Button>,
-            <Button primary onClick={this.setup}>
-              Submit
-            </Button>,
-          ]}
+          title={<h3>Setup</h3>}
+          bar={
+            <Fragment>
+              <Button text onClick={this.navigateHome}>
+                Cancel
+              </Button>
+              <Button primary onClick={this.setup}>
+                Submit
+              </Button>
+            </Fragment>
+          }
         >
           <Section subsection sectionTitle="Organization">
             <Input

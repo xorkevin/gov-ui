@@ -41,8 +41,8 @@ const Grid = ({
       {map &&
         React.Children.map(children, (child) => {
           let key = '';
-          if (child && child.attributes && child.attributes.colkey) {
-            key = child.attributes.colkey;
+          if (child && child.props && child.props.colkey) {
+            key = child.props.colkey;
           } else if (typeof child === 'string') {
             key = child;
           }

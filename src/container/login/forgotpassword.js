@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import {Link} from 'react-router-dom';
 import linkState from 'linkstate';
 import Section from 'component/section';
@@ -43,25 +43,25 @@ class ForgotContainer extends Component {
 
   render() {
     const {success, err} = this.state;
-    const bar = [];
-    if (success) {
-      bar.push(
-        <Link to="/x/forgotconfirm">
-          <Button outline>Confirm</Button>
-        </Link>,
-      );
-    } else {
-      bar.push(
-        <Link to="/x/login">
-          <Button text>Cancel</Button>
-        </Link>,
-      );
-      bar.push(
-        <Button primary onClick={this.forgotpassword}>
-          Submit
-        </Button>,
-      );
-    }
+    const bar = (
+      <Fragment>
+        {success && (
+          <Link to="/x/forgotconfirm">
+            <Button outline>Confirm</Button>
+          </Link>
+        )}
+        {!success && (
+          <Link to="/x/login">
+            <Button text>Cancel</Button>
+          </Link>
+        )}
+        {!success && (
+          <Button primary onClick={this.forgotpassword}>
+            Submit
+          </Button>
+        )}
+      </Fragment>
+    );
 
     return (
       <Section container padded>
@@ -70,7 +70,7 @@ class ForgotContainer extends Component {
           size="md"
           restrictWidth
           titleBar
-          title={[<h3>Forgot password</h3>]}
+          title={<h3>Forgot password</h3>}
           bar={bar}
         >
           <Input

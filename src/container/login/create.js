@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import {Link} from 'react-router-dom';
 import linkState from 'linkstate';
 import Section from 'component/section';
@@ -67,25 +67,25 @@ class CreateAccount extends Component {
 
   render() {
     const {success, err, clienterr} = this.state;
-    const bar = [];
-    if (success) {
-      bar.push(
-        <Link to="/x/confirm">
-          <Button outline>Confirm</Button>
-        </Link>,
-      );
-    } else {
-      bar.push(
-        <Link to="/x/login">
-          <Button text>Cancel</Button>
-        </Link>,
-      );
-      bar.push(
-        <Button primary onClick={this.createaccount}>
-          Submit
-        </Button>,
-      );
-    }
+    const bar = (
+      <Fragment>
+        {success && (
+          <Link to="/x/confirm">
+            <Button outline>Confirm</Button>
+          </Link>
+        )}
+        {!success && (
+          <Link to="/x/login">
+            <Button text>Cancel</Button>
+          </Link>
+        )}
+        {!success && (
+          <Button primary onClick={this.createaccount}>
+            Submit
+          </Button>
+        )}
+      </Fragment>
+    );
 
     return (
       <Section container padded>
@@ -94,7 +94,7 @@ class CreateAccount extends Component {
           size="md"
           restrictWidth
           titleBar
-          title={[<h3>Sign up</h3>]}
+          title={<h3>Sign up</h3>}
           bar={bar}
         >
           <Input

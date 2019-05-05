@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import {Link} from 'react-router-dom';
 import linkState from 'linkstate';
 import Section from 'component/section';
@@ -58,25 +58,25 @@ class ConfirmReset extends Component {
 
   render() {
     const {success, err, clienterr, key} = this.state;
-    const bar = [];
-    if (success) {
-      bar.push(
-        <Link to="/x/login">
-          <Button outline>Sign in</Button>
-        </Link>,
-      );
-    } else {
-      bar.push(
-        <Link to="/x/login">
-          <Button text>Cancel</Button>
-        </Link>,
-      );
-      bar.push(
-        <Button primary onClick={this.resetpassword}>
-          Submit
-        </Button>,
-      );
-    }
+    const bar = (
+      <Fragment>
+        {success && (
+          <Link to="/x/login">
+            <Button outline>Sign in</Button>
+          </Link>
+        )}
+        {!success && (
+          <Link to="/x/login">
+            <Button text>Cancel</Button>
+          </Link>
+        )}
+        {!success && (
+          <Button primary onClick={this.resetpassword}>
+            Submit
+          </Button>
+        )}
+      </Fragment>
+    );
 
     return (
       <Section container padded>
@@ -85,7 +85,7 @@ class ConfirmReset extends Component {
           size="md"
           restrictWidth
           titleBar
-          title={[<h3>Reset password</h3>]}
+          title={<h3>Reset password</h3>}
           bar={bar}
         >
           <Input

@@ -1,34 +1,14 @@
 import React from 'react';
 import Container from 'component/container';
 
-const generateItemList = (list) => {
-  return list.map((item) => {
-    return (
-      <div key={item.key} className="item">
-        {item.component}
-      </div>
-    );
-  });
-};
-
 const Tabbar = ({left, right, children}) => {
   const className = ['tabbar'];
-  let j = false;
-  let k = false;
-  if (left) {
-    j = generateItemList(left);
-  }
-  if (right) {
-    k = generateItemList(right);
-  }
   return (
     <div className={className.join(' ')}>
       <Container>
-        <div className="element">{j}</div>
-        {children && children.length > 0 && (
-          <div className="element">{children}</div>
-        )}
-        <div className="element">{k}</div>
+        <div className="element">{left}</div>
+        {children && <div className="element">{children}</div>}
+        <div className="element">{right}</div>
       </Container>
     </div>
   );

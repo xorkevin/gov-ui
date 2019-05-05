@@ -30,7 +30,7 @@ const Tooltip = ({position, display, width, tooltip, children}) => {
       <span className={k.join(' ')} style={s}>
         {tooltip}
       </span>
-      {children && children.length > 0 && children[0]}
+      {children}
     </span>
   );
 };

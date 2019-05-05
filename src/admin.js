@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import {
   Switch,
   Route,
@@ -130,7 +130,11 @@ class Admin extends Component {
                 key: 'settings',
                 component: (
                   <Menu
-                    icon={[<FaIcon icon="cog" />, <small>Settings</small>]}
+                    icon={
+                      <Fragment>
+                        <FaIcon icon="cog" /> <small>Settings</small>
+                      </Fragment>
+                    }
                     size="md"
                     fixed
                     align="left"

@@ -36,26 +36,13 @@ class Account extends Component {
     return (
       <Section container narrow padded sectionTitle="Settings">
         <Tabbar
-          left={[
-            {
-              key: 'account',
-              component: (
-                <NavLink to={`${match.path}/account`}>Account</NavLink>
-              ),
-            },
-            {
-              key: 'profile',
-              component: (
-                <NavLink to={`${match.path}/profile`}>Profile</NavLink>
-              ),
-            },
-            {
-              key: 'sessions',
-              component: (
-                <NavLink to={`${match.path}/sessions`}>Sessions</NavLink>
-              ),
-            },
-          ]}
+          left={
+            <Fragment>
+              <NavLink to={`${match.path}/account`}>Account</NavLink>
+              <NavLink to={`${match.path}/profile`}>Profile</NavLink>
+              <NavLink to={`${match.path}/sessions`}>Sessions</NavLink>
+            </Fragment>
+          }
         />
         <Switch>
           <Route

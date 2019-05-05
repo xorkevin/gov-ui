@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import {Link} from 'react-router-dom';
 import linkState from 'linkstate';
 import Section from 'component/section';
@@ -35,29 +35,31 @@ class SigninContainer extends Component {
           size="md"
           restrictWidth
           titleBar
-          title={[<h3>Sign in</h3>]}
-          bar={[
-            <Menu
-              icon={
-                <Button text>
-                  <FaIcon icon="ellipsis-v" />
-                </Button>
-              }
-              size="md"
-              align="left"
-              position="bottom"
-            >
-              <Link to="/x/create">
-                <FaIcon icon="user-plus" /> Create Account
-              </Link>
-              <Link to="/x/forgot">
-                <FaIcon icon="unlock-alt" /> Forgot Password
-              </Link>
-            </Menu>,
-            <Button primary onClick={this.login}>
-              Login
-            </Button>,
-          ]}
+          title={<h3>Sign in</h3>}
+          bar={
+            <Fragment>
+              <Menu
+                icon={
+                  <Button text>
+                    <FaIcon icon="ellipsis-v" />
+                  </Button>
+                }
+                size="md"
+                align="left"
+                position="bottom"
+              >
+                <Link to="/x/create">
+                  <FaIcon icon="user-plus" /> Create Account
+                </Link>
+                <Link to="/x/forgot">
+                  <FaIcon icon="unlock-alt" /> Forgot Password
+                </Link>
+              </Menu>
+              <Button primary onClick={this.login}>
+                Login
+              </Button>
+            </Fragment>
+          }
         >
           <Input
             label="username / email"

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import {Switch, Route, Redirect, NavLink, withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 
@@ -70,9 +70,9 @@ class App extends Component {
               component: (
                 <Menu
                   icon={
-                    <span>
+                    <Fragment>
                       <FaIcon icon="cog" /> Settings
-                    </span>
+                    </Fragment>
                   }
                   size="md"
                   fixed

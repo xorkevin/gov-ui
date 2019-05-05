@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import {Link} from 'react-router-dom';
 import Section from 'component/section';
 import Card from 'component/card';
@@ -74,12 +74,14 @@ class AccountSessions extends Component {
     if (!sessions) {
       return false;
     }
-    const bar = [];
-    bar.push(
-      <Button primary onClick={this.deletesessions}>
-        Delete
-      </Button>,
+    const bar = (
+      <Fragment>
+        <Button primary onClick={this.deletesessions}>
+          Delete
+        </Button>
+      </Fragment>
     );
+
     return (
       <Card size="lg" restrictWidth center bar={bar}>
         <Section subsection sectionTitle="Active Sessions">

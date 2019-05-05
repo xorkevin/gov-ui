@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import {Link} from 'react-router-dom';
 import linkstate from 'linkstate';
 import Section from 'component/section';
@@ -73,16 +73,15 @@ class ProfileEdit extends Component {
 
   render() {
     const {err, success, profile} = this.state;
-    const bar = [];
-    bar.push(
-      <Link to="/a/profile">
-        <Button text>{success ? 'Back' : 'Cancel'}</Button>
-      </Link>,
-    );
-    bar.push(
-      <Button primary onClick={this.editprofile}>
-        Save
-      </Button>,
+    const bar = (
+      <Fragment>
+        <Link to="/a/profile">
+          <Button text>{success ? 'Back' : 'Cancel'}</Button>
+        </Link>
+        <Button primary onClick={this.editprofile}>
+          Save
+        </Button>
+      </Fragment>
     );
 
     return (

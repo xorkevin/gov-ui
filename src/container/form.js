@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import linkState from 'linkstate';
 import Section from 'component/section';
 import Input from 'component/form';
@@ -177,18 +177,20 @@ class FormContainer extends Component {
           size="lg"
           restrictWidth
           titleBar
-          title={[<h3>Vivamus nibh enim</h3>]}
-          bar={[
-            <Button fixedWidth text>
-              Cancel
-            </Button>,
-            <Button fixedWidth outline>
-              Save
-            </Button>,
-            <Button fixedWidth primary>
-              Submit
-            </Button>,
-          ]}
+          title={<h3>Vivamus nibh enim</h3>}
+          bar={
+            <Fragment>
+              <Button fixedWidth text>
+                Cancel
+              </Button>
+              <Button fixedWidth outline>
+                Save
+              </Button>
+              <Button fixedWidth primary>
+                Submit
+              </Button>
+            </Fragment>
+          }
         >
           <Input
             textarea

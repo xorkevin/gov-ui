@@ -100,7 +100,11 @@ class Input extends Component {
         >
           {Array.isArray(dropdown) &&
             dropdown.map((i) => {
-              return <option value={i.value}>{i.text}</option>;
+              return (
+                <option key={i.value} value={i.value}>
+                  {i.text}
+                </option>
+              );
             })}
         </select>
       );

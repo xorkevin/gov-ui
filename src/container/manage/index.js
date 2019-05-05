@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import {Switch, Route, Redirect, NavLink} from 'react-router-dom';
 import Section from 'component/section';
 import Tabbar from 'component/tabbar';
@@ -15,12 +15,11 @@ class ManageContainer extends Component {
     return (
       <Section container narrow padded sectionTitle="Settings">
         <Tabbar
-          left={[
-            {
-              key: 'user',
-              component: <NavLink to={`${match.path}/user`}>User</NavLink>,
-            },
-          ]}
+          left={
+            <Fragment>
+              <NavLink to={`${match.path}/user`}>User</NavLink>
+            </Fragment>
+          }
         />
         <Switch>
           <Route
