@@ -40,17 +40,7 @@ const Grid = ({
     <div className={k.join(' ')}>
       {map &&
         React.Children.map(children, (child) => {
-          let key = '';
-          if (child && child.props && child.props.colkey) {
-            key = child.props.colkey;
-          } else if (typeof child === 'string') {
-            key = child;
-          }
-          return (
-            <Column key={key} {...childProps}>
-              {child}
-            </Column>
-          );
+          return <Column {...childProps}>{child}</Column>;
         })}
       {!map && children}
     </div>

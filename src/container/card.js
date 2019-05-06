@@ -13,7 +13,6 @@ const CardContainer = () => {
       <Section id="cards" sectionTitle="Cards anyone?" container padded>
         <Grid map md={8} sm={12}>
           <Card
-            colkey="underground"
             size="md"
             restrictHeight
             background="https://xorkevin.github.io/stratosphere/assets/underground.jpg"
@@ -30,7 +29,6 @@ const CardContainer = () => {
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
           </Card>
           <Card
-            colkey="mountain"
             size="md"
             restrictHeight
             background="https://xorkevin.github.io/stratosphere/assets/mountain.jpg"
@@ -54,7 +52,6 @@ const CardContainer = () => {
             </p>
           </Card>
           <Card
-            colkey="forest"
             size="md"
             restrictHeight
             background="https://xorkevin.github.io/stratosphere/assets/forest.jpg"
@@ -71,7 +68,6 @@ const CardContainer = () => {
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
           </Card>
           <Card
-            colkey="flower"
             size="md"
             restrictHeight
             background="https://xorkevin.github.io/stratosphere/assets/flower.jpg"
@@ -88,7 +84,6 @@ const CardContainer = () => {
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
           </Card>
           <Card
-            colkey="climb"
             size="md"
             restrictHeight
             background="https://xorkevin.github.io/stratosphere/assets/climb.jpg"
@@ -105,7 +100,6 @@ const CardContainer = () => {
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
           </Card>
           <Card
-            colkey="thames"
             size="md"
             restrictHeight
             background="https://xorkevin.github.io/stratosphere/assets/thames.jpg"

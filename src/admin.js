@@ -162,10 +162,10 @@ class Admin extends Component {
 
         <Footer withSidebar={loggedIn}>
           <Grid map center sm={8}>
-            <div colkey="left" className="text-center">
+            <div className="text-center">
               <h4>Nuke</h4>a reactive frontend for governor
             </div>
-            <div colkey="center" className="text-center">
+            <div className="text-center">
               <ul>
                 <li>
                   <Anchor noColor ext href="https://github.com/hackform/nuke">
@@ -184,7 +184,7 @@ class Admin extends Component {
                 </li>
               </ul>
             </div>
-            <div colkey="right" className="text-center">
+            <div className="text-center">
               <h5>
                 <FaIcon icon="code" /> with <FaIcon icon="heart-o" /> by{' '}
                 <Anchor noColor ext href="https://github.com/xorkevin">
