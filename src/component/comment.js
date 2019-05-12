@@ -1,4 +1,4 @@
-import React, {Component, useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Container from 'component/container';
 import Time from 'component/time';
 
@@ -13,7 +13,7 @@ const Comment = ({depth, username, score, time, content, children}) => {
       <div className="inner">
         <div className="info">
           <span className="data hide">
-            <a className="no-color" onClick={() => setHidden(!hidden)}>
+            <a className="no-color" onClick={() => setHidden((h) => !h)}>
               [{hidden && '+'}
               {!hidden && '-'}]
             </a>
@@ -86,63 +86,41 @@ const widthToDepth = (width) => {
   return DEPTH.xxs;
 };
 
-class CommentSection extends Component {
-  constructor(props) {
-    super(props);
-    const width = window.innerWidth;
-    this.state = {
-      depth: widthToDepth(width),
-    };
-  }
+const CommentSection = ({children}) => {
+  const [depth, setDepth] = useState(widthToDepth(window.innerWidth));
 
-  tick() {
-    this.setState((prevState) => {
-      return Object.assign({}, prevState, {
-        depth: widthToDepth(window.innerWidth),
-      });
-    });
-  }
-
-  componentDidMount() {
-    this.running = false;
-    this.handler = () => {
-      if (!this.running) {
-        this.running = true;
+  useEffect(() => {
+    let running = false;
+    const handler = () => {
+      if (!running) {
+        running = true;
         window.requestAnimationFrame(() => {
-          this.tick();
-          this.running = false;
+          setDepth(widthToDepth(window.innerWidth));
+          running = false;
         });
       }
     };
-    window.addEventListener('resize', this.handler);
-  }
+    window.addEventListener('resize', handler);
+    return () => {
+      window.removeEventListener('resize', handler);
+    };
+  }, []);
 
-  componentWillUnmount() {
-    if (this.handler) {
-      window.removeEventListener('resize', this.handler);
-      this.handler = false;
-    }
-  }
-
-  render() {
-    const {children} = this.props;
-    const {depth} = this.state;
-    return (
-      <Container padded narrow>
-        <h5>Comments</h5>
-        <div className="comment-section">
-          {children &&
-            React.Children.map(children, (child) => {
-              return React.cloneElement(child, {
-                depth: depth - 1,
-              });
-            })}
-          {!children && <span>No comments</span>}
-        </div>
-      </Container>
-    );
-  }
-}
+  return (
+    <Container padded narrow>
+      <h5>Comments</h5>
+      <div className="comment-section">
+        {children &&
+          React.Children.map(children, (child) => {
+            return React.cloneElement(child, {
+              depth: depth - 1,
+            });
+          })}
+        {!children && <span>No comments</span>}
+      </div>
+    </Container>
+  );
+};
 
 const Components = {Comment, CommentSection};
 
