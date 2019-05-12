@@ -1,99 +1,66 @@
-import React, {Component} from 'react';
+import React, {Component, useState} from 'react';
 import Container from 'component/container';
 import Time from 'component/time';
 
-class Comment extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      hidden: props.hidden || false,
-    };
+const Comment = ({depth, username, score, time, content, children}) => {
+  const [hidden, setHidden] = useState(false);
+  const k = ['comment'];
+  if (hidden) {
+    k.push('hidden');
   }
-
-  hide() {
-    this.setState((prevState) => {
-      return Object.assign({}, prevState, {hidden: true});
-    });
-  }
-
-  show() {
-    this.setState((prevState) => {
-      return Object.assign({}, prevState, {hidden: false});
-    });
-  }
-
-  toggleHidden() {
-    this.setState((prevState) => {
-      return Object.assign({}, prevState, {hidden: !prevState.hidden});
-    });
-  }
-
-  render() {
-    const {depth, username, score, time, content, children} = this.props;
-    const {hidden} = this.state;
-    const k = ['comment'];
-    if (hidden) {
-      k.push('hidden');
-    }
-    return (
-      <div className={k.join(' ')}>
-        <div className="inner">
-          <div className="info">
-            <span className="data hide">
-              <a
-                className="no-color"
-                onClick={() => {
-                  this.toggleHidden();
-                }}
-              >
-                [{hidden && '+'}
-                {!hidden && '-'}]
-              </a>
-            </span>
-            <span className="username">
-              <a>{username}</a>
-            </span>
-            <span className="data score">{score} points</span>
-            <span className="data time">
-              <Time value={time} />
-            </span>
-          </div>
-          <div className="content">{content}</div>
-          <div className="options">
-            <span>
-              <a className="no-color">link</a>
-            </span>
-            <span>
-              <a className="no-color">source</a>
-            </span>
-            <span>
-              <a className="no-color">reply</a>
-            </span>
-            <span>
-              <a className="no-color">report</a>
-            </span>
-          </div>
+  return (
+    <div className={k.join(' ')}>
+      <div className="inner">
+        <div className="info">
+          <span className="data hide">
+            <a className="no-color" onClick={() => setHidden(!hidden)}>
+              [{hidden && '+'}
+              {!hidden && '-'}]
+            </a>
+          </span>
+          <span className="username">
+            <a>{username}</a>
+          </span>
+          <span className="data score">{score} points</span>
+          <span className="data time">
+            <Time value={time} />
+          </span>
         </div>
-        {!hidden && children && (
-          <div className="children">
-            {depth > 0 &&
-              React.Children.map(children, (child) => {
-                return React.cloneElement(child, {
-                  depth: depth - 1,
-                });
-              })}
-            {depth <= 0 && (
-              <span>
-                <a className="no-color">continue &gt;</a>
-              </span>
-            )}
-            {!depth && typeof depth !== 'number' && children}
-          </div>
-        )}
+        <div className="content">{content}</div>
+        <div className="options">
+          <span>
+            <a className="no-color">link</a>
+          </span>
+          <span>
+            <a className="no-color">source</a>
+          </span>
+          <span>
+            <a className="no-color">reply</a>
+          </span>
+          <span>
+            <a className="no-color">report</a>
+          </span>
+        </div>
       </div>
-    );
-  }
-}
+      {!hidden && children && (
+        <div className="children">
+          {depth > 0 &&
+            React.Children.map(children, (child) => {
+              return React.cloneElement(child, {
+                depth: depth - 1,
+              });
+            })}
+          {depth <= 0 && (
+            <span>
+              <a className="no-color">continue &gt;</a>
+            </span>
+          )}
+          {!depth && typeof depth !== 'number' && children}
+        </div>
+      )}
+    </div>
+  );
+};
 
 const WIDTH = {
   sm: 768,
