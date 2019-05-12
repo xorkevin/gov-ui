@@ -1,34 +1,30 @@
-import React, {Component, Fragment} from 'react';
+import React, {Component, Fragment, lazy, Suspense} from 'react';
 import {Switch, Route, Redirect, NavLink} from 'react-router-dom';
 import Section from 'component/section';
 import Tabbar from 'component/tabbar';
 
-import Loader from 'loader';
+const EmailConfirmContainer = lazy(() =>
+  import('container/account/emailconfirm'),
+);
+const EmailEditContainer = lazy(() => import('container/account/emailedit'));
+const PassEditContainer = lazy(() => import('container/account/passedit'));
+const AccountEditContainer = lazy(() =>
+  import('container/account/detailsedit'),
+);
+const AccountDetailsContainer = lazy(() => import('container/account/details'));
+const ProfileEditContainer = lazy(() =>
+  import('container/account/profileedit'),
+);
+const ProfileDetailsContainer = lazy(() => import('container/account/profile'));
+const AccountSessionsContainer = lazy(() =>
+  import('container/account/sessions'),
+);
 
-const loadEmailConfirmContainer = Loader(() => {
-  return import('container/account/emailconfirm');
-});
-const loadEmailEditContainer = Loader(() => {
-  return import('container/account/emailedit');
-});
-const loadPassEditContainer = Loader(() => {
-  return import('container/account/passedit');
-});
-const loadAccountEditContainer = Loader(() => {
-  return import('container/account/detailsedit');
-});
-const loadAccountDetailsContainer = Loader(() => {
-  return import('container/account/details');
-});
-const loadProfileEditContainer = Loader(() => {
-  return import('container/account/profileedit');
-});
-const loadProfileDetailsContainer = Loader(() => {
-  return import('container/account/profile');
-});
-const loadAccountSessionsContainer = Loader(() => {
-  return import('container/account/sessions');
-});
+const FallbackView = (
+  <Section container padded narrow>
+    Loading
+  </Section>
+);
 
 class Account extends Component {
   render() {
@@ -44,41 +40,43 @@ class Account extends Component {
             </Fragment>
           }
         />
-        <Switch>
-          <Route
-            path={`${match.path}/account/email/confirm/:key?`}
-            component={loadEmailConfirmContainer}
-          />
-          <Route
-            path={`${match.path}/account/email`}
-            component={loadEmailEditContainer}
-          />
-          <Route
-            path={`${match.path}/account/pass`}
-            component={loadPassEditContainer}
-          />
-          <Route
-            path={`${match.path}/account/edit`}
-            component={loadAccountEditContainer}
-          />
-          <Route
-            path={`${match.path}/account`}
-            component={loadAccountDetailsContainer}
-          />
-          <Route
-            path={`${match.path}/profile/edit`}
-            component={loadProfileEditContainer}
-          />
-          <Route
-            path={`${match.path}/profile`}
-            component={loadProfileDetailsContainer}
-          />
-          <Route
-            path={`${match.path}/sessions`}
-            component={loadAccountSessionsContainer}
-          />
-          <Redirect to={`${match.path}/account`} />
-        </Switch>
+        <Suspense fallback={FallbackView}>
+          <Switch>
+            <Route
+              path={`${match.path}/account/email/confirm/:key?`}
+              component={EmailConfirmContainer}
+            />
+            <Route
+              path={`${match.path}/account/email`}
+              component={EmailEditContainer}
+            />
+            <Route
+              path={`${match.path}/account/pass`}
+              component={PassEditContainer}
+            />
+            <Route
+              path={`${match.path}/account/edit`}
+              component={AccountEditContainer}
+            />
+            <Route
+              path={`${match.path}/account`}
+              component={AccountDetailsContainer}
+            />
+            <Route
+              path={`${match.path}/profile/edit`}
+              component={ProfileEditContainer}
+            />
+            <Route
+              path={`${match.path}/profile`}
+              component={ProfileDetailsContainer}
+            />
+            <Route
+              path={`${match.path}/sessions`}
+              component={AccountSessionsContainer}
+            />
+            <Redirect to={`${match.path}/account`} />
+          </Switch>
+        </Suspense>
       </Section>
     );
   }

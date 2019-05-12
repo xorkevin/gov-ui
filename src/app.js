@@ -1,12 +1,11 @@
-import React, {Component, Fragment} from 'react';
+import React, {Component, Fragment, lazy, Suspense} from 'react';
 import {Switch, Route, Redirect, NavLink, withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 
 import {DarkMode} from 'reducer/settings';
 
-import Loader from 'loader';
-
 import MainContent from 'component/maincontent';
+import Section from 'component/section';
 import {Navbar, Navitem} from 'component/navbar';
 import Menu from 'component/menu';
 import Footer from 'component/footer';
@@ -14,18 +13,16 @@ import Grid from 'component/grid';
 import Anchor from 'component/anchor';
 import FaIcon from 'component/faicon';
 
-const loadHomeContainer = Loader(() => {
-  return import('container/home');
-});
-const loadFormContainer = Loader(() => {
-  return import('container/form');
-});
-const loadCardContainer = Loader(() => {
-  return import('container/card');
-});
-const loadHealthContainer = Loader(() => {
-  return import('container/health');
-});
+const HomeContainer = lazy(() => import('container/home'));
+const FormContainer = lazy(() => import('container/form'));
+const CardContainer = lazy(() => import('container/card'));
+const HealthContainer = lazy(() => import('container/health'));
+
+const FallbackView = (
+  <Section container padded narrow>
+    Loading
+  </Section>
+);
 
 const styletoppaths = ['/'];
 
@@ -98,13 +95,15 @@ class App extends Component {
         />
 
         <MainContent>
-          <Switch>
-            <Route exact path="/" component={loadHomeContainer} />
-            <Route path="/form" component={loadFormContainer} />
-            <Route path="/cards" component={loadCardContainer} />
-            <Route path="/health" component={loadHealthContainer} />
-            <Redirect to="/" />
-          </Switch>
+          <Suspense fallback={FallbackView}>
+            <Switch>
+              <Route exact path="/" component={HomeContainer} />
+              <Route path="/form" component={FormContainer} />
+              <Route path="/cards" component={CardContainer} />
+              <Route path="/health" component={HealthContainer} />
+              <Redirect to="/" />
+            </Switch>
+          </Suspense>
         </MainContent>
 
         <Footer>

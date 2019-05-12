@@ -1,24 +1,21 @@
-import React, {Component} from 'react';
+import React, {Component, lazy, Suspense} from 'react';
 import {Switch, Route, Redirect} from 'react-router-dom';
 
 import {connect} from 'react-redux';
-import Loader from 'loader';
 
-const loadSigninContainer = Loader(() => {
-  return import('container/login/signin');
-});
-const loadCreateContainer = Loader(() => {
-  return import('container/login/create');
-});
-const loadCreateConfirmContainer = Loader(() => {
-  return import('container/login/confirm');
-});
-const loadForgotPassContainer = Loader(() => {
-  return import('container/login/forgotpassword');
-});
-const loadResetPassContainer = Loader(() => {
-  return import('container/login/resetpassword');
-});
+const SigninContainer = lazy(() => import('container/login/signin'));
+const CreateContainer = lazy(() => import('container/login/create'));
+const CreateConfirmContainer = lazy(() => import('container/login/confirm'));
+const ForgotPassContainer = lazy(() =>
+  import('container/login/forgotpassword'),
+);
+const ResetPassContainer = lazy(() => import('container/login/resetpassword'));
+
+const FallbackView = (
+  <Section container padded narrow>
+    Loading
+  </Section>
+);
 
 class LoginContainer extends Component {
   constructor(props) {
@@ -45,23 +42,25 @@ class LoginContainer extends Component {
   render() {
     const {match} = this.props;
     return (
-      <Switch>
-        <Route path={`${match.path}/login`} component={loadSigninContainer} />
-        <Route path={`${match.path}/create`} component={loadCreateContainer} />
-        <Route
-          path={`${match.path}/confirm/:key?`}
-          component={loadCreateConfirmContainer}
-        />
-        <Route
-          path={`${match.path}/forgot`}
-          component={loadForgotPassContainer}
-        />
-        <Route
-          path={`${match.path}/forgotconfirm/:key?`}
-          component={loadResetPassContainer}
-        />
-        <Redirect to={`${match.path}/login`} />
-      </Switch>
+      <Suspense fallback={FallbackView}>
+        <Switch>
+          <Route path={`${match.path}/login`} component={SigninContainer} />
+          <Route path={`${match.path}/create`} component={CreateContainer} />
+          <Route
+            path={`${match.path}/confirm/:key?`}
+            component={CreateConfirmContainer}
+          />
+          <Route
+            path={`${match.path}/forgot`}
+            component={ForgotPassContainer}
+          />
+          <Route
+            path={`${match.path}/forgotconfirm/:key?`}
+            component={ResetPassContainer}
+          />
+          <Redirect to={`${match.path}/login`} />
+        </Switch>
+      </Suspense>
     );
   }
 }

@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
+import Section from 'component/section';
 import Button from 'component/button';
 import FaIcon from 'component/faicon';
 import {connect} from 'react-redux';
@@ -14,7 +15,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-const Protected = (child, auth, args) => {
+const Protected = (child, auth) => {
   return connect(mapStateToProps)(
     class extends Component {
       componentDidMount() {
@@ -37,12 +38,12 @@ const Protected = (child, auth, args) => {
         const {authTags} = this.props;
         if (auth && !new Set(authTags.split(',')).has(auth)) {
           return (
-            <div>
-              <h4>Unauthorized</h4>
-            </div>
+            <Section container padded narrow>
+              Unauthorized
+            </Section>
           );
         }
-        return React.createElement(child, Object.assign({}, this.props, args));
+        return React.createElement(child, this.props);
       }
     },
   );

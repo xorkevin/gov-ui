@@ -1,4 +1,4 @@
-import React, {Component, Fragment} from 'react';
+import React, {Component, Fragment, lazy, Suspense} from 'react';
 import {
   Switch,
   Route,
@@ -12,10 +12,10 @@ import {connect} from 'react-redux';
 import {DarkMode} from 'reducer/settings';
 import {Logout} from 'reducer/account/auth';
 
-import Loader from 'loader';
 import Protected from 'protected';
 
 import MainContent from 'component/maincontent';
+import Section from 'component/section';
 import {Navbar, Navitem} from 'component/navbar';
 import Menu from 'component/menu';
 import Footer from 'component/footer';
@@ -23,45 +23,29 @@ import Grid from 'component/grid';
 import Anchor from 'component/anchor';
 import FaIcon from 'component/faicon';
 
-const loadAdminContainer = Protected(
-  Loader(() => {
-    return import('container/admin');
-  }),
-);
-const loadLoginContainer = Loader(() => {
-  return import('container/login');
-});
-const loadAccountContainer = Protected(
-  Loader(() => {
-    return import('container/account');
-  }),
-);
-const loadUserContainer = Protected(
-  Loader(() => {
-    return import('container/user');
-  }),
-);
-const loadManageContainer = Protected(
-  Loader(() => {
-    return import('container/manage');
-  }),
+const AdminContainer = Protected(lazy(() => import('container/admin')));
+const LoginContainer = lazy(() => import('container/login'));
+const AccountContainer = Protected(lazy(() => import('container/account')));
+const UserContainer = Protected(lazy(() => import('container/user')));
+const ManageContainer = Protected(
+  lazy(() => import('container/manage')),
   'admin',
 );
-const loadHealthContainer = Protected(
-  Loader(() => {
-    return import('container/health');
-  }),
+const HealthContainer = Protected(
+  lazy(() => import('container/health')),
   'admin',
 );
-const loadCourierContainer = Protected(
-  Loader(() => {
-    return import('container/courier');
-  }),
+const CourierContainer = Protected(
+  lazy(() => import('container/courier')),
   'admin',
 );
-const loadSetupContainer = Loader(() => {
-  return import('container/setup');
-});
+const SetupContainer = lazy(() => import('container/setup'));
+
+const FallbackView = (
+  <Section container padded narrow>
+    Loading
+  </Section>
+);
 
 class Admin extends Component {
   constructor(props) {
@@ -147,17 +131,19 @@ class Admin extends Component {
         )}
 
         <MainContent withSidebar={loggedIn} sectionNoMargin>
-          <Switch>
-            <Route exact path="/" component={loadAdminContainer} />
-            <Route path="/x" component={loadLoginContainer} />
-            <Route path="/a" component={loadAccountContainer} />
-            <Route path="/u" component={loadUserContainer} />
-            <Route path="/manage" component={loadManageContainer} />
-            <Route path="/health" component={loadHealthContainer} />
-            <Route path="/courier" component={loadCourierContainer} />
-            <Route path="/setup" component={loadSetupContainer} />
-            <Redirect to="/" />
-          </Switch>
+          <Suspense fallback={FallbackView}>
+            <Switch>
+              <Route exact path="/" component={AdminContainer} />
+              <Route path="/x" component={LoginContainer} />
+              <Route path="/a" component={AccountContainer} />
+              <Route path="/u" component={UserContainer} />
+              <Route path="/manage" component={ManageContainer} />
+              <Route path="/health" component={HealthContainer} />
+              <Route path="/courier" component={CourierContainer} />
+              <Route path="/setup" component={SetupContainer} />
+              <Redirect to="/" />
+            </Switch>
+          </Suspense>
         </MainContent>
 
         <Footer withSidebar={loggedIn}>

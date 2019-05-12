@@ -1,14 +1,16 @@
-import React, {Component, Fragment} from 'react';
+import React, {Component, Fragment, lazy, Suspense} from 'react';
 import {Switch, Route, Redirect, NavLink} from 'react-router-dom';
 import Section from 'component/section';
 import Tabbar from 'component/tabbar';
 import FaIcon from 'component/faicon';
 
-import Loader from 'loader';
+const CourierLink = lazy(() => import('container/courier/link'));
 
-const loadCourierLink = Loader(() => {
-  return import('container/courier/link');
-});
+const FallbackView = (
+  <Section container padded narrow>
+    Loading
+  </Section>
+);
 
 class CourierContainer extends Component {
   render() {
@@ -24,10 +26,12 @@ class CourierContainer extends Component {
             </Fragment>
           }
         />
-        <Switch>
-          <Route path={`${match.url}/link`} component={loadCourierLink} />
-          <Redirect to={`${match.url}/link`} />
-        </Switch>
+        <Suspense fallback={FallbackView}>
+          <Switch>
+            <Route path={`${match.url}/link`} component={CourierLink} />
+            <Redirect to={`${match.url}/link`} />
+          </Switch>
+        </Suspense>
       </Section>
     );
   }

@@ -1,13 +1,15 @@
-import React, {Component, Fragment} from 'react';
+import React, {Component, Fragment, lazy, Suspense} from 'react';
 import {Switch, Route, Redirect, NavLink} from 'react-router-dom';
 import Section from 'component/section';
 import Tabbar from 'component/tabbar';
 
-import Loader from 'loader';
+const ManageUserContainer = lazy(() => import('container/manage/user'));
 
-const loadManageUserContainer = Loader(() => {
-  return import('container/manage/user');
-});
+const FallbackView = (
+  <Section container padded narrow>
+    Loading
+  </Section>
+);
 
 class ManageContainer extends Component {
   render() {
@@ -21,13 +23,15 @@ class ManageContainer extends Component {
             </Fragment>
           }
         />
-        <Switch>
-          <Route
-            path={`${match.url}/user/:username?`}
-            component={loadManageUserContainer}
-          />
-          <Redirect to={`${match.url}/user`} />
-        </Switch>
+        <Suspense fallback={FallbackView}>
+          <Switch>
+            <Route
+              path={`${match.url}/user/:username?`}
+              component={ManageUserContainer}
+            />
+            <Redirect to={`${match.url}/user`} />
+          </Switch>
+        </Suspense>
       </Section>
     );
   }
