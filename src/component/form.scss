@@ -100,6 +100,13 @@ textarea {
     }
   }
 
+  & > input:not([type='radio']):not([type='checkbox']):not([type='file']),
+  & > textarea {
+    &:focus {
+      outline: none;
+    }
+  }
+
   &.file {
     & > input[type='file'] {
       border-bottom: none;
