@@ -1,204 +1,153 @@
-import React, {Component} from 'react';
+import React, {Component, useState, useCallback, useRef} from 'react';
 
 const deferLoadImage = (src) => {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => {
       resolve(src);
     };
+    img.onerror = reject;
     img.src = src;
   });
 };
 
-class Img extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      imgsrc: false,
-      loaded: false,
-    };
+const ImgSizeSet = new Set(['sm', 'md', 'lg', 'full', 'fill']);
 
-    this.imgLoaded = this.imgLoaded.bind(this);
-  }
+const Img = ({
+  src,
+  preview,
+  size,
+  fixed,
+  light,
+  noShadow,
+  rounded,
+  color,
+  imgWidth,
+  imgHeight,
+  className,
+  children,
+}) => {
+  const [imgsrc, setImgsrc] = useState(false);
+  const [imgloaded, setImgloaded] = useState(false);
+  const imgelem = useRef(null);
+  const handleImageLoad = useCallback(() => {
+    setImgloaded(true);
+  }, [setImgloaded]);
 
-  tick() {
-    if (!this.elem) {
-      return false;
+  useEffect(() => {
+    if (!src || !imgelem.current || imgloaded) {
+      return;
     }
-    const innerHeight = window.innerHeight;
-    const {
-      top: elemTop,
-      bottom: elemBottom,
-    } = this.elem.getBoundingClientRect();
-    const halfHeight = innerHeight / 4;
-    const topBound = -halfHeight;
-    const bottomBound = innerHeight + halfHeight;
-    if (
-      (elemTop < bottomBound && elemTop > topBound) ||
-      (elemBottom < bottomBound && elemBottom > topBound)
-    ) {
-      if (this.props.fixed) {
-        deferLoadImage(this.props.src).then((src) => {
-          this.setState((prevState) => {
-            return Object.assign({}, prevState, {imgsrc: src});
-          });
-          this.imgLoaded();
-        });
-      } else {
-        this.setState((prevState) => {
-          return Object.assign({}, prevState, {imgsrc: this.props.src});
-        });
-      }
-      return true;
-    }
-  }
-
-  imgLoaded() {
-    this.setState((prevState) => {
-      return Object.assign({}, prevState, {loaded: true});
-    });
-  }
-
-  unbind() {
-    if (this.handler) {
-      window.removeEventListener('scroll', this.handler);
-      window.removeEventListener('resize', this.handler);
-      this.handler = false;
-    }
-  }
-
-  componentDidMount() {
-    if (this.props.src) {
-      this.running = false;
-      this.handler = () => {
-        if (!this.running) {
-          this.running = true;
-          window.requestAnimationFrame(() => {
-            if (this.tick()) {
-              this.unbind();
+    let running = false;
+    const handler = () => {
+      if (!running) {
+        running = true;
+        window.requestAnimationFrame(async () => {
+          const innerHeight = window.innerHeight;
+          const {
+            top: elemTop,
+            bottom: elemBottom,
+          } = imgelem.current.getBoundingClientRect();
+          const halfHeight = innerHeight / 4;
+          const topBound = -halfHeight;
+          const bottomBound = innerHeight + halfHeight;
+          if (
+            (elemTop < bottomBound && elemTop > topBound) ||
+            (elemBottom < bottomBound && elemBottom > topBound)
+          ) {
+            if (fixed) {
+              try {
+                await deferLoadImage(src);
+              } catch (e) {}
             }
-            this.running = false;
-          });
-        }
-      };
-      window.addEventListener('scroll', this.handler);
-      window.addEventListener('resize', this.handler);
-      this.handler();
-    }
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.setState((prevState) => {
-      return Object.assign({}, prevState, {imgsrc: nextProps.src});
-    });
-  }
-
-  componentWillUnmount() {
-    this.unbind();
-  }
-
-  render() {
-    const {
-      preview,
-      size,
-      fixed,
-      light,
-      noShadow,
-      color,
-      rounded,
-      imgWidth,
-      imgHeight,
-      className,
-      children,
-    } = this.props;
-    const {imgsrc, loaded} = this.state;
-
-    const k = ['img'];
-
-    if (className) {
-      k.push(className);
-    }
-    if (light) {
-      k.push('light');
-    }
-    if (noShadow) {
-      k.push('no-shadow');
-    }
-    if (rounded) {
-      k.push('rounded');
-    }
-    if (!loaded) {
-      k.push('invisible');
-    }
-    if (fixed) {
-      k.push('fixed');
-      if (!size) {
-        size = 'full';
+            setImgsrc(src);
+            setImgloaded(true);
+            return true;
+          }
+          running = false;
+        });
       }
-    }
-    switch (size) {
-      case 'sm':
-      case 'md':
-      case 'lg':
-      case 'full':
-      case 'fill':
-        k.push('sized');
-        k.push(size);
-    }
+    };
+    window.addEventListener('scroll', handler);
+    window.addEventListener('resize', handler);
+    handler();
+    return () => {
+      window.removeEventListener('scroll', handler);
+      window.removeEventListener('resize', handler);
+    };
+  }, [src, setImgsrc, imgloaded, setImgloaded, imgelem.current]);
 
-    const s = {};
-    let url = undefined;
-    if (imgsrc) {
-      url = imgsrc;
-      s.backgroundImage = `url(${imgsrc})`;
-    }
+  const k = ['img'];
 
-    const previewStyle = {};
-    let previewUrl = undefined;
+  if (className) {
+    k.push(className);
+  }
+  if (light) {
+    k.push('light');
+  }
+  if (noShadow) {
+    k.push('no-shadow');
+  }
+  if (rounded) {
+    k.push('rounded');
+  }
+  if (!imgloaded) {
+    k.push('invisible');
+  }
+
+  let imgsize = size;
+  if (fixed) {
+    k.push('fixed');
+    if (!imgsize) {
+      imgsize = 'full';
+    }
+  }
+  if (ImgSizeSet.has(imgsize)) {
+    k.push('sized');
+    k.push(size);
+  }
+
+  const s = {};
+  const previewStyle = {};
+  if (imgsrc) {
+    s.backgroundImage = `url(${imgsrc})`;
+  }
+  if (preview) {
+    previewStyle.backgroundImage = `url(${preview})`;
+  }
+  if (color) {
+    s.backgroundColor = color;
+    previewStyle.backgroundColor = color;
+  }
+
+  let image;
+  let previewImage;
+  if (fixed) {
+    image = <div className="image" style={s} />;
     if (preview) {
-      previewUrl = preview;
-      previewStyle.backgroundImage = `url(${preview})`;
+      previewImage = <div className="image preview" style={previewStyle} />;
     }
-
-    if (color) {
-      s.backgroundColor = color;
-      previewStyle.backgroundColor = color;
+  } else {
+    image = <img className="image" src={imgsrc} onLoad={handleImageLoad} />;
+    if (preview) {
+      previewImage = <img className="image preview" src={preview} />;
     }
-
-    let image;
-    let previewImage;
-    if (fixed) {
-      image = <div className="image" style={s} />;
-      if (preview) {
-        previewImage = <div className="image preview" style={previewStyle} />;
-      }
-    } else {
-      image = <img className="image" src={url} onLoad={this.imgLoaded} />;
-      if (preview) {
-        previewImage = <img className="image preview" src={previewUrl} />;
-      }
-    }
-
-    const j = {};
-    if (!size && imgWidth && imgHeight && imgWidth !== 0) {
-      j.paddingBottom = (imgHeight / imgWidth).toFixed(4) * 100 + '%';
-    }
-
-    return (
-      <div
-        className={k.join(' ')}
-        ref={(elem) => {
-          this.elem = elem;
-        }}
-      >
-        <div className="inner" style={j}>
-          {children && <div className="children">{children}</div>}
-          {image}
-          {previewImage}
-        </div>
-      </div>
-    );
   }
-}
+
+  const j = {};
+  if (!size && imgWidth && imgHeight && imgWidth !== 0) {
+    j.paddingBottom = (imgHeight / imgWidth).toFixed(4) * 100 + '%';
+  }
+
+  return (
+    <div className={k.join(' ')} ref={imgelem}>
+      <div className="inner" style={j}>
+        {children && <div className="children">{children}</div>}
+        {image}
+        {previewImage}
+      </div>
+    </div>
+  );
+};
 
 export default Img;
