@@ -1,5 +1,4 @@
-import React, {Component, Fragment} from 'react';
-import linkState from 'linkstate';
+import React, {Fragment, useState, useCallback} from 'react';
 import Section from 'component/section';
 import Input from 'component/form';
 import Card from 'component/card';
@@ -140,198 +139,213 @@ const TableData = [
   },
 ];
 
-class FormContainer extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      checkbox: false,
-      radioval: false,
-      lang: '200',
-    };
-  }
+const FormContainer = () => {
+  const [formState, setFormState] = useState({
+    checkbox: false,
+    radioval: false,
+    lang: '200',
+  });
 
-  render() {
-    const {checkbox, radioval, lang} = this.state;
-    return (
-      <Section id="form" sectionTitle="Form" container padded narrow>
-        <Input label="Name" />
-        <Input label="Email" error="not an email" />
-        <Input label="Phone" valid info="10 digits" />
-        <Input label="Tagline" info="What describes you?" />
-        <Input label="Password" type="password" />
-        <Input
-          type="checkbox"
-          label="Check me"
-          checked={checkbox}
-          onChange={linkState(this, 'checkbox')}
-          info="This is a checkbox"
-        />
-        <Input
-          type="checkbox"
-          label="Check me"
-          checked={checkbox}
-          onChange={linkState(this, 'checkbox')}
-          error="checkbox error"
-          info="This is a checkbox"
-        />
-        <Input
-          type="checkbox"
-          label="Check me"
-          checked={checkbox}
-          onChange={linkState(this, 'checkbox')}
-          valid
-          info="This is a checkbox"
-        />
-        <Input
-          type="radio"
-          label="Radio one"
-          value="one"
-          checked={radioval}
-          onChange={linkState(this, 'radioval')}
-          info="Radio button"
-        />
-        <Input
-          type="radio"
-          label="Radio two"
-          value="two"
-          checked={radioval}
-          onChange={linkState(this, 'radioval')}
-          error="radio error"
-          info="Radio button"
-        />
-        <Input
-          type="radio"
-          label="Radio three"
-          value="three"
-          checked={radioval}
-          onChange={linkState(this, 'radioval')}
-          valid
-          info="Radio button"
-        />
-        <Input type="file" label="File" info="Choose a file" />
-        <Input
-          type="file"
-          label="File"
-          error="file error"
-          info="Choose a file"
-        />
-        <Input type="file" label="File" valid info="Choose a file" />
-        <Input
-          label="Language"
-          info="Your favorite language"
-          value={lang}
-          onChange={linkState(this, 'lang')}
-          dropdown={[
-            {text: 'Rust', value: '100'},
-            {text: 'Go', value: '200'},
-            {text: 'Javascript', value: '300'},
-            {text: 'Python', value: '400'},
-            {text: 'Prolog', value: '500'},
-          ]}
-        />
-        <Input
-          label="Language"
-          error="select error"
-          info="Your favorite language"
-          value={lang}
-          onChange={linkState(this, 'lang')}
-          dropdown={[
-            {text: 'Rust', value: '100'},
-            {text: 'Go', value: '200'},
-            {text: 'Javascript', value: '300'},
-            {text: 'Python', value: '400'},
-            {text: 'Prolog', value: '500'},
-          ]}
-        />
-        <Input
-          label="Language"
-          valid
-          info="Your favorite language"
-          value={lang}
-          onChange={linkState(this, 'lang')}
-          dropdown={[
-            {text: 'Rust', value: '100'},
-            {text: 'Go', value: '200'},
-            {text: 'Javascript', value: '300'},
-            {text: 'Python', value: '400'},
-            {text: 'Prolog', value: '500'},
-          ]}
-        />
-        <p>Dropdown value: {lang}</p>
-        <Card
-          size="lg"
-          restrictWidth
-          titleBar
-          title={<h3>Vivamus nibh enim</h3>}
-          bar={
-            <Fragment>
-              <Button fixedWidth text>
-                Cancel
-              </Button>
-              <Button fixedWidth outline>
-                Save
-              </Button>
-              <Button fixedWidth primary>
-                Submit
-              </Button>
-            </Fragment>
-          }
-        >
-          <Input
-            textarea
-            fullWidth
-            label="Biography"
-            info="Tell us about yourself"
-          />
-          <Input
-            textarea
-            fullWidth
-            error="textarea error"
-            label="Biography"
-            info="Tell us about yourself"
-          />
-          <Input
-            textarea
-            fullWidth
-            valid
-            label="Biography"
-            info="Tell us about yourself"
-          />
-        </Card>
+  const setCheckbox = useCallback(
+    (val) => setFormState((prev) => Object.assign({}, prev, {checkbox: val})),
+    [setFormState],
+  );
+  const setRadio = useCallback(
+    (val) => setFormState((prev) => Object.assign({}, prev, {radioval: val})),
+    [setFormState],
+  );
+  const setLang = useCallback(
+    (val) => setFormState((prev) => Object.assign({}, prev, {lang: val})),
+    [setFormState],
+  );
+  const setFile = useCallback((val) => console.log('File:', val));
 
-        <Section subsection sectionTitle="Buttons">
-          <Button fixedWidth primary>
-            Primary
-          </Button>
-          <Button fixedWidth outline>
-            Outline
-          </Button>
-          <Button fixedWidth text>
-            Text
-          </Button>
-          <Button raised fixedWidth primary>
-            Raised Primary
-          </Button>
-          <Button raised fixedWidth outline>
-            Raised Outline
-          </Button>
-          <Button raised fixedWidth text>
-            Raised Text
-          </Button>
-        </Section>
+  return (
+    <Section id="form" sectionTitle="Form" container padded narrow>
+      <Input label="Name" />
+      <Input label="Email" error="not an email" />
+      <Input label="Phone" valid info="10 digits" />
+      <Input label="Tagline" info="What describes you?" />
+      <Input label="Password" type="password" />
+      <Input
+        type="checkbox"
+        label="Check me"
+        checked={formState.checkbox}
+        onChange={setCheckbox}
+        info="This is a checkbox"
+      />
+      <Input
+        type="checkbox"
+        label="Check me"
+        checked={formState.checkbox}
+        onChange={setCheckbox}
+        error="checkbox error"
+        info="This is a checkbox"
+      />
+      <Input
+        type="checkbox"
+        label="Check me"
+        checked={formState.checkbox}
+        onChange={setCheckbox}
+        valid
+        info="This is a checkbox"
+      />
+      <Input
+        type="radio"
+        label="Radio one"
+        value="one"
+        checked={formState.radioval}
+        onChange={setRadio}
+        info="Radio button"
+      />
+      <Input
+        type="radio"
+        label="Radio two"
+        value="two"
+        checked={formState.radioval}
+        onChange={setRadio}
+        error="radio error"
+        info="Radio button"
+      />
+      <Input
+        type="radio"
+        label="Radio three"
+        value="three"
+        checked={formState.radioval}
+        onChange={setRadio}
+        valid
+        info="Radio button"
+      />
+      <Input type="file" label="File" onChange={setFile} info="Choose a file" />
+      <Input
+        type="file"
+        label="File"
+        onChange={setFile}
+        error="file error"
+        info="Choose a file"
+      />
+      <Input
+        type="file"
+        label="File"
+        onChange={setFile}
+        valid
+        info="Choose a file"
+      />
+      <Input
+        label="Language"
+        info="Your favorite language"
+        value={formState.lang}
+        onChange={setLang}
+        dropdown={[
+          {text: 'Rust', value: '100'},
+          {text: 'Go', value: '200'},
+          {text: 'Javascript', value: '300'},
+          {text: 'Python', value: '400'},
+          {text: 'Prolog', value: '500'},
+        ]}
+      />
+      <Input
+        label="Language"
+        error="select error"
+        info="Your favorite language"
+        value={formState.lang}
+        onChange={setLang}
+        dropdown={[
+          {text: 'Rust', value: '100'},
+          {text: 'Go', value: '200'},
+          {text: 'Javascript', value: '300'},
+          {text: 'Python', value: '400'},
+          {text: 'Prolog', value: '500'},
+        ]}
+      />
+      <Input
+        label="Language"
+        valid
+        info="Your favorite language"
+        value={formState.lang}
+        onChange={setLang}
+        dropdown={[
+          {text: 'Rust', value: '100'},
+          {text: 'Go', value: '200'},
+          {text: 'Javascript', value: '300'},
+          {text: 'Python', value: '400'},
+          {text: 'Prolog', value: '500'},
+        ]}
+      />
+      <p>Dropdown value: {formState.lang}</p>
+      <Card
+        size="lg"
+        restrictWidth
+        titleBar
+        title={<h3>Vivamus nibh enim</h3>}
+        bar={
+          <Fragment>
+            <Button fixedWidth text>
+              Cancel
+            </Button>
+            <Button fixedWidth outline>
+              Save
+            </Button>
+            <Button fixedWidth primary>
+              Submit
+            </Button>
+          </Fragment>
+        }
+      >
+        <Input
+          textarea
+          fullWidth
+          label="Biography"
+          info="Tell us about yourself"
+        />
+        <Input
+          textarea
+          fullWidth
+          error="textarea error"
+          label="Biography"
+          info="Tell us about yourself"
+        />
+        <Input
+          textarea
+          fullWidth
+          valid
+          label="Biography"
+          info="Tell us about yourself"
+        />
+      </Card>
 
-        <Section subsection sectionTitle="Table">
-          <Table
-            head={[
-              {key: 'name', component: 'name'},
-              {key: 'desc', component: 'description'},
-            ]}
-            data={TableData}
-          />
-        </Section>
+      <Section subsection sectionTitle="Buttons">
+        <Button fixedWidth primary>
+          Primary
+        </Button>
+        <Button fixedWidth outline>
+          Outline
+        </Button>
+        <Button fixedWidth text>
+          Text
+        </Button>
+        <Button raised fixedWidth primary>
+          Raised Primary
+        </Button>
+        <Button raised fixedWidth outline>
+          Raised Outline
+        </Button>
+        <Button raised fixedWidth text>
+          Raised Text
+        </Button>
       </Section>
-    );
-  }
-}
+
+      <Section subsection sectionTitle="Table">
+        <Table
+          head={[
+            {key: 'name', component: 'name'},
+            {key: 'desc', component: 'description'},
+          ]}
+          data={TableData}
+        />
+      </Section>
+    </Section>
+  );
+};
 
 export default FormContainer;
