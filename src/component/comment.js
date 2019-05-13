@@ -124,8 +124,4 @@ const CommentSection = ({children}) => {
   );
 };
 
-const Components = {Comment, CommentSection};
-
-export {Comment, CommentSection};
-
-export default Components;
+export {Comment, CommentSection, CommentSection as default};

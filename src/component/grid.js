@@ -74,6 +74,4 @@ const Column = ({xs, sm, md, lg, children}) => {
   return <div className={k.join(' ')}>{children}</div>;
 };
 
-export {Grid, Column};
-
-export default Grid;
+export {Grid, Column, Grid as default};

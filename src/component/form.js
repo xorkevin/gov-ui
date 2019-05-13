@@ -1,9 +1,12 @@
-import React, {useState, useMemo} from 'react';
+import React, {useState, useCallback, useMemo} from 'react';
 import shortid from 'shortid';
 
 const Input = ({
   type,
+  name,
   value,
+  onChange,
+  onEnter,
   label,
   info,
   error,
@@ -14,8 +17,6 @@ const Input = ({
   accept,
   capture,
   checked,
-  onChange,
-  onEnter,
   wide,
   fullWidth,
 }) => {
@@ -29,21 +30,21 @@ const Input = ({
       case 'file':
         return (event) => {
           if (event.target.files.length < 1) {
-            onChange(undefined);
+            onChange(name, undefined);
           } else {
-            onChange(event.target.files[0]);
+            onChange(name, event.target.files[0]);
           }
         };
       case 'checkbox':
         return (event) => {
-          onChange(event.target.checked);
+          onChange(name, event.target.checked);
         };
       default:
         return (event) => {
-          onChange(event.target.value);
+          onChange(name, event.target.value);
         };
     }
-  }, [onChange, type]);
+  }, [type, name, onChange]);
 
   const handleEnter = useMemo(() => {
     if (!onEnter) {
@@ -96,6 +97,7 @@ const Input = ({
     inp = (
       <textarea
         id={id}
+        name={name}
         value={value}
         onChange={handleChange}
         onKeyPress={handleEnter}
@@ -109,12 +111,11 @@ const Input = ({
           <input
             id={id}
             type={type}
-            accept={accept}
-            capture={capture}
-            value={value}
-            checked={checked}
+            name={name}
             onChange={handleChange}
             onKeyPress={handleEnter}
+            accept={accept}
+            capture={capture}
             placeholder=" "
           />
         );
@@ -124,6 +125,7 @@ const Input = ({
           <input
             id={id}
             type={type}
+            name={name}
             value={value}
             checked={checked === value}
             onChange={handleChange}
@@ -137,6 +139,7 @@ const Input = ({
           <input
             id={id}
             type={type}
+            name={name}
             checked={checked}
             onChange={handleChange}
             onKeyPress={handleEnter}
@@ -149,6 +152,7 @@ const Input = ({
           <input
             id={id}
             type={type}
+            name={name}
             value={value}
             onChange={handleChange}
             onKeyPress={handleEnter}
@@ -169,4 +173,14 @@ const Input = ({
   );
 };
 
-export default Input;
+const useForm = (initState) => {
+  const [formState, setFormState] = useState(initState);
+  const updateForm = useCallback(
+    (name, val) =>
+      setFormState((prev) => Object.assign({}, prev, {[name]: val})),
+    [setFormState],
+  );
+  return [formState, updateForm];
+};
+
+export {Input, useForm, Input as default};

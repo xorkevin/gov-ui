@@ -180,7 +180,4 @@ class Navbar extends Component {
   }
 }
 
-const Components = {Navbar, Navitem};
-
-export {Navbar, Navitem};
-export default Components;
+export {Navbar, Navitem, Navbar as default};
