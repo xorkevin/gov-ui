@@ -1,10 +1,4 @@
-import React, {
-  Component,
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
-} from 'react';
+import React, {useState, useEffect, useCallback, useRef} from 'react';
 
 const deferLoadImage = (src) => {
   return new Promise((resolve, reject) => {
