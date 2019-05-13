@@ -1,5 +1,50 @@
 import React, {useState, useEffect, useCallback, useRef} from 'react';
 
+const useViewIntersectOnce = (refelem, callback) => {
+  const [intersected, setIntersect] = useState(false);
+  useEffect(() => {
+    if (intersected || !refelem.current) {
+      return;
+    }
+
+    let running = false;
+    const handler = () => {
+      if (!running) {
+        running = true;
+        window.requestAnimationFrame(async () => {
+          const innerHeight = window.innerHeight;
+          const {
+            top: elemTop,
+            bottom: elemBottom,
+          } = refelem.current.getBoundingClientRect();
+
+          const halfHeight = innerHeight / 4;
+          const topBound = -halfHeight;
+          const bottomBound = innerHeight + halfHeight;
+
+          if (
+            (elemTop < bottomBound && elemTop > topBound) ||
+            (elemBottom < bottomBound && elemBottom > topBound)
+          ) {
+            setIntersect(true);
+            callback();
+          } else {
+            running = false;
+          }
+        });
+      }
+    };
+    window.addEventListener('scroll', handler);
+    window.addEventListener('resize', handler);
+    handler();
+    return () => {
+      window.removeEventListener('scroll', handler);
+      window.removeEventListener('resize', handler);
+    };
+  }, [intersected, setIntersect, refelem.current, callback]);
+  return intersected;
+};
+
 const deferLoadImage = (src) => {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -34,50 +79,18 @@ const Img = ({
     setImgloaded(true);
   }, [setImgloaded]);
 
-  useEffect(() => {
-    if (!src || !imgelem.current || imgloaded) {
-      return;
+  const imgCallback = useCallback(async () => {
+    if (fixed) {
+      try {
+        await deferLoadImage(src);
+        setImgsrc(src);
+        setImgloaded(true);
+      } catch (e) {}
+    } else {
+      setImgsrc(src);
     }
-    let running = false;
-    const handler = () => {
-      if (!running) {
-        running = true;
-        window.requestAnimationFrame(async () => {
-          const innerHeight = window.innerHeight;
-          const {
-            top: elemTop,
-            bottom: elemBottom,
-          } = imgelem.current.getBoundingClientRect();
-          const halfHeight = innerHeight / 4;
-          const topBound = -halfHeight;
-          const bottomBound = innerHeight + halfHeight;
-          if (
-            (elemTop < bottomBound && elemTop > topBound) ||
-            (elemBottom < bottomBound && elemBottom > topBound)
-          ) {
-            if (fixed) {
-              try {
-                await deferLoadImage(src);
-                setImgsrc(src);
-                setImgloaded(true);
-              } catch (e) {}
-            } else {
-              setImgsrc(src);
-            }
-            return true;
-          }
-          running = false;
-        });
-      }
-    };
-    window.addEventListener('scroll', handler);
-    window.addEventListener('resize', handler);
-    handler();
-    return () => {
-      window.removeEventListener('scroll', handler);
-      window.removeEventListener('resize', handler);
-    };
-  }, [src, fixed, setImgsrc, imgloaded, setImgloaded, imgelem.current]);
+  }, [src, setImgsrc, setImgloaded, fixed]);
+  useViewIntersectOnce(imgelem, imgCallback);
 
   const k = ['img'];
 
