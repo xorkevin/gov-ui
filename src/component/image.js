@@ -1,4 +1,10 @@
-import React, {Component, useState, useCallback, useRef} from 'react';
+import React, {
+  Component,
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+} from 'react';
 
 const deferLoadImage = (src) => {
   return new Promise((resolve, reject) => {
@@ -16,21 +22,21 @@ const ImgSizeSet = new Set(['sm', 'md', 'lg', 'full', 'fill']);
 const Img = ({
   src,
   preview,
+  imgWidth,
+  imgHeight,
   size,
-  fixed,
   light,
   noShadow,
   rounded,
+  fixed,
   color,
-  imgWidth,
-  imgHeight,
   className,
   children,
 }) => {
-  const [imgsrc, setImgsrc] = useState(false);
+  const [imgsrc, setImgsrc] = useState(undefined);
   const [imgloaded, setImgloaded] = useState(false);
   const imgelem = useRef(null);
-  const handleImageLoad = useCallback(() => {
+  const handleImgLoad = useCallback(() => {
     setImgloaded(true);
   }, [setImgloaded]);
 
@@ -58,10 +64,12 @@ const Img = ({
             if (fixed) {
               try {
                 await deferLoadImage(src);
+                setImgsrc(src);
+                setImgloaded(true);
               } catch (e) {}
+            } else {
+              setImgsrc(src);
             }
-            setImgsrc(src);
-            setImgloaded(true);
             return true;
           }
           running = false;
@@ -75,25 +83,9 @@ const Img = ({
       window.removeEventListener('scroll', handler);
       window.removeEventListener('resize', handler);
     };
-  }, [src, setImgsrc, imgloaded, setImgloaded, imgelem.current]);
+  }, [src, fixed, setImgsrc, imgloaded, setImgloaded, imgelem.current]);
 
   const k = ['img'];
-
-  if (className) {
-    k.push(className);
-  }
-  if (light) {
-    k.push('light');
-  }
-  if (noShadow) {
-    k.push('no-shadow');
-  }
-  if (rounded) {
-    k.push('rounded');
-  }
-  if (!imgloaded) {
-    k.push('invisible');
-  }
 
   let imgsize = size;
   if (fixed) {
@@ -106,29 +98,44 @@ const Img = ({
     k.push('sized');
     k.push(size);
   }
+  if (light) {
+    k.push('light');
+  }
+  if (noShadow) {
+    k.push('no-shadow');
+  }
+  if (rounded) {
+    k.push('rounded');
+  }
+  if (className) {
+    k.push(className);
+  }
 
-  const s = {};
-  const previewStyle = {};
-  if (imgsrc) {
-    s.backgroundImage = `url(${imgsrc})`;
-  }
-  if (preview) {
-    previewStyle.backgroundImage = `url(${preview})`;
-  }
-  if (color) {
-    s.backgroundColor = color;
-    previewStyle.backgroundColor = color;
+  if (!imgloaded) {
+    k.push('invisible');
   }
 
   let image;
   let previewImage;
   if (fixed) {
+    const s = {};
+    const previewStyle = {};
+    if (imgsrc) {
+      s.backgroundImage = `url(${imgsrc})`;
+    }
+    if (preview) {
+      previewStyle.backgroundImage = `url(${preview})`;
+    }
+    if (color) {
+      s.backgroundColor = color;
+      previewStyle.backgroundColor = color;
+    }
     image = <div className="image" style={s} />;
     if (preview) {
       previewImage = <div className="image preview" style={previewStyle} />;
     }
   } else {
-    image = <img className="image" src={imgsrc} onLoad={handleImageLoad} />;
+    image = <img className="image" src={imgsrc} onLoad={handleImgLoad} />;
     if (preview) {
       previewImage = <img className="image preview" src={preview} />;
     }
