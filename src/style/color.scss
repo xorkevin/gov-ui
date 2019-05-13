@@ -38,8 +38,10 @@ $color-text-light-4: rgba($white, 0.12) !default; // dividers
 // $color-grey-100: #F5F5F5;
 // $color-grey-50 : #FAFAFA;
 
-$color-valid: #61d095 !default;
-$color-invalid: #c62828 !default;
+$color-valid: #308457 !default;
+$color-valid-light: #5bc38c !default;
+$color-invalid: #a72222 !default;
+$color-invalid-light: #f15656 !default;
 
 $shadow-box: 0 2px 4px 0 $color-text-dark-4, 0 2px 8px 0 $color-text-dark-4;
 $shadow-box-2: 0 1px 2px 0 $color-text-dark-4, 0 1px 4px 0 $color-text-dark-4;

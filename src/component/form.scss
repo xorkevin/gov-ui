@@ -248,6 +248,10 @@ body.dark {
       }
     }
 
+    & > .error {
+      color: $color-invalid-light;
+    }
+
     & > select {
       & ~ .dropdown-arrow {
         border-top-color: $color-text-light-2;
@@ -261,20 +265,20 @@ body.dark {
 
   .input.invalid {
     & > label {
-      color: $color-invalid !important;
+      color: $color-invalid-light !important;
 
       &:after {
-        background-color: $color-invalid !important;
+        background-color: $color-invalid-light !important;
       }
     }
   }
 
   .input.valid {
     & > label {
-      color: $color-valid !important;
+      color: $color-valid-light !important;
 
       &:after {
-        background-color: $color-valid !important;
+        background-color: $color-valid-light !important;
       }
     }
   }
