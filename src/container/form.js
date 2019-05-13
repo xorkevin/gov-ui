@@ -144,23 +144,108 @@ class FormContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      checkbox: false,
+      radioval: false,
       lang: '200',
     };
   }
 
   render() {
-    const {lang} = this.state;
+    const {checkbox, radioval, lang} = this.state;
     return (
       <Section id="form" sectionTitle="Form" container padded narrow>
         <Input label="Name" />
         <Input label="Email" error="not an email" />
-        <Input label="Phone" valid />
+        <Input label="Phone" valid info="10 digits" />
         <Input label="Tagline" info="What describes you?" />
-        <Input type="checkbox" label="Check me" info="This is a checkbox" />
-        <Input type="radio" label="Radio" info="Radio button" />
+        <Input label="Password" type="password" />
+        <Input
+          type="checkbox"
+          label="Check me"
+          checked={checkbox}
+          onChange={linkState(this, 'checkbox')}
+          info="This is a checkbox"
+        />
+        <Input
+          type="checkbox"
+          label="Check me"
+          checked={checkbox}
+          onChange={linkState(this, 'checkbox')}
+          error="checkbox error"
+          info="This is a checkbox"
+        />
+        <Input
+          type="checkbox"
+          label="Check me"
+          checked={checkbox}
+          onChange={linkState(this, 'checkbox')}
+          valid
+          info="This is a checkbox"
+        />
+        <Input
+          type="radio"
+          label="Radio one"
+          value="one"
+          checked={radioval}
+          onChange={linkState(this, 'radioval')}
+          info="Radio button"
+        />
+        <Input
+          type="radio"
+          label="Radio two"
+          value="two"
+          checked={radioval}
+          onChange={linkState(this, 'radioval')}
+          error="radio error"
+          info="Radio button"
+        />
+        <Input
+          type="radio"
+          label="Radio three"
+          value="three"
+          checked={radioval}
+          onChange={linkState(this, 'radioval')}
+          valid
+          info="Radio button"
+        />
         <Input type="file" label="File" info="Choose a file" />
         <Input
+          type="file"
+          label="File"
+          error="file error"
+          info="Choose a file"
+        />
+        <Input type="file" label="File" valid info="Choose a file" />
+        <Input
           label="Language"
+          info="Your favorite language"
+          value={lang}
+          onChange={linkState(this, 'lang')}
+          dropdown={[
+            {text: 'Rust', value: '100'},
+            {text: 'Go', value: '200'},
+            {text: 'Javascript', value: '300'},
+            {text: 'Python', value: '400'},
+            {text: 'Prolog', value: '500'},
+          ]}
+        />
+        <Input
+          label="Language"
+          error="select error"
+          info="Your favorite language"
+          value={lang}
+          onChange={linkState(this, 'lang')}
+          dropdown={[
+            {text: 'Rust', value: '100'},
+            {text: 'Go', value: '200'},
+            {text: 'Javascript', value: '300'},
+            {text: 'Python', value: '400'},
+            {text: 'Prolog', value: '500'},
+          ]}
+        />
+        <Input
+          label="Language"
+          valid
           info="Your favorite language"
           value={lang}
           onChange={linkState(this, 'lang')}
@@ -195,6 +280,20 @@ class FormContainer extends Component {
           <Input
             textarea
             fullWidth
+            label="Biography"
+            info="Tell us about yourself"
+          />
+          <Input
+            textarea
+            fullWidth
+            error="textarea error"
+            label="Biography"
+            info="Tell us about yourself"
+          />
+          <Input
+            textarea
+            fullWidth
+            valid
             label="Biography"
             info="Tell us about yourself"
           />

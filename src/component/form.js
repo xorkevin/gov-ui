@@ -10,19 +10,20 @@ class Input extends Component {
   }
 
   handleChange(event) {
-    if (this.props.type && this.props.type === 'file') {
-      if (event.target.files.length < 1) {
-        if (this.props.onChange) {
-          this.props.onChange(undefined);
-        }
-      } else {
-        if (this.props.onChange) {
-          this.props.onChange(event.target.files[0]);
-        }
-      }
-    } else {
-      if (this.props.onChange) {
-        this.props.onChange(event.target.value);
+    if (this.props.onChange) {
+      switch (this.props.type) {
+        case 'file':
+          if (event.target.files.length < 1) {
+            this.props.onChange(undefined);
+          } else {
+            this.props.onChange(event.target.files[0]);
+          }
+          break;
+        case 'checkbox':
+          this.props.onChange(event.target.checked);
+          break;
+        default:
+          this.props.onChange(event.target.value);
       }
     }
   }
@@ -35,18 +36,19 @@ class Input extends Component {
 
   render() {
     const {
+      type,
       value,
       label,
       info,
-      valid,
       error,
+      valid,
+      wide,
       fullWidth,
-      type,
-      accept,
-      capture,
-      textarea,
       dropdown,
       multiple,
+      textarea,
+      accept,
+      capture,
       checked,
     } = this.props;
 
@@ -65,7 +67,9 @@ class Input extends Component {
       k.push('checkbox');
     }
 
-    if (fullWidth) {
+    if (wide) {
+      k.push('wide');
+    } else if (fullWidth) {
       k.push('full-width');
     }
 
@@ -98,34 +102,60 @@ class Input extends Component {
           placeholder=" "
         />
       );
-    } else if (
-      type &&
-      (type === 'file' || type === 'radio' || type === 'checkbox')
-    ) {
-      inp = (
-        <input
-          id={this.id}
-          type={type}
-          accept={accept}
-          capture={capture}
-          value={value}
-          checked={checked}
-          onChange={this.handleChange}
-          onKeyPress={this.handleEnter}
-          placeholder=" "
-        />
-      );
     } else {
-      inp = (
-        <input
-          id={this.id}
-          type={type}
-          value={value}
-          onChange={this.handleChange}
-          onKeyPress={this.handleEnter}
-          placeholder=" "
-        />
-      );
+      switch (type) {
+        case 'file':
+          inp = (
+            <input
+              id={this.id}
+              type={type}
+              accept={accept}
+              capture={capture}
+              value={value}
+              checked={checked}
+              onChange={this.handleChange}
+              onKeyPress={this.handleEnter}
+              placeholder=" "
+            />
+          );
+          break;
+        case 'radio':
+          inp = (
+            <input
+              id={this.id}
+              type={type}
+              value={value}
+              checked={checked === value}
+              onChange={this.handleChange}
+              onKeyPress={this.handleEnter}
+              placeholder=" "
+            />
+          );
+          break;
+        case 'checkbox':
+          inp = (
+            <input
+              id={this.id}
+              type={type}
+              checked={checked}
+              onChange={this.handleChange}
+              onKeyPress={this.handleEnter}
+              placeholder=" "
+            />
+          );
+          break;
+        default:
+          inp = (
+            <input
+              id={this.id}
+              type={type}
+              value={value}
+              onChange={this.handleChange}
+              onKeyPress={this.handleEnter}
+              placeholder=" "
+            />
+          );
+      }
     }
 
     return (

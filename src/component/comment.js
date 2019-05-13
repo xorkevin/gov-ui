@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import Container from 'component/container';
 import Time from 'component/time';
 
@@ -8,12 +8,14 @@ const Comment = ({depth, username, score, time, content, children}) => {
   if (hidden) {
     k.push('hidden');
   }
+  const toggleHidden = useCallback(() => setHidden((h) => !h), []);
+
   return (
     <div className={k.join(' ')}>
       <div className="inner">
         <div className="info">
           <span className="data hide">
-            <a className="no-color" onClick={() => setHidden((h) => !h)}>
+            <a className="no-color" onClick={toggleHidden}>
               [{hidden && '+'}
               {!hidden && '-'}]
             </a>

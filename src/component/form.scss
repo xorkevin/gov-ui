@@ -17,6 +17,31 @@ textarea {
     width: 100%;
   }
 
+  & > input,
+  & > textarea,
+  & > select {
+    & ~ .info {
+      color: $color-text-dark-3;
+      position: absolute;
+      font-size: 0.75em;
+      margin-top: 2px;
+      display: block;
+    }
+
+    &:focus ~ .info {
+      color: $color-text-dark-2;
+    }
+
+    & ~ .error {
+      color: $color-invalid;
+      position: absolute;
+      font-size: 0.75em;
+      margin-top: 2px;
+      visibility: hidden;
+      display: block;
+    }
+  }
+
   & > input:not([type='radio']):not([type='checkbox']),
   & > textarea,
   & > select {
@@ -43,124 +68,49 @@ textarea {
       text-align: left;
 
       &:after {
-        background-color: $color-primary;
-        bottom: 20px;
-        left: calc(50% - 8px);
-        width: 16px;
-        height: 2px;
         content: '';
         position: absolute;
-        transition: $transition-normal;
+        width: 16px;
+        height: 2px;
+        bottom: 20px;
+        left: calc(50% - 8px);
         visibility: hidden;
+        transition: $transition-normal;
+        background-color: $color-primary;
       }
     }
 
-    &:focus {
-      outline: none;
-    }
+    &:focus,
+    &:not(:placeholder-shown) {
+      & + label {
+        color: $color-primary;
+        font-size: 0.75em;
+        top: 4px;
+      }
 
-    &:focus + label {
-      color: $color-primary;
-      font-size: 0.75em;
-      top: 4px;
-      visibility: visible;
-
-      &:after {
-        left: 0;
-        visibility: visible;
-        width: 100%;
+      & ~ .info {
+        color: $color-text-dark-2;
       }
     }
 
-    &:not(:placeholder-shown) + label {
-      color: $color-primary;
-      font-size: 0.75em;
-      top: 4px;
+    &:focus + label:after {
+      width: 100%;
+      left: 0;
       visibility: visible;
-    }
-
-    & ~ .info {
-      color: $color-text-dark-3;
-      position: absolute;
-      font-size: 0.75em;
-      margin-top: 2px;
-      display: block;
-    }
-
-    &:focus ~ .info {
-      color: $color-text-dark-2;
-    }
-
-    &:not(:placeholder-shown) ~ .info {
-      color: $color-text-dark-2;
-    }
-
-    & ~ .error {
-      color: $color-invalid;
-      position: absolute;
-      font-size: 0.75em;
-      margin-top: 2px;
-      visibility: hidden;
-      display: block;
     }
   }
 
   &.file {
-    padding-top: 20px;
-    padding-bottom: 20px;
-
     & > input[type='file'] {
       border-bottom: none;
 
-      & + label,
-      & + label:hover {
-        &:after {
-          content: none;
-        }
+      &:hover {
+        cursor: pointer;
       }
-    }
-  }
 
-  &.radio,
-  &.checkbox {
-    padding-top: 10px;
-    padding-bottom: 20px;
-  }
-
-  & > input[type='radio'],
-  & > input[type='checkbox'] {
-    border-bottom: none;
-    vertical-align: middle;
-    margin-right: 8px;
-
-    & + label,
-    & + label:hover {
-      vertical-align: middle;
-
-      &:after {
+      & + label:after {
         content: none;
       }
-    }
-
-    & ~ .info {
-      color: $color-text-dark-3;
-      position: absolute;
-      font-size: 0.75em;
-      margin-top: 2px;
-      display: block;
-    }
-
-    &:focus ~ .info {
-      color: $color-text-dark-2;
-    }
-
-    & ~ .error {
-      color: $color-invalid;
-      position: absolute;
-      font-size: 0.75em;
-      margin-top: 2px;
-      visibility: hidden;
-      display: block;
     }
   }
 
@@ -205,6 +155,27 @@ textarea {
       background: none;
     }
   }
+
+  &.radio,
+  &.checkbox {
+    padding-top: 10px;
+    padding-bottom: 20px;
+
+    & > input[type='radio'],
+    & > input[type='checkbox'] {
+      border-bottom: none;
+      vertical-align: middle;
+      margin-right: 8px;
+
+      & + label {
+        vertical-align: middle;
+
+        &:after {
+          content: none;
+        }
+      }
+    }
+  }
 }
 
 .input.invalid {
@@ -213,9 +184,9 @@ textarea {
 
     &:after {
       background-color: $color-invalid !important;
-      left: 0;
-      visibility: visible;
-      width: 100%;
+      left: 0 !important;
+      visibility: visible !important;
+      width: 100% !important;
     }
   }
 
@@ -230,9 +201,6 @@ textarea {
 
     &:after {
       background-color: $color-valid !important;
-      left: 0;
-      visibility: visible;
-      width: 100%;
     }
   }
 }
@@ -240,6 +208,9 @@ textarea {
 body.dark {
   .input {
     & > input:not([type='radio']):not([type='checkbox']),
+    & > input[type='file'],
+    & > input[type='radio'],
+    & > input[type='checkbox'],
     & > input,
     & > textarea,
     & > select {
@@ -254,24 +225,19 @@ body.dark {
         }
       }
 
-      &:focus + label {
-        color: $color-text-light-1-5;
-      }
-
-      &:not(:placeholder-shown) + label {
-        color: $color-text-light-1-5;
-      }
-
       & ~ .info {
         color: $color-text-light-3;
       }
 
-      &:focus ~ .info {
-        color: $color-text-light-2;
-      }
+      &:focus,
+      &:not(:placeholder-shown) {
+        & + label {
+          color: $color-text-light-1-5;
+        }
 
-      &:not(:placeholder-shown) ~ .info {
-        color: $color-text-light-2;
+        & ~ .info {
+          color: $color-text-light-2;
+        }
       }
     }
 
@@ -280,9 +246,8 @@ body.dark {
         border-top-color: $color-text-light-2;
       }
 
-      & > option,
-      & > option:checked {
-        background: $color-text-dark-1;
+      & > option {
+        color: $color-text-dark-1;
       }
     }
   }
