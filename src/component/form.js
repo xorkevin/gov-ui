@@ -19,7 +19,7 @@ const Input = ({
   wide,
   fullWidth,
 }) => {
-  const id = useMemo(() => shortid.generate());
+  const id = useMemo(() => shortid.generate(), []);
 
   const handleChange = useMemo(() => {
     if (!onChange) {
