@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {useState, useEffect, useMemo} from 'react';
 import Container from 'component/container';
 
 const scrollTime = 384;
@@ -59,125 +59,102 @@ const Navitem = ({home, scroll, children}) => {
   if (home) {
     className.push('nav-home');
   }
-  const itemProps = {};
-  if (scroll) {
-    itemProps.onClick = () => {
-      scrollTo(scroll);
-    };
-  }
+
+  const onClickHandler = useMemo(() => {
+    if (scroll) {
+      return () => {
+        scrollTo(scroll);
+      };
+    }
+    return undefined;
+  }, [scroll, scrollTo]);
+
   return (
-    <div className={className.join(' ')} {...itemProps}>
+    <div className={className.join(' ')} onClick={onClickHandler}>
       {children}
     </div>
   );
 };
 
-class Navbar extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      top: false,
-      hidden: false,
-    };
-    this.position = window.pageYOffset;
-  }
+const Navbar = ({sidebar, left, right, hideOnScroll, styletop, children}) => {
+  const [top, setTop] = useState(false);
+  const [hidden, setHidden] = useState(false);
 
-  tickTop() {
-    const position = window.pageYOffset;
-    if (position < 256) {
-      this.setState((prevState) => {
-        return Object.assign({}, prevState, {top: true});
-      });
-    } else {
-      this.setState((prevState) => {
-        return Object.assign({}, prevState, {top: false});
-      });
-    }
-  }
-
-  tick() {
-    const nextPosition = window.pageYOffset;
-    const diff = nextPosition - this.position;
-    if (Math.abs(diff) > scrollTriggerMargin) {
-      this.setState((prevState) => {
-        return Object.assign({}, prevState, {hidden: diff > 0});
-      });
-      this.position = nextPosition;
-    }
-  }
-
-  unbind() {
-    if (this.handlerTop) {
-      window.removeEventListener('scroll', this.handlerTop);
-      this.handlerTop = false;
-    }
-    if (this.handler) {
-      window.removeEventListener('scroll', this.handler);
-      this.handler = false;
-    }
-  }
-
-  componentDidMount() {
-    if (!this.props.sidebar) {
-      this.runningTop = false;
-      this.handlerTop = () => {
-        if (!this.runningTop) {
-          this.runningTop = true;
-          window.requestAnimationFrame(() => {
-            this.tickTop();
-            this.runningTop = false;
-          });
-        }
-      };
-      window.addEventListener('scroll', this.handlerTop);
-      this.handlerTop();
-    }
-    if (!this.props.sidebar && this.props.hideOnScroll) {
-      this.running = false;
-      this.handler = () => {
-        if (!this.running) {
-          this.running = true;
-          window.requestAnimationFrame(() => {
-            this.tick();
-            this.running = false;
-          });
-        }
-      };
-      window.addEventListener('scroll', this.handler);
-      this.handler();
-    }
-  }
-
-  componentWillUnmount() {
-    this.unbind();
-  }
-
-  render() {
-    const {sidebar, left, right, styletop, children} = this.props;
-    const {top, hidden} = this.state;
-    const className = [];
+  useEffect(() => {
     if (sidebar) {
-      className.push('sidebar');
+      return;
     }
-    if (!sidebar && !top && hidden) {
-      className.push('hidden');
-    }
-    if (styletop && top) {
-      className.push('top');
-    }
+    let running = false;
+    const handler = () => {
+      if (!running) {
+        running = true;
+        window.requestAnimationFrame(() => {
+          const position = window.pageYOffset;
+          if (position < 256) {
+            setTop(true);
+          } else {
+            setTop(false);
+          }
+          running = false;
+        });
+      }
+    };
+    window.addEventListener('scroll', handler);
+    handler();
+    return () => {
+      window.removeEventListener('scroll', handler);
+    };
+  }, [sidebar, setTop]);
 
-    return (
-      <nav className={className.join(' ')}>
-        <div className="nav-container">
-          <Container>
-            <div className="element">{left}</div>
-            {children && <div className="element">{children}</div>}
-            <div className="element">{right}</div>
-          </Container>
-        </div>
-      </nav>
-    );
+  useEffect(() => {
+    if (sidebar || !hideOnScroll) {
+      return;
+    }
+    let position = window.pageYOffset;
+    let running = false;
+    const handler = () => {
+      if (!running) {
+        running = true;
+        window.requestAnimationFrame(() => {
+          const nextPosition = window.pageYOffset;
+          const diff = nextPosition - position;
+          if (Math.abs(diff) > scrollTriggerMargin) {
+            setHidden(diff > 0);
+            position = nextPosition;
+          }
+          running = false;
+        });
+      }
+    };
+    window.addEventListener('scroll', handler);
+    handler();
+    return () => {
+      window.removeEventListener('scroll', handler);
+    };
+  }, [sidebar, hideOnScroll, setHidden]);
+
+  const k = [];
+  if (sidebar) {
+    k.push('sidebar');
   }
-}
+  if (!sidebar && !top && hidden) {
+    k.push('hidden');
+  }
+  if (styletop && top) {
+    k.push('top');
+  }
+
+  return (
+    <nav className={k.join(' ')}>
+      <div className="nav-container">
+        <Container>
+          <div className="element">{left}</div>
+          {children && <div className="element">{children}</div>}
+          <div className="element">{right}</div>
+        </Container>
+      </div>
+    </nav>
+  );
+};
 
 export {Navbar, Navitem, Navbar as default};
