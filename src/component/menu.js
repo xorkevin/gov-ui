@@ -1,155 +1,119 @@
-import React, {Component} from 'react';
+import React, {useState, useEffect, useCallback, useRef} from 'react';
 import ReactDOM from 'react-dom';
 
-class MenuContainer extends Component {
-  tick() {
-    const bounds = this.props.reference.getBoundingClientRect();
-    this.setState((prevState) => {
-      return Object.assign({}, prevState, {bounds, scrollY: window.scrollY});
-    });
-  }
+const MenuSizeSet = new Set(['sm', 'md', 'lg']);
 
-  componentWillMount() {
-    this.tick();
-  }
+const MenuContainer = ({
+  size,
+  align,
+  position,
+  fixed,
+  reference,
+  close,
+  children,
+}) => {
+  const [bounds, setBounds] = useState(
+    reference.current.getBoundingClientRect(),
+  );
+  const [scrollY, setScrollY] = useState(window.scrollY);
 
-  componentDidMount() {
-    this.running = false;
-    this.handler = () => {
-      if (!this.running) {
-        this.running = true;
+  useEffect(() => {
+    let running = false;
+    const handler = () => {
+      if (!running) {
+        running = true;
         window.requestAnimationFrame(() => {
-          this.tick();
-          this.running = false;
+          setBounds(reference.current.getBoundingClientRect());
+          setScrollY(window.scrollY);
+          running = false;
         });
       }
     };
-    this.handlerClick = () => {
-      this.props.close();
+    window.addEventListener('resize', handler);
+    window.addEventListener('scroll', handler);
+    window.addEventListener('click', close);
+    return () => {
+      window.removeEventListener('resize', handler);
+      window.removeEventListener('scroll', handler);
+      window.removeEventListener('click', close);
     };
-    window.addEventListener('resize', this.handler, true);
-    window.addEventListener('scroll', this.handler, true);
-    window.addEventListener('click', this.handlerClick);
+  }, [reference.current, close, setBounds, setScrollY]);
+
+  const k = ['menu'];
+  const s = {};
+  const t = {
+    left: bounds.width / 2,
+  };
+
+  if (MenuSizeSet.has(size)) {
+    k.push(size);
   }
 
-  componentWillUnmount() {
-    if (this.handler) {
-      window.removeEventListener('resize', this.handler, true);
-      window.removeEventListener('scroll', this.handler, true);
-      this.handler = false;
-    }
-    if (this.handlerClick) {
-      window.removeEventListener('click', this.handlerClick);
-      this.handlerClick = false;
-    }
+  if (align === 'right') {
+    s.left = bounds.right;
+    k.push('right');
+    t.left *= -1;
+  } else {
+    s.left = bounds.left;
+    k.push('left');
+  }
+  if (position === 'top') {
+    s.top = bounds.top;
+    k.push('top');
+  } else {
+    s.top = bounds.bottom;
+    k.push('bottom');
+  }
+  if (fixed) {
+    k.push('fixed');
+  } else {
+    s.top += scrollY;
   }
 
-  render() {
-    const {size, align, position, fixed, children} = this.props;
-    const {bounds, scrollY} = this.state;
-    const k = ['menu'];
-    const s = {};
-    const t = {};
+  return (
+    <div className={k.join(' ')} style={s}>
+      <div className="menu-container">{children}</div>
+      <div className="triangle" style={t} />
+    </div>
+  );
+};
 
-    switch (size) {
-      case 'sm':
-      case 'md':
-      case 'lg':
-        k.push(size);
-    }
+const Menu = ({icon, size, align, position, fixed, children}) => {
+  const [hidden, setHidden] = useState(true);
+  const menuelem = useRef(null);
 
-    if (bounds) {
-      t.left = bounds.width / 2;
-      if (align === 'right') {
-        s.left = bounds.right;
-        k.push('right');
-        t.left *= -1;
-      } else {
-        s.left = bounds.left;
-        k.push('left');
-      }
-      if (position === 'top') {
-        s.top = bounds.top;
-        k.push('top');
-      } else {
-        s.top = bounds.bottom;
-        k.push('bottom');
-      }
-      if (fixed) {
-        k.push('fixed');
-      } else {
-        s.top += scrollY;
-      }
-    }
+  const setHiddenHandler = useCallback(() => {
+    setHidden(true);
+  }, [setHidden]);
 
-    return (
-      <div className={k.join(' ')} style={s}>
-        <div className="menu-container">{children}</div>
-        <div className="triangle" style={t} />
-      </div>
-    );
-  }
-}
+  const toggleHidden = useCallback(
+    (e) => {
+      e.stopPropagation();
+      setHidden((h) => !h);
+    },
+    [setHidden],
+  );
 
-class Menu extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      hidden: true,
-    };
-    this.toggleHidden = this.toggleHidden.bind(this);
-    this.setHidden = this.setHidden.bind(this);
-    this.setVisible = this.setVisible.bind(this);
-  }
-
-  setHidden() {
-    this.setState((prevState) => {
-      return Object.assign({}, prevState, {hidden: true});
-    });
-  }
-
-  setVisible() {
-    this.setState((prevState) => {
-      return Object.assign({}, prevState, {hidden: false});
-    });
-  }
-
-  toggleHidden(e) {
-    e.stopPropagation();
-    this.setState((prevState) => {
-      return Object.assign({}, prevState, {hidden: !prevState.hidden});
-    });
-  }
-
-  render() {
-    const {children, icon, size, align, position, fixed} = this.props;
-    const {hidden} = this.state;
-    return (
-      <div
-        className="menu-button"
-        onClick={this.toggleHidden}
-        ref={(elem) => {
-          this.elem = elem;
-        }}
-      >
-        {icon}
-        {!hidden &&
-          ReactDOM.createPortal(
-            <MenuContainer
-              size={size}
-              align={align}
-              position={position}
-              fixed={fixed}
-              reference={this.elem}
-              close={this.setHidden}
-            >
-              {children}
-            </MenuContainer>,
-            document.body,
-          )}
-      </div>
-    );
-  }
-}
+  return (
+    <div className="menu-button" onClick={toggleHidden} ref={menuelem}>
+      {icon}
+      {menuelem.current &&
+        !hidden &&
+        ReactDOM.createPortal(
+          <MenuContainer
+            size={size}
+            align={align}
+            position={position}
+            fixed={fixed}
+            reference={menuelem}
+            close={setHiddenHandler}
+          >
+            {children}
+          </MenuContainer>,
+          document.body,
+        )}
+    </div>
+  );
+};
 
 export default Menu;

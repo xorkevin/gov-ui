@@ -8,7 +8,7 @@ const Comment = ({depth, username, score, time, content, children}) => {
   if (hidden) {
     k.push('hidden');
   }
-  const toggleHidden = useCallback(() => setHidden((h) => !h), []);
+  const toggleHidden = useCallback(() => setHidden((h) => !h), [setHidden]);
 
   return (
     <div className={k.join(' ')}>
