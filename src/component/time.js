@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {useState, useEffect, useMemo} from 'react';
 import {formatStr} from 'utility';
 import Tooltip from 'component/tooltip';
 
@@ -105,54 +105,34 @@ const timeAgo = (date) => {
   return formatStr(timeAgoFormatStrings[k][future], num);
 };
 
-class Time extends Component {
-  constructor(props) {
-    super(props);
-    const k = new Date(props.value);
-    this.state = {
-      date: k,
-      timeAgo: timeAgo(k),
-      isoString: k.toISOString(),
-      localeString: dateToLocale(k),
-    };
-  }
+const genTimeData = (tms) => {
+  const k = new Date(tms);
+  return {
+    date: k,
+    timeAgo: timeAgo(k),
+    isoString: k.toISOString(),
+    localeString: dateToLocale(k),
+  };
+};
 
-  tick() {
-    this.setState((prevState) => {
-      return Object.assign({}, prevState, {timeAgo: timeAgo(prevState.date)});
-    });
-  }
+const Time = ({value}) => {
+  const timeData = useMemo(() => genTimeData(value), [value]);
+  const [timeDataAgo, setTimeAgo] = useState(timeData.timeAgo);
 
-  componentWillReceiveProps(nextProps) {
-    const k = new Date(nextProps.value);
-    this.setState((prevState) => {
-      return Object.assign({}, prevState, {
-        date: k,
-        timeAgo: timeAgo(k),
-        isoString: k.toISOString(),
-        localeString: dateToLocale(k),
-      });
-    });
-  }
-
-  componentDidMount() {
-    this.interval = setInterval(() => {
-      this.tick();
+  useEffect(() => {
+    const handler = window.setInterval(() => {
+      setTimeAgo(timeAgo(timeData.date));
     }, 60000);
-  }
+    return () => {
+      window.clearInterval(handler);
+    };
+  }, [timeData.date, setTimeAgo]);
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
-  render() {
-    const {isoString, localeString, timeAgo} = this.state;
-    return (
-      <Tooltip tooltip={this.state.localeString}>
-        <time dateTime={this.state.isoString}>{this.state.timeAgo}</time>
-      </Tooltip>
-    );
-  }
-}
+  return (
+    <Tooltip tooltip={timeData.localeString}>
+      <time dateTime={timeData.isoString}>{timeDataAgo}</time>
+    </Tooltip>
+  );
+};
 
 export default Time;

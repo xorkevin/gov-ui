@@ -67,7 +67,7 @@ const Navitem = ({home, scroll, children}) => {
       };
     }
     return undefined;
-  }, [scroll, scrollTo]);
+  }, [scroll]);
 
   return (
     <div className={className.join(' ')} onClick={onClickHandler}>
