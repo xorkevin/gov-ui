@@ -47,6 +47,15 @@ article,
     margin-bottom: 2rem;
   }
 
+  code,
+  pre {
+    font-size: 1rem;
+  }
+
+  pre {
+    overflow: auto;
+  }
+
   ul,
   ol {
     font-family: $typography-article-font;
@@ -70,6 +79,7 @@ article,
   h5,
   h6,
   .info,
+  pre,
   p {
     padding-left: 8px;
     padding-right: 8px;

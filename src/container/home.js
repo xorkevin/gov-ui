@@ -50,9 +50,12 @@ const HomeContainer = () => {
         <h6>
           Heading 6 <small>small</small>
         </h6>
-        <span>
+        <div>
           Text <small>small</small>
-        </span>
+        </div>
+        <div>
+          <code>Code: Hello, World</code>
+        </div>
       </Section>
 
       <Article
@@ -106,7 +109,13 @@ const HomeContainer = () => {
           sapien. Aliquam erat volutpat. Phasellus vitae cursus turpis, posuere
           viverra diam.
         </p>
-        <p>Fusce mollis consectetur ligula.</p>
+        <p>
+          Fusce mollis consectetur ligula. <code>Code: Hello, World</code>
+        </p>
+        <pre>
+          This is some example preformatted text that is extremely long and
+          might take more than one line.
+        </pre>
       </Article>
       <CommentSection>
         <Comment

@@ -118,6 +118,12 @@ body {
     margin-bottom: 1rem;
   }
 
+  code,
+  pre {
+    font-family: $typography-mono-font;
+    font-size: 0.85rem;
+  }
+
   .colossal {
     font-size: 96px;
     margin: 0;
