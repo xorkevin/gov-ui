@@ -1,6 +1,5 @@
 article,
 .article {
-  line-height: 1.8;
   font-size: 1.25rem;
   font-family: $typography-base-font;
   width: 100%;
@@ -45,6 +44,7 @@ article,
 
   p {
     font-family: $typography-article-font;
+    line-height: 1.8;
     margin-top: 2rem;
     margin-bottom: 2rem;
   }
@@ -67,11 +67,14 @@ article,
   }
 
   .title {
-    line-height: 1.25;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
   }
 
   .subtitle {
     color: $color-text-dark-2;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
   }
 
   h1,
@@ -85,6 +88,39 @@ article,
   p {
     padding-left: 8px;
     padding-right: 8px;
+  }
+
+  .author {
+    width: 24rem;
+    display: flex;
+    align-items: center;
+
+    & > .image {
+      & > img {
+        object-fit: cover;
+        width: 6rem;
+        height: 6rem;
+        padding: 4px;
+      }
+
+      &.round {
+        & > img {
+          border-radius: 50%;
+        }
+      }
+    }
+
+    & > .description {
+      & > .name {
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+      }
+      & > .bio {
+        font-size: 1rem;
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+    }
   }
 }
 

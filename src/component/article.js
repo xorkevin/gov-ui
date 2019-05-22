@@ -9,13 +9,24 @@ const Article = ({title, subtitle, author, time, tags, children}) => {
       <h1 className="title">{title}</h1>
       {subtitle && <h3 className="subtitle">{subtitle}</h3>}
       <span className="info">
-        {author} | <Time value={time} />
+        {author.name} | <Time value={time} />
       </span>
       {children}
       <span className="info">
         {Array.isArray(tags) && tags.map((tag) => <Chip key={tag}>{tag}</Chip>)}
       </span>
       <hr />
+      <div>
+        <div className="author">
+          <div className="image round">
+            <img src="https://xorkevin.github.io/stratosphere/assets/thames.jpg" />
+          </div>
+          <div className="description">
+            <h4 className="name">{author.name}</h4>
+            <div className="bio">{author.bio}</div>
+          </div>
+        </div>
+      </div>
     </article>
   );
 };

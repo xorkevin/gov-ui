@@ -61,7 +61,11 @@ const HomeContainer = () => {
       <Article
         title="Lorem ipsum"
         subtitle="Dolor sit amet"
-        author="Kevin Wang"
+        author={{
+          name: 'Kevin Wang',
+          bio:
+            'Tech evangelist and web dev. Experiences decision fatigue daily.',
+        }}
         time={Date.now() - 86400000}
         tags={['list', 'of', 'tags']}
       >
