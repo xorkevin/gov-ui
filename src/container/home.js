@@ -63,6 +63,7 @@ const HomeContainer = () => {
         subtitle="Dolor sit amet"
         author="Kevin Wang"
         time={Date.now() - 86400000}
+        tags={['list', 'of', 'tags']}
       >
         <p>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
@@ -97,6 +98,10 @@ const HomeContainer = () => {
           at, suscipit non arcu. Suspendisse sodales massa vitae dolor
           vestibulum, lacinia congue enim hendrerit.
         </p>
+        <pre>
+          This is some example preformatted text that is extremely long and
+          might take more than one line.
+        </pre>
         <p>
           Curabitur dapibus, arcu a pulvinar pulvinar, lectus elit eleifend
           dolor, id tincidunt nunc dolor eu orci. Sed neque massa, cursus et
@@ -112,10 +117,6 @@ const HomeContainer = () => {
         <p>
           Fusce mollis consectetur ligula. <code>Code: Hello, World</code>
         </p>
-        <pre>
-          This is some example preformatted text that is extremely long and
-          might take more than one line.
-        </pre>
       </Article>
       <CommentSection>
         <Comment

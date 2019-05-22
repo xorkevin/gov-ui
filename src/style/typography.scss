@@ -28,6 +28,10 @@ body {
     a {
       color: $color-primary-light;
     }
+
+    hr {
+      background-color: $color-text-light-4;
+    }
   }
 
   @media (min-width: $grid-sm-breakpoint) and (max-width: $grid-md-breakpoint - 1px) {
@@ -139,5 +143,12 @@ body {
     letter-spacing: 2px;
     text-transform: uppercase;
     text-transform: uppercase;
+  }
+
+  hr {
+    display: block;
+    height: 1px;
+    border: none;
+    background-color: $color-text-dark-4;
   }
 }

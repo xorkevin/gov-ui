@@ -41,6 +41,18 @@ table {
   text-align: center;
 }
 
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-unset {
+  text-align: unset;
+}
+
 :root {
   background-color: $background-dark;
 }
