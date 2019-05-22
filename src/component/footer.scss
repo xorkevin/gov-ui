@@ -16,6 +16,10 @@ footer {
     color: $color-text-light-1;
   }
 
+  .title {
+    margin-top: 0;
+  }
+
   &.with-sidebar {
     margin-left: $nav-width;
   }
