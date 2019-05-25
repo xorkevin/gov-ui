@@ -94,6 +94,47 @@ const HomeContainer = () => {
           preview={thamesPreview}
           src="https://xorkevin.github.io/stratosphere/assets/thames.jpg"
         />
+        <div className="caption">Hello, World</div>
+        <Img
+          imgWidth={1920}
+          imgHeight={1080}
+          preview={thamesPreview}
+          src="https://xorkevin.github.io/stratosphere/assets/thames.jpg"
+        />
+        <Img
+          className="inset"
+          imgWidth={1920}
+          imgHeight={1080}
+          preview={thamesPreview}
+          src="https://xorkevin.github.io/stratosphere/assets/thames.jpg"
+        />
+        <Img
+          className="inset-half"
+          imgWidth={1920}
+          imgHeight={1080}
+          preview={thamesPreview}
+          src="https://xorkevin.github.io/stratosphere/assets/thames.jpg"
+        />
+        <div className="contentrow outset">
+          <Img
+            imgWidth={1920}
+            imgHeight={1080}
+            preview={thamesPreview}
+            src="https://xorkevin.github.io/stratosphere/assets/thames.jpg"
+          />
+          <Img
+            imgWidth={1920}
+            imgHeight={1080}
+            preview={thamesPreview}
+            src="https://xorkevin.github.io/stratosphere/assets/thames.jpg"
+          />
+          <Img
+            imgWidth={1920}
+            imgHeight={1080}
+            preview={thamesPreview}
+            src="https://xorkevin.github.io/stratosphere/assets/thames.jpg"
+          />
+        </div>
         <p>
           Nulla facilisi. Phasellus blandit interdum est, in pellentesque nunc
           fermentum et. Proin nibh risus, sollicitudin ac urna sed, aliquet

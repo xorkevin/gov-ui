@@ -20,6 +20,14 @@ article,
     display: block;
   }
 
+  & > *.inset-half {
+    width: 24rem;
+  }
+
+  & > *.inset {
+    width: 36rem;
+  }
+
   & > *.outset {
     width: 64rem;
   }
@@ -75,6 +83,26 @@ article,
     color: $color-text-dark-2;
     margin-top: 1rem;
     margin-bottom: 1rem;
+  }
+
+  .caption {
+    font-family: $typography-article-font;
+    font-size: 1rem;
+    text-align: center;
+  }
+
+  .contentrow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    & > * {
+      display: block;
+      flex-basis: 0;
+      flex-grow: 1;
+      flex-shrink: 1;
+      padding: 4px;
+    }
   }
 
   h1,
