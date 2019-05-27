@@ -11,7 +11,7 @@ const Section = ({
   children,
 }) => {
   const k = [];
-  let headingClass = 'h3';
+  let headingClass = 'h1';
   if (subsection) {
     k.push('subsection');
     headingClass = 'h5';
