@@ -1,6 +1,6 @@
 article,
 .article {
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   font-family: $typography-base-font;
   width: 100%;
 
@@ -16,16 +16,16 @@ article,
     margin-bottom: 1rem;
     margin-left: auto;
     margin-right: auto;
-    width: 48rem;
+    width: 42rem;
     display: block;
   }
 
   & > *.inset-half {
-    width: 24rem;
+    width: 20rem;
   }
 
   & > *.inset {
-    width: 36rem;
+    width: 32rem;
   }
 
   & > *.outset {

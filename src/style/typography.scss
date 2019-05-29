@@ -33,15 +33,15 @@ body {
   }
 
   @media (min-width: $grid-sm-breakpoint) and (max-width: $grid-md-breakpoint - 1px) {
-    font-size: $typography-base-size * 13 / 12;
+    font-size: $typography-base-size;
   }
 
   @media (min-width: $grid-md-breakpoint) and (max-width: $grid-lg-breakpoint - 1px) {
-    font-size: $typography-base-size * 7 / 6;
+    font-size: $typography-base-size;
   }
 
   @media (min-width: $grid-lg-breakpoint) {
-    font-size: $typography-base-size * 15 / 12;
+    font-size: $typography-base-size * 8 / 7;
   }
 
   h1,
