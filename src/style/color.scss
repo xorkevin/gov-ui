@@ -5,6 +5,7 @@ $color-primary: #224a7f !default;
 $color-primary-light: lighten($color-primary, 12.5%) !default;
 $color-primary-dark: #222832 !default;
 $color-accent: #ffb74d !default;
+$color-accent-light: lighten($color-accent, 12.5%) !default;
 $background: #fcfcfc !default;
 $background-dark: darken($color-primary-dark, 6.25%) !default;
 $background-transparent: rgba($white, 0.97) !default;
