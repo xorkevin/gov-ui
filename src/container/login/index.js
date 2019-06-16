@@ -1,6 +1,8 @@
 import React, {Component, lazy, Suspense} from 'react';
 import {Switch, Route, Redirect} from 'react-router-dom';
 
+import Section from 'component/section';
+
 import {connect} from 'react-redux';
 
 const SigninContainer = lazy(() => import('container/login/signin'));
