@@ -102,7 +102,7 @@ const makeFetchJSON = ({
 };
 
 const authopts = Object.freeze({
-  credentials: 'include',
+  credentials: 'same-origin',
 });
 
 const API = {
@@ -130,7 +130,7 @@ const API = {
         url: '/user',
         method: 'GET',
         expectdata: true,
-        err: 'Failed to fetch user info',
+        err: 'Unable to get user info',
         opts: authopts,
         children: {
           sessions: {
@@ -212,15 +212,32 @@ const API = {
           },
           id: {
             url: '/id/{0}',
+            method: 'GET',
+            transformer: (userid) => [[userid], null],
+            expectdata: true,
+            err: 'Unable to get user info',
             children: {
               priv: {
                 url: '/private',
+                method: 'GET',
+                transformer: (userid) => [[userid], null],
+                expectdata: true,
+                err: 'Unable to get user info',
+                opt: authopts,
               },
               edit: {
                 url: '',
                 children: {
                   rank: {
                     url: '/rank',
+                    method: 'PATCH',
+                    transformer: (userid, add, remove) => [
+                      [userid],
+                      {add, remove},
+                    ],
+                    expectdata: false,
+                    err: 'Unable to update user permissions',
+                    opts: authopts,
                   },
                 },
               },
@@ -228,14 +245,27 @@ const API = {
           },
           name: {
             url: '/name/{0}',
+            method: 'GET',
+            transformer: (name) => [[name], null],
+            expectdata: true,
+            err: 'Unable to get user info',
             children: {
               priv: {
                 url: '/private',
+                method: 'GET',
+                transformer: (name) => [[name], null],
+                expectdata: true,
+                err: 'Unable to get user info',
+                opts: authopts,
               },
             },
           },
           ids: {
             url: '/ids?ids={0}',
+            method: 'GET',
+            transformer: (userids) => [[userids.join(',')], null],
+            expectdata: true,
+            err: 'Unable to get user info',
           },
           create: {
             url: '',
@@ -246,10 +276,54 @@ const API = {
               confirm: {
                 url: '/confirm',
                 method: 'POST',
+                transformer: (key) => [null, {key}],
                 expectdata: true,
                 err: 'Could not create account',
               },
             },
+          },
+        },
+      },
+      auth: {
+        url: '/auth',
+        children: {
+          login: {
+            url: '/login',
+            method: 'POST',
+            transformer: (username, password) => [null, {username, password}],
+            expectdata: true,
+            selector: (status, data) => {
+              const {exp: time, userid, auth_tags: authTags} = data.claims;
+              return {
+                time,
+                userid,
+                authTags,
+              };
+            },
+            err: 'Incorrect username or password',
+            opts: authopts,
+          },
+          exchange: {
+            url: '/exchange',
+            method: 'POST',
+            expectdata: true,
+            selector: (status, data) => {
+              const {exp: time, userid, auth_tags: authTags} = data.claims;
+              return {
+                time,
+                userid,
+                authTags,
+              };
+            },
+            err: 'Login session expired',
+            opt: authopts,
+          },
+          refresh: {
+            url: '/refresh',
+            method: 'POST',
+            expectdata: false,
+            err: 'Login session expired',
+            opt: authopts,
           },
         },
       },

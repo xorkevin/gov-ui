@@ -56,12 +56,8 @@ const Login = (username, password) => {
       const time = data.claims.exp;
       const userid = data.claims.userid;
       const authTags = data.claims.auth_tags;
-      const firstname = data.first_name;
-      const lastname = data.last_name;
       dispatch(Refresh());
-      dispatch(
-        LoginSuccess(time, userid, authTags, username, firstname, lastname),
-      );
+      dispatch(LoginSuccess(time, userid, authTags));
     } catch (e) {
       dispatch(LoginErr(e.message));
     }
