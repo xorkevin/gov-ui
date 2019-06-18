@@ -1,10 +1,14 @@
-const formatStr = (str, ...args) => {
+const formatStrArgs = (str, args) => {
   return str.replace(/{(\d+)}/g, (match, number) => {
     if (typeof args[number] != 'undefined') {
       return args[number];
     }
     return match;
   });
+};
+
+const formatStr = (str, ...args) => {
+  return formatStrArgs(str, args);
 };
 
 const IS_WEB = typeof window !== 'undefined';
@@ -42,4 +46,4 @@ const setCookie = (key, value, path = '/', age = 31536000) => {
   document.cookie = `${key}=${value};path=${path};max-age=${age}`;
 };
 
-export {formatStr, isWeb, logger, getCookie, setCookie};
+export {formatStr, formatStrArgs, isWeb, logger, getCookie, setCookie};

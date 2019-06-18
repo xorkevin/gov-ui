@@ -1,6 +1,5 @@
 const apibase = APIBASE_URL;
 const healthzbase = apibase + '/healthz';
-const setupzbase = apibase + '/setupz';
 const ubase = apibase + '/u';
 const userbase = ubase + '/user';
 const passwordbase = userbase + '/password';
@@ -10,7 +9,7 @@ const courierbase = apibase + '/courier';
 const courierlink = courierbase + '/link';
 
 const API = {
-  setupz: setupzbase,
+  setupz: apibase + '/setupz',
   healthz: {
     check: healthzbase + '/check',
   },
