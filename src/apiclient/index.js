@@ -1,4 +1,9 @@
 import {formatStrArgs} from 'utility';
+import {authopts} from './config';
+import courierAPI from './courier';
+import profileAPI from './profile';
+import authAPI from './auth';
+import userAPI from './user';
 
 const JSON_MIME = 'application/json';
 
@@ -105,10 +110,6 @@ const makeFetch = ({
   };
 };
 
-const authopts = Object.freeze({
-  credentials: 'same-origin',
-});
-
 const API = {
   setupz: {
     url: '/setupz',
@@ -132,287 +133,21 @@ const API = {
     children: {
       user: {
         url: '/user',
-        method: 'GET',
-        expectdata: true,
-        err: 'Unable to get user info',
-        opts: authopts,
-        children: {
-          sessions: {
-            url: '/sessions',
-            method: 'GET',
-            expectdata: true,
-            err: 'Could not get sessions',
-            opts: authopts,
-            children: {
-              del: {
-                url: '',
-                method: 'DELETE',
-                transformer: (sessions_ids) => [null, {session_ids}],
-                expectdata: false,
-                err: 'Could not delete sessions',
-                opts: authopts,
-              },
-            },
-          },
-          edit: {
-            url: '',
-            method: 'PUT',
-            expectdata: false,
-            err: 'Could not edit account',
-            opts: authopts,
-          },
-          email: {
-            url: '/email',
-            children: {
-              edit: {
-                url: '',
-                method: 'PUT',
-                transformer: (email, password) => [null, {email, password}],
-                expectdata: false,
-                err: 'Could not edit email',
-                opts: authopts,
-                children: {
-                  confirm: {
-                    url: '/verify',
-                    method: 'PUT',
-                    transformer: (key, password) => [null, {key, password}],
-                    expectdata: false,
-                    err: 'Could not edit email',
-                    opts: authopts,
-                  },
-                },
-              },
-            },
-          },
-          pass: {
-            url: '/password',
-            children: {
-              edit: {
-                url: '',
-                method: 'PUT',
-                transformer: (old_password, new_password) => [
-                  null,
-                  {old_password, new_password},
-                ],
-                expectdata: false,
-                err: 'Could not edit password',
-                opts: authopts,
-              },
-              forgot: {
-                url: '/forgot',
-                method: 'PUT',
-                expectdata: true,
-                err: 'Could not reset password',
-                children: {
-                  confirm: {
-                    url: '/reset',
-                    method: 'PUT',
-                    expectdata: true,
-                    err: 'Could not reset password',
-                  },
-                },
-              },
-            },
-          },
-          id: {
-            url: '/id/{0}',
-            method: 'GET',
-            transformer: (userid) => [[userid], null],
-            expectdata: true,
-            err: 'Unable to get user info',
-            children: {
-              priv: {
-                url: '/private',
-                method: 'GET',
-                transformer: (userid) => [[userid], null],
-                expectdata: true,
-                err: 'Unable to get user info',
-                opt: authopts,
-              },
-              edit: {
-                url: '',
-                children: {
-                  rank: {
-                    url: '/rank',
-                    method: 'PATCH',
-                    transformer: (userid, add, remove) => [
-                      [userid],
-                      {add, remove},
-                    ],
-                    expectdata: false,
-                    err: 'Unable to update user permissions',
-                    opts: authopts,
-                  },
-                },
-              },
-            },
-          },
-          name: {
-            url: '/name/{0}',
-            method: 'GET',
-            transformer: (name) => [[name], null],
-            expectdata: true,
-            err: 'Unable to get user info',
-            children: {
-              priv: {
-                url: '/private',
-                method: 'GET',
-                transformer: (name) => [[name], null],
-                expectdata: true,
-                err: 'Unable to get user info',
-                opts: authopts,
-              },
-            },
-          },
-          ids: {
-            url: '/ids?ids={0}',
-            method: 'GET',
-            transformer: (userids) => [[userids.join(',')], null],
-            expectdata: true,
-            err: 'Unable to get user info',
-          },
-          create: {
-            url: '',
-            method: 'POST',
-            expectdata: true,
-            err: 'Could not create account',
-            children: {
-              confirm: {
-                url: '/confirm',
-                method: 'POST',
-                transformer: (key) => [null, {key}],
-                expectdata: true,
-                err: 'Could not create account',
-              },
-            },
-          },
-        },
+        children: userAPI,
       },
       auth: {
         url: '/auth',
-        children: {
-          login: {
-            url: '/login',
-            method: 'POST',
-            transformer: (username, password) => [null, {username, password}],
-            expectdata: true,
-            selector: (status, data) => {
-              const {exp: time, userid, auth_tags: authTags} = data.claims;
-              return {
-                time,
-                userid,
-                authTags,
-              };
-            },
-            err: 'Incorrect username or password',
-            opts: authopts,
-          },
-          exchange: {
-            url: '/exchange',
-            method: 'POST',
-            expectdata: true,
-            selector: (status, data) => {
-              const {exp: time, userid, auth_tags: authTags} = data.claims;
-              return {
-                time,
-                userid,
-                authTags,
-              };
-            },
-            err: 'Login session expired',
-            opt: authopts,
-          },
-          refresh: {
-            url: '/refresh',
-            method: 'POST',
-            expectdata: false,
-            err: 'Login session expired',
-            opt: authopts,
-          },
-        },
+        children: authAPI,
       },
     },
   },
   profile: {
     url: '/profile',
-    method: 'GET',
-    expectdata: true,
-    err: 'Unable to get profile',
-    opt: authopts,
-    children: {
-      edit: {
-        url: '',
-        method: 'PUT',
-        expectdata: false,
-        err: 'Unable to edit profile',
-        opt: authopts,
-        image: {
-          url: '/image',
-          method: 'PUT',
-          transformer: (file) => {
-            const formData = new FormData();
-            formData.append('image', file);
-            return [null, formData];
-          },
-          expectdata: false,
-          err: 'Unable to update profile picture',
-          opt: authopts,
-        },
-      },
-      id: {
-        url: '/{0}',
-        method: 'GET',
-        transformer: (userid) => [[userid], null],
-        expectdata: true,
-        err: 'Unable to get profile',
-        children: {
-          image: {
-            url: '/image',
-          },
-        },
-      },
-      create: {
-        url: '',
-      },
-    },
+    children: profileAPI,
   },
   courier: {
     url: '/courier',
-    children: {
-      link: {
-        url: '/link',
-        children: {
-          get: {
-            url: '?amount={0}&offset={1}',
-            method: 'GET',
-            transformer: (amount, offset) => [[amount, offset], null],
-            expectdata: true,
-            err: 'Unable to get links',
-            opt: authopts,
-          },
-          id: {
-            url: '/{0}',
-            children: {
-              del: {
-                url: '',
-                method: 'DELETE',
-                transformer: (linkid) => [[linkid], null],
-                expectdata: true,
-                err: 'Unable to delete link',
-                opt: authopts,
-              },
-            },
-          },
-          create: {
-            url: '',
-            method: 'POST',
-            expectdata: true,
-            err: 'Unable to create link',
-            opt: authopts,
-          },
-        },
-      },
-    },
+    children: courierAPI,
   },
 };
 
