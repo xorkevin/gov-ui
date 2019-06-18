@@ -2,6 +2,17 @@ import {formatStrArgs} from 'utility';
 
 const JSON_MIME = 'application/json';
 
+const defaultTransformer = (...args) => {
+  if (args.length === 0) {
+    return [null, null, null, null];
+  }
+  if (args.length === 1) {
+    return [null, args[1], null, null];
+  }
+  const k = args.length - 1;
+  return [args.slice(0, k), args[k], null, null];
+};
+
 const defaultSelector = (status, data) => {
   if (data) {
     return data;
@@ -16,25 +27,34 @@ const defaultErrHandler = (defaultMessage) => (status, data) => {
   return defaultMessage;
 };
 
-const defaultCatcher = (err) => {
-  return err.message;
-};
+const defaultCatcher = (err) => err.message;
 
 const makeFetchJSON = ({
   url,
   method,
+  transformer,
   expectdata,
   selector,
-  errhandler,
+  err,
   catcher,
   headers: baseheaders,
   opts: baseopts,
 }) => {
+  const transformargs = transformer || defaultTransformer;
   const onsuccess = selector || defaultSelector;
-  const onerr = errhandler || defaultErrHandler;
+  const onerr = (() => {
+    if (!err) {
+      return defaultErrHandler('Request error');
+    }
+    if (typeof err === 'string') {
+      return defaultErrHandler(err);
+    }
+    return err;
+  })();
   const oncatch = catcher || defaultCatcher;
 
-  return async (params, body, reqheaders, reqopts) => {
+  return async (...args) => {
+    const [params, body, reqheaders, reqopts] = transformargs(...args);
     const tempheaders = {};
     if (body) {
       tempheaders['Content-Type'] = JSON_MIME;
@@ -43,7 +63,7 @@ const makeFetchJSON = ({
     const opts = Object.assign({}, baseopts, reqopts, {
       method,
       headers,
-      body,
+      body: body ? JSON.stringify(body) : undefined,
     });
     const finalurl = params ? formatStrArgs(url, params) : url;
 
@@ -81,12 +101,16 @@ const makeFetchJSON = ({
   };
 };
 
+const authopts = Object.freeze({
+  credentials: 'include',
+});
+
 const API = {
   setupz: {
     url: '/setupz',
     method: 'POST',
     expectdata: true,
-    errhandler: defaultErrHandler('Could not run server setup'),
+    err: 'Could not run server setup',
   },
   healthz: {
     url: '/healthz',
@@ -95,27 +119,161 @@ const API = {
         url: '/check',
         method: 'GET',
         expectdata: false,
-        errhandler: defaultErrHandler('Could not get time from api server'),
+        err: 'Could not get time from api server',
+      },
+    },
+  },
+  u: {
+    url: '/u',
+    children: {
+      user: {
+        url: '/user',
+        method: 'GET',
+        expectdata: true,
+        err: 'Failed to fetch user info',
+        opts: authopts,
+        children: {
+          sessions: {
+            url: '/sessions',
+            method: 'GET',
+            expectdata: true,
+            err: 'Could not get sessions',
+            opts: authopts,
+            children: {
+              del: {
+                url: '',
+                method: 'DELETE',
+                transformer: (sessions_ids) => [null, {session_ids}],
+                expectdata: false,
+                err: 'Could not delete sessions',
+                opts: authopts,
+              },
+            },
+          },
+          edit: {
+            url: '',
+            method: 'PUT',
+            expectdata: false,
+            err: 'Could not edit account',
+            opts: authopts,
+          },
+          email: {
+            url: '/email',
+            children: {
+              edit: {
+                url: '',
+                method: 'PUT',
+                transformer: (email, password) => [null, {email, password}],
+                expectdata: false,
+                err: 'Could not edit email',
+                opts: authopts,
+                children: {
+                  confirm: {
+                    url: '/verify',
+                    method: 'PUT',
+                    transformer: (key, password) => [null, {key, password}],
+                    expectdata: false,
+                    err: 'Could not edit email',
+                    opts: authopts,
+                  },
+                },
+              },
+            },
+          },
+          pass: {
+            url: '/password',
+            children: {
+              edit: {
+                url: '',
+                method: 'PUT',
+                transformer: (old_password, new_password) => [
+                  null,
+                  {old_password, new_password},
+                ],
+                expectdata: false,
+                err: 'Could not edit password',
+                opts: authopts,
+              },
+              forgot: {
+                url: '/forgot',
+                method: 'PUT',
+                expectdata: true,
+                err: 'Could not reset password',
+                children: {
+                  confirm: {
+                    url: '/reset',
+                    method: 'PUT',
+                    expectdata: true,
+                    err: 'Could not reset password',
+                  },
+                },
+              },
+            },
+          },
+          id: {
+            url: '/id/{0}',
+            children: {
+              priv: {
+                url: '/private',
+              },
+              edit: {
+                url: '',
+                children: {
+                  rank: {
+                    url: '/rank',
+                  },
+                },
+              },
+            },
+          },
+          name: {
+            url: '/name/{0}',
+            children: {
+              priv: {
+                url: '/private',
+              },
+            },
+          },
+          ids: {
+            url: '/ids?ids={0}',
+          },
+          create: {
+            url: '',
+            method: 'POST',
+            expectdata: true,
+            err: 'Could not create account',
+            children: {
+              confirm: {
+                url: '/confirm',
+                method: 'POST',
+                expectdata: true,
+                err: 'Could not create account',
+              },
+            },
+          },
+        },
       },
     },
   },
 };
 
 const APIClientBuilder = (baseurl, apiconfig) => {
-  return Object.fromEntries(
-    Object.entries(apiconfig).map(([k, v]) => {
-      const url = baseurl + v.url;
-      const fn = v.method
-        ? makeFetchJSON(Object.assign({}, v, {url, children: undefined}))
-        : {};
-      if (v.children) {
-        Object.assign(fn, APIClientBuilder(url, v.children));
-      }
-      return [k, Object.freeze(fn)];
-    }),
+  return Object.freeze(
+    Object.fromEntries(
+      Object.entries(apiconfig).map(([k, v]) => {
+        const url = baseurl + v.url;
+        const fn = v.method
+          ? makeFetchJSON(Object.assign({}, v, {url, children: undefined}))
+          : {};
+        if (v.children) {
+          Object.assign(fn, APIClientBuilder(url, v.children));
+        }
+        return [k, Object.freeze(fn)];
+      }),
+    ),
   );
 };
 
-const APIClient = Object.freeze(APIClientBuilder(APIBASE_URL, API));
+const APIClient = APIClientBuilder(APIBASE_URL, API);
 
 export default APIClient;
