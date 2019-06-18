@@ -29,7 +29,7 @@ const defaultErrHandler = (defaultMessage) => (status, data) => {
 
 const defaultCatcher = (err) => err.message;
 
-const makeFetchJSON = ({
+const makeFetch = ({
   url,
   method,
   transformer,
@@ -54,17 +54,21 @@ const makeFetchJSON = ({
   const oncatch = catcher || defaultCatcher;
 
   return async (...args) => {
-    const [params, body, reqheaders, reqopts] = transformargs(...args);
+    const [params, bodycontent, reqheaders, reqopts] = transformargs(...args);
+
     const tempheaders = {};
-    if (body) {
-      tempheaders['Content-Type'] = JSON_MIME;
+    let body = undefined;
+    if (bodycontent) {
+      if (bodycontent instanceof FormData) {
+        body = bodycontent;
+      } else {
+        tempheaders['Content-Type'] = JSON_MIME;
+        body = JSON.stringify(body);
+      }
     }
+
     const headers = Object.assign(tempheaders, baseheaders, reqheaders);
-    const opts = Object.assign({}, baseopts, reqopts, {
-      method,
-      headers,
-      body: body ? JSON.stringify(body) : undefined,
-    });
+    const opts = Object.assign({}, baseopts, reqopts, {method, headers, body});
     const finalurl = params ? formatStrArgs(url, params) : url;
 
     try {
@@ -329,6 +333,87 @@ const API = {
       },
     },
   },
+  profile: {
+    url: '/profile',
+    method: 'GET',
+    expectdata: true,
+    err: 'Unable to get profile',
+    opt: authopts,
+    children: {
+      edit: {
+        url: '',
+        method: 'PUT',
+        expectdata: false,
+        err: 'Unable to edit profile',
+        opt: authopts,
+        image: {
+          url: '/image',
+          method: 'PUT',
+          transformer: (file) => {
+            const formData = new FormData();
+            formData.append('image', file);
+            return [null, formData];
+          },
+          expectdata: false,
+          err: 'Unable to update profile picture',
+          opt: authopts,
+        },
+      },
+      id: {
+        url: '/{0}',
+        method: 'GET',
+        transformer: (userid) => [[userid], null],
+        expectdata: true,
+        err: 'Unable to get profile',
+        children: {
+          image: {
+            url: '/image',
+          },
+        },
+      },
+      create: {
+        url: '',
+      },
+    },
+  },
+  courier: {
+    url: '/courier',
+    children: {
+      link: {
+        url: '/link',
+        children: {
+          get: {
+            url: '?amount={0}&offset={1}',
+            method: 'GET',
+            transformer: (amount, offset) => [[amount, offset], null],
+            expectdata: true,
+            err: 'Unable to get links',
+            opt: authopts,
+          },
+          id: {
+            url: '/{0}',
+            children: {
+              del: {
+                url: '',
+                method: 'DELETE',
+                transformer: (linkid) => [[linkid], null],
+                expectdata: true,
+                err: 'Unable to delete link',
+                opt: authopts,
+              },
+            },
+          },
+          create: {
+            url: '',
+            method: 'POST',
+            expectdata: true,
+            err: 'Unable to create link',
+            opt: authopts,
+          },
+        },
+      },
+    },
+  },
 };
 
 const APIClientBuilder = (baseurl, apiconfig) => {
@@ -337,11 +422,17 @@ const APIClientBuilder = (baseurl, apiconfig) => {
       Object.entries(apiconfig).map(([k, v]) => {
         const url = baseurl + v.url;
         const fn = v.method
-          ? makeFetchJSON(Object.assign({}, v, {url, children: undefined}))
+          ? makeFetch(Object.assign({}, v, {url, children: undefined}))
           : {};
         if (v.children) {
           Object.assign(fn, APIClientBuilder(url, v.children));
         }
+        Object.assign(fn, {
+          api_prop: {
+            url,
+            formatUrl: (...args) => formatStrArgs(url, args),
+          },
+        });
         return [k, Object.freeze(fn)];
       }),
     ),
