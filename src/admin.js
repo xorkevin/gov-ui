@@ -10,7 +10,7 @@ import {
 import {connect} from 'react-redux';
 
 import {DarkMode} from 'reducer/settings';
-import {Logout} from 'reducer/account/auth';
+import {Logout} from 'reducer/auth';
 
 import Protected from 'protected';
 

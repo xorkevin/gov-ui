@@ -1,13 +1,17 @@
 import {createStore, combineReducers, applyMiddleware} from 'redux';
 import thunk from 'redux-thunk';
 
-import * as reducers from 'reducer/admin';
+import Health from 'reducer/health';
+import Settings from 'reducer/settings';
+import Auth from 'reducer/auth';
 
-const makeStore = () => {
-  return createStore(
-    combineReducers(Object.assign({}, reducers)),
-    applyMiddleware(thunk),
-  );
-};
+const store = createStore(
+  combineReducers({
+    Health,
+    Settings,
+    Auth,
+  }),
+  applyMiddleware(thunk),
+);
 
-export default makeStore;
+export default store;

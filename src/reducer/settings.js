@@ -49,4 +49,4 @@ const Settings = (state = initState(), action) => {
   }
 };
 
-export {Settings, DarkMode};
+export {Settings as default, Settings, DarkMode};

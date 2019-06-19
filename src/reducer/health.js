@@ -80,4 +80,4 @@ const Health = (state = initState(), action) => {
   }
 };
 
-export {Health, TimeGet};
+export {Health as default, Health, TimeGet};

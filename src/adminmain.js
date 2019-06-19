@@ -8,11 +8,11 @@ import {BrowserRouter} from 'react-router-dom';
 
 import Admin from 'admin';
 import {APIContext, APIClient} from 'apiclient';
-import makeStore from 'adminstore';
+import store from 'adminstore';
 
 ReactDOM.render(
   <div id="mount">
-    <Provider store={makeStore()}>
+    <Provider store={store}>
       <BrowserRouter>
         <APIContext.Provider value={APIClient}>
           <Admin />

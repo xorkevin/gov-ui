@@ -9,7 +9,7 @@ import Button from 'component/button';
 import Input from 'component/form';
 
 import {connect} from 'react-redux';
-import {Login} from 'reducer/account/auth';
+import {Login} from 'reducer/auth';
 
 class SigninContainer extends Component {
   constructor(props) {

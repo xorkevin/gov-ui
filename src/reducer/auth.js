@@ -300,4 +300,4 @@ const Auth = (state = initState(), action) => {
   }
 };
 
-export {Auth, Login, ReLogin, Logout, GetUserAccount};
+export {Auth as default, Auth, Login, ReLogin, Logout, GetUserAccount};

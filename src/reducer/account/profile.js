@@ -1,5 +1,5 @@
 import {API} from 'config';
-import {ReLogin} from 'reducer/account/auth';
+import {ReLogin} from 'reducer/auth';
 
 const CreateProfileReq = () => {
   return async (dispatch) => {

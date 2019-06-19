@@ -8,7 +8,7 @@ import Button from 'component/button';
 import Time from 'component/time';
 
 import {connect} from 'react-redux';
-import {GetUserAccount} from 'reducer/account/auth';
+import {GetUserAccount} from 'reducer/auth';
 
 class AccountDetails extends Component {
   constructor(props) {

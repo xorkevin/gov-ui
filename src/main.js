@@ -7,11 +7,11 @@ import {Provider} from 'react-redux';
 import {BrowserRouter} from 'react-router-dom';
 
 import App from 'app';
-import makeStore from 'store';
+import store from 'store';
 
 ReactDOM.render(
   <div id="mount">
-    <Provider store={makeStore()}>
+    <Provider store={store}>
       <BrowserRouter>
         <App />
       </BrowserRouter>
