@@ -1,3 +1,4 @@
+import React, {useState, useEffect, useCallback, useContext} from 'react';
 import {formatStrArgs} from 'utility';
 import {authopts} from './config';
 import courierAPI from './courier';
@@ -151,7 +152,7 @@ const API = {
   },
 };
 
-const APIClientBuilder = (baseurl, apiconfig) => {
+const makeAPIClient = (baseurl, apiconfig) => {
   return Object.freeze(
     Object.fromEntries(
       Object.entries(apiconfig).map(([k, v]) => {
@@ -160,7 +161,7 @@ const APIClientBuilder = (baseurl, apiconfig) => {
           ? makeFetch(Object.assign({}, v, {url, children: undefined}))
           : {};
         if (v.children) {
-          Object.assign(fn, APIClientBuilder(url, v.children));
+          Object.assign(fn, makeAPIClient(url, v.children));
         }
         Object.assign(fn, {
           api_prop: {
@@ -174,6 +175,45 @@ const APIClientBuilder = (baseurl, apiconfig) => {
   );
 };
 
-const APIClient = APIClientBuilder(APIBASE_URL, API);
+const APIClient = makeAPIClient(APIBASE_URL, API);
 
-export default APIClient;
+const APIContext = React.createContext(APIClient);
+
+const useAPI = (selector, initState) => {
+  const apiClient = useContext(APIContext);
+  const route = selector(apiClient);
+
+  const [loadingState, setLoading] = useState(false);
+  const [successState, setSuccess] = useState(false);
+  const [errState, setErr] = useState(null);
+  const [data, setData] = useState(initState);
+
+  const execute = useCallback(
+    async (...args) => {
+      setLoading(true);
+      const {status, data, err} = await route(...args);
+      if (err != null) {
+        setSuccess(false);
+        setErr(err);
+      } else {
+        setSuccess(true);
+        setErr(null);
+        setData(data);
+      }
+      setLoading(false);
+    },
+    [route, setLoading, setSuccess, setErr, setData],
+  );
+
+  return [loadingState, successState, errState, data, execute];
+};
+
+const useResource = (selector, initState, ...args) => {
+  const [loading, success, err, data, execute] = useAPI(selector, initState);
+  useEffect(() => {
+    execute(...args);
+  }, [execute, ...args]);
+  return [loading, success, err, data];
+};
+
+export {APIClient, APIContext, useAPI, useResource};

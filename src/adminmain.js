@@ -7,13 +7,16 @@ import {Provider} from 'react-redux';
 import {BrowserRouter} from 'react-router-dom';
 
 import Admin from 'admin';
+import {APIContext, APIClient} from 'apiclient';
 import makeStore from 'adminstore';
 
 ReactDOM.render(
   <div id="mount">
     <Provider store={makeStore()}>
       <BrowserRouter>
-        <Admin />
+        <APIContext.Provider value={APIClient}>
+          <Admin />
+        </APIContext.Provider>
       </BrowserRouter>
     </Provider>
   </div>,
