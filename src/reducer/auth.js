@@ -76,7 +76,7 @@ const Auth = (state = initState(), action) => {
 
 const selectReducerAuth = (store) => store.Auth;
 
-const useAuth = () => useSelector(selectReducerAuth);
+const useAuthState = () => useSelector(selectReducerAuth);
 
 const selectAPILogin = (api) => api.u.auth.login;
 
@@ -145,7 +145,7 @@ const useRelogin = () => {
   return relogin;
 };
 
-const useWrapRelogin = (callback) => {
+const useAuth = (callback) => {
   const relogin = useRelogin();
   const store = useStore();
 
@@ -160,7 +160,7 @@ const useWrapRelogin = (callback) => {
   return exec;
 };
 
-const useReloginResource = (selector, args, initState) => {
+const useAuthResource = (selector, args, initState) => {
   const relogin = useRelogin();
 
   const prehook = useCallback(async () => {
@@ -187,10 +187,10 @@ const useLogout = () => {
 export {
   Auth as default,
   Auth,
-  useAuth,
+  useAuthState,
   useLogin,
   useRelogin,
-  useWrapRelogin,
-  useReloginResource,
+  useAuth,
+  useAuthResource,
   useLogout,
 };
