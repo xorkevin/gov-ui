@@ -1,7 +1,7 @@
 import {useCallback} from 'react';
-import {useSelector, useDispatch} from 'react-redux';
+import {useDispatch, useStore} from 'react-redux';
 import {getCookie, setCookie} from 'utility';
-import {useAPI} from 'apiclient';
+import {useAPI, useResource} from 'apiclient';
 
 // Actions
 
@@ -82,21 +82,23 @@ const selectAPILogin = (api) => api.u.auth.login;
 
 const useLogin = () => {
   const dispatch = useDispatch();
-  const [loading, success, err, data, execute] = useAPI(selectAPILogin);
+  const execute = useAPI(selectAPILogin);
+
   const login = useCallback(
     async (username, password) => {
-      const [data, err] = await execute(username, password);
+      const [data, status, err] = await execute(username, password);
       if (err) {
-        return false;
+        return [data, status, err];
       }
       const {userid, authTags, time} = data;
       dispatch(Refresh());
       dispatch(LoginSuccess(userid, authTags, time));
-      return true;
+      return [data, status, err];
     },
     [dispatch, execute],
   );
-  return [loading, success, err, login];
+
+  return login;
 };
 
 const selectAPIExchange = (api) => api.u.auth.exchange;
@@ -105,39 +107,68 @@ const selectAPIRefresh = (api) => api.u.auth.refresh;
 
 const useRelogin = () => {
   const dispatch = useDispatch();
-  const {loggedIn, timeEnd, timeRefresh} = useAuth();
-  const [loading, success, errEx, , execEx] = useAPI(selectAPIExchange);
-  const [, , errRe, , execRe] = useAPI(selectAPIRefresh);
+  const store = useStore();
+  const execEx = useAPI(selectAPIExchange);
+  const execRe = useAPI(selectAPIRefresh);
+
   const relogin = useCallback(async () => {
+    const {loggedIn, timeEnd, timeRefresh} = store.getState().Auth;
     if (!loggedIn) {
-      return false;
+      return [null, -1, 'Not logged in'];
     }
     if (Date.now() / 1000 + 15 < timeEnd) {
-      return true;
+      return [null, 0, null];
     }
     const refreshValid = getCookie('refresh_valid');
     if (refreshValid !== 'valid') {
       dispatch(NotLoggedIn());
-      return false;
+      return [false, -1, 'Session expired'];
     }
     if (Date.now() / 1000 > timeRefresh) {
-      const [, err] = await execRe();
+      const [data, status, err] = await execRe();
       if (err) {
         dispatch(NotLoggedIn());
-        return false;
+        return [data, status, err];
       }
       dispatch(Refresh());
     }
-    const [data, err] = await execEx();
+    const [data, status, err] = await execEx();
     if (err) {
       dispatch(NotLoggedIn());
-      return false;
+      return [data, status, err];
     }
     const {userid, authTags, time} = data;
     dispatch(LoginSuccess(userid, authTags, time));
-    return true;
-  }, [dispatch, loggedIn, timeEnd, timeRefresh, execEx, execRe]);
-  return [loading, success, errRe || errEx, relogin];
+    return [data, status, err];
+  }, [dispatch, store, execEx, execRe]);
+
+  return relogin;
+};
+
+const useWrapRelogin = (callback) => {
+  const relogin = useRelogin();
+  const store = useStore();
+
+  const exec = useCallback(async () => {
+    const [data, status, err] = await relogin();
+    if (err) {
+      return err;
+    }
+    return callback(store.getState().Auth);
+  }, [relogin, store, callback]);
+
+  return exec;
+};
+
+const useReloginResource = (selector, args, initState) => {
+  const relogin = useRelogin();
+
+  const prehook = useCallback(async () => {
+    const [data, status, err] = await relogin();
+    return err;
+  }, [relogin]);
+
+  return useResource(selector, args, initState, prehook);
 };
 
 const useLogout = () => {
@@ -153,4 +184,13 @@ const useLogout = () => {
   return logout;
 };
 
-export {Auth as default, Auth, useAuth, useLogin, useRelogin, useLogout};
+export {
+  Auth as default,
+  Auth,
+  useAuth,
+  useLogin,
+  useRelogin,
+  useWrapRelogin,
+  useReloginResource,
+  useLogout,
+};

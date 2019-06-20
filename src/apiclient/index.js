@@ -179,43 +179,63 @@ const APIClient = makeAPIClient(APIBASE_URL, API);
 
 const APIContext = React.createContext(APIClient);
 
-const useAPI = (selector, initState) => {
+const useAPI = (selector) => {
   const apiClient = useContext(APIContext);
   const route = selector(apiClient);
 
-  const [loadingState, setLoading] = useState(false);
-  const [successState, setSuccess] = useState(false);
-  const [errState, setErr] = useState(null);
-  const [data, setData] = useState(initState);
-
   const execute = useCallback(
     async (...args) => {
-      setLoading(true);
       const {status, data, err} = await route(...args);
-      if (err != null) {
+      return [data, status, err];
+    },
+    [route],
+  );
+
+  return execute;
+};
+
+const useResource = (selector, args, initState, prehook) => {
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [err, setErr] = useState(null);
+  const [data, setData] = useState(initState);
+  const execute = useAPI(selector);
+
+  useEffect(() => {
+    let cancel = false;
+    setLoading(true);
+    (async () => {
+      if (prehook) {
+        const err = await prehook();
+        if (cancel) {
+          return;
+        }
+        if (err) {
+          setSuccess(false);
+          setErr(err);
+          setLoading(false);
+          return;
+        }
+      }
+      const [data, status, err] = await execute(...args);
+      if (cancel) {
+        return;
+      }
+      if (err) {
         setSuccess(false);
         setErr(err);
-        setLoading(false);
-        return [null, err];
       } else {
         setSuccess(true);
         setErr(null);
         setData(data);
-        setLoading(false);
-        return [data, null];
       }
-    },
-    [route, setLoading, setSuccess, setErr, setData],
-  );
+      setLoading(false);
+    })();
+    return () => {
+      cancel = true;
+    };
+  }, [setLoading, setSuccess, setErr, setData, prehook, execute, ...args]);
 
-  return [loadingState, successState, errState, data, execute];
-};
-
-const useResource = (selector, initState, ...args) => {
-  const [loading, success, err, data, execute] = useAPI(selector, initState);
-  useEffect(() => {
-    execute(...args);
-  }, [execute, ...args]);
   return [loading, success, err, data];
 };
 
