@@ -6,11 +6,11 @@ export default {
     transformer: (username, password) => [null, {username, password}],
     expectdata: true,
     selector: (status, data) => {
-      const {exp: time, userid, auth_tags: authTags} = data.claims;
+      const {userid, auth_tags: authTags, exp: time} = data.claims;
       return {
-        time,
         userid,
         authTags,
+        time,
       };
     },
     err: 'Incorrect username or password',
@@ -21,11 +21,11 @@ export default {
     method: 'POST',
     expectdata: true,
     selector: (status, data) => {
-      const {exp: time, userid, auth_tags: authTags} = data.claims;
+      const {userid, auth_tags: authTags, exp: time} = data.claims;
       return {
-        time,
         userid,
         authTags,
+        time,
       };
     },
     err: 'Login session expired',

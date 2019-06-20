@@ -8,7 +8,7 @@ import Button from 'component/button';
 import Time from 'component/time';
 
 import {connect} from 'react-redux';
-import {GetUserAccount} from 'reducer/auth';
+import {GetLoggedInUser} from 'reducer/useraccount';
 
 class AccountDetails extends Component {
   constructor(props) {
@@ -110,7 +110,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     getaccount: () => {
-      dispatch(GetUserAccount());
+      dispatch(GetLoggedInUser());
     },
   };
 };

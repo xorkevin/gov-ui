@@ -195,12 +195,15 @@ const useAPI = (selector, initState) => {
       if (err != null) {
         setSuccess(false);
         setErr(err);
+        setLoading(false);
+        return [null, err];
       } else {
         setSuccess(true);
         setErr(null);
         setData(data);
+        setLoading(false);
+        return [data, null];
       }
-      setLoading(false);
     },
     [route, setLoading, setSuccess, setErr, setData],
   );
