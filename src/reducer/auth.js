@@ -4,6 +4,7 @@ import {getCookie, setCookie} from 'utility';
 import {useAPI} from 'apiclient';
 
 // Actions
+
 const LOGIN_SUCCESS = Symbol('LOGIN_SUCCESS');
 const LoginSuccess = (userid, authTags, timeEnd) => ({
   type: LOGIN_SUCCESS,
@@ -25,6 +26,51 @@ const NotLoggedIn = () => ({type: NOT_LOGGEDIN});
 
 const LOGOUT = Symbol('LOGOUT');
 const Logout = () => ({type: LOGOUT});
+
+// Reducer
+
+const defaultState = Object.freeze({
+  valid: false,
+  loggedIn: false,
+  userid: '',
+  authTags: '',
+  timeEnd: 0,
+  timeRefresh: 0,
+});
+
+const initState = () => {
+  const k = {valid: true};
+  if (getCookie('refresh_valid') === 'valid') {
+    k.loggedIn = true;
+    k.userid = getCookie('userid');
+    k.authTags = getCookie('auth_tags').replace(/^"+|"+$/g, '');
+  }
+  return Object.assign({}, defaultState, k);
+};
+
+const Auth = (state = initState(), action) => {
+  switch (action.type) {
+    case LOGIN_SUCCESS:
+      return Object.assign({}, state, {
+        loggedIn: true,
+        userid: action.userid,
+        authTags: action.authTags,
+        timeEnd: action.timeEnd,
+      });
+    case LOGIN_REFRESH:
+      return Object.assign({}, state, {
+        timeRefresh: action.time,
+      });
+    case NOT_LOGGEDIN:
+      return Object.assign({}, state, {
+        loggedIn: false,
+      });
+    case LOGOUT:
+      return Object.assign({}, defaultState, {valid: true});
+    default:
+      return state;
+  }
+};
 
 // Hooks
 
@@ -105,49 +151,6 @@ const useLogout = () => {
     dispatch(Logout());
   }, [dispatch]);
   return logout;
-};
-
-const defaultState = Object.freeze({
-  valid: false,
-  loggedIn: false,
-  userid: '',
-  authTags: '',
-  timeEnd: 0,
-  timeRefresh: 0,
-});
-
-const initState = () => {
-  const k = {valid: true};
-  if (getCookie('refresh_valid') === 'valid') {
-    k.loggedIn = true;
-    k.userid = getCookie('userid');
-    k.authTags = getCookie('auth_tags').replace(/^"+|"+$/g, '');
-  }
-  return Object.assign({}, defaultState, k);
-};
-
-const Auth = (state = initState(), action) => {
-  switch (action.type) {
-    case LOGIN_SUCCESS:
-      return Object.assign({}, state, {
-        loggedIn: true,
-        userid: action.userid,
-        authTags: action.authTags,
-        timeEnd: action.timeEnd,
-      });
-    case LOGIN_REFRESH:
-      return Object.assign({}, state, {
-        timeRefresh: action.time,
-      });
-    case NOT_LOGGEDIN:
-      return Object.assign({}, state, {
-        loggedIn: false,
-      });
-    case LOGOUT:
-      return Object.assign({}, defaultState, {valid: true});
-    default:
-      return state;
-  }
 };
 
 export {Auth as default, Auth, useAuth, useLogin, useRelogin, useLogout};
