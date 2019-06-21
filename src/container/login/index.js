@@ -1,9 +1,9 @@
-import React, {Component, lazy, Suspense} from 'react';
+import React, {lazy, Suspense, useEffect, useCallback} from 'react';
 import {Switch, Route, Redirect} from 'react-router-dom';
-
+import {useAuthState} from 'reducer/auth';
 import Section from 'component/section';
 
-import {connect} from 'react-redux';
+import {URL} from 'config';
 
 const SigninContainer = lazy(() => import('container/login/signin'));
 const CreateContainer = lazy(() => import('container/login/create'));
@@ -19,61 +19,37 @@ const FallbackView = (
   </Section>
 );
 
-class LoginContainer extends Component {
-  constructor(props) {
-    super(props);
-    this.navigateHome = this.navigateHome.bind(this);
-  }
+const LoginContainer = ({history, match}) => {
+  const navigateHome = useCallback(() => {
+    history.push(URL.home);
+  }, [history]);
 
-  navigateHome() {
-    this.props.history.replace('/');
-  }
+  const {loggedIn} = useAuthState();
 
-  componentDidMount() {
-    if (this.props.loggedIn) {
-      this.navigateHome();
+  useEffect(() => {
+    if (loggedIn) {
+      navigateHome();
     }
-  }
+  }, [loggedIn]);
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.loggedIn) {
-      this.navigateHome();
-    }
-  }
-
-  render() {
-    const {match} = this.props;
-    return (
-      <Suspense fallback={FallbackView}>
-        <Switch>
-          <Route path={`${match.path}/login`} component={SigninContainer} />
-          <Route path={`${match.path}/create`} component={CreateContainer} />
-          <Route
-            path={`${match.path}/confirm/:key?`}
-            component={CreateConfirmContainer}
-          />
-          <Route
-            path={`${match.path}/forgot`}
-            component={ForgotPassContainer}
-          />
-          <Route
-            path={`${match.path}/forgotconfirm/:key?`}
-            component={ResetPassContainer}
-          />
-          <Redirect to={`${match.path}/login`} />
-        </Switch>
-      </Suspense>
-    );
-  }
-}
-
-const mapStateToProps = (state) => {
-  const {loggedIn} = state.Auth;
-  return {
-    loggedIn,
-  };
+  return (
+    <Suspense fallback={FallbackView}>
+      <Switch>
+        <Route path={`${match.path}/login`} component={SigninContainer} />
+        <Route path={`${match.path}/create`} component={CreateContainer} />
+        <Route
+          path={`${match.path}/confirm/:key?`}
+          component={CreateConfirmContainer}
+        />
+        <Route path={`${match.path}/forgot`} component={ForgotPassContainer} />
+        <Route
+          path={`${match.path}/forgotconfirm/:key?`}
+          component={ResetPassContainer}
+        />
+        <Redirect to={`${match.path}/login`} />
+      </Switch>
+    </Suspense>
+  );
 };
-
-LoginContainer = connect(mapStateToProps)(LoginContainer);
 
 export default LoginContainer;

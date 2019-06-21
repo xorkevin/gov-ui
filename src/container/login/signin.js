@@ -1,104 +1,79 @@
-import React, {Component, Fragment} from 'react';
+import React, {Fragment} from 'react';
 import {Link} from 'react-router-dom';
-import linkState from 'linkstate';
+import {useLoginCall} from 'reducer/auth';
 import Section from 'component/section';
 import Menu from 'component/menu';
 import FaIcon from 'component/faicon';
 import Card from 'component/card';
 import Button from 'component/button';
-import Input from 'component/form';
+import Input, {useForm} from 'component/form';
 
-import {connect} from 'react-redux';
-import {Login} from 'reducer/auth';
+const SigninContainer = () => {
+  const [formState, updateForm] = useForm({
+    username: '',
+    password: '',
+  });
 
-class SigninContainer extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      username: '',
-      password: '',
-    };
-    this.login = this.login.bind(this);
-  }
+  const [loginState, execLogin] = useLoginCall(
+    formState.username,
+    formState.password,
+  );
 
-  login() {
-    const {username, password} = this.state;
-    this.props.login(username, password);
-  }
+  const {loading, success, err, data} = loginState;
 
-  render() {
-    const {loading, err} = this.props;
-    return (
-      <Section container padded>
-        <Card
-          center
-          size="md"
-          restrictWidth
-          titleBar
-          title={<h3>Sign in</h3>}
-          bar={
-            <Fragment>
-              <Menu
-                icon={
-                  <Button text>
-                    <FaIcon icon="ellipsis-v" />
-                  </Button>
-                }
-                size="md"
-                align="left"
-                position="bottom"
-              >
-                <Link to="/x/create">
-                  <FaIcon icon="user-plus" /> Create Account
-                </Link>
-                <Link to="/x/forgot">
-                  <FaIcon icon="unlock-alt" /> Forgot Password
-                </Link>
-              </Menu>
-              <Button primary onClick={this.login}>
-                Login
-              </Button>
-            </Fragment>
-          }
-        >
-          <Input
-            label="username / email"
-            fullWidth
-            onChange={linkState(this, 'username')}
-          />
-          <Input
-            label="password"
-            type="password"
-            fullWidth
-            onChange={linkState(this, 'password')}
-            onEnter={this.login}
-          />
-          {!loading && err && <span>{err}</span>}
-        </Card>
-      </Section>
-    );
-  }
-}
-
-const mapStateToProps = (state) => {
-  const {loading, err} = state.Auth;
-  return {
-    loading,
-    err,
-  };
+  return (
+    <Section container padded>
+      <Card
+        center
+        size="md"
+        restrictWidth
+        titleBar
+        title={<h3>Sign in</h3>}
+        bar={
+          <Fragment>
+            <Menu
+              icon={
+                <Button text>
+                  <FaIcon icon="ellipsis-v" />
+                </Button>
+              }
+              size="md"
+              align="left"
+              position="bottom"
+            >
+              <Link to="/x/create">
+                <FaIcon icon="user-plus" /> Create Account
+              </Link>
+              <Link to="/x/forgot">
+                <FaIcon icon="unlock-alt" /> Forgot Password
+              </Link>
+            </Menu>
+            <Button primary onClick={execLogin}>
+              Login
+            </Button>
+          </Fragment>
+        }
+      >
+        <Input
+          label="username / email"
+          name="username"
+          value={formState.username}
+          onChange={updateForm}
+          fullWidth
+        />
+        <Input
+          label="password"
+          type="password"
+          name="password"
+          value={formState.password}
+          onChange={updateForm}
+          onEnter={execLogin}
+          fullWidth
+        />
+        {err && <span>{err}</span>}
+      </Card>
+    </Section>
+  );
 };
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    login: (username, password) => {
-      dispatch(Login(username, password));
-    },
-  };
-};
-
-SigninContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(SigninContainer);
 
 export default SigninContainer;

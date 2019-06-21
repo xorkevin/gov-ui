@@ -190,7 +190,7 @@ const useAPICall = (selector, args, initState, prehook, posthook) => {
           setSuccess(false);
           setErr(err);
           setLoading(false);
-          return;
+          return [null, -1, err];
         }
       }
 
@@ -199,7 +199,7 @@ const useAPICall = (selector, args, initState, prehook, posthook) => {
         setSuccess(false);
         setErr(err);
         setLoading(false);
-        return;
+        return [data, status, err];
       }
 
       setSuccess(true);
@@ -212,17 +212,18 @@ const useAPICall = (selector, args, initState, prehook, posthook) => {
           setSuccess(false);
           setErr(err);
           setLoading(false);
-          return;
+          return [data, status, err];
         }
       }
 
       setLoading(false);
+      return [data, status, err];
     },
     [setLoading, setSuccess, setErr, setData, route],
   );
 
   const execute = useCallback(() => {
-    apicall(args, prehook, posthook);
+    return apicall(args, prehook, posthook);
   }, [prehook, posthook, apicall, ...args]);
 
   return [{loading, success, err, data}, execute];
