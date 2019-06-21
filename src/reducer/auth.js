@@ -80,25 +80,29 @@ const useAuthState = () => useSelector(selectReducerAuth);
 
 const selectAPILogin = (api) => api.u.auth.login;
 
-const useLogin = () => {
+const useLoginCall = (username, password) => {
   const dispatch = useDispatch();
-  const execute = useAPI(selectAPILogin);
-
-  const login = useCallback(
-    async (username, password) => {
-      const [data, status, err] = await execute(username, password);
-      if (err) {
-        return [data, status, err];
-      }
-      const {userid, authTags, time} = data;
-      dispatch(Refresh());
-      dispatch(LoginSuccess(userid, authTags, time));
-      return [data, status, err];
+  const [loading, success, err, data, execute] = useAPICall(
+    selectAPILogin,
+    [username, password],
+    {
+      userid: '',
+      authTags: '',
+      time: 0,
     },
-    [dispatch, execute],
   );
 
-  return login;
+  const login = useCallback(async () => {
+    const [data, status, err] = await execute();
+    if (err) {
+      return;
+    }
+    const {userid, authTags, time} = data;
+    dispatch(Refresh());
+    dispatch(LoginSuccess(userid, authTags, time));
+  }, [dispatch, execute]);
+
+  return [loading, success, err, data, login];
 };
 
 const selectAPIExchange = (api) => api.u.auth.exchange;
@@ -122,7 +126,7 @@ const useRelogin = () => {
     const refreshValid = getCookie('refresh_valid');
     if (refreshValid !== 'valid') {
       dispatch(NotLoggedIn());
-      return [false, -1, 'Session expired'];
+      return [null, -1, 'Session expired'];
     }
     if (Date.now() / 1000 > timeRefresh) {
       const [data, status, err] = await execRe();
@@ -188,7 +192,7 @@ export {
   Auth as default,
   Auth,
   useAuthState,
-  useLogin,
+  useLoginCall,
   useRelogin,
   useAuth,
   useAuthResource,

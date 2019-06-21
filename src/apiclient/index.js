@@ -81,32 +81,16 @@ const makeFetch = ({
       const res = await fetch(finalurl, opts);
       const status = response.status;
       if (status < 200 || status >= 300) {
-        const data = await response.json();
-        return {
-          status,
-          data: null,
-          err: onerr(status, data),
-        };
+        const err = await response.json();
+        return [null, status, onerr(status, err)];
       }
       if (!expectdata) {
-        return {
-          status,
-          data: onsuccess(status),
-          err: null,
-        };
+        return [onsuccess(status), status, null];
       }
       const data = await response.json();
-      return {
-        status,
-        data: onsuccess(status, data),
-        err: null,
-      };
+      return [onsuccess(status, data), status, null];
     } catch (e) {
-      return {
-        status: -1,
-        data: null,
-        err: oncatch(err),
-      };
+      return [null, -1, oncatch(err)];
     }
   };
 };
@@ -181,35 +165,22 @@ const APIContext = React.createContext(APIClient);
 
 const useAPI = (selector) => {
   const apiClient = useContext(APIContext);
-  const route = selector(apiClient);
-
-  const execute = useCallback(
-    async (...args) => {
-      const {status, data, err} = await route(...args);
-      return [data, status, err];
-    },
-    [route],
-  );
-
-  return execute;
+  return selector(apiClient);
 };
 
-const useResource = (selector, args, initState, prehook) => {
+const useAPICall = (selector, args, initState, prehook, posthook) => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [err, setErr] = useState(null);
   const [data, setData] = useState(initState);
-  const execute = useAPI(selector);
+  const route = useAPI(selector);
 
-  useEffect(() => {
-    let cancel = false;
-    setLoading(true);
-    (async () => {
+  const apicall = useCallback(
+    async (...args) => {
+      setLoading(true);
+
       if (prehook) {
         const err = await prehook();
-        if (cancel) {
-          return;
-        }
         if (err) {
           setSuccess(false);
           setErr(err);
@@ -217,26 +188,55 @@ const useResource = (selector, args, initState, prehook) => {
           return;
         }
       }
-      const [data, status, err] = await execute(...args);
-      if (cancel) {
-        return;
-      }
+
+      const [data, status, err] = await route(...args);
       if (err) {
         setSuccess(false);
         setErr(err);
-      } else {
-        setSuccess(true);
-        setErr(null);
-        setData(data);
+        setLoading(false);
+        return;
       }
+
+      setSuccess(true);
+      setErr(null);
+      setData(data);
+
+      if (posthook) {
+        const err = await posthook(data, status, err);
+        if (err) {
+          setSuccess(false);
+          setErr(err);
+          setLoading(false);
+          return;
+        }
+      }
+
       setLoading(false);
-    })();
-    return () => {
-      cancel = true;
-    };
-  }, [setLoading, setSuccess, setErr, setData, prehook, execute, ...args]);
+    },
+    [setLoading, setSuccess, setErr, setData, prehook, posthook, route],
+  );
+
+  const execute = useCallback(() => {
+    apicall(...args);
+  }, [apicall, ...args]);
+
+  return [loading, success, err, data, execute];
+};
+
+const useResource = (selector, args, initState, prehook, posthook) => {
+  const [loading, success, err, data, execute] = useAPICall(
+    selector,
+    args,
+    initState,
+    prehook,
+    posthook,
+  );
+
+  useEffect(() => {
+    execute();
+  }, [execute]);
 
   return [loading, success, err, data];
 };
 
-export {APIClient, APIContext, useAPI, useResource};
+export {APIClient, APIContext, useAPI, useAPICall, useResource};
