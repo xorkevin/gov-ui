@@ -1,7 +1,7 @@
 import {useCallback} from 'react';
 import {useDispatch, useStore} from 'react-redux';
 import {getCookie, setCookie} from 'utility';
-import {useAPI, useResource} from 'apiclient';
+import {useAPI, useAPICall, useResource} from 'apiclient';
 
 // Actions
 
