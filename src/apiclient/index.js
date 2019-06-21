@@ -161,7 +161,7 @@ const makeAPIClient = (baseurl, baseopts, apiconfig) => {
 };
 
 const BASEOPTS = Object.freeze({
-  credentials: 'same-origin',
+  credentials: 'include',
 });
 
 const APIClient = makeAPIClient(APIBASE_URL, BASEOPTS, API);
