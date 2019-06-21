@@ -1,18 +1,15 @@
-import {authopts} from './config';
 export default {
   get: {
     url: '',
     method: 'GET',
     expectdata: true,
     err: 'Unable to get user info',
-    opts: authopts,
   },
   sessions: {
     url: '/sessions',
     method: 'GET',
     expectdata: true,
     err: 'Could not get sessions',
-    opts: authopts,
     children: {
       del: {
         url: '',
@@ -20,7 +17,6 @@ export default {
         transformer: (sessions_ids) => [null, {session_ids}],
         expectdata: false,
         err: 'Could not delete sessions',
-        opts: authopts,
       },
     },
   },
@@ -29,7 +25,6 @@ export default {
     method: 'PUT',
     expectdata: false,
     err: 'Could not edit account',
-    opts: authopts,
   },
   email: {
     url: '/email',
@@ -40,7 +35,6 @@ export default {
         transformer: (email, password) => [null, {email, password}],
         expectdata: false,
         err: 'Could not edit email',
-        opts: authopts,
         children: {
           confirm: {
             url: '/verify',
@@ -48,7 +42,6 @@ export default {
             transformer: (key, password) => [null, {key, password}],
             expectdata: false,
             err: 'Could not edit email',
-            opts: authopts,
           },
         },
       },
@@ -66,7 +59,6 @@ export default {
         ],
         expectdata: false,
         err: 'Could not edit password',
-        opts: authopts,
       },
       forgot: {
         url: '/forgot',
@@ -97,7 +89,6 @@ export default {
         transformer: (userid) => [[userid], null],
         expectdata: true,
         err: 'Unable to get user info',
-        opt: authopts,
       },
       edit: {
         url: '',
@@ -108,7 +99,6 @@ export default {
             transformer: (userid, add, remove) => [[userid], {add, remove}],
             expectdata: false,
             err: 'Unable to update user permissions',
-            opts: authopts,
           },
         },
       },
@@ -127,7 +117,6 @@ export default {
         transformer: (name) => [[name], null],
         expectdata: true,
         err: 'Unable to get user info',
-        opts: authopts,
       },
     },
   },

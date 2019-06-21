@@ -82,15 +82,11 @@ const selectAPILogin = (api) => api.u.auth.login;
 
 const useLoginCall = (username, password) => {
   const dispatch = useDispatch();
-  const [loading, success, err, data, execute] = useAPICall(
-    selectAPILogin,
-    [username, password],
-    {
-      userid: '',
-      authTags: '',
-      time: 0,
-    },
-  );
+  const [apiState, execute] = useAPICall(selectAPILogin, [username, password], {
+    userid: '',
+    authTags: '',
+    time: 0,
+  });
 
   const login = useCallback(async () => {
     const [data, status, err] = await execute();
@@ -102,7 +98,7 @@ const useLoginCall = (username, password) => {
     dispatch(LoginSuccess(userid, authTags, time));
   }, [dispatch, execute]);
 
-  return [loading, success, err, data, login];
+  return [apiState, login];
 };
 
 const selectAPIExchange = (api) => api.u.auth.exchange;

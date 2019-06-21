@@ -1,4 +1,3 @@
-import {authopts} from './config';
 export default {
   link: {
     url: '/link',
@@ -9,7 +8,6 @@ export default {
         transformer: (amount, offset) => [[amount, offset], null],
         expectdata: true,
         err: 'Unable to get links',
-        opt: authopts,
       },
       id: {
         url: '/{0}',
@@ -20,7 +18,6 @@ export default {
             transformer: (linkid) => [[linkid], null],
             expectdata: true,
             err: 'Unable to delete link',
-            opt: authopts,
           },
         },
       },
@@ -29,7 +26,6 @@ export default {
         method: 'POST',
         expectdata: true,
         err: 'Unable to create link',
-        opt: authopts,
       },
     },
   },

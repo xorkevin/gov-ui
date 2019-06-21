@@ -1,6 +1,5 @@
 import React, {useState, useEffect, useCallback, useContext} from 'react';
 import {formatStrArgs} from 'utility';
-import {authopts} from './config';
 import courierAPI from './courier';
 import profileAPI from './profile';
 import authAPI from './auth';
@@ -13,7 +12,7 @@ const defaultTransformer = (...args) => {
     return [null, null, null, null];
   }
   if (args.length === 1) {
-    return [null, args[1], null, null];
+    return [null, args[0], null, null];
   }
   const k = args.length - 1;
   return [args.slice(0, k), args[k], null, null];
@@ -69,7 +68,7 @@ const makeFetch = ({
         body = bodycontent;
       } else {
         tempheaders['Content-Type'] = JSON_MIME;
-        body = JSON.stringify(body);
+        body = JSON.stringify(bodycontent);
       }
     }
 
@@ -79,17 +78,17 @@ const makeFetch = ({
 
     try {
       const res = await fetch(finalurl, opts);
-      const status = response.status;
+      const status = res.status;
       if (status < 200 || status >= 300) {
-        const err = await response.json();
+        const err = await res.json();
         return [null, status, onerr(status, err)];
       }
       if (!expectdata) {
         return [onsuccess(status), status, null];
       }
-      const data = await response.json();
+      const data = await res.json();
       return [onsuccess(status, data), status, null];
-    } catch (e) {
+    } catch (err) {
       return [null, -1, oncatch(err)];
     }
   };
@@ -136,16 +135,18 @@ const API = {
   },
 };
 
-const makeAPIClient = (baseurl, apiconfig) => {
+const makeAPIClient = (baseurl, baseopts, apiconfig) => {
   return Object.freeze(
     Object.fromEntries(
       Object.entries(apiconfig).map(([k, v]) => {
         const url = baseurl + v.url;
         const fn = v.method
-          ? makeFetch(Object.assign({}, v, {url, children: undefined}))
+          ? makeFetch(
+              Object.assign({opts: baseopts}, v, {url, children: undefined}),
+            )
           : {};
         if (v.children) {
-          Object.assign(fn, makeAPIClient(url, v.children));
+          Object.assign(fn, makeAPIClient(url, baseopts, v.children));
         }
         Object.assign(fn, {
           api_prop: {
@@ -159,7 +160,11 @@ const makeAPIClient = (baseurl, apiconfig) => {
   );
 };
 
-const APIClient = makeAPIClient(APIBASE_URL, API);
+const BASEOPTS = Object.freeze({
+  credentials: 'same-origin',
+});
+
+const APIClient = makeAPIClient(APIBASE_URL, BASEOPTS, API);
 
 const APIContext = React.createContext(APIClient);
 
@@ -176,7 +181,7 @@ const useAPICall = (selector, args, initState, prehook, posthook) => {
   const route = useAPI(selector);
 
   const apicall = useCallback(
-    async (...args) => {
+    async (args, prehook, posthook) => {
       setLoading(true);
 
       if (prehook) {
@@ -213,18 +218,18 @@ const useAPICall = (selector, args, initState, prehook, posthook) => {
 
       setLoading(false);
     },
-    [setLoading, setSuccess, setErr, setData, prehook, posthook, route],
+    [setLoading, setSuccess, setErr, setData, route],
   );
 
   const execute = useCallback(() => {
-    apicall(...args);
-  }, [apicall, ...args]);
+    apicall(args, prehook, posthook);
+  }, [prehook, posthook, apicall, ...args]);
 
-  return [loading, success, err, data, execute];
+  return [{loading, success, err, data}, execute];
 };
 
 const useResource = (selector, args, initState, prehook, posthook) => {
-  const [loading, success, err, data, execute] = useAPICall(
+  const [apiState, execute] = useAPICall(
     selector,
     args,
     initState,
@@ -236,7 +241,7 @@ const useResource = (selector, args, initState, prehook, posthook) => {
     execute();
   }, [execute]);
 
-  return [loading, success, err, data];
+  return apiState;
 };
 
 export {APIClient, APIContext, useAPI, useAPICall, useResource};

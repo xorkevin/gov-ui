@@ -1,4 +1,3 @@
-import {authopts} from './config';
 export default {
   login: {
     url: '/login',
@@ -14,7 +13,6 @@ export default {
       };
     },
     err: 'Incorrect username or password',
-    opts: authopts,
   },
   exchange: {
     url: '/exchange',
@@ -29,13 +27,11 @@ export default {
       };
     },
     err: 'Login session expired',
-    opt: authopts,
   },
   refresh: {
     url: '/refresh',
     method: 'POST',
     expectdata: false,
     err: 'Login session expired',
-    opt: authopts,
   },
 };
