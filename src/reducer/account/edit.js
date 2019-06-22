@@ -1,5 +1,5 @@
 import {API} from 'config';
-import {ReLogin} from 'reducer/auth';
+import {ReLogin} from 'service/auth';
 
 const EditAccountReq = (options) => {
   return async (dispatch) => {

@@ -1,6 +1,6 @@
 import React, {lazy, Suspense, useEffect, useCallback} from 'react';
 import {Switch, Route, Redirect} from 'react-router-dom';
-import {useAuthState} from 'reducer/auth';
+import {useAuthState} from 'service/auth';
 import Section from 'component/section';
 
 import {URL} from 'config';
@@ -21,7 +21,7 @@ const FallbackView = (
 
 const LoginContainer = ({history, match}) => {
   const navigateHome = useCallback(() => {
-    history.push(URL.home);
+    history.replace(URL.home);
   }, [history]);
 
   const {loggedIn} = useAuthState();

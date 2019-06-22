@@ -1,7 +1,8 @@
-import {useCallback} from 'react';
+import React, {useEffect, useCallback, useMemo} from 'react';
 import {useSelector, useDispatch, useStore} from 'react-redux';
 import {getCookie, setCookie} from 'utility';
 import {useAPI, useAPICall, useResource} from 'apiclient';
+import {URL} from 'config';
 
 // Actions
 
@@ -184,6 +185,43 @@ const useLogout = () => {
   return logout;
 };
 
+// Higher Order
+
+const Protected = (child, allowedAuth) => (props) => {
+  const history = props.history;
+  const navigateLogin = useCallback(() => {
+    history.replace(URL.login);
+  }, [history]);
+  const {valid, loggedIn, authTags} = useAuthState();
+
+  useEffect(() => {
+    if (valid && !loggedIn) {
+      navigateLogin();
+    }
+  }, [valid, loggedIn]);
+
+  const authorized = useMemo(() => {
+    if (!allowedAuth) {
+      return true;
+    }
+    const authTagSet = new Set(authTags.split(','));
+    if (!Array.isArray(allowedAuth)) {
+      return authTagSet.has(allowedAuth);
+    }
+    const intersection = new Set(allowedAuth.filter((x) => authTagSet.has(x)));
+    return intersection.size > 0;
+  }, [allowedAuth, authTags]);
+
+  if (!authorized) {
+    return (
+      <Section container padded narrow>
+        Unauthorized
+      </Section>
+    );
+  }
+  return React.createElement(child, props);
+};
+
 export {
   Auth as default,
   Auth,
@@ -193,4 +231,5 @@ export {
   useAuth,
   useAuthResource,
   useLogout,
+  Protected,
 };

@@ -1,6 +1,6 @@
 import {API} from 'config';
 import {formatStr} from 'utility';
-import {ReLogin} from 'reducer/auth';
+import {ReLogin} from 'service/auth';
 
 const GetLinkGroup = (amount, offset) => {
   return async (dispatch) => {

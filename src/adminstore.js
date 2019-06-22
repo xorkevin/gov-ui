@@ -3,7 +3,7 @@ import thunk from 'redux-thunk';
 
 import Health from 'reducer/health';
 import Settings from 'reducer/settings';
-import Auth from 'reducer/auth';
+import Auth from 'service/auth';
 
 const store = createStore(
   combineReducers({

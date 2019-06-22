@@ -1,6 +1,6 @@
 import React, {Fragment} from 'react';
 import {Link} from 'react-router-dom';
-import {useLoginCall} from 'reducer/auth';
+import {useLoginCall} from 'service/auth';
 import Section from 'component/section';
 import Menu from 'component/menu';
 import FaIcon from 'component/faicon';

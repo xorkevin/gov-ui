@@ -61,6 +61,7 @@ const API = {
 
 const URL = Object.freeze({
   home: '/',
+  login: '/x/login',
   courier: COURIERBASE_URL,
 });
 
