@@ -57,7 +57,7 @@ const UnAuthFallback = (
 );
 
 const Admin = () => {
-  const [, toggleDark] = useDarkMode();
+  const [dark, toggleDark] = useDarkMode();
   const logout = useLogout();
   const {loggedIn} = useAuthState();
 
@@ -112,7 +112,7 @@ const Admin = () => {
                     <FaIcon icon="address-card-o" /> Account
                   </Link>
                   <span onClick={toggleDark}>
-                    <FaIcon icon="bolt" /> Dark Mode
+                    <FaIcon icon="bolt" /> {dark ? 'Light' : 'Dark'} Mode
                   </span>
                   <Anchor ext href="https://github.com/xorkevin">
                     <FaIcon icon="github" /> xorkevin
