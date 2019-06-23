@@ -63,12 +63,14 @@ export default {
       forgot: {
         url: '/forgot',
         method: 'PUT',
+        transformer: (username) => [null, {username}],
         expectdata: true,
         err: 'Could not reset password',
         children: {
           confirm: {
             url: '/reset',
             method: 'PUT',
+            transformer: (key, new_password) => [null, {key, new_password}],
             expectdata: true,
             err: 'Could not reset password',
           },
