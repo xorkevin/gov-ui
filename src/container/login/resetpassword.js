@@ -46,7 +46,7 @@ const ConfirmReset = ({match}) => {
       <Link to="/x/login">
         <Button text>Cancel</Button>
       </Link>
-      <Button primary onClick={this.resetpassword}>
+      <Button primary onClick={execReset}>
         Reset Password
       </Button>
     </Fragment>
