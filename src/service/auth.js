@@ -222,6 +222,22 @@ const Protected = (child, allowedAuth) => (props) => {
   return React.createElement(child, props);
 };
 
+const AntiProtected = (child) => (props) => {
+  const history = props.history;
+  const navigateHome = useCallback(() => {
+    history.replace(URL.home);
+  }, [history]);
+  const {loggedIn} = useAuthState();
+
+  useEffect(() => {
+    if (loggedIn) {
+      navigateHome();
+    }
+  }, [loggedIn]);
+
+  return React.createElement(child, props);
+};
+
 export {
   Auth as default,
   Auth,
@@ -232,4 +248,5 @@ export {
   useAuthResource,
   useLogout,
   Protected,
+  AntiProtected,
 };

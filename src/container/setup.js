@@ -29,7 +29,7 @@ const SetupContainer = ({history}) => {
     email_confirm: '',
   });
 
-  const setupPreHook = useCallback(() => {
+  const prehook = useCallback(() => {
     const {password, email} = formState;
     const {password_confirm, email_confirm} = formConfirmState;
     if (password !== password_confirm) {
@@ -44,7 +44,7 @@ const SetupContainer = ({history}) => {
     selectAPISetup,
     [formState],
     {orgname: ''},
-    setupPreHook,
+    prehook,
   );
 
   const {loading, success, err, data} = setupState;
@@ -63,7 +63,7 @@ const SetupContainer = ({history}) => {
               Cancel
             </Button>
             <Button primary onClick={execSetup}>
-              Submit
+              Setup
             </Button>
           </Fragment>
         }

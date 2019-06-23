@@ -1,110 +1,67 @@
-import React, {Component, Fragment} from 'react';
+import React, {Fragment, useCallback} from 'react';
 import {Link} from 'react-router-dom';
-import linkState from 'linkstate';
+import {useAPICall} from 'apiclient';
 import Section from 'component/section';
-import FaIcon from 'component/faicon';
 import Card from 'component/card';
 import Button from 'component/button';
-import Input from 'component/form';
+import Input, {useForm} from 'component/form';
 
-import {connect} from 'react-redux';
-import {ConfirmAccountReq} from 'reducer/account/create';
+const selectAPIConfirmAccount = (api) => api.u.user.create.confirm;
 
-class ConfirmAccount extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      success: false,
-      err: false,
-      key: props.match.params.key || '',
-    };
-    this.confirmaccount = this.confirmaccount.bind(this);
-  }
+const ConfirmAccount = ({match}) => {
+  const [formState, updateForm] = useForm({
+    key: match.params.key || '',
+  });
 
-  async confirmaccount() {
-    const {err} = await this.props.confirmaccount(this.state.key);
-    if (err) {
-      this.setState((prevState) => {
-        return Object.assign({}, prevState, {
-          success: false,
-          err,
-        });
-      });
-    } else {
-      this.setState((prevState) => {
-        return Object.assign({}, prevState, {
-          success: true,
-          err: false,
-        });
-      });
-    }
-  }
+  const [confirmState, execConfirm] = useAPICall(selectAPIConfirmAccount, [
+    formState.key,
+  ]);
 
-  render() {
-    const {key, success, err} = this.state;
-    const bar = (
-      <Fragment>
-        {!success && (
-          <Link to="/x/login">
-            <Button text>Cancel</Button>
-          </Link>
-        )}
-        {!success && (
-          <Button primary onClick={this.confirmaccount}>
-            Submit
-          </Button>
-        )}
+  const {loading, success, err} = confirmState;
+
+  const bar = success ? (
+    <Fragment>
+      <Link to="/x/login">
+        <Button outline>Sign in</Button>
+      </Link>
+    </Fragment>
+  ) : (
+    <Fragment>
+      <Link to="/x/login">
+        <Button text>Cancel</Button>
+      </Link>
+      <Button primary onClick={execConfirm}>
+        Confirm
+      </Button>
+    </Fragment>
+  );
+
+  return (
+    <Section container padded>
+      <Card
+        center
+        size="md"
+        restrictWidth
+        titleBar
+        title={<h3>Confirm account</h3>}
+        bar={bar}
+      >
+        <Input
+          label="code"
+          name="key"
+          value={formState.key}
+          onChange={updateForm}
+          fullWidth
+        />
+        {err && <span>{err}</span>}
         {success && (
-          <Link to="/x/login">
-            <Button outline>Sign in</Button>
-          </Link>
+          <span>
+            <span>Your account has been created</span>
+          </span>
         )}
-      </Fragment>
-    );
-
-    return (
-      <Section container padded>
-        <Card
-          center
-          size="md"
-          restrictWidth
-          titleBar
-          title={<h3>Confirm account</h3>}
-          bar={bar}
-        >
-          <Input
-            label="code"
-            fullWidth
-            value={key}
-            onChange={linkState(this, 'key')}
-          />
-          {!success && err && <span>{err}</span>}
-          {success && (
-            <span>
-              <span>Your account has been created</span>
-            </span>
-          )}
-        </Card>
-      </Section>
-    );
-  }
-}
-
-const mapStateToProps = (state) => {
-  return {};
+      </Card>
+    </Section>
+  );
 };
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    confirmaccount: (key) => {
-      return dispatch(ConfirmAccountReq(key));
-    },
-  };
-};
-
-ConfirmAccount = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(ConfirmAccount);
 
 export default ConfirmAccount;

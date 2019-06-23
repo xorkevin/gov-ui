@@ -10,7 +10,7 @@ import {
 import {connect} from 'react-redux';
 
 import {DarkMode} from 'reducer/settings';
-import {Logout, Protected} from 'service/auth';
+import {Logout, Protected, AntiProtected} from 'service/auth';
 
 import MainContent from 'component/maincontent';
 import Section from 'component/section';
@@ -22,7 +22,7 @@ import Anchor from 'component/anchor';
 import FaIcon from 'component/faicon';
 
 const AdminContainer = Protected(lazy(() => import('container/admin')));
-const LoginContainer = lazy(() => import('container/login'));
+const LoginContainer = AntiProtected(lazy(() => import('container/login')));
 const AccountContainer = Protected(lazy(() => import('container/account')));
 const UserContainer = Protected(lazy(() => import('container/user')));
 const ManageContainer = Protected(

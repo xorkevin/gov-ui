@@ -1,4 +1,4 @@
-import React, {lazy, Suspense, useEffect, useCallback} from 'react';
+import React, {lazy, Suspense} from 'react';
 import {Switch, Route, Redirect} from 'react-router-dom';
 import {useAuthState} from 'service/auth';
 import Section from 'component/section';
@@ -19,19 +19,7 @@ const FallbackView = (
   </Section>
 );
 
-const LoginContainer = ({history, match}) => {
-  const navigateHome = useCallback(() => {
-    history.replace(URL.home);
-  }, [history]);
-
-  const {loggedIn} = useAuthState();
-
-  useEffect(() => {
-    if (loggedIn) {
-      navigateHome();
-    }
-  }, [loggedIn]);
-
+const LoginContainer = ({match}) => {
   return (
     <Suspense fallback={FallbackView}>
       <Switch>
