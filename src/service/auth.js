@@ -1,6 +1,11 @@
 import React, {useEffect, useCallback, useMemo, useContext} from 'react';
 import {useSelector, useDispatch, useStore} from 'react-redux';
-import {getCookie, setCookie} from 'utility';
+import {
+  getCookie,
+  setCookie,
+  getSearchParams,
+  searchParamsToString,
+} from 'utility';
 import {useAPI, useAPICall, useResource} from 'apiclient';
 import {URL} from 'config';
 
@@ -196,21 +201,16 @@ const redirectParamName = 'redir';
 const Protected = (child, allowedAuth) => (props) => {
   const history = props.history;
   const navigateLogin = useCallback(() => {
-    if (history.location.pathname === URL.home) {
-      history.replace({
-        pathname: URL.login,
-      });
-    } else {
-      const {pathname, search} = history.location;
-      const searchParams = new URLSearchParams(
-        search.length > 0 ? search.slice(1) : '',
-      );
-      searchParams.set(redirectParamName, history.location.pathname);
-      history.replace({
-        pathname: URL.login,
-        search: '?' + searchParams.toString(),
-      });
+    const {pathname} = history.location;
+    const search = getSearchParams(history.location);
+    search.delete(redirectParamName);
+    if (pathname !== URL.home) {
+      search.set(redirectParamName, pathname);
     }
+    history.replace({
+      pathname: URL.login,
+      search: searchParamsToString(search),
+    });
   }, [history]);
   const {valid, loggedIn, authTags} = useAuthState();
   const fallback = useContext(ProtectedFallbackContext);
@@ -242,21 +242,16 @@ const Protected = (child, allowedAuth) => (props) => {
 const AntiProtected = (child) => (props) => {
   const history = props.history;
   const navigateBack = useCallback(() => {
-    const {search} = history.location;
-    const searchParams = new URLSearchParams(
-      search.length > 0 ? search.slice(1) : '',
-    );
-    const redir = searchParams.get(redirectParamName);
-    searchParams.delete(redirectParamName);
-    const nextSearch = searchParams.toString();
-    if (redir) {
-      history.replace({
-        pathname: redir,
-        search: nextSearch.length > 0 ? '?' + nextSearch : '',
-      });
-    } else {
-      history.replace(URL.home);
+    const search = getSearchParams(history.location);
+    let redir = search.get(redirectParamName);
+    search.delete(redirectParamName);
+    if (!redir) {
+      redir = URL.home;
     }
+    history.replace({
+      pathname: redir,
+      search: searchParamsToString(search),
+    });
   }, [history]);
   const {loggedIn} = useAuthState();
 
