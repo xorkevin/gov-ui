@@ -192,7 +192,7 @@ const useLogout = () => {
 
 // Higher Order
 
-const DefaultProtectedFallback = () => 'Unauthorized';
+const DefaultProtectedFallback = 'Unauthorized';
 const ProtectedFallbackContext = React.createContext(DefaultProtectedFallback);
 const ProtectedFallback = ProtectedFallbackContext.Provider;
 
@@ -234,7 +234,7 @@ const Protected = (child, allowedAuth) => (props) => {
   }, [allowedAuth, authTags]);
 
   if (!authorized) {
-    return React.createElement(fallback);
+    return fallback;
   }
   return React.createElement(child, props);
 };

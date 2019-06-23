@@ -1,4 +1,4 @@
-import React, {Component, Fragment, lazy, Suspense} from 'react';
+import React, {Fragment, lazy, Suspense} from 'react';
 import {
   Switch,
   Route,
@@ -7,10 +7,15 @@ import {
   Link,
   withRouter,
 } from 'react-router-dom';
-import {connect} from 'react-redux';
 
-import {DarkMode} from 'reducer/settings';
-import {Logout, Protected, AntiProtected} from 'service/auth';
+import {useDarkMode} from 'service/settings';
+import {
+  useAuthState,
+  useLogout,
+  Protected,
+  AntiProtected,
+  ProtectedFallback,
+} from 'service/auth';
 
 import MainContent from 'component/maincontent';
 import Section from 'component/section';
@@ -45,90 +50,85 @@ const FallbackView = (
   </Section>
 );
 
-class Admin extends Component {
-  constructor(props) {
-    super(props);
-    this.toggleDark = this.toggleDark.bind(this);
-    this.logout = this.logout.bind(this);
-  }
+const UnAuthFallback = (
+  <Section container padded narrow>
+    Unauthorized
+  </Section>
+);
 
-  toggleDark() {
-    this.props.toggleDark();
-  }
+const Admin = () => {
+  const [, toggleDark] = useDarkMode();
+  const logout = useLogout();
+  const {loggedIn} = useAuthState();
 
-  logout() {
-    this.props.logout();
-  }
+  return (
+    <div>
+      {loggedIn && (
+        <Navbar
+          sidebar
+          left={
+            <Fragment>
+              <Navitem home>
+                <NavLink exact to="/">
+                  <FaIcon icon="home" />
+                  <small>Home</small>
+                </NavLink>
+              </Navitem>
+              <Navitem>
+                <NavLink to="/health">
+                  <FaIcon icon="server" />
+                  <small>Health</small>
+                </NavLink>
+              </Navitem>
+              <Navitem>
+                <NavLink to="/manage">
+                  <FaIcon icon="building" />
+                  <small>Manage</small>
+                </NavLink>
+              </Navitem>
+              <Navitem>
+                <NavLink to="/courier">
+                  <FaIcon icon="paper-plane" />
+                  <small>Courier</small>
+                </NavLink>
+              </Navitem>
+            </Fragment>
+          }
+          right={
+            <Fragment>
+              <Navitem>
+                <Menu
+                  icon={
+                    <Fragment>
+                      <FaIcon icon="cog" /> <small>Settings</small>
+                    </Fragment>
+                  }
+                  size="md"
+                  fixed
+                  align="left"
+                  position="top"
+                >
+                  <Link to="/a/account">
+                    <FaIcon icon="address-card-o" /> Account
+                  </Link>
+                  <span onClick={toggleDark}>
+                    <FaIcon icon="bolt" /> Dark Mode
+                  </span>
+                  <Anchor ext href="https://github.com/xorkevin">
+                    <FaIcon icon="github" /> xorkevin
+                  </Anchor>
+                  <span onClick={logout}>
+                    <FaIcon icon="sign-out" /> Sign out
+                  </span>
+                </Menu>
+              </Navitem>
+            </Fragment>
+          }
+        />
+      )}
 
-  render() {
-    const {loggedIn} = this.props;
-    return (
-      <div>
-        {loggedIn && (
-          <Navbar
-            sidebar
-            left={
-              <Fragment>
-                <Navitem home>
-                  <NavLink exact to="/">
-                    <FaIcon icon="home" />
-                    <small>Home</small>
-                  </NavLink>
-                </Navitem>
-                <Navitem>
-                  <NavLink to="/health">
-                    <FaIcon icon="server" />
-                    <small>Health</small>
-                  </NavLink>
-                </Navitem>
-                <Navitem>
-                  <NavLink to="/manage">
-                    <FaIcon icon="building" />
-                    <small>Manage</small>
-                  </NavLink>
-                </Navitem>
-                <Navitem>
-                  <NavLink to="/courier">
-                    <FaIcon icon="paper-plane" />
-                    <small>Courier</small>
-                  </NavLink>
-                </Navitem>
-              </Fragment>
-            }
-            right={
-              <Fragment>
-                <Navitem>
-                  <Menu
-                    icon={
-                      <Fragment>
-                        <FaIcon icon="cog" /> <small>Settings</small>
-                      </Fragment>
-                    }
-                    size="md"
-                    fixed
-                    align="left"
-                    position="top"
-                  >
-                    <Link to="/a/account">
-                      <FaIcon icon="address-card-o" /> Account
-                    </Link>
-                    <span onClick={this.toggleDark}>
-                      <FaIcon icon="bolt" /> Dark Mode
-                    </span>
-                    <Anchor ext href="https://github.com/xorkevin">
-                      <FaIcon icon="github" /> xorkevin
-                    </Anchor>
-                    <span onClick={this.logout}>
-                      <FaIcon icon="sign-out" /> Sign out
-                    </span>
-                  </Menu>
-                </Navitem>
-              </Fragment>
-            }
-          />
-        )}
-
-        <MainContent withSidebar={loggedIn} sectionNoMargin>
+      <MainContent withSidebar={loggedIn} sectionNoMargin>
+        <ProtectedFallback value={UnAuthFallback}>
           <Suspense fallback={FallbackView}>
             <Switch>
               <Route exact path="/" component={AdminContainer} />
@@ -142,69 +142,41 @@ class Admin extends Component {
               <Redirect to="/" />
             </Switch>
           </Suspense>
-        </MainContent>
+        </ProtectedFallback>
+      </MainContent>
 
-        <Footer withSidebar={loggedIn}>
-          <Grid map center sm={8}>
-            <div className="text-center">
-              <h4>Nuke</h4>a reactive frontend for governor
-            </div>
-            <div className="text-center">
-              <ul>
-                <li>
-                  <Anchor noColor ext href="https://github.com/hackform/nuke">
-                    <FaIcon icon="github" /> Github
-                  </Anchor>
-                </li>
-                <li>
-                  Designed for{' '}
-                  <Anchor
-                    noColor
-                    ext
-                    href="https://github.com/hackform/governor"
-                  >
-                    hackform/governor
-                  </Anchor>
-                </li>
-              </ul>
-            </div>
-            <div className="text-center">
-              <h5>
-                <FaIcon icon="code" /> with <FaIcon icon="heart-o" /> by{' '}
-                <Anchor noColor ext href="https://github.com/xorkevin">
-                  <FaIcon icon="github" /> xorkevin
+      <Footer withSidebar={loggedIn}>
+        <Grid map center sm={8}>
+          <div className="text-center">
+            <h4>Nuke</h4>a reactive frontend for governor
+          </div>
+          <div className="text-center">
+            <ul>
+              <li>
+                <Anchor noColor ext href="https://github.com/hackform/nuke">
+                  <FaIcon icon="github" /> Github
                 </Anchor>
-              </h5>
-            </div>
-          </Grid>
-        </Footer>
-      </div>
-    );
-  }
-}
-
-const mapStateToProps = (state) => {
-  const {loggedIn} = state.Auth;
-  return {
-    loggedIn,
-  };
+              </li>
+              <li>
+                Designed for{' '}
+                <Anchor noColor ext href="https://github.com/hackform/governor">
+                  hackform/governor
+                </Anchor>
+              </li>
+            </ul>
+          </div>
+          <div className="text-center">
+            <h5>
+              <FaIcon icon="code" /> with <FaIcon icon="heart-o" /> by{' '}
+              <Anchor noColor ext href="https://github.com/xorkevin">
+                <FaIcon icon="github" /> xorkevin
+              </Anchor>
+            </h5>
+          </div>
+        </Grid>
+      </Footer>
+    </div>
+  );
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    toggleDark: () => {
-      dispatch(DarkMode());
-    },
-    logout: () => {
-      dispatch(Logout());
-    },
-  };
-};
-
-Admin = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(Admin);
-Admin = withRouter(Admin);
-
-export default Admin;
+export default withRouter(Admin);
