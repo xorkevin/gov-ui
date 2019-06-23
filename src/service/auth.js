@@ -202,7 +202,7 @@ const Protected = (child, allowedAuth) => (props) => {
   const history = props.history;
   const navigateLogin = useCallback(() => {
     const {pathname} = history.location;
-    const search = getSearchParams(history.location);
+    const search = getSearchParams(history.location.search);
     search.delete(redirectParamName);
     if (pathname !== URL.home) {
       search.set(redirectParamName, pathname);
@@ -242,7 +242,7 @@ const Protected = (child, allowedAuth) => (props) => {
 const AntiProtected = (child) => (props) => {
   const history = props.history;
   const navigateBack = useCallback(() => {
-    const search = getSearchParams(history.location);
+    const search = getSearchParams(history.location.search);
     let redir = search.get(redirectParamName);
     search.delete(redirectParamName);
     if (!redir) {

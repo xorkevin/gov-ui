@@ -48,9 +48,9 @@ const setCookie = (key, value, path = '/', age = 31536000) => {
   document.cookie = `${key}=${value};path=${path};max-age=${age}`;
 };
 
-const getSearchParams = ({search}) => {
+const getSearchParams = (search) => {
   let k = search;
-  if (k.length > 0) {
+  if (k.length > 0 && k[0] === '?') {
     k = k.slice(1);
   }
   return new URLSearchParams(k);
@@ -58,10 +58,10 @@ const getSearchParams = ({search}) => {
 
 const searchParamsToString = (search) => {
   let k = search.toString();
-  if (k.length > 0) {
-    return '?' + k;
+  if (k.length > 0 && k[0] !== '?') {
+    k = '?' + k;
   }
-  return '';
+  return k;
 };
 
 export {
