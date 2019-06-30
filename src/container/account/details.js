@@ -1,5 +1,6 @@
-import React, {Component, Fragment} from 'react';
+import React, {Fragment} from 'react';
 import {Link} from 'react-router-dom';
+import {useAuthResource} from 'service/auth';
 import Section from 'component/section';
 import Card from 'component/card';
 import ListItem from 'component/list';
@@ -7,117 +8,70 @@ import Chip from 'component/chip';
 import Button from 'component/button';
 import Time from 'component/time';
 
-import {connect} from 'react-redux';
-import {GetLoggedInUser} from 'reducer/useraccount';
+const selectAPIAccount = (api) => api.u.user.get;
 
-class AccountDetails extends Component {
-  constructor(props) {
-    super(props);
-    this.getaccount = this.getaccount.bind(this);
-  }
+const AccountDetails = () => {
+  const {loading, success, err, data} = useAuthResource(selectAPIAccount, [], {
+    userid: '',
+    username: '',
+    auth_tags: '',
+    first_name: '',
+    last_name: '',
+    creation_time: 0,
+    email: '',
+  });
 
-  getaccount() {
-    this.props.getaccount();
-  }
-
-  componentDidMount() {
-    this.getaccount();
-  }
-
-  render() {
-    const {
-      getuserloading,
-      getusererr,
-      userid,
-      username,
-      firstname,
-      lastname,
-      authTags,
-      email,
-      creationTime,
-    } = this.props;
-    const bar = (
-      <Fragment>
-        <Link to="/a/account/edit">
-          <Button outline>Edit</Button>
-        </Link>
-        <Link to="/a/account/email">
-          <Button outline>Change Email</Button>
-        </Link>
-        <Link to="/a/account/pass">
-          <Button outline>Change Password</Button>
-        </Link>
-      </Fragment>
-    );
-
-    return (
-      <div>
-        {!getuserloading && getusererr && <span>{getusererr}</span>}
-        {!getuserloading && (
-          <Card size="lg" restrictWidth center bar={bar}>
-            <Section subsection sectionTitle="Account Details">
-              <ListItem label="userid" item={userid} />
-              <ListItem label="username" item={username} />
-              <ListItem label="first name" item={firstname} />
-              <ListItem label="last name" item={lastname} />
-              <ListItem
-                label="roles"
-                item={
-                  authTags &&
-                  authTags.split(',').map((tag) => {
-                    return <Chip key={tag}>{tag}</Chip>;
-                  })
-                }
-              />
-              <ListItem label="email" item={email} />
-              <ListItem
-                label="creation time"
-                item={<Time value={creationTime} />}
-              />
-            </Section>
-          </Card>
-        )}
-      </div>
-    );
-  }
-}
-
-const mapStateToProps = (state) => {
   const {
-    getuserloading,
-    getusererr,
     userid,
     username,
-    firstname,
-    lastname,
-    authTags,
+    first_name,
+    last_name,
+    auth_tags,
     email,
-    creationTime,
-  } = state.Auth;
-  return {
-    getuserloading,
-    getusererr,
-    userid,
-    username,
-    firstname,
-    lastname,
-    authTags,
-    email,
-    creationTime,
-  };
-};
+    creation_time,
+  } = data;
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    getaccount: () => {
-      dispatch(GetLoggedInUser());
-    },
-  };
-};
+  const bar = (
+    <Fragment>
+      <Link to="/a/account/edit">
+        <Button outline>Edit</Button>
+      </Link>
+      <Link to="/a/account/email">
+        <Button outline>Change Email</Button>
+      </Link>
+      <Link to="/a/account/pass">
+        <Button outline>Change Password</Button>
+      </Link>
+    </Fragment>
+  );
 
-AccountDetails = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(AccountDetails);
+  return (
+    <div>
+      {err && <span>{err}</span>}
+      {success && (
+        <Card size="lg" restrictWidth center bar={bar}>
+          <Section subsection sectionTitle="Account Details">
+            <ListItem label="userid" item={userid} />
+            <ListItem label="username" item={username} />
+            <ListItem label="first name" item={first_name} />
+            <ListItem label="last name" item={last_name} />
+            <ListItem
+              label="roles"
+              item={
+                auth_tags &&
+                auth_tags.split(',').map((tag) => <Chip key={tag}>{tag}</Chip>)
+              }
+            />
+            <ListItem label="email" item={email} />
+            <ListItem
+              label="creation time"
+              item={<Time value={creation_time * 1000} />}
+            />
+          </Section>
+        </Card>
+      )}
+    </div>
+  );
+};
 
 export default AccountDetails;

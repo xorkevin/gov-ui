@@ -1,4 +1,4 @@
-import React, {Component, Fragment, lazy, Suspense} from 'react';
+import React, {Fragment, lazy, Suspense} from 'react';
 import {Switch, Route, Redirect, NavLink} from 'react-router-dom';
 import Section from 'component/section';
 import Tabbar from 'component/tabbar';
@@ -26,60 +26,57 @@ const FallbackView = (
   </Section>
 );
 
-class Account extends Component {
-  render() {
-    const {match} = this.props;
-    return (
-      <Section container narrow padded sectionTitle="Settings">
-        <Tabbar
-          left={
-            <Fragment>
-              <NavLink to={`${match.path}/account`}>Account</NavLink>
-              <NavLink to={`${match.path}/profile`}>Profile</NavLink>
-              <NavLink to={`${match.path}/sessions`}>Sessions</NavLink>
-            </Fragment>
-          }
-        />
-        <Suspense fallback={FallbackView}>
-          <Switch>
-            <Route
-              path={`${match.path}/account/email/confirm/:key?`}
-              component={EmailConfirmContainer}
-            />
-            <Route
-              path={`${match.path}/account/email`}
-              component={EmailEditContainer}
-            />
-            <Route
-              path={`${match.path}/account/pass`}
-              component={PassEditContainer}
-            />
-            <Route
-              path={`${match.path}/account/edit`}
-              component={AccountEditContainer}
-            />
-            <Route
-              path={`${match.path}/account`}
-              component={AccountDetailsContainer}
-            />
-            <Route
-              path={`${match.path}/profile/edit`}
-              component={ProfileEditContainer}
-            />
-            <Route
-              path={`${match.path}/profile`}
-              component={ProfileDetailsContainer}
-            />
-            <Route
-              path={`${match.path}/sessions`}
-              component={AccountSessionsContainer}
-            />
-            <Redirect to={`${match.path}/account`} />
-          </Switch>
-        </Suspense>
-      </Section>
-    );
-  }
-}
+const Account = ({match}) => {
+  return (
+    <Section container narrow padded sectionTitle="Settings">
+      <Tabbar
+        left={
+          <Fragment>
+            <NavLink to={`${match.path}/account`}>Account</NavLink>
+            <NavLink to={`${match.path}/profile`}>Profile</NavLink>
+            <NavLink to={`${match.path}/sessions`}>Sessions</NavLink>
+          </Fragment>
+        }
+      />
+      <Suspense fallback={FallbackView}>
+        <Switch>
+          <Route
+            path={`${match.path}/account/email/confirm/:key?`}
+            component={EmailConfirmContainer}
+          />
+          <Route
+            path={`${match.path}/account/email`}
+            component={EmailEditContainer}
+          />
+          <Route
+            path={`${match.path}/account/pass`}
+            component={PassEditContainer}
+          />
+          <Route
+            path={`${match.path}/account/edit`}
+            component={AccountEditContainer}
+          />
+          <Route
+            path={`${match.path}/account`}
+            component={AccountDetailsContainer}
+          />
+          <Route
+            path={`${match.path}/profile/edit`}
+            component={ProfileEditContainer}
+          />
+          <Route
+            path={`${match.path}/profile`}
+            component={ProfileDetailsContainer}
+          />
+          <Route
+            path={`${match.path}/sessions`}
+            component={AccountSessionsContainer}
+          />
+          <Redirect to={`${match.path}/account`} />
+        </Switch>
+      </Suspense>
+    </Section>
+  );
+};
 
 export default Account;

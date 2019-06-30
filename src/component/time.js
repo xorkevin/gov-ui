@@ -27,7 +27,7 @@ const dateToLocale = (date) => {
   return timeFormatter.format(date);
 };
 
-const timeAgoFormatStrings = [
+const relativeTimeFormatStrings = [
   /*0*/ ['just now', 'right now'],
   /*1*/ ['{0} seconds ago', 'in {0} seconds'],
   /*2*/ ['a minute ago', 'in 1 minute'],
@@ -54,7 +54,7 @@ const month2 = 5184000;
 const year1 = 31556952;
 const year1_1 = 34689600;
 
-const timeAgo = (date) => {
+const relativeTime = (date) => {
   let diff = Date.now() - date.getTime();
   let future = 0;
   if (diff < 0) {
@@ -102,35 +102,40 @@ const timeAgo = (date) => {
     num = (num / year1).toFixed(1);
   }
 
-  return formatStr(timeAgoFormatStrings[k][future], num);
+  return formatStr(relativeTimeFormatStrings[k][future], num);
 };
 
 const genTimeData = (tms) => {
   const k = new Date(tms);
   return {
     date: k,
-    timeAgo: timeAgo(k),
+    relTime: relativeTime(k),
     isoString: k.toISOString(),
     localeString: dateToLocale(k),
   };
 };
 
 const Time = ({value}) => {
-  const timeData = useMemo(() => genTimeData(value), [value]);
-  const [timeDataAgo, setTimeAgo] = useState(timeData.timeAgo);
+  const {date, relTime, isoString, localeString} = useMemo(
+    () => genTimeData(value),
+    [value],
+  );
+  const [relTimeState, setRelTime] = useState(relTime);
 
   useEffect(() => {
-    const handler = window.setInterval(() => {
-      setTimeAgo(timeAgo(timeData.date));
-    }, 60000);
-    return () => {
-      window.clearInterval(handler);
+    const handler = () => {
+      setRelTime(relativeTime(date));
     };
-  }, [timeData.date, setTimeAgo]);
+    const interval = window.setInterval(handler, 60000);
+    handler();
+    return () => {
+      window.clearInterval(interval);
+    };
+  }, [date, setRelTime]);
 
   return (
-    <Tooltip tooltip={timeData.localeString}>
-      <time dateTime={timeData.isoString}>{timeDataAgo}</time>
+    <Tooltip tooltip={localeString}>
+      <time dateTime={isoString}>{relTimeState}</time>
     </Tooltip>
   );
 };
