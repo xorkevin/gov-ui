@@ -207,7 +207,7 @@ const useAPICall = (selector, args, initState, prehook, posthook) => {
       setData(data);
 
       if (posthook) {
-        const err = await posthook(data, status, err);
+        const err = await posthook(data, status);
         if (err) {
           setSuccess(false);
           setErr(err);

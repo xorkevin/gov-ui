@@ -177,15 +177,18 @@ const useAuthCall = (selector, args, initState, prehook, posthook) => {
   return [apiState, useAuth(execute)];
 };
 
-const useAuthResource = (selector, args, initState) => {
+const useAuthResource = (selector, args, initState, prehook, posthook) => {
   const relogin = useRelogin();
 
-  const prehook = useCallback(async () => {
+  const reloginhook = useCallback(async () => {
     const [data, status, err] = await relogin();
     return err;
-  }, [relogin]);
+    if (prehook) {
+      return prehook();
+    }
+  }, [relogin, prehook]);
 
-  return useResource(selector, args, initState, prehook);
+  return useResource(selector, args, initState, reloginhook, posthook);
 };
 
 const useLogout = () => {
