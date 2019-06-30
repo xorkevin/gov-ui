@@ -10,7 +10,7 @@ import Time from 'component/time';
 
 const selectAPIAccount = (api) => api.u.user.get;
 
-const AccountDetails = () => {
+const AccountDetails = ({match}) => {
   const {loading, success, err, data} = useAuthResource(selectAPIAccount, [], {
     userid: '',
     username: '',
@@ -33,13 +33,13 @@ const AccountDetails = () => {
 
   const bar = (
     <Fragment>
-      <Link to="/a/account/edit">
+      <Link to={`${match.path}/edit`}>
         <Button outline>Edit</Button>
       </Link>
-      <Link to="/a/account/email">
+      <Link to={`${match.path}/email`}>
         <Button outline>Change Email</Button>
       </Link>
-      <Link to="/a/account/pass">
+      <Link to={`${match.path}/pass`}>
         <Button outline>Change Password</Button>
       </Link>
     </Fragment>

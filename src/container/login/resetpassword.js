@@ -12,19 +12,15 @@ const ConfirmReset = ({match}) => {
   const [formState, updateForm] = useForm({
     key: props.match.params.key || '',
     new_password: '',
-  });
-
-  const [formStateConfirm, updateFormConfirm] = useForm({
     password_confirm: '',
   });
 
   const prehook = useCallback(() => {
-    const {new_password} = formState;
-    const {password_confirm} = formStateConfirm;
+    const {new_password, password_confirm} = formState;
     if (new_password !== password_confirm) {
       return 'Passwords do not match';
     }
-  }, [formState, formStateConfirm]);
+  }, [formState]);
 
   const [resetState, execReset] = useAPICall(
     selectAPIResetPass,
@@ -81,7 +77,7 @@ const ConfirmReset = ({match}) => {
           label="confirm password"
           type="password"
           name="password_confirm"
-          value={formStateConfirm.password_confirm}
+          value={formState.password_confirm}
           onChange={updateFormConfirm}
           onEnter={execReset}
           fullWidth

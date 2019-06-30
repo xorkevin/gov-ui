@@ -166,6 +166,17 @@ const useAuth = (callback) => {
   return exec;
 };
 
+const useAuthCall = (selector, args, initState, prehook, posthook) => {
+  const [apiState, execute] = useAPICall(
+    selector,
+    args,
+    initState,
+    prehook,
+    posthook,
+  );
+  return [apiState, useAuth(execute)];
+};
+
 const useAuthResource = (selector, args, initState) => {
   const relogin = useRelogin();
 
@@ -271,6 +282,7 @@ export {
   useLoginCall,
   useRelogin,
   useAuth,
+  useAuthCall,
   useAuthResource,
   useLogout,
   Protected,

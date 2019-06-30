@@ -1,105 +1,67 @@
-import React, {Component, Fragment} from 'react';
+import React, {Fragment} from 'react';
 import {Link} from 'react-router-dom';
-import linkstate from 'linkstate';
+import {useAuthCall} from 'service/auth';
 import Section from 'component/section';
 import Card from 'component/card';
-import Input from 'component/form';
 import Button from 'component/button';
-import ListItem from 'component/list';
+import Input, {useForm} from 'component/form';
 
-import {connect} from 'react-redux';
-import {ConfirmEmailReq} from 'reducer/account/edit';
+const selectAPIConfirmEmail = (api) => api.u.user.email.edit.confirm;
 
-class AccountEmailConfirm extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      key: props.match.params.key || '',
-      password: '',
-      success: false,
-      err: false,
-    };
-    this.confirmemail = this.confirmemail.bind(this);
-    this.navigateAccount = this.navigateAccount.bind(this);
-  }
+const AccountEmailConfirm = ({match}) => {
+  const [formState, updateForm] = useForm({
+    key: match.params.key || '',
+    password: '',
+  });
 
-  navigateAccount() {
-    this.props.history.replace('/a/account');
-  }
+  const [confirmState, execConfirm] = useAuthCall(selectAPIConfirmEmail, [
+    formState.key,
+    formState.password,
+  ]);
 
-  async confirmemail() {
-    const {err} = await this.props.confirmemail(
-      this.state.key,
-      this.state.password,
-    );
-    if (err) {
-      this.setState((prevState) => {
-        return Object.assign({}, prevState, {
-          success: false,
-          err,
-        });
-      });
-    } else {
-      this.setState((prevState) => {
-        return Object.assign({}, prevState, {
-          success: true,
-          err: false,
-        });
-      });
-    }
-  }
+  const {loading, success, err} = confirmState;
 
-  render() {
-    const {success, err, key, password} = this.state;
-    const bar = (
-      <Fragment>
-        <Link to="/a/account">
-          <Button text>Cancel</Button>
-        </Link>
-        <Button primary onClick={this.confirmemail}>
-          Update
-        </Button>
-      </Fragment>
-    );
-    return (
-      <Card size="md" restrictWidth center bar={bar}>
-        <Section subsection sectionTitle="Account Details">
-          <Input
-            fullWidth
-            label="code"
-            value={key}
-            onChange={linkstate(this, 'key')}
-          />
-          <Input
-            fullWidth
-            label="password"
-            type="password"
-            value={password}
-            onChange={linkstate(this, 'password')}
-          />
-        </Section>
-        {err && <span>{err}</span>}
-        {success && <span>Email updated</span>}
-      </Card>
-    );
-  }
-}
+  const bar = success ? (
+    <Fragment>
+      <Link to="/a/account">
+        <Button primary>Back</Button>
+      </Link>
+    </Fragment>
+  ) : (
+    <Fragment>
+      <Link to="/a/account">
+        <Button text>Cancel</Button>
+      </Link>
+      <Button primary onClick={execConfirm}>
+        Update
+      </Button>
+    </Fragment>
+  );
 
-const mapStateToProps = (state) => {
-  return {};
+  return (
+    <Card size="md" restrictWidth center bar={bar}>
+      <Section subsection sectionTitle="Account Details">
+        <Input
+          label="code"
+          name="key"
+          value={formState.key}
+          onChange={updateForm}
+          fullWidth
+        />
+        <Input
+          label="password"
+          type="password"
+          name="password"
+          value={formState.password}
+          onChange={updateForm}
+          onEnter={execConfirm}
+          fullWidth
+        />
+      </Section>
+      {err && <span>{err}</span>}
+      {success && <span>Email updated</span>}
+    </Card>
+  );
 };
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    confirmemail: (key, password) => {
-      return dispatch(ConfirmEmailReq(key, password));
-    },
-  };
-};
-
-AccountEmailConfirm = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(AccountEmailConfirm);
 
 export default AccountEmailConfirm;

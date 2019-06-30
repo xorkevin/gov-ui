@@ -1,163 +1,86 @@
-import React, {Component, Fragment} from 'react';
+import React, {Fragment, useCallback} from 'react';
 import {Link} from 'react-router-dom';
-import linkstate from 'linkstate';
+import {useAuthCall} from 'service/auth';
 import Section from 'component/section';
 import Card from 'component/card';
-import Input from 'component/form';
 import Button from 'component/button';
-import ListItem from 'component/list';
+import Input, {useForm} from 'component/form';
 
-import {connect} from 'react-redux';
-import {EditPassReq} from 'reducer/account/edit';
+const selectAPIEditPass = (api) => api.u.user.pass.edit;
 
-class AccountPassEdit extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      old_password: '',
-      new_password: '',
-      password_confirm: '',
-      success: false,
-      err: false,
-      clienterr: false,
-    };
-    this.editpass = this.editpass.bind(this);
-    this.navigateAccount = this.navigateAccount.bind(this);
-  }
+const AccountPassEdit = () => {
+  const [formState, updateForm] = useForm({
+    old_password: '',
+    new_password: '',
+    password_confirm: '',
+  });
 
-  navigateAccount() {
-    this.props.history.replace('/a/account');
-  }
-
-  async editpass() {
-    const {new_password, password_confirm} = this.state;
+  const prehook = useCallback(() => {
+    const {new_password, password_confirm} = formState;
     if (new_password !== password_confirm) {
-      this.setState((prevState) => {
-        return Object.assign({}, prevState, {
-          clienterr: 'passwords do not match',
-        });
-      });
-    } else {
-      this.setState((prevState) => {
-        return Object.assign({}, prevState, {clienterr: false});
-      });
-      const {err} = await this.props.editpass(
-        this.state.old_password,
-        this.state.new_password,
-      );
-      if (err) {
-        this.setState((prevState) => {
-          return Object.assign({}, prevState, {
-            success: false,
-            err,
-          });
-        });
-      } else {
-        this.setState((prevState) => {
-          return Object.assign({}, prevState, {
-            success: true,
-            err: false,
-          });
-        });
-      }
+      return 'Passwords do not match';
     }
-  }
+  }, [formState]);
 
-  componentDidMount() {
-    if (!this.props.userid) {
-      this.navigateAccount();
-    }
-  }
+  const [passState, execEditPass] = useAuthCall(
+    selectAPIEditPass,
+    [formState.old_password, formState.new_password],
+    {},
+    prehook,
+  );
 
-  componentWillReceiveProps(nextProps) {
-    if (!nextProps.userid) {
-      this.navigateAccount();
-    }
-  }
+  const {loading, success, err} = passState;
 
-  render() {
-    const {userid} = this.props;
-    const {
-      success,
-      err,
-      clienterr,
-      old_password,
-      new_password,
-      password_confirm,
-    } = this.state;
-    if (!userid) {
-      return false;
-    }
-    const bar = (
-      <Fragment>
-        {success && (
-          <Link to="/a/account">
-            <Button text>Back</Button>
-          </Link>
-        )}
-        {!success && (
-          <Link to="/a/account">
-            <Button text>Cancel</Button>
-          </Link>
-        )}
-        <Button primary onClick={this.editpass}>
-          Update
-        </Button>
-      </Fragment>
-    );
+  const bar = success ? (
+    <Fragment>
+      <Link to="/a/account">
+        <Button text>Back</Button>
+      </Link>
+    </Fragment>
+  ) : (
+    <Fragment>
+      <Link to="/a/account">
+        <Button text>Cancel</Button>
+      </Link>
+      <Button primary onClick={execEditPass}>
+        Update
+      </Button>
+    </Fragment>
+  );
 
-    return (
-      <Card size="md" restrictWidth center bar={bar}>
-        <Section subsection sectionTitle="Account Details">
-          <ListItem label="userid" item={userid} />
-          <Input
-            fullWidth
-            label="old password"
-            type="password"
-            value={old_password}
-            onChange={linkstate(this, 'old_password')}
-          />
-          <Input
-            fullWidth
-            label="new password"
-            type="password"
-            value={new_password}
-            onChange={linkstate(this, 'new_password')}
-          />
-          <Input
-            fullWidth
-            label="confirm password"
-            type="password"
-            value={password_confirm}
-            onChange={linkstate(this, 'password_confirm')}
-          />
-        </Section>
-        {!success && clienterr && <span>{clienterr}</span>}
-        {!success && !clienterr && err && <span>{err}</span>}
-        {success && <span>Password updated</span>}
-      </Card>
-    );
-  }
-}
-
-const mapStateToProps = (state) => {
-  const {userid} = state.Auth;
-  return {
-    userid,
-  };
+  return (
+    <Card size="md" restrictWidth center bar={bar}>
+      <Section subsection sectionTitle="Account Details">
+        <Input
+          label="old password"
+          type="password"
+          name="old_password"
+          value={formState.old_password}
+          onChange={updateForm}
+          fullWidth
+        />
+        <Input
+          label="new password"
+          type="password"
+          name="new_password"
+          value={formState.new_password}
+          onChange={updateForm}
+          fullWidth
+        />
+        <Input
+          label="confirm password"
+          type="password"
+          name="password_confirm"
+          value={formState.password_confirm}
+          onChange={updateForm}
+          onEnter={execEditPass}
+          fullWidth
+        />
+      </Section>
+      {err && <span>{err}</span>}
+      {success && <span>Password updated</span>}
+    </Card>
+  );
 };
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    editpass: (old_password, new_password) => {
-      return dispatch(EditPassReq(old_password, new_password));
-    },
-  };
-};
-
-AccountPassEdit = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(AccountPassEdit);
 
 export default AccountPassEdit;
