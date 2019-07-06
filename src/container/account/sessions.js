@@ -1,4 +1,4 @@
-import React, {Fragment, useMemo} from 'react';
+import React, {Fragment} from 'react';
 import {useAuthCall, useAuthResource} from 'service/auth';
 import Section from 'component/section';
 import Card from 'component/card';
@@ -12,15 +12,14 @@ const selectAPISessionDelete = (api) => api.u.user.sessions.del;
 const AccountSessions = () => {
   const [formState, updateForm] = useForm();
 
-  const sessions = Object.keys(formState).sort();
-  const session_ids = useMemo(() => {
-    return sessions;
-  }, [sessions.join(',')]);
+  const sessionids = Object.keys(formState)
+    .sort()
+    .join(',');
 
   const {success, err, data} = useAuthResource(selectAPISessions);
 
   const [deleteState, execDelete] = useAuthCall(selectAPISessionDelete, [
-    session_ids,
+    sessionids,
   ]);
 
   const {success: successDelete, err: errDelete} = deleteState;
