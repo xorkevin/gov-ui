@@ -268,7 +268,11 @@ const useResource = (selector, args, initState, prehook, posthook) => {
     execute();
   }, [execute]);
 
-  return apiState;
+  const reexecute = useCallback(() => {
+    execute();
+  }, [execute]);
+
+  return {...apiState, reexecute};
 };
 
 export {APIClient, APIContext, useAPI, useURL, useAPICall, useResource};

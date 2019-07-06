@@ -16,11 +16,15 @@ const AccountSessions = () => {
     .sort()
     .join(',');
 
-  const {success, err, data} = useAuthResource(selectAPISessions);
+  const {success, err, data, reexecute} = useAuthResource(selectAPISessions);
 
-  const [deleteState, execDelete] = useAuthCall(selectAPISessionDelete, [
-    sessionids,
-  ]);
+  const [deleteState, execDelete] = useAuthCall(
+    selectAPISessionDelete,
+    [sessionids],
+    {},
+    null,
+    reexecute,
+  );
 
   const {success: successDelete, err: errDelete} = deleteState;
 
