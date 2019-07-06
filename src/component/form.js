@@ -173,7 +173,7 @@ const Input = ({
   );
 };
 
-const useForm = (initState) => {
+const useForm = (initState = {}) => {
   const [formState, setFormState] = useState(initState);
   const updateForm = useCallback(
     (name, val) =>

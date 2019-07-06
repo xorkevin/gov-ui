@@ -61,7 +61,7 @@ const ProfileEdit = () => {
 
   return (
     <div>
-      <Card size="md" restrictWidth center bar={bar}>
+      <Card size="lg" restrictWidth center bar={bar}>
         <Section subsection sectionTitle="Profile">
           <Input
             label="contact email"

@@ -177,62 +177,82 @@ const useURL = (selector, args = []) =>
   useAPI(selector).api_prop.formatUrl(args);
 
 const useAPICall = (selector, args = [], initState, prehook, posthook) => {
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [err, setErr] = useState(null);
-  const [status, setStatus] = useState(-1);
-  const [data, setData] = useState(initState);
+  const [apiState, setApiState] = useState({
+    loading: false,
+    success: false,
+    err: null,
+    status: -1,
+    data: initState,
+  });
   const route = useAPI(selector);
 
   const apicall = useCallback(
     async (args, prehook, posthook) => {
-      setLoading(true);
+      setApiState({
+        loading: true,
+        success: false,
+        err: null,
+        status: -1,
+        data: initState,
+      });
 
       if (prehook) {
         const err = await prehook();
         if (err) {
-          setSuccess(false);
-          setErr(err);
-          setLoading(false);
+          setApiState({
+            loading: false,
+            success: false,
+            err,
+            status: -1,
+            data: initState,
+          });
           return [null, -1, err];
         }
       }
 
       const [data, status, err] = await route(...args);
       if (err) {
-        setSuccess(false);
-        setErr(err);
-        setStatus(status);
-        setLoading(false);
+        setApiState({
+          loading: false,
+          success: false,
+          err,
+          status,
+          data: initState,
+        });
         return [data, status, err];
       }
-
-      setSuccess(true);
-      setErr(null);
-      setStatus(status);
-      setData(data);
 
       if (posthook) {
         const err = await posthook(data, status);
         if (err) {
-          setSuccess(false);
-          setErr(err);
-          setLoading(false);
+          setApiState({
+            loading: false,
+            success: false,
+            err,
+            status,
+            data,
+          });
           return [data, status, err];
         }
       }
 
-      setLoading(false);
+      setApiState({
+        loading: false,
+        success: true,
+        err: null,
+        status,
+        data,
+      });
       return [data, status, err];
     },
-    [setLoading, setSuccess, setErr, setStatus, setData, route],
+    [setApiState, route],
   );
 
   const execute = useCallback(() => {
     return apicall(args, prehook, posthook);
   }, [prehook, posthook, apicall, ...args]);
 
-  return [{loading, success, err, status, data}, execute];
+  return [apiState, execute];
 };
 
 const useResource = (selector, args, initState, prehook, posthook) => {

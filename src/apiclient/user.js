@@ -9,12 +9,13 @@ export default {
     url: '/sessions',
     method: 'GET',
     expectdata: true,
+    selector: (status, data) => data && data.active_sessions,
     err: 'Could not get sessions',
     children: {
       del: {
         url: '',
         method: 'DELETE',
-        transformer: (sessions_ids) => [null, {session_ids}],
+        transformer: (session_ids) => [null, {session_ids}],
         expectdata: false,
         err: 'Could not delete sessions',
       },
