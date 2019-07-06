@@ -36,5 +36,9 @@ export default {
   },
   create: {
     url: '',
+    method: 'POST',
+    transformer: () => [null, {}],
+    expectdata: false,
+    err: 'Unable to create profile',
   },
 };

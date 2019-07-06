@@ -1,145 +1,80 @@
-import React, {Component, Fragment} from 'react';
-import {formatStr} from 'utility';
-import {API} from 'config';
+import React, {Fragment} from 'react';
 import {Link} from 'react-router-dom';
+import {useURL} from 'apiclient';
+import {useAuthState, useAuthCall, useAuthResource} from 'service/auth';
 import Section from 'component/section';
 import Card from 'component/card';
 import ListItem from 'component/list';
 import Button from 'component/button';
 import Img from 'component/image';
 
-import {connect} from 'react-redux';
-import {GetProfileReq, CreateProfileReq} from 'reducer/account/profile';
+const selectAPIProfile = (api) => api.profile.get;
+const selectAPIProfileImage = (api) => api.profile.id.image;
+const selectAPICreateProfile = (api) => api.profile.create;
 
-class Profile extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      err: false,
-      canCreate: false,
-      profile: false,
-    };
-    this.getprofile = this.getprofile.bind(this);
-    this.createprofile = this.createprofile.bind(this);
-  }
+const Profile = () => {
+  const {loading, success, err, status, data} = useAuthResource(
+    selectAPIProfile,
+    [],
+    {
+      contact_email: '',
+      bio: '',
+      image: '',
+    },
+  );
 
-  getprofile() {
-    this.props.getprofile((err, canCreate, data) => {
-      if (canCreate) {
-        return this.setState((prevState) => {
-          return Object.assign({}, prevState, {
-            err: err,
-            canCreate: true,
-          });
-        });
-      }
-      if (err) {
-        return this.setState((prevState) => {
-          return Object.assign({}, prevState, {
-            err,
-            canCreate: false,
-          });
-        });
-      }
-      return this.setState((prevState) => {
-        return Object.assign({}, prevState, {
-          err: false,
-          canCreate: false,
-          profile: data,
-        });
-      });
-    });
-  }
+  const canCreate = status === 404;
 
-  createprofile() {
-    this.props.createprofile((err) => {
-      if (err) {
-        return this.setState((prevState) => {
-          return Object.assign({}, prevState, {err});
-        });
-      }
-      this.setState((prevState) => {
-        return Object.assign({}, prevState, {err: false});
-      });
-      this.getprofile();
-    });
-  }
+  const [createState, execCreate] = useAuthCall(selectAPICreateProfile);
+  const {success: successCreate, err: errCreate} = createState;
 
-  componentDidMount() {
-    this.getprofile();
-  }
+  const {userid} = useAuthState();
+  const imageURL = useURL(selectAPIProfileImage, [userid]);
 
-  render() {
-    const {userid} = this.props;
-    const {err, canCreate, profile} = this.state;
-    const bar = (
-      <Fragment>
-        {profile && (
-          <Link to="/a/profile/edit">
-            <Button outline>Edit</Button>
-          </Link>
-        )}
-      </Fragment>
-    );
+  const bar = (
+    <Fragment>
+      <Link to="/a/profile/edit">
+        <Button outline>Edit</Button>
+      </Link>
+    </Fragment>
+  );
 
-    return (
-      <div>
-        {err && <span>{err}</span>}
-        {canCreate && (
-          <Button primary onClick={this.createprofile}>
+  return (
+    <div>
+      {canCreate && (
+        <div>
+          <Button primary onClick={execCreate}>
             Create Profile
           </Button>
-        )}
-        {profile && (
-          <Card size="lg" restrictWidth center bar={bar}>
-            <Section subsection sectionTitle="Profile">
-              <ListItem label="contact email" item={profile.contact_email} />
-              <ListItem label="bio" item={profile.bio} />
-              <ListItem
-                label="profile image"
-                item={
-                  profile.image && (
-                    <Img
-                      rounded
-                      preview={profile.image}
-                      imgWidth={384}
-                      imgHeight={384}
-                      src={formatStr(API.profile.idimage, userid)}
-                    />
-                  )
-                }
-              />
-            </Section>
-          </Card>
-        )}
-      </div>
-    );
-  }
-}
-
-const mapStateToProps = (state) => {
-  const {userid} = state.Auth;
-  return {
-    userid,
-  };
+        </div>
+      )}
+      {successCreate && <span>Profile created</span>}
+      {errCreate && <span>{errCreate}</span>}
+      {success && (
+        <Card size="lg" restrictWidth center bar={bar}>
+          <Section subsection sectionTitle="Profile">
+            <ListItem label="contact email" item={data.contact_email} />
+            <ListItem label="bio" item={data.bio} />
+            <ListItem
+              label="profile image"
+              item={
+                data.image && (
+                  <Img
+                    rounded
+                    preview={data.image}
+                    imgWidth={384}
+                    imgHeight={384}
+                    src={imageURL}
+                  />
+                )
+              }
+            />
+          </Section>
+        </Card>
+      )}
+      {!canCreate && err && <span>{err}</span>}
+    </div>
+  );
 };
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    getprofile: async (callback) => {
-      const data = await dispatch(GetProfileReq());
-      callback(data.err, data.canCreate, data.data);
-    },
-    createprofile: async (callback) => {
-      const data = await dispatch(CreateProfileReq());
-      callback(data.err);
-    },
-  };
-};
-
-Profile = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(Profile);
 
 export default Profile;

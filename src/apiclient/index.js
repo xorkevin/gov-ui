@@ -151,7 +151,7 @@ const makeAPIClient = (baseurl, baseopts, apiconfig) => {
         Object.assign(fn, {
           api_prop: {
             url,
-            formatUrl: (...args) => formatStrArgs(url, args),
+            formatUrl: (args) => formatStrArgs(url, args),
           },
         });
         return [k, Object.freeze(fn)];
@@ -173,10 +173,14 @@ const useAPI = (selector) => {
   return selector(apiClient);
 };
 
-const useAPICall = (selector, args, initState, prehook, posthook) => {
+const useURL = (selector, args = []) =>
+  useAPI(selector).api_prop.formatUrl(args);
+
+const useAPICall = (selector, args = [], initState, prehook, posthook) => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [err, setErr] = useState(null);
+  const [status, setStatus] = useState(-1);
   const [data, setData] = useState(initState);
   const route = useAPI(selector);
 
@@ -198,12 +202,14 @@ const useAPICall = (selector, args, initState, prehook, posthook) => {
       if (err) {
         setSuccess(false);
         setErr(err);
+        setStatus(status);
         setLoading(false);
         return [data, status, err];
       }
 
       setSuccess(true);
       setErr(null);
+      setStatus(status);
       setData(data);
 
       if (posthook) {
@@ -219,14 +225,14 @@ const useAPICall = (selector, args, initState, prehook, posthook) => {
       setLoading(false);
       return [data, status, err];
     },
-    [setLoading, setSuccess, setErr, setData, route],
+    [setLoading, setSuccess, setErr, setStatus, setData, route],
   );
 
   const execute = useCallback(() => {
     return apicall(args, prehook, posthook);
   }, [prehook, posthook, apicall, ...args]);
 
-  return [{loading, success, err, data}, execute];
+  return [{loading, success, err, status, data}, execute];
 };
 
 const useResource = (selector, args, initState, prehook, posthook) => {
@@ -245,4 +251,4 @@ const useResource = (selector, args, initState, prehook, posthook) => {
   return apiState;
 };
 
-export {APIClient, APIContext, useAPI, useAPICall, useResource};
+export {APIClient, APIContext, useAPI, useURL, useAPICall, useResource};
