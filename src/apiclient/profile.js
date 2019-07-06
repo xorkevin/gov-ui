@@ -10,16 +10,18 @@ export default {
     method: 'PUT',
     expectdata: false,
     err: 'Unable to edit profile',
-    image: {
-      url: '/image',
-      method: 'PUT',
-      transformer: (file) => {
-        const formData = new FormData();
-        formData.append('image', file);
-        return [null, formData];
+    children: {
+      image: {
+        url: '/image',
+        method: 'PUT',
+        transformer: (file) => {
+          const formData = new FormData();
+          formData.append('image', file);
+          return [null, formData];
+        },
+        expectdata: false,
+        err: 'Unable to update profile picture',
       },
-      expectdata: false,
-      err: 'Unable to update profile picture',
     },
   },
   id: {

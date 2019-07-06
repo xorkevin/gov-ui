@@ -1,143 +1,104 @@
-import React, {Component, Fragment} from 'react';
+import React, {Fragment, useCallback} from 'react';
 import {Link} from 'react-router-dom';
-import linkstate from 'linkstate';
+import {useAuthCall, useAuthResource} from 'service/auth';
 import Section from 'component/section';
 import Card from 'component/card';
-import Input from 'component/form';
 import Button from 'component/button';
+import Input, {useForm} from 'component/form';
 
-import {connect} from 'react-redux';
-import {GetProfileReq, EditProfileReq} from 'reducer/account/profile';
+const selectAPIProfile = (api) => api.profile.get;
+const selectAPIEdit = (api) => api.profile.edit;
+const selectAPIEditImage = (api) => api.profile.edit.image;
 
-class ProfileEdit extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      err: false,
-      success: false,
-      profile: {
-        bio: '',
-        contact_email: '',
-        image: undefined,
-      },
-    };
-    this.getprofile = this.getprofile.bind(this);
-    this.editprofile = this.editprofile.bind(this);
-  }
+const ProfileEdit = () => {
+  const [formState, updateForm] = useForm({
+    contact_email: '',
+    bio: '',
+  });
 
-  getprofile() {
-    this.props.getprofile((err, data) => {
-      if (err) {
-        return this.setState((prevState) => {
-          return Object.assign({}, prevState, {
-            err,
-            success: false,
-          });
-        });
-      }
-      return this.setState((prevState) => {
-        return Object.assign({}, prevState, {
-          err: false,
-          profile: {
-            bio: data.bio,
-            contact_email: data.contact_email,
-            image: undefined,
-          },
-        });
-      });
-    });
-  }
-
-  editprofile() {
-    this.props.editprofile(this.state.profile, (err) => {
-      if (err) {
-        return this.setState((prevState) => {
-          return Object.assign({}, prevState, {
-            err,
-            success: false,
-          });
-        });
-      }
-      return this.setState((prevState) => {
-        return Object.assign({}, prevState, {
-          err: false,
-          success: true,
-        });
-      });
-    });
-  }
-
-  componentDidMount() {
-    this.getprofile();
-  }
-
-  render() {
-    const {err, success, profile} = this.state;
-    const bar = (
-      <Fragment>
-        <Link to="/a/profile">
-          <Button text>{success ? 'Back' : 'Cancel'}</Button>
-        </Link>
-        <Button primary onClick={this.editprofile}>
-          Save
-        </Button>
-      </Fragment>
-    );
-
-    return (
-      <div>
-        <Card size="md" restrictWidth center bar={bar}>
-          <Section subsection sectionTitle="Profile">
-            <Input
-              fullWidth
-              label="contact email"
-              value={profile.contact_email}
-              onChange={linkstate(this, 'profile.contact_email')}
-            />
-            <Input
-              textarea
-              fullWidth
-              label="bio"
-              value={profile.bio}
-              onChange={linkstate(this, 'profile.bio')}
-            />
-            <Input
-              type="file"
-              accept="image/*"
-              capture="environment"
-              fullWidth
-              label="profile image"
-              onChange={linkstate(this, 'profile.image')}
-            />
-          </Section>
-          {err && <span>{err}</span>}
-          {success && <span>Changes saved</span>}
-        </Card>
-      </div>
-    );
-  }
-}
-
-const mapStateToProps = (state) => {
-  return {};
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    getprofile: async (callback) => {
-      const data = await dispatch(GetProfileReq());
-      callback(data.err, data.data);
+  const posthook = useCallback(
+    ({contact_email, bio}) => {
+      updateForm('contact_email', contact_email);
+      updateForm('bio', bio);
     },
-    editprofile: async (options, callback) => {
-      const data = await dispatch(EditProfileReq(options));
-      callback(data.err);
-    },
-  };
-};
+    [updateForm],
+  );
 
-ProfileEdit = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(ProfileEdit);
+  const {err: errProfile} = useAuthResource(
+    selectAPIProfile,
+    [],
+    {
+      contact_email: '',
+      bio: '',
+    },
+    null,
+    posthook,
+  );
+
+  const [editState, execEdit] = useAuthCall(selectAPIEdit, [formState]);
+
+  const [imageState, updateImage] = useForm({
+    image: undefined,
+  });
+
+  const [editImageState, execEditImage] = useAuthCall(selectAPIEditImage, [
+    imageState.image,
+  ]);
+
+  const {success, err} = editState;
+  const {success: successImage, err: errImage} = editImageState;
+
+  const bar = (
+    <Fragment>
+      <Link to="/a/profile">
+        <Button text>{success ? 'Back' : 'Cancel'}</Button>
+      </Link>
+      <Button primary onClick={execEdit}>
+        Save
+      </Button>
+    </Fragment>
+  );
+
+  return (
+    <div>
+      <Card size="md" restrictWidth center bar={bar}>
+        <Section subsection sectionTitle="Profile">
+          <Input
+            label="contact email"
+            name="contact_email"
+            value={formState.contact_email}
+            onChange={updateForm}
+            fullWidth
+          />
+          <Input
+            label="bio"
+            name="bio"
+            value={formState.bio}
+            onChange={updateForm}
+            onEnter={execEdit}
+            textarea
+            fullWidth
+          />
+          <Input
+            type="file"
+            accept="image/*"
+            capture="environment"
+            label="profile image"
+            name="image"
+            onChange={updateImage}
+            fullWidth
+          />
+          <Button outline onClick={execEditImage}>
+            Upload
+          </Button>
+          {errImage && <span>{errImage}</span>}
+          {successImage && <span>Image updated</span>}
+        </Section>
+        {err && <span>{err}</span>}
+        {success && <span>Changes saved</span>}
+      </Card>
+    </div>
+  );
+};
 
 export default ProfileEdit;
