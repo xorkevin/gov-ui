@@ -255,6 +255,8 @@ const useAPICall = (selector, args = [], initState, prehook, posthook) => {
   return [apiState, execute];
 };
 
+const selectAPINull = () => null;
+
 const useResource = (selector, args, initState, prehook, posthook) => {
   const [apiState, execute] = useAPICall(
     selector,
@@ -265,8 +267,10 @@ const useResource = (selector, args, initState, prehook, posthook) => {
   );
 
   useEffect(() => {
-    execute();
-  }, [execute]);
+    if (selector !== selectAPINull) {
+      execute();
+    }
+  }, [selector, execute]);
 
   const reexecute = useCallback(() => {
     execute();
@@ -275,4 +279,12 @@ const useResource = (selector, args, initState, prehook, posthook) => {
   return {...apiState, reexecute};
 };
 
-export {APIClient, APIContext, useAPI, useURL, useAPICall, useResource};
+export {
+  APIClient,
+  APIContext,
+  useAPI,
+  useURL,
+  useAPICall,
+  useResource,
+  selectAPINull,
+};
