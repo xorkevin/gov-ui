@@ -107,7 +107,7 @@ const API = {
       check: {
         url: '/check',
         method: 'GET',
-        expectdata: false,
+        expectdata: true,
         err: 'Could not get time from api server',
       },
     },

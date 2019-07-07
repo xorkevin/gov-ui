@@ -1,47 +1,35 @@
-import React, {Component} from 'react';
+import React, {Fragment} from 'react';
+import {useResource} from 'apiclient';
 import Section from 'component/section';
 
-import {connect} from 'react-redux';
-import {TimeGet} from 'reducer/health';
+const selectAPIHealth = (api) => api.healthz.check;
 
-class HealthContainer extends Component {
-  componentDidMount() {
-    this.props.getTime();
-  }
-
-  render() {
-    const {loading, success, time, err} = this.props;
-    return (
-      <Section sectionTitle="Health Check" container padded>
-        <span>{loading && 'loading'}</span>
-        <span>{success && time}</span>
-        <span>{!success && err}</span>
-      </Section>
-    );
-  }
-}
-
-const mapStateToProps = (state) => {
-  const {time, err, loading, success} = state.Health;
-  return {
-    loading,
-    success,
-    time,
-    err,
-  };
+const HealthContainer = () => {
+  const {loading, success, err, data} = useResource(selectAPIHealth, [], {
+    time: '',
+    errs: [],
+  });
+  return (
+    <Section sectionTitle="Health Check" container padded>
+      {loading && <span>Loading</span>}
+      {success && (
+        <Fragment>
+          <div>{data.time}</div>
+          {data.errs && (
+            <Fragment>
+              <div>Server Errors:</div>
+              <ul>
+                {data.errs.map((errstring) => (
+                  <li>{errstring}</li>
+                ))}
+              </ul>
+            </Fragment>
+          )}
+        </Fragment>
+      )}
+      {err && <span>{err}</span>}
+    </Section>
+  );
 };
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    getTime: () => {
-      dispatch(TimeGet());
-    },
-  };
-};
-
-HealthContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(HealthContainer);
 
 export default HealthContainer;
