@@ -20,7 +20,7 @@ const UserDetails = ({match}) => {
   );
   const {success: successAccount, err: errAccount, data: account} = useResource(
     selectAPIUser,
-    [match.params.username],
+    [match.params.username || ''],
     {first_name: '', last_name: '', username: '', creation_time: ''},
     null,
     posthook,

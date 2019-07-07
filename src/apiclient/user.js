@@ -102,7 +102,22 @@ export default {
           rank: {
             url: '/rank',
             method: 'PATCH',
-            transformer: (userid, add, remove) => [[userid], {add, remove}],
+            transformer: (userid, add, remove) => {
+              const body = {};
+              if (add.length > 0) {
+                body.add = add
+                  .split(',')
+                  .map((tag) => tag.trim())
+                  .join(',');
+              }
+              if (remove.length > 0) {
+                body.remove = remove
+                  .split(',')
+                  .map((tag) => tag.trim())
+                  .join(',');
+              }
+              return [[userid], body];
+            },
             expectdata: false,
             err: 'Unable to update user permissions',
           },
