@@ -64,6 +64,10 @@ const searchParamsToString = (search) => {
   return k;
 };
 
+const max = (a, b) => (a > b ? a : b);
+
+const max0 = (a) => max(a, 0);
+
 export {
   formatStr,
   formatStrArgs,
@@ -73,4 +77,6 @@ export {
   setCookie,
   getSearchParams,
   searchParamsToString,
+  max,
+  max0,
 };

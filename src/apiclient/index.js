@@ -1,9 +1,11 @@
 import React, {useState, useEffect, useCallback, useContext} from 'react';
-import {formatStrArgs} from 'utility';
+import {formatStrArgs, max0} from 'utility';
 import courierAPI from './courier';
 import profileAPI from './profile';
 import authAPI from './auth';
 import userAPI from './user';
+
+// API Client
 
 const JSON_MIME = 'application/json';
 
@@ -166,6 +168,8 @@ const BASEOPTS = Object.freeze({
 
 const APIClient = makeAPIClient(APIBASE_URL, BASEOPTS, API);
 
+// Hooks
+
 const APIContext = React.createContext(APIClient);
 
 const useAPI = (selector) => {
@@ -197,7 +201,7 @@ const useAPICall = (selector, args = [], initState, prehook, posthook) => {
       });
 
       if (prehook) {
-        const err = await prehook();
+        const err = await prehook(...args);
         if (err) {
           setApiState({
             loading: false,
@@ -279,6 +283,36 @@ const useResource = (selector, args, initState, prehook, posthook) => {
   return {...apiState, reexecute};
 };
 
+// Utility Hooks
+
+const endNextPage = () => {};
+
+const usePaginate = (limit = 8, offset = 0) => {
+  const [value, setVal] = useState(offset);
+  const [end, setEnd] = useState(false);
+
+  const next = useCallback(() => setVal((i) => max0(i + limit)), [
+    setVal,
+    limit,
+  ]);
+  const prev = useCallback(() => setVal((i) => max0(i - limit)), [
+    setVal,
+    limit,
+  ]);
+  const set = useCallback((i) => setVal(i), [setVal]);
+  const first = useCallback(() => setVal(0), [setVal]);
+
+  return {
+    value,
+    next: end ? endNextPage : next,
+    prev,
+    prev,
+    set,
+    first,
+    setEnd,
+  };
+};
+
 export {
   APIClient,
   APIContext,
@@ -287,4 +321,5 @@ export {
   useAPICall,
   useResource,
   selectAPINull,
+  usePaginate,
 };

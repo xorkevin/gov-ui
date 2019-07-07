@@ -1,254 +1,169 @@
-import React, {Component} from 'react';
-import linkstate from 'linkstate';
+import React, {useCallback} from 'react';
+import {usePaginate} from 'apiclient';
+import {useAuthCall, useAuthResource} from 'service/auth';
 import Section from 'component/section';
 import Table from 'component/table';
 import Button from 'component/button';
-import Input from 'component/form';
 import Time from 'component/time';
 import Anchor from 'component/anchor';
+import Input, {useForm} from 'component/form';
 
-import {connect} from 'react-redux';
-import {GetLinkGroup, CreateLink, DeleteLink} from 'reducer/courier/link';
-import {GetUserInfoBulk} from 'reducer/user';
-import {COURIER} from 'config';
+import {URL} from 'config';
 
-class CourierLink extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      err: false,
-      links: [],
-      usernames: {},
-      amount: 32,
-      offset: 0,
-      newLink: {
-        id: '',
-        url: '',
-      },
-    };
-    this.fetchLinkGroup = this.fetchLinkGroup.bind(this);
-    this.getUserInfo = this.getUserInfo.bind(this);
-    this.clearLink = this.clearLink.bind(this);
-    this.deleteLink = this.deleteLink.bind(this);
-    this.createLink = this.createLink.bind(this);
-  }
+const LIMIT = 32;
 
-  fetchLinkGroup() {
-    const {amount, offset} = this.state;
-    this.props.getLinkGroup(amount, offset, (err, data) => {
-      if (err) {
-        return this.setState((prevState) => {
-          return Object.assign({}, prevState, {err});
-        });
-      }
-      this.setState((prevState) => {
-        return Object.assign({}, prevState, {
-          links: data.links,
-          err: false,
-        });
-      });
-      this.getUserInfo(
-        Array.from(new Set(data.links.map(({creatorid}) => creatorid))),
-      );
-    });
-  }
+const selectAPILinks = (api) => api.courier.link.get;
+const selectAPICreate = (api) => api.courier.link.create;
+const selectAPIDelete = (api) => api.courier.link.id.del;
 
-  getUserInfo(userids) {
-    this.props.getUserInfo(userids, (err, data) => {
-      if (err) {
-        return this.setState((prevState) => {
-          return Object.assign({}, prevState, {err});
-        });
-      }
-      this.setState((prevState) => {
-        return Object.assign({}, prevState, {
-          err: false,
-          usernames: data.users.reduce((obj, {userid, username}) => {
-            obj[userid] = username;
-            return obj;
-          }, {}),
-        });
-      });
-    });
-  }
+const CourierLink = () => {
+  const [formState, updateForm] = useForm({
+    linkid: '',
+    url: '',
+  });
 
-  clearLink() {
-    return this.setState((prevState) => {
-      return Object.assign({}, prevState, {
-        newLink: {
-          id: '',
-          url: '',
-        },
-      });
-    });
-  }
+  const page = usePaginate(LIMIT);
 
-  createLink() {
-    const {newLink} = this.state;
-    if (newLink.url.length == 0) {
-      return this.setState((prevState) => {
-        return Object.assign({}, prevState, {
-          err: 'A url must be provided',
-        });
-      });
+  const posthook = useCallback(
+    (data) => {
+      page.setEnd(data.length < LIMIT);
+      //Array.from(new Set(data.links.map(({creatorid}) => creatorid)));
+    },
+    [page.setEnd],
+  );
+  const {success, err, data: links, reexecute} = useAuthResource(
+    selectAPILinks,
+    [LIMIT, page.value],
+    [],
+    null,
+    posthook,
+  );
+
+  //getUserInfo(userids) {
+  //  this.props.getUserInfo(userids, (err, data) => {
+  //    if (err) {
+  //      return this.setState((prevState) => {
+  //        return Object.assign({}, prevState, {err});
+  //      });
+  //    }
+  //    this.setState((prevState) => {
+  //      return Object.assign({}, prevState, {
+  //        err: false,
+  //        usernames: data.users.reduce((obj, {userid, username}) => {
+  //          obj[userid] = username;
+  //          return obj;
+  //        }, {}),
+  //      });
+  //    });
+  //  });
+  //}
+
+  const prehook = useCallback(({linkid, url}) => {
+    if (url.length === 0) {
+      return 'A url must be provided';
     }
-    this.props.createLink(newLink.id, newLink.url, (err, data) => {
-      if (err) {
-        return this.setState((prevState) => {
-          return Object.assign({}, prevState, {
-            err,
-          });
-        });
-      }
-      this.setState((prevState) => {
-        return Object.assign({}, prevState, {
-          err: false,
-        });
-      });
-      this.clearLink();
-      this.fetchLinkGroup();
-    });
-  }
+  }, []);
+  const posthookRefresh = useCallback(() => {
+    updateForm('linkid', '');
+    updateForm('url', '');
+    reexecute();
+  }, [reexecute, updateForm]);
+  const [createState, execCreate] = useAuthCall(
+    selectAPICreate,
+    [formState],
+    {},
+    prehook,
+    posthookRefresh,
+  );
 
-  deleteLink(linkid) {
-    this.props.deleteLink(linkid, (err) => {
-      if (err) {
-        return this.setState((prevState) => {
-          return Object.assign({}, prevState, {
-            err,
-          });
-        });
-      }
-      this.setState((prevState) => {
-        return Object.assign({}, prevState, {
-          err: false,
-        });
-      });
-      this.fetchLinkGroup();
-    });
-  }
+  //const [deleteState, execDelete] = useAuthCall(selectAPIDelete, [], {}, null, reexecute);
 
-  componentDidMount() {
-    this.fetchLinkGroup();
-  }
-
-  render() {
-    const {err, links, usernames, newLink} = this.state;
-    return (
-      <div>
-        <Section subsection sectionTitle="Add Link">
-          <Input
-            label="link id"
-            info="usage: /link/:linkid; (optional)"
-            value={newLink.id}
-            onChange={linkstate(this, 'newLink.id')}
-          />
-          <Input
-            label="link url"
-            info="destination url"
-            value={newLink.url}
-            onChange={linkstate(this, 'newLink.url')}
-            onEnter={this.createLink}
-          />
-          <Button text onClick={this.clearLink}>
-            Clear
-          </Button>
-          <Button onClick={this.createLink}>Add Link</Button>
-        </Section>
-        {err && <span>Error: {err}</span>}
-        <Section subsection sectionTitle="Links">
-          <Table
-            fullWidth
-            head={[
-              {key: 'shortlink', component: 'shortlink'},
-              {key: 'url', component: 'url'},
-              {key: 'image', component: 'qr code'},
-              {key: 'creator', component: 'creator'},
-              {key: 'time', component: 'creation time'},
-              {key: 'delete', component: ''},
-            ]}
-            data={links.map(({linkid, url, creatorid, creation_time}) => {
-              return {
-                key: linkid,
-                row: [
-                  {
-                    key: 'shortlink',
-                    component: (
-                      <Anchor ext href={COURIER.base + '/' + linkid}>
-                        {COURIER.base + '/' + linkid}
-                      </Anchor>
-                    ),
-                  },
-                  {
-                    key: 'url',
-                    component: (
-                      <Anchor ext href={url}>
-                        {url}
-                      </Anchor>
-                    ),
-                  },
-                  {
-                    key: 'image',
-                    component: (
-                      <Anchor ext href={COURIER.base + '/' + linkid + '/image'}>
-                        image
-                      </Anchor>
-                    ),
-                  },
-                  {
-                    key: 'creator',
-                    component: usernames[creatorid],
-                  },
-                  {
-                    key: 'time',
-                    component: <Time value={creation_time * 1000} />,
-                  },
-                  {
-                    key: 'delete',
-                    component: (
-                      <Button text onClick={() => this.deleteLink(linkid)}>
-                        Delete
-                      </Button>
-                    ),
-                  },
-                ],
-              };
-            })}
-          />
-        </Section>
-      </div>
-    );
-  }
-}
-
-const mapStateToProps = (state) => {
-  return {};
+  return (
+    <div>
+      <Section subsection sectionTitle="Add Link">
+        <Input
+          label="link id"
+          info="usage: /link/:linkid; (optional)"
+          name="linkid"
+          value={formState.linkid}
+          onChange={updateForm}
+        />
+        <Input
+          label="link url"
+          info="destination url"
+          name="url"
+          value={formState.url}
+          onChange={updateForm}
+          onEnter={execCreate}
+        />
+        <Button onClick={execCreate}>Add Link</Button>
+      </Section>
+      {err && <span>Error: {err}</span>}
+      <Section subsection sectionTitle="Links">
+        <Table
+          fullWidth
+          head={[
+            {key: 'shortlink', component: 'shortlink'},
+            {key: 'url', component: 'url'},
+            {key: 'image', component: 'qr code'},
+            {key: 'creator', component: 'creator'},
+            {key: 'time', component: 'creation time'},
+            {key: 'delete', component: ''},
+          ]}
+          data={links.map(({linkid, url, creatorid, creation_time}) => {
+            return {
+              key: linkid,
+              row: [
+                {
+                  key: 'shortlink',
+                  component: (
+                    <Anchor ext href={URL.courier + '/' + linkid}>
+                      {URL.courier + '/' + linkid}
+                    </Anchor>
+                  ),
+                },
+                {
+                  key: 'url',
+                  component: (
+                    <Anchor ext href={url}>
+                      {url}
+                    </Anchor>
+                  ),
+                },
+                {
+                  key: 'image',
+                  component: (
+                    <Anchor ext href={URL.courier + '/' + linkid + '/image'}>
+                      image
+                    </Anchor>
+                  ),
+                },
+                {
+                  key: 'creator',
+                  component: /*usernames[creatorid]*/ 'creator',
+                },
+                {
+                  key: 'time',
+                  component: <Time value={creation_time * 1000} />,
+                },
+                {
+                  key: 'delete',
+                  component: (
+                    <Button
+                      text
+                      onClick={/*() => this.deleteLink(linkid)*/ false}
+                    >
+                      Delete
+                    </Button>
+                  ),
+                },
+              ],
+            };
+          })}
+        />
+      </Section>
+    </div>
+  );
 };
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    getLinkGroup: async (amount, offset, callback) => {
-      const data = await dispatch(GetLinkGroup(amount, offset));
-      callback(data.err, data.data);
-    },
-    getUserInfo: async (userids, callback) => {
-      const data = await dispatch(GetUserInfoBulk(userids));
-      callback(data.err, data.data);
-    },
-    createLink: async (linkid, url, callback) => {
-      const data = await dispatch(CreateLink(linkid, url));
-      callback(data.err, data.data);
-    },
-    deleteLink: async (linkid, callback) => {
-      const data = await dispatch(DeleteLink(linkid));
-      callback(data.err);
-    },
-  };
-};
-
-CourierLink = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(CourierLink);
 
 export default CourierLink;
