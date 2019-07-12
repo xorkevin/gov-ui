@@ -17,7 +17,7 @@ export default {
             url: '',
             method: 'DELETE',
             transformer: (linkid) => [[linkid], null],
-            expectdata: true,
+            expectdata: false,
             err: 'Unable to delete link',
           },
         },
@@ -25,7 +25,7 @@ export default {
       create: {
         url: '',
         method: 'POST',
-        expectdata: true,
+        expectdata: false,
         err: 'Unable to create link',
       },
     },

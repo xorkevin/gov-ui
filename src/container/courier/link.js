@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, {Fragment, useCallback} from 'react';
 import {usePaginate} from 'apiclient';
 import {useAuthCall, useAuthResource} from 'service/auth';
 import Section from 'component/section';
@@ -15,6 +15,48 @@ const LIMIT = 32;
 const selectAPILinks = (api) => api.courier.link.get;
 const selectAPICreate = (api) => api.courier.link.create;
 const selectAPIDelete = (api) => api.courier.link.id.del;
+
+const LinkRow = ({linkid, url, username, creation_time, reexecute}) => {
+  const [deleteState, execDelete] = useAuthCall(
+    selectAPIDelete,
+    [linkid],
+    {},
+    null,
+    reexecute,
+  );
+
+  const {err} = deleteState;
+
+  return (
+    <tr>
+      <td>
+        <Anchor ext href={URL.courier + '/' + linkid}>
+          {URL.courier + '/' + linkid}
+        </Anchor>
+      </td>
+      <td>
+        <Anchor ext href={url}>
+          {url}
+        </Anchor>
+      </td>
+      <td>
+        <Anchor ext href={URL.courier + '/' + linkid + '/image'}>
+          image
+        </Anchor>
+      </td>
+      <td>{username}</td>
+      <td>
+        <Time value={creation_time * 1000} />
+      </td>
+      <td>
+        <Button text onClick={execDelete}>
+          Delete
+        </Button>
+        {err && <small>{err}</small>}
+      </td>
+    </tr>
+  );
+};
 
 const CourierLink = () => {
   const [formState, updateForm] = useForm({
@@ -76,7 +118,7 @@ const CourierLink = () => {
     posthookRefresh,
   );
 
-  //const [deleteState, execDelete] = useAuthCall(selectAPIDelete, [], {}, null, reexecute);
+  const {err: errCreate} = createState;
 
   return (
     <div>
@@ -97,70 +139,34 @@ const CourierLink = () => {
           onEnter={execCreate}
         />
         <Button onClick={execCreate}>Add Link</Button>
+        {errCreate && <span>{errCreate}</span>}
       </Section>
-      {err && <span>Error: {err}</span>}
+      {err && <span>{err}</span>}
       <Section subsection sectionTitle="Links">
         <Table
           fullWidth
-          head={[
-            {key: 'shortlink', component: 'shortlink'},
-            {key: 'url', component: 'url'},
-            {key: 'image', component: 'qr code'},
-            {key: 'creator', component: 'creator'},
-            {key: 'time', component: 'creation time'},
-            {key: 'delete', component: ''},
-          ]}
-          data={links.map(({linkid, url, creatorid, creation_time}) => {
-            return {
-              key: linkid,
-              row: [
-                {
-                  key: 'shortlink',
-                  component: (
-                    <Anchor ext href={URL.courier + '/' + linkid}>
-                      {URL.courier + '/' + linkid}
-                    </Anchor>
-                  ),
-                },
-                {
-                  key: 'url',
-                  component: (
-                    <Anchor ext href={url}>
-                      {url}
-                    </Anchor>
-                  ),
-                },
-                {
-                  key: 'image',
-                  component: (
-                    <Anchor ext href={URL.courier + '/' + linkid + '/image'}>
-                      image
-                    </Anchor>
-                  ),
-                },
-                {
-                  key: 'creator',
-                  component: /*usernames[creatorid]*/ 'creator',
-                },
-                {
-                  key: 'time',
-                  component: <Time value={creation_time * 1000} />,
-                },
-                {
-                  key: 'delete',
-                  component: (
-                    <Button
-                      text
-                      onClick={/*() => this.deleteLink(linkid)*/ false}
-                    >
-                      Delete
-                    </Button>
-                  ),
-                },
-              ],
-            };
-          })}
-        />
+          head={
+            <Fragment>
+              <th>shortlink</th>
+              <th>url</th>
+              <th>qr code</th>
+              <th>creator</th>
+              <th>creation time</th>
+              <th></th>
+            </Fragment>
+          }
+        >
+          {links.map(({linkid, url, creatorid, creation_time}) => (
+            <LinkRow
+              key={linkid}
+              linkid={linkid}
+              url={url}
+              username={creatorid}
+              creation_time={creation_time}
+              reexecute={reexecute}
+            />
+          ))}
+        </Table>
       </Section>
     </div>
   );

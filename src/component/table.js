@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Table = ({head, data, fullWidth}) => {
+const Table = ({head, children, fullWidth}) => {
   const k = [];
   if (fullWidth) {
     k.push('full-width');
@@ -10,26 +10,10 @@ const Table = ({head, data, fullWidth}) => {
     <table className={k.join(' ')}>
       {head && (
         <thead>
-          <tr>
-            {head.map(({key, component}) => {
-              return <th key={key}>{component}</th>;
-            })}
-          </tr>
+          <tr>{head}</tr>
         </thead>
       )}
-      {data && (
-        <tbody>
-          {data.map(({key, row}) => {
-            return (
-              <tr key={key}>
-                {row.map(({key, component}) => {
-                  return <td key={key}>{component}</td>;
-                })}
-              </tr>
-            );
-          })}
-        </tbody>
-      )}
+      {children && <tbody>{children}</tbody>}
     </table>
   );
 };

@@ -7,135 +7,62 @@ import Table from 'component/table';
 
 const TableData = [
   {
-    key: 'Elrond',
-    row: [
-      {key: 'name', component: 'Elrond'},
-      {
-        key: 'desc',
-        component:
-          'a Half-elven conveyor, member of White Council and lord of Rivendell.',
-      },
-    ],
+    name: 'Elrond',
+    description:
+      'a Half-elven conveyor, member of White Council and lord of Rivendell.',
   },
   {
-    key: 'Erestor',
-    row: [
-      {key: 'name', component: 'Erestor'},
-      {
-        key: 'desc',
-        component:
-          'an Elf-lord, advisor, and the chief of the House of Elrond.',
-      },
-    ],
+    name: 'Erestor',
+    description: 'an Elf-lord, advisor, and the chief of the House of Elrond.',
   },
   {
-    key: 'Gandalf the Grey',
-    row: [
-      {key: 'name', component: 'Gandalf the Grey'},
-      {
-        key: 'desc',
-        component:
-          'a Wizard, one of the Istari, and member of both the White Council and The Fellowship.',
-      },
-    ],
+    name: 'Gandalf the Grey',
+    description:
+      'a Wizard, one of the Istari, and member of both the White Council and The Fellowship.',
   },
   {
-    key: 'Aragorn',
-    row: [
-      {key: 'name', component: 'Aragorn'},
-      {
-        key: 'desc',
-        component:
-          'a Ranger, heir of Isildur, member of The Fellowship, and Chieftain of the Dúnedain in the North.',
-      },
-    ],
+    name: 'Aragorn',
+    description:
+      'a Ranger, heir of Isildur, member of The Fellowship, and Chieftain of the Dúnedain in the North.',
   },
   {
-    key: 'Frodo Baggins',
-    row: [
-      {key: 'name', component: 'Frodo Baggins'},
-      {
-        key: 'desc',
-        component:
-          'a Hobbit of the Shire, member of The Fellowship, and Ring-bearer.',
-      },
-    ],
+    name: 'Frodo Baggins',
+    description:
+      'a Hobbit of the Shire, member of The Fellowship, and Ring-bearer.',
   },
   {
-    key: 'Bilbo Baggins',
-    row: [
-      {key: 'name', component: 'Bilbo Baggins'},
-      {
-        key: 'desc',
-        component:
-          'a Hobbit of the Shire, former Ring-bearer, uncle of Frodo and long resident in Rivendell.',
-      },
-    ],
+    name: 'Bilbo Baggins',
+    description:
+      'a Hobbit of the Shire, former Ring-bearer, uncle of Frodo and long resident in Rivendell.',
   },
   {
-    key: 'Boromir of Gondor',
-    row: [
-      {key: 'name', component: 'Boromir of Gondor'},
-      {
-        key: 'desc',
-        component:
-          'son of Denethor II Ruling Steward of Minas Tirith, and member of The Fellowship.',
-      },
-    ],
+    name: 'Boromir of Gondor',
+    description:
+      'son of Denethor II Ruling Steward of Minas Tirith, and member of The Fellowship.',
   },
   {
-    key: 'Glóin of the Lonely Mountain',
-    row: [
-      {
-        key: 'name',
-        component: 'Glóin of the Lonely Mountain',
-      },
-      {
-        key: 'desc',
-        component:
-          'representative of the King under the Mountain, Dain Ironfoot of the Dwarves.',
-      },
-    ],
+    name: 'Glóin of the Lonely Mountain',
+    description:
+      'representative of the King under the Mountain, Dain Ironfoot of the Dwarves.',
   },
   {
-    key: 'Gimli',
-    row: [
-      {key: 'name', component: 'Gimli'},
-      {
-        key: 'desc',
-        component:
-          'son of Gloin, member of The Fellowship, and dwarf of the Lonely Mountain.',
-      },
-    ],
+    name: 'Gimli',
+    description:
+      'son of Gloin, member of The Fellowship, and dwarf of the Lonely Mountain.',
   },
   {
-    key: 'Legolas',
-    row: [
-      {key: 'name', component: 'Legolas'},
-      {
-        key: 'desc',
-        component:
-          'a Sindar Elf of the Woodland Realm (Mirkwood), son of Thranduil the Elvenking, and member of The Fellowship.',
-      },
-    ],
+    name: 'Legolas',
+    description:
+      'a Sindar Elf of the Woodland Realm (Mirkwood), son of Thranduil the Elvenking, and member of The Fellowship.',
   },
   {
-    key: 'Glorfindel',
-    row: [
-      {key: 'name', component: 'Glorfindel'},
-      {
-        key: 'desc',
-        component:
-          'an Elf-lord of Rivendell, rescuer of Frodo and his company from the Nine.',
-      },
-    ],
+    name: 'Glorfindel',
+    description:
+      'an Elf-lord of Rivendell, rescuer of Frodo and his company from the Nine.',
   },
   {
-    key: 'Galdor of the Havens',
-    row: [
-      {key: 'name', component: 'Galdor of the Havens'},
-      {key: 'desc', component: 'messenger from Círdan of the Grey Havens.'},
-    ],
+    name: 'Galdor of the Havens',
+    description: 'messenger from Círdan of the Grey Havens.',
   },
 ];
 
@@ -379,12 +306,20 @@ const FormContainer = () => {
 
       <Section subsection sectionTitle="Table">
         <Table
-          head={[
-            {key: 'name', component: 'name'},
-            {key: 'desc', component: 'description'},
-          ]}
-          data={TableData}
-        />
+          head={
+            <Fragment>
+              <th>name</th>
+              <th>description</th>
+            </Fragment>
+          }
+        >
+          {TableData.map(({name, description}) => (
+            <tr key={name}>
+              <td>{name}</td>
+              <td>{description}</td>
+            </tr>
+          ))}
+        </Table>
       </Section>
     </Section>
   );

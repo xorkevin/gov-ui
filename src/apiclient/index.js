@@ -192,13 +192,11 @@ const useAPICall = (selector, args = [], initState, prehook, posthook) => {
 
   const apicall = useCallback(
     async (args, prehook, posthook) => {
-      setApiState({
-        loading: true,
-        success: false,
-        err: null,
-        status: -1,
-        data: initState,
-      });
+      setApiState((s) =>
+        Object.assign({}, s, {
+          loading: true,
+        }),
+      );
 
       if (prehook) {
         const err = await prehook(...args);
