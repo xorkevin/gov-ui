@@ -29,16 +29,18 @@ const SetupContainer = ({history}) => {
     email_confirm: '',
   });
 
-  const prehook = useCallback(() => {
-    const {password, email} = formState;
-    const {password_confirm, email_confirm} = formConfirmState;
-    if (password !== password_confirm) {
-      return 'Passwords do not match';
-    }
-    if (email !== email_confirm) {
-      return 'Emails do not match';
-    }
-  }, [formState, formConfirmState]);
+  const prehook = useCallback(
+    ({password, email}) => {
+      const {password_confirm, email_confirm} = formConfirmState;
+      if (password !== password_confirm) {
+        return 'Passwords do not match';
+      }
+      if (email !== email_confirm) {
+        return 'Emails do not match';
+      }
+    },
+    [formConfirmState],
+  );
 
   const [setupState, execSetup] = useAPICall(
     selectAPISetup,

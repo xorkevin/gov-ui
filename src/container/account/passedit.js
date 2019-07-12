@@ -15,12 +15,11 @@ const AccountPassEdit = () => {
     password_confirm: '',
   });
 
-  const prehook = useCallback(() => {
-    const {new_password, password_confirm} = formState;
+  const prehook = useCallback(({new_password, password_confirm}) => {
     if (new_password !== password_confirm) {
       return 'Passwords do not match';
     }
-  }, [formState]);
+  }, []);
 
   const [passState, execEditPass] = useAuthCall(
     selectAPIEditPass,
