@@ -144,8 +144,9 @@ export default {
   ids: {
     url: '/ids?ids={0}',
     method: 'GET',
-    transformer: (userids) => [[userids.join(',')], null],
+    transformer: (userids) => [[userids], null],
     expectdata: true,
+    selector: (status, data) => data.users,
     err: 'Unable to get user info',
   },
   create: {

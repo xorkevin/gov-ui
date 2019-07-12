@@ -1,11 +1,12 @@
-import React, {Fragment, useCallback} from 'react';
-import {usePaginate} from 'apiclient';
+import React, {Fragment, useState, useCallback} from 'react';
+import {usePaginate, selectAPINull} from 'apiclient';
 import {useAuthCall, useAuthResource} from 'service/auth';
 import Section from 'component/section';
 import Table from 'component/table';
 import Button from 'component/button';
 import Time from 'component/time';
 import Anchor from 'component/anchor';
+import Tooltip from 'component/tooltip';
 import Input, {useForm} from 'component/form';
 
 import {URL} from 'config';
@@ -15,6 +16,7 @@ const LIMIT = 32;
 const selectAPILinks = (api) => api.courier.link.get;
 const selectAPICreate = (api) => api.courier.link.create;
 const selectAPIDelete = (api) => api.courier.link.id.del;
+const selectAPIUsers = (api) => api.u.user.ids;
 
 const LinkRow = ({linkid, url, username, creation_time, reexecute}) => {
   const [deleteState, execDelete] = useAuthCall(
@@ -66,12 +68,16 @@ const CourierLink = () => {
 
   const page = usePaginate(LIMIT);
 
+  const [userids, setUserids] = useState([]);
+
   const posthook = useCallback(
-    (data) => {
-      page.setEnd(data.length < LIMIT);
-      //Array.from(new Set(data.links.map(({creatorid}) => creatorid)));
+    (links) => {
+      page.setEnd(links.length < LIMIT);
+      setUserids(
+        Array.from(new Set(links.map(({creatorid}) => creatorid))).sort(),
+      );
     },
-    [page.setEnd],
+    [page.setEnd, setUserids],
   );
   const {success, err, data: links, reexecute} = useAuthResource(
     selectAPILinks,
@@ -81,24 +87,17 @@ const CourierLink = () => {
     posthook,
   );
 
-  //getUserInfo(userids) {
-  //  this.props.getUserInfo(userids, (err, data) => {
-  //    if (err) {
-  //      return this.setState((prevState) => {
-  //        return Object.assign({}, prevState, {err});
-  //      });
-  //    }
-  //    this.setState((prevState) => {
-  //      return Object.assign({}, prevState, {
-  //        err: false,
-  //        usernames: data.users.reduce((obj, {userid, username}) => {
-  //          obj[userid] = username;
-  //          return obj;
-  //        }, {}),
-  //      });
-  //    });
-  //  });
-  //}
+  const {err: errUsername, data: users} = useAuthResource(
+    userids.length > 0 ? selectAPIUsers : selectAPINull,
+    [userids.join(',')],
+    [],
+  );
+  const usernames = Object.fromEntries(
+    users.map(({userid, username, first_name, last_name}) => [
+      userid,
+      <Tooltip tooltip={first_name + ' ' + last_name}>{username}</Tooltip>,
+    ]),
+  );
 
   const prehook = useCallback(({linkid, url}) => {
     if (url.length === 0) {
@@ -141,7 +140,7 @@ const CourierLink = () => {
         <Button onClick={execCreate}>Add Link</Button>
         {errCreate && <span>{errCreate}</span>}
       </Section>
-      {err && <span>{err}</span>}
+      {(err || errUsername) && <span>{err || errUsername}</span>}
       <Section subsection sectionTitle="Links">
         <Table
           fullWidth
@@ -161,7 +160,7 @@ const CourierLink = () => {
               key={linkid}
               linkid={linkid}
               url={url}
-              username={creatorid}
+              username={usernames[creatorid] || creatorid}
               creation_time={creation_time}
               reexecute={reexecute}
             />
