@@ -1,0 +1,10 @@
+.snackbar {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+
+  .inner {
+    padding: 8px;
+    border-radius: 8px;
+  }
+}

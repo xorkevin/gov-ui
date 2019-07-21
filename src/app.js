@@ -9,6 +9,7 @@ import {Navbar, Navitem} from 'component/navbar';
 import Menu from 'component/menu';
 import Footer from 'component/footer';
 import Grid from 'component/grid';
+import Snackbar from 'component/snackbar';
 import Anchor from 'component/anchor';
 import FaIcon from 'component/faicon';
 
@@ -122,6 +123,7 @@ const App = ({location}) => {
           </div>
         </Grid>
       </Footer>
+      <Snackbar />
     </div>
   );
 };
