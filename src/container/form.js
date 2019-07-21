@@ -4,6 +4,8 @@ import Input, {useForm} from 'component/form';
 import Card from 'component/card';
 import Button from 'component/button';
 import Table from 'component/table';
+import Tabbar from 'component/tabbar';
+import FaIcon from 'component/faicon';
 
 const TableData = [
   {
@@ -320,6 +322,37 @@ const FormContainer = () => {
             </tr>
           ))}
         </Table>
+      </Section>
+
+      <Section subsection sectionTitle="Tabs">
+        <Tabbar
+          left={
+            <Fragment>
+              <div>
+                <FaIcon icon="newspaper-o" /> Newsfeed
+              </div>
+              <div>
+                <FaIcon icon="fire" /> Popular
+              </div>
+              <div>
+                <FaIcon icon="users" /> Friends
+              </div>
+              <div>
+                <FaIcon icon="paper-plane" /> Post
+              </div>
+            </Fragment>
+          }
+          right={
+            <Fragment>
+              <div>
+                <FaIcon icon="user" /> Profile
+              </div>
+              <div>
+                <FaIcon icon="cog" /> Settings
+              </div>
+            </Fragment>
+          }
+        />
       </Section>
     </Section>
   );

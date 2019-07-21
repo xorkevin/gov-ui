@@ -4,6 +4,7 @@ import Grid from 'component/grid';
 import Card from 'component/card';
 import Button from 'component/button';
 import FaIcon from 'component/faicon';
+import ListItem from 'component/list';
 
 import {mountainPreview, thamesPreview} from 'config';
 
@@ -106,7 +107,7 @@ const CardContainer = () => {
             preview={thamesPreview}
             title={
               <Fragment>
-                <h3>Aliquet</h3>,
+                <h3>Aliquet</h3>
                 <Button label="favorite">
                   <FaIcon icon="heart" />
                 </Button>
@@ -124,7 +125,7 @@ const CardContainer = () => {
             background="https://xorkevin.github.io/stratosphere/assets/climb.jpg"
             title={
               <Fragment>
-                <h3>Vivamus nibh enim</h3>,
+                <h3>Vivamus nibh enim</h3>
                 <Button label="favorite">
                   <FaIcon icon="heart" />
                 </Button>
@@ -137,6 +138,8 @@ const CardContainer = () => {
             dictum massa porta at. Mauris augue nisi, scelerisque ac suscipit
             sit amet, egestas ut risus. In hac habitasse platea dictumst.
             Vivamus nibh enim, dignissim quis consequat at, sagittis in magna.
+            <ListItem label="Project" item="Nuke" />
+            <ListItem label="Language" item="Javascript" />
           </Card>
           <Card
             size="md"
@@ -144,7 +147,7 @@ const CardContainer = () => {
             background="https://xorkevin.github.io/stratosphere/assets/flower.jpg"
             title={
               <Fragment>
-                <h3>Vivamus nibh enim</h3>,
+                <h3>Vivamus nibh enim</h3>
                 <Button label="favorite">
                   <FaIcon icon="heart" />
                 </Button>
@@ -164,7 +167,7 @@ const CardContainer = () => {
             background="https://xorkevin.github.io/stratosphere/assets/underground.jpg"
             title={
               <Fragment>
-                <h3>Vivamus nibh enim</h3>,
+                <h3>Vivamus nibh enim</h3>
                 <Button label="favorite">
                   <FaIcon icon="heart" />
                 </Button>
@@ -184,7 +187,7 @@ const CardContainer = () => {
             titleBar
             title={
               <Fragment>
-                <h3>Vivamus nibh enim</h3>,
+                <h3>Vivamus nibh enim</h3>
                 <Button label="favorite">
                   <FaIcon icon="heart" />
                 </Button>
