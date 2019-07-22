@@ -5,7 +5,7 @@ import SnackbarComponent from 'component/snackbar';
 // Constants
 
 const TIME_DISPLAY = 4000;
-const TIME_ANIMATE = 500;
+const TIME_ANIMATE = 250;
 
 // Actions
 
