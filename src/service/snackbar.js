@@ -58,11 +58,7 @@ const useSnackbar = () => {
     [dispatch],
   );
 
-  const hide = useCallback(() => {
-    dispatch(SnackbarHide());
-  }, [dispatch]);
-
-  return {display, hide};
+  return display;
 };
 
 // Higher Order

@@ -1,13 +1,15 @@
 import {createStore, combineReducers, applyMiddleware} from 'redux';
 import thunk from 'redux-thunk';
 
-import Settings from 'service/settings';
 import Auth from 'service/auth';
+import Settings from 'service/settings';
+import Snackbar from 'service/snackbar';
 
 const store = createStore(
   combineReducers({
-    Settings,
     Auth,
+    Settings,
+    Snackbar,
   }),
   applyMiddleware(thunk),
 );

@@ -1,4 +1,5 @@
 import React, {Fragment, useState, useCallback} from 'react';
+import {useSnackbar} from 'service/snackbar';
 import Section from 'component/section';
 import Input, {useForm} from 'component/form';
 import Card from 'component/card';
@@ -80,6 +81,21 @@ const FormContainer = () => {
     fileval: undefined,
     lang: '200',
   });
+
+  const logFormState = useCallback(() => {
+    console.log(formState);
+  }, [formState]);
+
+  const snackbar = useSnackbar();
+
+  const displaySnack = useCallback(() => {
+    snackbar(
+      <Fragment>
+        <span>Hello, World</span>
+        <Button>Reply</Button>
+      </Fragment>,
+    );
+  }, [snackbar]);
 
   return (
     <Section id="form" sectionTitle="Form" container padded narrow>
@@ -241,7 +257,7 @@ const FormContainer = () => {
         valid
       />
       <p>Dropdown value: {formState.lang}</p>
-      <Button fixedWidth primary onClick={() => console.log(formState)}>
+      <Button fixedWidth primary onClick={logFormState}>
         Submit
       </Button>
       <Card
@@ -257,7 +273,7 @@ const FormContainer = () => {
             <Button fixedWidth outline>
               Save
             </Button>
-            <Button fixedWidth primary>
+            <Button fixedWidth primary onClick={displaySnack}>
               Submit
             </Button>
           </Fragment>

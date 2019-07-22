@@ -9,6 +9,7 @@ $color-accent-light: lighten($color-accent, 12.5%) !default;
 $background: #fcfcfc !default;
 $background-dark: darken($color-primary-dark, 6.25%) !default;
 $background-transparent: rgba($white, 0.97) !default;
+$background-dark-solid: #111111 !default;
 $background-full-transparent: rgba($white, 0) !default;
 $background-dark-transparent: rgba($color-primary-dark, 0.75) !default;
 

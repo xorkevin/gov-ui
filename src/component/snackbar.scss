@@ -1,10 +1,28 @@
 .snackbar {
-  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  width: 100%;
   left: 0;
   bottom: 0;
+  padding: 16px;
+  z-index: 128;
+  transition: $transition-normal;
+
+  &.hidden {
+    transform: translateY(100%);
+  }
 
   .inner {
-    padding: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    max-width: 100%;
+    padding: 16px;
     border-radius: 8px;
+    background-color: $background-dark-solid;
+    color: $color-text-light-1-5;
   }
 }

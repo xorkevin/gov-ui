@@ -2,6 +2,7 @@ import React, {Fragment, lazy, Suspense} from 'react';
 import {Switch, Route, Redirect, NavLink, withRouter} from 'react-router-dom';
 
 import {useDarkMode} from 'service/settings';
+import {SnackbarContainer} from 'service/snackbar';
 
 import MainContent from 'component/maincontent';
 import Section from 'component/section';
@@ -9,7 +10,6 @@ import {Navbar, Navitem} from 'component/navbar';
 import Menu from 'component/menu';
 import Footer from 'component/footer';
 import Grid from 'component/grid';
-import Snackbar from 'component/snackbar';
 import Anchor from 'component/anchor';
 import FaIcon from 'component/faicon';
 
@@ -123,7 +123,7 @@ const App = ({location}) => {
           </div>
         </Grid>
       </Footer>
-      <Snackbar />
+      <SnackbarContainer />
     </div>
   );
 };
