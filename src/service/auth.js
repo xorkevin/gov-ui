@@ -171,7 +171,7 @@ const useAuthCall = (selector, args, initState, opts) => {
   return [apiState, useAuth(execute)];
 };
 
-const useAuthResource = (selector, args, initState, opts) => {
+const useAuthResource = (selector, args, initState, opts = {}) => {
   const relogin = useRelogin();
 
   const {prehook} = opts;
