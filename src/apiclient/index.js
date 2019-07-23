@@ -184,7 +184,7 @@ const useAPICall = (
   selector,
   args = [],
   initState,
-  {prehook, posthook} = {},
+  {prehook, posthook, errhook} = {},
 ) => {
   const [apiState, setApiState] = useState({
     loading: false,
@@ -213,6 +213,9 @@ const useAPICall = (
             status: -1,
             data: initState,
           });
+          if (errhook) {
+            errhook('prehook', err);
+          }
           return [null, -1, err];
         }
       }
@@ -226,6 +229,9 @@ const useAPICall = (
           status,
           data: initState,
         });
+        if (errhook) {
+          errhook('api', err);
+        }
         return [data, status, err];
       }
 
@@ -239,6 +245,9 @@ const useAPICall = (
             status,
             data,
           });
+          if (errhook) {
+            errhook('posthook', err);
+          }
           return [data, status, err];
         }
       }
