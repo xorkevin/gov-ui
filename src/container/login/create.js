@@ -39,7 +39,7 @@ const CreateAccount = () => {
     selectAPICreateAccount,
     [formState],
     {},
-    prehook,
+    {prehook},
   );
 
   const {loading, success, err} = createState;

@@ -22,8 +22,7 @@ const AccountSessions = () => {
     selectAPISessionDelete,
     [sessionids],
     {},
-    null,
-    reexecute,
+    {posthook: reexecute},
   );
 
   const {success: successDelete, err: errDelete} = deleteState;

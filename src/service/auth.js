@@ -166,19 +166,15 @@ const useAuth = (callback) => {
   return exec;
 };
 
-const useAuthCall = (selector, args, initState, prehook, posthook) => {
-  const [apiState, execute] = useAPICall(
-    selector,
-    args,
-    initState,
-    prehook,
-    posthook,
-  );
+const useAuthCall = (selector, args, initState, opts) => {
+  const [apiState, execute] = useAPICall(selector, args, initState, opts);
   return [apiState, useAuth(execute)];
 };
 
-const useAuthResource = (selector, args, initState, prehook, posthook) => {
+const useAuthResource = (selector, args, initState, opts) => {
   const relogin = useRelogin();
+
+  const {prehook} = opts;
 
   const reloginhook = useCallback(
     async (...args) => {
@@ -191,7 +187,11 @@ const useAuthResource = (selector, args, initState, prehook, posthook) => {
     [relogin, prehook],
   );
 
-  return useResource(selector, args, initState, reloginhook, posthook);
+  const reloginOpts = Object.assign({}, opts, {
+    prehook: reloginhook,
+  });
+
+  return useResource(selector, args, initState, reloginOpts);
 };
 
 const useLogout = () => {

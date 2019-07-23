@@ -46,7 +46,7 @@ const SetupContainer = ({history}) => {
     selectAPISetup,
     [formState],
     {orgname: ''},
-    prehook,
+    {prehook},
   );
 
   const {loading, success, err, data} = setupState;

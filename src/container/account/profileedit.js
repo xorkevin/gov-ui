@@ -31,8 +31,7 @@ const ProfileEdit = () => {
       contact_email: '',
       bio: '',
     },
-    null,
-    posthook,
+    {posthook},
   );
 
   const [editState, execEdit] = useAuthCall(selectAPIEdit, [formState]);

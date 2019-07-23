@@ -22,8 +22,7 @@ const UserDetails = ({match}) => {
     selectAPIUser,
     [match.params.username || ''],
     {first_name: '', last_name: '', username: '', creation_time: ''},
-    null,
-    posthook,
+    {posthook},
   );
   const imageURL = useURL(selectAPIImage, [userid]);
 

@@ -180,7 +180,12 @@ const useAPI = (selector) => {
 const useURL = (selector, args = []) =>
   useAPI(selector).api_prop.formatUrl(args);
 
-const useAPICall = (selector, args = [], initState, prehook, posthook) => {
+const useAPICall = (
+  selector,
+  args = [],
+  initState,
+  {prehook, posthook} = {},
+) => {
   const [apiState, setApiState] = useState({
     loading: false,
     success: false,
@@ -259,14 +264,8 @@ const useAPICall = (selector, args = [], initState, prehook, posthook) => {
 
 const selectAPINull = () => null;
 
-const useResource = (selector, args, initState, prehook, posthook) => {
-  const [apiState, execute] = useAPICall(
-    selector,
-    args,
-    initState,
-    prehook,
-    posthook,
-  );
+const useResource = (selector, args, initState, opts) => {
+  const [apiState, execute] = useAPICall(selector, args, initState, opts);
 
   useEffect(() => {
     if (selector !== selectAPINull) {

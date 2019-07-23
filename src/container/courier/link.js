@@ -23,8 +23,7 @@ const LinkRow = ({linkid, url, username, creation_time, reexecute}) => {
     selectAPIDelete,
     [linkid],
     {},
-    null,
-    reexecute,
+    {posthook: reexecute},
   );
 
   const {err} = deleteState;
@@ -83,8 +82,7 @@ const CourierLink = () => {
     selectAPILinks,
     [LIMIT, page.value],
     [],
-    null,
-    posthook,
+    {posthook},
   );
 
   const {err: errUsername, data: users} = useAuthResource(
@@ -113,8 +111,7 @@ const CourierLink = () => {
     selectAPICreate,
     [formState],
     {},
-    prehook,
-    posthookRefresh,
+    {prehook, posthook: posthookRefresh},
   );
 
   const {err: errCreate} = createState;

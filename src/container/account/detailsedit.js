@@ -41,8 +41,7 @@ const AccountDetailsEdit = () => {
       first_name: '',
       last_name: '',
     },
-    null,
-    posthook,
+    {posthook},
   );
 
   const {loading, success, err} = accountState;

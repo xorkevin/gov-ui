@@ -25,7 +25,7 @@ const ConfirmReset = ({match}) => {
     selectAPIResetPass,
     [formState.key, formState.new_password],
     {},
-    prehook,
+    {prehook},
   );
 
   const {loading, success, err} = resetState;

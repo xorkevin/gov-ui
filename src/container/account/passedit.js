@@ -25,7 +25,7 @@ const AccountPassEdit = () => {
     selectAPIEditPass,
     [formState.old_password, formState.new_password],
     {},
-    prehook,
+    {prehook},
   );
 
   const {loading, success, err} = passState;

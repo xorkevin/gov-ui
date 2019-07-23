@@ -56,8 +56,7 @@ const ManageUser = ({history, match}) => {
     selectAPIRank,
     [user.userid, formState.add, formState.remove],
     {},
-    null,
-    posthook,
+    {posthook},
   );
 
   if (!displayUser) {
