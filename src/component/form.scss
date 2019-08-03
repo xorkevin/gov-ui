@@ -80,10 +80,6 @@ textarea {
         font-size: 0.75em;
         top: 4px;
       }
-
-      & ~ .info {
-        color: $color-text-dark-2;
-      }
     }
   }
 
@@ -254,20 +250,20 @@ body.dark {
         color: $color-text-light-3;
       }
 
+      &:focus ~ .info {
+        color: $color-text-light-2;
+      }
+
       &:focus,
       &:not(:placeholder-shown) {
         & + label {
           color: $color-text-light-1-5;
         }
-
-        & ~ .info {
-          color: $color-text-light-2;
-        }
       }
-    }
 
-    & > .error {
-      color: $color-invalid-light;
+      & ~ .error {
+        color: $color-invalid-light;
+      }
     }
 
     & > select {
@@ -282,21 +278,35 @@ body.dark {
   }
 
   .input.invalid {
-    & > label {
-      color: $color-invalid-light !important;
+    &.normal > input,
+    &.file > input,
+    &.radio > input,
+    &.checkbox > input,
+    & > textarea,
+    & > select {
+      & + label {
+        color: $color-invalid-light;
 
-      &:after {
-        background-color: $color-invalid-light !important;
+        &:after {
+          background-color: $color-invalid-light;
+        }
       }
     }
   }
 
   .input.valid {
-    & > label {
-      color: $color-valid-light !important;
+    &.normal > input,
+    &.file > input,
+    &.radio > input,
+    &.checkbox > input,
+    & > textarea,
+    & > select {
+      & + label {
+        color: $color-valid-light;
 
-      &:after {
-        background-color: $color-valid-light !important;
+        &:after {
+          background-color: $color-valid-light;
+        }
       }
     }
   }
