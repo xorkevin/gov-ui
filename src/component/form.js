@@ -65,12 +65,14 @@ const Input = ({
     k.push('invalid');
   }
 
-  if (type === 'file') {
-    k.push('file');
-  } else if (type === 'radio') {
-    k.push('radio');
-  } else if (type === 'checkbox') {
-    k.push('checkbox');
+  switch (type) {
+    case 'file':
+    case 'radio':
+    case 'checkbox':
+      k.push(type);
+      break;
+    default:
+      k.push('normal');
   }
 
   if (wide) {
@@ -82,7 +84,13 @@ const Input = ({
   let inp = null;
   if (dropdown) {
     inp = (
-      <select id={id} value={value} multiple={multiple} onChange={handleChange}>
+      <select
+        id={id}
+        value={value}
+        multiple={multiple}
+        onChange={handleChange}
+        onKeyPress={handleEnter}
+      >
         {Array.isArray(dropdown) &&
           dropdown.map((i) => {
             return (
@@ -140,6 +148,7 @@ const Input = ({
             id={id}
             type={type}
             name={name}
+            value={value}
             checked={checked}
             onChange={handleChange}
             onKeyPress={handleEnter}

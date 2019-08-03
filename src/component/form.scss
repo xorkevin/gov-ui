@@ -17,9 +17,17 @@ textarea {
     width: 100%;
   }
 
+  /* font size, info, and error text */
   & > input,
   & > textarea,
   & > select {
+    font-size: 1em;
+    color: $color-text-dark-1;
+
+    & + label {
+      font-size: 1em;
+    }
+
     & ~ .info {
       color: $color-text-dark-3;
       position: absolute;
@@ -42,20 +50,18 @@ textarea {
     }
   }
 
-  & > input:not([type='radio']):not([type='checkbox']),
+  /* label positioning */
+  &.normal > input,
+  &.file > input,
   & > textarea,
   & > select {
-    font-size: 1em;
-    border-bottom: 1px solid $color-text-dark-3;
     width: 100%;
     padding: 4px 0;
-    color: $color-text-dark-1;
 
     & + label {
       transition: $transition-normal;
       bottom: 0;
       color: $color-text-dark-2;
-      font-size: 1em;
       left: 0;
       right: 0;
       pointer-events: none;
@@ -66,18 +72,6 @@ textarea {
       overflow: hidden;
       white-space: nowrap;
       text-align: left;
-
-      &:after {
-        content: '';
-        position: absolute;
-        width: 16px;
-        height: 2px;
-        bottom: 20px;
-        left: calc(50% - 8px);
-        visibility: hidden;
-        transition: $transition-normal;
-        background-color: $color-primary;
-      }
     }
 
     &:focus,
@@ -92,6 +86,26 @@ textarea {
         color: $color-text-dark-2;
       }
     }
+  }
+
+  /* bottom border */
+  &.normal > input,
+  & > textarea,
+  & > select {
+    border: none;
+    border-bottom: 1px solid $color-text-dark-3;
+
+    & + label:after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 2px;
+      bottom: 20px;
+      left: calc(50% - 8px);
+      visibility: hidden;
+      transition: $transition-normal;
+      background-color: $color-primary;
+    }
 
     &:focus + label:after {
       width: 100%;
@@ -100,46 +114,38 @@ textarea {
     }
   }
 
-  & > input:not([type='radio']):not([type='checkbox']):not([type='file']),
+  /* remove outline */
+  &.normal > input,
   & > textarea {
     &:focus {
       outline: none;
     }
   }
 
-  &.file {
-    & > input[type='file'] {
-      border-bottom: none;
-
-      &:hover {
-        cursor: pointer;
-      }
-
-      & + label:after {
-        content: none;
-      }
-    }
-  }
-
-  & > textarea {
-    padding: 4px 0;
-    display: block;
-    border: none;
-    border-bottom: 1px solid $color-text-dark-3;
-    resize: vertical;
-  }
-
+  /* cursor pointer */
+  &.file > input,
   & > select {
-    display: block;
-    -moz-appearance: none;
-    -webkit-appearance: none;
-    background: none;
-    border: none;
-    border-bottom: 1px solid $color-text-dark-3;
-
     &:hover {
       cursor: pointer;
     }
+  }
+
+  /* fix border positioning */
+  & > textarea,
+  & > select {
+    display: block;
+  }
+
+  /* textarea interaction */
+  & > textarea {
+    resize: vertical;
+  }
+
+  /* select appearance */
+  & > select {
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    background: none;
 
     & ~ .dropdown-arrow {
       content: '';
@@ -163,23 +169,18 @@ textarea {
     }
   }
 
+  /* radio and checkbox label */
   &.radio,
   &.checkbox {
     padding-top: 10px;
     padding-bottom: 20px;
 
-    & > input[type='radio'],
-    & > input[type='checkbox'] {
-      border-bottom: none;
+    & > input {
       vertical-align: middle;
       margin-right: 8px;
 
       & + label {
         vertical-align: middle;
-
-        &:after {
-          content: none;
-        }
       }
     }
   }
