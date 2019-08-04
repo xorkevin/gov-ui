@@ -153,14 +153,14 @@ const Admin = () => {
           <div className="text-center">
             <ul>
               <li>
-                <Anchor noColor ext href="https://github.com/hackform/nuke">
+                <Anchor noColor ext href="https://github.com/xorkevin/nuke">
                   <FaIcon icon="github" /> Github
                 </Anchor>
               </li>
               <li>
                 Designed for{' '}
-                <Anchor noColor ext href="https://github.com/hackform/governor">
-                  hackform/governor
+                <Anchor noColor ext href="https://github.com/xorkevin/governor">
+                  xorkevin/governor
                 </Anchor>
               </li>
             </ul>

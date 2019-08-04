@@ -9,28 +9,28 @@
   "description": "governor frontend",
   "icons": [
     {
-      "src": "/static/icon/hackformlogo64.png",
+      "src": "/static/icon/xorkevinlogo064.png",
       "sizes": "64x64",
       "type": "image/png"
     },
     {
-      "src": "/static/icon/hackformlogo128.png",
+      "src": "/static/icon/xorkevinlogo128.png",
       "sizes": "128x128",
       "type": "image/png"
     },
     {
-      "src": "/static/icon/hackformlogo192.png",
+      "src": "/static/icon/xorkevinlogo192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/static/icon/hackformlogo256.png",
+      "src": "/static/icon/xorkevinlogo256.png",
       "sizes": "256x256",
       "type": "image/png"
     },
     {
-      "src": "/static/icon/hackformlogo512.png",
-      "sizes": "512x512",
+      "src": "/static/icon/xorkevinlogo.png",
+      "sizes": "448x448",
       "type": "image/png"
     }
   ]

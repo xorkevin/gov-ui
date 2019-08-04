@@ -27,9 +27,7 @@ function start(port) {
     }),
   );
   serveFile(app, 'manifest.json');
-  app.get('/favicon.ico', (req, res) => {
-    res.sendStatus(404);
-  });
+  serveFile(app, 'favicon.ico');
   app.get('*', (req, res) => {
     res.sendFile('index.html', {
       root: binpath,
