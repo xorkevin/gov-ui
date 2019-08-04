@@ -11,6 +11,17 @@ const formatStr = (str, ...args) => {
   return formatStrArgs(str, args);
 };
 
+const ALPHABET =
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-';
+
+const randomID = (len = 8) => {
+  const idarr = [];
+  for (let i = 0; i < len; i++) {
+    idarr.push(ALPHABET[Math.floor(ALPHABET.length * Math.random())]);
+  }
+  return idarr.join('');
+};
+
 const IS_WEB = typeof window !== 'undefined';
 
 const isWeb = () => {
@@ -71,6 +82,7 @@ const max0 = (a) => max(a, 0);
 export {
   formatStr,
   formatStrArgs,
+  randomID,
   isWeb,
   logger,
   getCookie,

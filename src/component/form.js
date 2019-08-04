@@ -1,5 +1,5 @@
 import React, {useState, useCallback, useMemo} from 'react';
-import shortid from 'shortid';
+import {randomID} from 'utility';
 
 const Input = ({
   type,
@@ -20,7 +20,7 @@ const Input = ({
   wide,
   fullWidth,
 }) => {
-  const id = useMemo(() => shortid.generate(), []);
+  const id = useMemo(randomID, []);
 
   const handleChange = useMemo(() => {
     if (!onChange) {
