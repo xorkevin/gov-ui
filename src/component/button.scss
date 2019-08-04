@@ -75,7 +75,6 @@ button {
 
     &:hover {
       box-shadow: $shadow-button-raised;
-      transform: translateY(-1px);
       border: 0;
     }
   }
