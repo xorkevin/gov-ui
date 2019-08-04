@@ -12,7 +12,7 @@ const createConfig = (env, argv) => {
 
     context: path.resolve(__dirname, 'src'),
     entry: {
-      admin: ['@babel/polyfill', 'adminmain.js'],
+      admin: ['core-js/stable', 'adminmain.js'],
     },
     resolve: {
       modules: [path.resolve(__dirname, 'src'), 'node_modules'],
