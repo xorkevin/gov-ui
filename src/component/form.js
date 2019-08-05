@@ -1,5 +1,19 @@
-import React, {useState, useCallback, useMemo} from 'react';
+import React, {useState, useCallback, useMemo, useContext} from 'react';
 import {randomID} from 'utility';
+
+const FormContext = React.createContext();
+
+const Form = ({formState, onChange, onEnter, validation, children}) => {
+  let error;
+  if (validation) {
+    error = validation(formState);
+  }
+  return (
+    <FormContext.Provider value={{formState, onChange, onEnter, error}}>
+      {children}
+    </FormContext.Provider>
+  );
+};
 
 const Input = ({
   type,
@@ -21,6 +35,18 @@ const Input = ({
   fullWidth,
 }) => {
   const id = useMemo(randomID, []);
+
+  const context = useContext(FormContext);
+  if (context) {
+    if (context.formState) {
+      value = context.formState[name];
+    }
+    onChange = context.onChange;
+    onEnter = context.onEnter;
+    if (context.error) {
+      error = context.error[name];
+    }
+  }
 
   const handleChange = useMemo(() => {
     if (!onChange) {
@@ -192,4 +218,4 @@ const useForm = (initState = {}) => {
   return [formState, updateForm];
 };
 
-export {Input, useForm, Input as default};
+export {Input, useForm, Form, Input as default};
