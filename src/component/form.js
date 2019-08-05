@@ -39,10 +39,21 @@ const Input = ({
   const context = useContext(FormContext);
   if (context) {
     if (context.formState) {
-      value = context.formState[name];
+      switch (type) {
+        case 'radio':
+        case 'checkbox':
+          checked = context.formState[name];
+          break;
+        default:
+          value = context.formState[name];
+      }
     }
-    onChange = context.onChange;
-    onEnter = context.onEnter;
+    if (context.onChange) {
+      onChange = context.onChange;
+    }
+    if (context.onEnter) {
+      onEnter = context.onEnter;
+    }
     if (context.error) {
       error = context.error[name];
     }

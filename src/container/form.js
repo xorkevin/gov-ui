@@ -1,7 +1,7 @@
 import React, {Fragment, useState, useCallback} from 'react';
 import {useSnackbar} from 'service/snackbar';
 import Section from 'component/section';
-import Input, {useForm} from 'component/form';
+import {Form, Input, useForm} from 'component/form';
 import Card from 'component/card';
 import Button from 'component/button';
 import Table from 'component/table';
@@ -99,163 +99,109 @@ const FormContainer = () => {
 
   return (
     <Section id="form" sectionTitle="Form" container padded narrow>
-      <Input
-        label="Name"
-        name="name"
-        value={formState.name}
-        onChange={updateForm}
-      />
-      <Input
-        label="Email"
-        name="email"
-        value={formState.email}
-        onChange={updateForm}
-        error="not an email"
-      />
-      <Input
-        label="Phone"
-        info="10 digits"
-        name="phone"
-        value={formState.phone}
-        onChange={updateForm}
-        valid
-      />
-      <Input
-        label="Tagline"
-        info="What describes you?"
-        name="tagline"
-        value={formState.tagline}
-        onChange={updateForm}
-      />
-      <Input
-        label="Password"
-        type="password"
-        name="password"
-        value={formState.password}
-        onChange={updateForm}
-      />
-      <Input
-        label="Check me"
-        info="This is a checkbox"
-        type="checkbox"
-        name="checkbox"
-        checked={formState.checkbox}
-        onChange={updateForm}
-      />
-      <Input
-        label="Check me"
-        info="This is a checkbox"
-        type="checkbox"
-        name="checkbox"
-        checked={formState.checkbox}
-        onChange={updateForm}
-        error="checkbox error"
-      />
-      <Input
-        label="Check me"
-        info="This is a checkbox"
-        type="checkbox"
-        name="checkbox"
-        checked={formState.checkbox}
-        onChange={updateForm}
-        valid
-      />
-      <Input
-        label="Radio one"
-        info="Radio button"
-        type="radio"
-        name="radioval"
-        value="one"
-        checked={formState.radioval}
-        onChange={updateForm}
-      />
-      <Input
-        label="Radio two"
-        info="Radio button"
-        type="radio"
-        name="radioval"
-        value="two"
-        checked={formState.radioval}
-        onChange={updateForm}
-        error="radio error"
-      />
-      <Input
-        label="Radio three"
-        info="Radio button"
-        type="radio"
-        name="radioval"
-        value="three"
-        checked={formState.radioval}
-        onChange={updateForm}
-        valid
-      />
-      <Input
-        label="File"
-        info="Choose a file"
-        type="file"
-        name="fileval"
-        onChange={updateForm}
-      />
-      <Input
-        label="File"
-        info="Choose a file"
-        type="file"
-        name="fileval"
-        onChange={updateForm}
-        error="file error"
-      />
-      <Input
-        label="File"
-        info="Choose a file"
-        type="file"
-        name="fileval"
-        onChange={updateForm}
-        valid
-      />
-      <Input
-        label="Language"
-        info="Your favorite language"
-        dropdown={[
-          {text: 'Rust', value: '100'},
-          {text: 'Go', value: '200'},
-          {text: 'Javascript', value: '300'},
-          {text: 'Python', value: '400'},
-          {text: 'Prolog', value: '500'},
-        ]}
-        name="lang"
-        value={formState.lang}
-        onChange={updateForm}
-      />
-      <Input
-        label="Language"
-        info="Your favorite language"
-        dropdown={[
-          {text: 'Rust', value: '100'},
-          {text: 'Go', value: '200'},
-          {text: 'Javascript', value: '300'},
-          {text: 'Python', value: '400'},
-          {text: 'Prolog', value: '500'},
-        ]}
-        name="lang"
-        value={formState.lang}
-        onChange={updateForm}
-        error="select error"
-      />
-      <Input
-        label="Language"
-        info="Your favorite language"
-        dropdown={[
-          {text: 'Rust', value: '100'},
-          {text: 'Go', value: '200'},
-          {text: 'Javascript', value: '300'},
-          {text: 'Python', value: '400'},
-          {text: 'Prolog', value: '500'},
-        ]}
-        name="lang"
-        value={formState.lang}
-        onChange={updateForm}
-        valid
-      />
+      <Form formState={formState} onChange={updateForm} onEnter={logFormState}>
+        <Input label="Name" name="name" />
+        <Input label="Email" name="email" error="not an email" />
+        <Input label="Phone" info="10 digits" name="phone" valid />
+        <Input label="Tagline" info="What describes you?" name="tagline" />
+        <Input label="Password" type="password" name="password" />
+        <Input
+          label="Check me"
+          info="This is a checkbox"
+          type="checkbox"
+          name="checkbox"
+        />
+        <Input
+          label="Check me"
+          info="This is a checkbox"
+          type="checkbox"
+          name="checkbox"
+          error="checkbox error"
+        />
+        <Input
+          label="Check me"
+          info="This is a checkbox"
+          type="checkbox"
+          name="checkbox"
+          valid
+        />
+        <Input
+          label="Radio one"
+          info="Radio button"
+          type="radio"
+          name="radioval"
+          value="one"
+        />
+        <Input
+          label="Radio two"
+          info="Radio button"
+          type="radio"
+          name="radioval"
+          value="two"
+          error="radio error"
+        />
+        <Input
+          label="Radio three"
+          info="Radio button"
+          type="radio"
+          name="radioval"
+          value="three"
+          valid
+        />
+        <Input label="File" info="Choose a file" type="file" name="fileval" />
+        <Input
+          label="File"
+          info="Choose a file"
+          type="file"
+          name="fileval"
+          error="file error"
+        />
+        <Input
+          label="File"
+          info="Choose a file"
+          type="file"
+          name="fileval"
+          valid
+        />
+        <Input
+          label="Language"
+          info="Your favorite language"
+          dropdown={[
+            {text: 'Rust', value: '100'},
+            {text: 'Go', value: '200'},
+            {text: 'Javascript', value: '300'},
+            {text: 'Python', value: '400'},
+            {text: 'Prolog', value: '500'},
+          ]}
+          name="lang"
+        />
+        <Input
+          label="Language"
+          info="Your favorite language"
+          dropdown={[
+            {text: 'Rust', value: '100'},
+            {text: 'Go', value: '200'},
+            {text: 'Javascript', value: '300'},
+            {text: 'Python', value: '400'},
+            {text: 'Prolog', value: '500'},
+          ]}
+          name="lang"
+          error="select error"
+        />
+        <Input
+          label="Language"
+          info="Your favorite language"
+          dropdown={[
+            {text: 'Rust', value: '100'},
+            {text: 'Go', value: '200'},
+            {text: 'Javascript', value: '300'},
+            {text: 'Python', value: '400'},
+            {text: 'Prolog', value: '500'},
+          ]}
+          name="lang"
+          valid
+        />
+      </Form>
       <p>Dropdown value: {formState.lang}</p>
       <Button fixedWidth primary onClick={logFormState}>
         Submit
