@@ -69,6 +69,22 @@ const TableData = [
   },
 ];
 
+const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]+$/;
+const formErrCheck = ({email}) => {
+  const err = {};
+  if (!emailRegex.test(email)) {
+    Object.assign(err, {email: 'Not a valid email'});
+  }
+  return err;
+};
+const formValidCheck = ({email}) => {
+  const valid = {};
+  if (emailRegex.test(email)) {
+    Object.assign(valid, {email: true});
+  }
+  return valid;
+};
+
 const FormContainer = () => {
   const [formState, updateForm] = useForm({
     name: '',
@@ -99,11 +115,17 @@ const FormContainer = () => {
 
   return (
     <Section id="form" sectionTitle="Form" container padded narrow>
-      <Form formState={formState} onChange={updateForm} onEnter={logFormState}>
+      <Form
+        formState={formState}
+        onChange={updateForm}
+        onEnter={logFormState}
+        errCheck={formErrCheck}
+        validCheck={formValidCheck}
+      >
         <Input label="Name" name="name" />
-        <Input label="Email" name="email" error="not an email" />
-        <Input label="Phone" info="10 digits" name="phone" valid />
-        <Input label="Tagline" info="What describes you?" name="tagline" />
+        <Input label="Email" name="email" info="name@example.com" />
+        <Input label="Phone" name="phone" info="xxx-xxx-xxxx" />
+        <Input label="Tagline" name="tagline" info="What describes you?" />
         <Input label="Password" type="password" name="password" />
         <Input
           label="Check me"
