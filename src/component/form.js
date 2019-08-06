@@ -4,10 +4,12 @@ import {randomID} from 'utility';
 const FormContext = React.createContext();
 
 const Form = ({formState, onChange, onEnter, validation, children}) => {
-  let error;
-  if (validation) {
-    error = validation(formState);
-  }
+  let error = useMemo(() => {
+    if (validation) {
+      return validation(formState);
+    }
+    return undefined;
+  }, [validation, formState]);
   return (
     <FormContext.Provider value={{formState, onChange, onEnter, error}}>
       {children}
