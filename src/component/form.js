@@ -3,15 +3,28 @@ import {randomID} from 'utility';
 
 const FormContext = React.createContext();
 
-const Form = ({formState, onChange, onEnter, validation, children}) => {
+const Form = ({
+  formState,
+  onChange,
+  onEnter,
+  errCheck,
+  validCheck,
+  children,
+}) => {
   let error = useMemo(() => {
-    if (validation) {
-      return validation(formState);
+    if (errCheck) {
+      return errCheck(formState);
     }
     return undefined;
-  }, [validation, formState]);
+  }, [errCheck, formState]);
+  let valid = useMemo(() => {
+    if (validCheck) {
+      return validCheck(formState);
+    }
+    return undefined;
+  }, [validCheck, formState]);
   return (
-    <FormContext.Provider value={{formState, onChange, onEnter, error}}>
+    <FormContext.Provider value={{formState, onChange, onEnter, error, valid}}>
       {children}
     </FormContext.Provider>
   );
@@ -58,6 +71,9 @@ const Input = ({
     }
     if (context.error) {
       error = context.error[name];
+    }
+    if (context.valid) {
+      valid = context.valid[name];
     }
   }
 
