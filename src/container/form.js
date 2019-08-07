@@ -71,23 +71,38 @@ const TableData = [
 
 const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]+$/;
 const phoneRegex = /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/;
-const formErrCheck = ({email, phone}) => {
+const formErrCheck = ({email, phone, password, confirm_password}) => {
   const err = {};
   if (email.length > 0 && !emailRegex.test(email)) {
-    Object.assign(err, {email: 'Not a valid email'});
+    Object.assign(err, {email: true});
   }
   if (phone.length > 0 && !phoneRegex.test(phone)) {
-    Object.assign(err, {phone: 'Not a valid phone number'});
+    Object.assign(err, {phone: true});
+  }
+  if (password.length > 0 && password.length < 10) {
+    Object.assign(err, {password: true});
+  }
+  if (confirm_password.length > 0 && confirm_password !== password) {
+    Object.assign(err, {confirm_password: true});
   }
   return err;
 };
-const formValidCheck = ({email, phone}) => {
+const formValidCheck = ({name, email, phone, password, confirm_password}) => {
   const valid = {};
+  if (name.length > 0) {
+    Object.assign(valid, {name: true});
+  }
   if (emailRegex.test(email)) {
     Object.assign(valid, {email: true});
   }
   if (phoneRegex.test(phone)) {
     Object.assign(valid, {phone: true});
+  }
+  if (password.length > 9) {
+    Object.assign(valid, {password: true});
+  }
+  if (password.length > 0 && confirm_password === password) {
+    Object.assign(valid, {confirm_password: true});
   }
   return valid;
 };
@@ -99,6 +114,7 @@ const FormContainer = () => {
     phone: '',
     tagline: '',
     password: '',
+    confirm_password: '',
     checkbox: false,
     radioval: false,
     fileval: undefined,
@@ -133,7 +149,17 @@ const FormContainer = () => {
         <Input label="Email" name="email" info="name@example.com" />
         <Input label="Phone" name="phone" info="xxx-xxx-xxxx" />
         <Input label="Tagline" name="tagline" info="What describes you?" />
-        <Input label="Password" type="password" name="password" />
+        <Input
+          label="Password"
+          type="password"
+          name="password"
+          info="Must be at least 10 chars"
+        />
+        <Input
+          label="Confirm password"
+          type="password"
+          name="confirm_password"
+        />
         <Input
           label="Check me"
           info="This is a checkbox"

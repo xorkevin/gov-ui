@@ -226,6 +226,11 @@ const Input = ({
     }
   }
 
+  let errDisplay = false;
+  if (typeof error !== 'boolean') {
+    errDisplay = true;
+  }
+
   return (
     <div className={k.join(' ')}>
       {inp}
@@ -234,7 +239,8 @@ const Input = ({
       {!error && info && <span className="info">{info}</span>}
       {error && (
         <span className="error">
-          {info && info + ' |'} {error}
+          {!errDisplay && info}
+          {errDisplay}
         </span>
       )}
     </div>
