@@ -156,6 +156,7 @@ const FormContainer = () => {
     password: '',
     confirm_password: '',
     checkbox: false,
+    checkbox2: false,
     radioval: false,
     fileval: undefined,
     lang: '200',
