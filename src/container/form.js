@@ -70,17 +70,24 @@ const TableData = [
 ];
 
 const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]+$/;
-const formErrCheck = ({email}) => {
+const phoneRegex = /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/;
+const formErrCheck = ({email, phone}) => {
   const err = {};
-  if (!emailRegex.test(email)) {
+  if (email.length > 0 && !emailRegex.test(email)) {
     Object.assign(err, {email: 'Not a valid email'});
+  }
+  if (phone.length > 0 && !phoneRegex.test(phone)) {
+    Object.assign(err, {phone: 'Not a valid phone number'});
   }
   return err;
 };
-const formValidCheck = ({email}) => {
+const formValidCheck = ({email, phone}) => {
   const valid = {};
   if (emailRegex.test(email)) {
     Object.assign(valid, {email: true});
+  }
+  if (phoneRegex.test(phone)) {
+    Object.assign(valid, {phone: true});
   }
   return valid;
 };

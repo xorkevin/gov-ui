@@ -232,7 +232,11 @@ const Input = ({
       <label htmlFor={id}>{label}</label>
       {dropdown && <div className="dropdown-arrow" />}
       {!error && info && <span className="info">{info}</span>}
-      {error && <span className="error">{error}</span>}
+      {error && (
+        <span className="error">
+          {info && info + ' |'} {error}
+        </span>
+      )}
     </div>
   );
 };
