@@ -71,7 +71,16 @@ const TableData = [
 
 const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]+$/;
 const phoneRegex = /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/;
-const formErrCheck = ({email, phone, password, confirm_password}) => {
+const imageSetType = new Set(['image/png', 'image/jpeg']);
+const formErrCheck = ({
+  email,
+  phone,
+  password,
+  confirm_password,
+  checkbox2,
+  radioval,
+  fileval,
+}) => {
   const err = {};
   if (email.length > 0 && !emailRegex.test(email)) {
     Object.assign(err, {email: true});
@@ -83,11 +92,30 @@ const formErrCheck = ({email, phone, password, confirm_password}) => {
     Object.assign(err, {password: true});
   }
   if (confirm_password.length > 0 && confirm_password !== password) {
-    Object.assign(err, {confirm_password: true});
+    Object.assign(err, {confirm_password: 'Must match password'});
+  }
+  if (checkbox2) {
+    Object.assign(err, {checkbox2: true});
+  }
+  if (radioval === 'two') {
+    Object.assign(err, {radioval: true});
+  }
+  if (fileval && !imageSetType.has(fileval.type)) {
+    Object.assign(err, {fileval: 'File must be a png or jpeg'});
   }
   return err;
 };
-const formValidCheck = ({name, email, phone, password, confirm_password}) => {
+const formValidCheck = ({
+  name,
+  email,
+  phone,
+  password,
+  confirm_password,
+  checkbox,
+  radioval,
+  fileval,
+  lang,
+}) => {
   const valid = {};
   if (name.length > 0) {
     Object.assign(valid, {name: true});
@@ -103,6 +131,18 @@ const formValidCheck = ({name, email, phone, password, confirm_password}) => {
   }
   if (password.length > 0 && confirm_password === password) {
     Object.assign(valid, {confirm_password: true});
+  }
+  if (checkbox) {
+    Object.assign(valid, {checkbox: true});
+  }
+  if (radioval === 'one') {
+    Object.assign(valid, {radioval: true});
+  }
+  if (fileval && imageSetType.has(fileval.type)) {
+    Object.assign(valid, {fileval: true});
+  }
+  if (lang === '100' || lang === '200') {
+    Object.assign(valid, {lang: true});
   }
   return valid;
 };
@@ -171,14 +211,12 @@ const FormContainer = () => {
           info="This is a checkbox"
           type="checkbox"
           name="checkbox"
-          error="checkbox error"
         />
         <Input
           label="Check me"
           info="This is a checkbox"
           type="checkbox"
-          name="checkbox"
-          valid
+          name="checkbox2"
         />
         <Input
           label="Radio one"
@@ -193,7 +231,6 @@ const FormContainer = () => {
           type="radio"
           name="radioval"
           value="two"
-          error="radio error"
         />
         <Input
           label="Radio three"
@@ -201,22 +238,13 @@ const FormContainer = () => {
           type="radio"
           name="radioval"
           value="three"
-          valid
-        />
-        <Input label="File" info="Choose a file" type="file" name="fileval" />
-        <Input
-          label="File"
-          info="Choose a file"
-          type="file"
-          name="fileval"
-          error="file error"
         />
         <Input
           label="File"
-          info="Choose a file"
           type="file"
           name="fileval"
-          valid
+          accept="image/png, image/jpeg"
+          info="Choose an image"
         />
         <Input
           label="Language"
@@ -257,7 +285,6 @@ const FormContainer = () => {
           valid
         />
       </Form>
-      <p>Dropdown value: {formState.lang}</p>
       <Button fixedWidth primary onClick={logFormState}>
         Submit
       </Button>

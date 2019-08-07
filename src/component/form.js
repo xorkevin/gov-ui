@@ -240,7 +240,7 @@ const Input = ({
       {error && (
         <span className="error">
           {!errDisplay && info}
-          {errDisplay}
+          {errDisplay && error}
         </span>
       )}
     </div>
