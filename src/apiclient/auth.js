@@ -31,7 +31,15 @@ export default {
   refresh: {
     url: '/refresh',
     method: 'POST',
-    expectdata: false,
+    expectdata: true,
+    selector: (status, data) => {
+      const {userid, auth_tags: authTags, exp: time} = data.claims;
+      return {
+        userid,
+        authTags,
+        time,
+      };
+    },
     err: 'Login session expired',
   },
 };

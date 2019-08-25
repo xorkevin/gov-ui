@@ -137,6 +137,9 @@ const useRelogin = () => {
         return [data, status, err];
       }
       dispatch(Refresh());
+      const {userid, authTags, time} = data;
+      dispatch(LoginSuccess(userid, authTags, time));
+      return [data, status, err];
     }
     const [data, status, err] = await execEx();
     if (err) {
