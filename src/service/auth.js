@@ -27,9 +27,6 @@ const Refresh = () => ({
   time: Date.now() / 1000 + secondsDay, // time is in seconds
 });
 
-const NOT_LOGGEDIN = Symbol('NOT_LOGGEDIN');
-const NotLoggedIn = () => ({type: NOT_LOGGEDIN});
-
 const LOGOUT = Symbol('LOGOUT');
 const Logout = () => ({type: LOGOUT});
 
@@ -67,10 +64,6 @@ const Auth = (state = initState(), action) => {
       return Object.assign({}, state, {
         timeRefresh: action.time,
       });
-    case NOT_LOGGEDIN:
-      return Object.assign({}, state, {
-        loggedIn: false,
-      });
     case LOGOUT:
       return Object.assign({}, defaultState, {valid: true});
     default:
@@ -85,6 +78,23 @@ const selectReducerAuth = (store) => store.Auth;
 const useAuthState = () => useSelector(selectReducerAuth);
 
 const selectAPILogin = (api) => api.u.auth.login;
+
+const logoutCookies = () => {
+  setCookie('access_token', 'invalid', '/api', 0);
+  setCookie('refresh_token', 'invalid', '/api/u/auth', 0);
+  setCookie('refresh_valid', 'invalid', '/', 0);
+  setCookie('auth_tags', 'invalid', '/', 0);
+  setCookie('userid', 'invalid', '/', 0);
+};
+
+const useLogout = () => {
+  const dispatch = useDispatch();
+  const logout = useCallback(() => {
+    logoutCookies();
+    dispatch(Logout());
+  }, [dispatch]);
+  return logout;
+};
 
 const useLoginCall = (username, password) => {
   const dispatch = useDispatch();
@@ -116,24 +126,25 @@ const useRelogin = () => {
   const store = useStore();
   const execEx = useAPI(selectAPIExchange);
   const execRe = useAPI(selectAPIRefresh);
+  const execLogout = useLogout();
 
   const relogin = useCallback(async () => {
     const {loggedIn, timeEnd, timeRefresh} = store.getState().Auth;
     if (!loggedIn) {
       return [null, -1, 'Not logged in'];
     }
-    if (Date.now() / 1000 + 15 < timeEnd) {
+    if (Date.now() / 1000 + 5 < timeEnd) {
       return [null, 0, null];
     }
     const refreshValid = getCookie('refresh_valid');
     if (refreshValid !== 'valid') {
-      dispatch(NotLoggedIn());
+      execLogout();
       return [null, -1, 'Session expired'];
     }
     if (Date.now() / 1000 > timeRefresh) {
       const [data, status, err] = await execRe();
       if (err) {
-        dispatch(NotLoggedIn());
+        execLogout();
         return [data, status, err];
       }
       dispatch(Refresh());
@@ -143,7 +154,7 @@ const useRelogin = () => {
     }
     const [data, status, err] = await execEx();
     if (err) {
-      dispatch(NotLoggedIn());
+      execLogout();
       return [data, status, err];
     }
     const {userid, authTags, time} = data;
@@ -195,19 +206,6 @@ const useAuthResource = (selector, args, initState, opts = {}) => {
   });
 
   return useResource(selector, args, initState, reloginOpts);
-};
-
-const useLogout = () => {
-  const dispatch = useDispatch();
-  const logout = useCallback(() => {
-    setCookie('access_token', 'invalid', '/api', 0);
-    setCookie('refresh_token', 'invalid', '/api/u/auth', 0);
-    setCookie('refresh_valid', 'invalid', '/', 0);
-    setCookie('auth_tags', 'invalid', '/', 0);
-    setCookie('userid', 'invalid', '/', 0);
-    dispatch(Logout());
-  }, [dispatch]);
-  return logout;
 };
 
 // Higher Order
