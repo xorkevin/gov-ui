@@ -67,7 +67,11 @@ const createConfig = (env, argv) => {
     },
 
     plugins: [
-      new webpack.HashedModuleIdsPlugin(),
+      new webpack.HashedModuleIdsPlugin({
+        hashFunction: 'blake2b512',
+        hashDigest: 'base64',
+        hashDigestLength: 8,
+      }),
       new HtmlPlugin({
         title: 'Nuke',
         filename: 'index.html',
