@@ -180,6 +180,8 @@ const useAPI = (selector) => {
 const useURL = (selector, args = []) =>
   useAPI(selector).api_prop.formatUrl(args);
 
+const API_CANCEL = Symbol('API_CANCEL');
+
 const useAPICall = (
   selector,
   args = [],
@@ -196,7 +198,7 @@ const useAPICall = (
   const route = useAPI(selector);
 
   const apicall = useCallback(
-    async (args, prehook, posthook) => {
+    async (args, prehook, posthook, {cancelRef} = {}) => {
       setApiState((s) =>
         Object.assign({}, s, {
           loading: true,
@@ -205,6 +207,9 @@ const useAPICall = (
 
       if (prehook) {
         const err = await prehook(...args);
+        if (cancelRef && cancelRef.current) {
+          return [null, -1, API_CANCEL];
+        }
         if (err) {
           setApiState({
             loading: false,
@@ -221,6 +226,9 @@ const useAPICall = (
       }
 
       const [data, status, err] = await route(...args);
+      if (cancelRef && cancelRef.current) {
+        return [null, -1, API_CANCEL];
+      }
       if (err) {
         setApiState({
           loading: false,
@@ -237,6 +245,9 @@ const useAPICall = (
 
       if (posthook) {
         const err = await posthook(data, status);
+        if (cancelRef && cancelRef.current) {
+          return [null, -1, API_CANCEL];
+        }
         if (err) {
           setApiState({
             loading: false,
@@ -264,9 +275,12 @@ const useAPICall = (
     [setApiState, route],
   );
 
-  const execute = useCallback(() => {
-    return apicall(args, prehook, posthook);
-  }, [prehook, posthook, apicall, ...args]);
+  const execute = useCallback(
+    (opts) => {
+      return apicall(args, prehook, posthook, opts);
+    },
+    [prehook, posthook, apicall, ...args],
+  );
 
   return [apiState, execute];
 };
@@ -277,9 +291,13 @@ const useResource = (selector, args, initState, opts) => {
   const [apiState, execute] = useAPICall(selector, args, initState, opts);
 
   useEffect(() => {
+    let cancelRef = {current: false};
     if (selector !== selectAPINull) {
-      execute();
+      execute({cancelRef});
     }
+    return () => {
+      cancelRef.current = true;
+    };
   }, [selector, execute]);
 
   const reexecute = useCallback(() => {

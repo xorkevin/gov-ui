@@ -81,6 +81,7 @@ const Navbar = ({sidebar, left, right, hideOnScroll, styletop, children}) => {
   const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
+    let cancel = false;
     if (sidebar) {
       return;
     }
@@ -89,6 +90,9 @@ const Navbar = ({sidebar, left, right, hideOnScroll, styletop, children}) => {
       if (!running) {
         running = true;
         window.requestAnimationFrame(() => {
+          if (cancel) {
+            return;
+          }
           const position = window.pageYOffset;
           if (position < 256) {
             setTop(true);
@@ -102,11 +106,13 @@ const Navbar = ({sidebar, left, right, hideOnScroll, styletop, children}) => {
     window.addEventListener('scroll', handler);
     handler();
     return () => {
+      cancel = true;
       window.removeEventListener('scroll', handler);
     };
   }, [sidebar, setTop]);
 
   useEffect(() => {
+    let cancel = false;
     if (sidebar || !hideOnScroll) {
       return;
     }
@@ -116,6 +122,9 @@ const Navbar = ({sidebar, left, right, hideOnScroll, styletop, children}) => {
       if (!running) {
         running = true;
         window.requestAnimationFrame(() => {
+          if (cancel) {
+            return;
+          }
           const nextPosition = window.pageYOffset;
           const diff = nextPosition - position;
           if (Math.abs(diff) > scrollTriggerMargin) {
@@ -129,6 +138,7 @@ const Navbar = ({sidebar, left, right, hideOnScroll, styletop, children}) => {
     window.addEventListener('scroll', handler);
     handler();
     return () => {
+      cancel = true;
       window.removeEventListener('scroll', handler);
     };
   }, [sidebar, hideOnScroll, setHidden]);

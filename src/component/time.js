@@ -123,12 +123,17 @@ const Time = ({value}) => {
   const [relTimeState, setRelTime] = useState(relTime);
 
   useEffect(() => {
+    let cancel = false;
     const handler = () => {
+      if (cancel) {
+        return;
+      }
       setRelTime(relativeTime(date));
     };
     const interval = window.setInterval(handler, 60000);
     handler();
     return () => {
+      cancel = true;
       window.clearInterval(interval);
     };
   }, [date, setRelTime]);

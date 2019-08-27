@@ -3,7 +3,8 @@ import React, {useState, useEffect, useCallback, useRef} from 'react';
 const useViewIntersectOnce = (refelem, callback) => {
   const [intersected, setIntersect] = useState(false);
   useEffect(() => {
-    if (intersected || !refelem.current) {
+    let cancelRef = {current: false};
+    if (intersected) {
       return;
     }
 
@@ -12,6 +13,9 @@ const useViewIntersectOnce = (refelem, callback) => {
       if (!running) {
         running = true;
         window.requestAnimationFrame(async () => {
+          if (cancelRef.current || !refelem.current) {
+            return;
+          }
           const innerHeight = window.innerHeight;
           const {
             top: elemTop,
@@ -27,7 +31,7 @@ const useViewIntersectOnce = (refelem, callback) => {
             (elemBottom < bottomBound && elemBottom > topBound)
           ) {
             setIntersect(true);
-            callback();
+            callback(cancelRef);
           } else {
             running = false;
           }
@@ -38,10 +42,11 @@ const useViewIntersectOnce = (refelem, callback) => {
     window.addEventListener('resize', handler);
     handler();
     return () => {
+      cancelRef.current = true;
       window.removeEventListener('scroll', handler);
       window.removeEventListener('resize', handler);
     };
-  }, [intersected, setIntersect, refelem.current, callback]);
+  }, [intersected, setIntersect, refelem, callback]);
   return intersected;
 };
 
@@ -79,17 +84,23 @@ const Img = ({
     setImgloaded(true);
   }, [setImgloaded]);
 
-  const imgCallback = useCallback(async () => {
-    if (fixed) {
-      try {
-        await deferLoadImage(src);
+  const imgCallback = useCallback(
+    async (cancelRef) => {
+      if (fixed) {
+        try {
+          await deferLoadImage(src);
+          if (cancelRef && cancelRef.current) {
+            return;
+          }
+          setImgsrc(src);
+          setImgloaded(true);
+        } catch (e) {}
+      } else {
         setImgsrc(src);
-        setImgloaded(true);
-      } catch (e) {}
-    } else {
-      setImgsrc(src);
-    }
-  }, [src, setImgsrc, setImgloaded, fixed]);
+      }
+    },
+    [src, setImgsrc, setImgloaded, fixed],
+  );
   useViewIntersectOnce(imgelem, imgCallback);
 
   const k = ['img'];

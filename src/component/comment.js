@@ -92,11 +92,15 @@ const CommentSection = ({children}) => {
   const [depth, setDepth] = useState(widthToDepth(window.innerWidth));
 
   useEffect(() => {
+    let cancel = false;
     let running = false;
     const handler = () => {
       if (!running) {
         running = true;
         window.requestAnimationFrame(() => {
+          if (cancel) {
+            return;
+          }
           setDepth(widthToDepth(window.innerWidth));
           running = false;
         });
@@ -104,6 +108,7 @@ const CommentSection = ({children}) => {
     };
     window.addEventListener('resize', handler);
     return () => {
+      cancel = true;
       window.removeEventListener('resize', handler);
     };
   }, []);

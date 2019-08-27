@@ -18,11 +18,15 @@ const MenuContainer = ({
   const [scrollY, setScrollY] = useState(window.scrollY);
 
   useEffect(() => {
+    let cancel = false;
     let running = false;
     const handler = () => {
       if (!running) {
         running = true;
         window.requestAnimationFrame(() => {
+          if (cancel) {
+            return;
+          }
           setBounds(reference.current.getBoundingClientRect());
           setScrollY(window.scrollY);
           running = false;
@@ -33,6 +37,7 @@ const MenuContainer = ({
     window.addEventListener('scroll', handler);
     window.addEventListener('click', close);
     return () => {
+      cancel = true;
       window.removeEventListener('resize', handler);
       window.removeEventListener('scroll', handler);
       window.removeEventListener('click', close);
