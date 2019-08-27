@@ -193,7 +193,9 @@ const useAuthResource = (selector, args, initState, opts = {}) => {
   const reloginhook = useCallback(
     async (...args) => {
       const [data, status, err] = await relogin();
-      return err;
+      if (err) {
+        return err;
+      }
       if (prehook) {
         return prehook(...args);
       }
