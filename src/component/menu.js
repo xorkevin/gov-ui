@@ -18,18 +18,16 @@ const MenuContainer = ({
   const [scrollY, setScrollY] = useState(window.scrollY);
 
   useEffect(() => {
-    let cancel = false;
-    let running = false;
+    let running = null;
     const handler = () => {
       if (!running) {
-        running = true;
-        window.requestAnimationFrame(() => {
+        running = window.requestAnimationFrame(() => {
           if (cancel) {
             return;
           }
           setBounds(reference.current.getBoundingClientRect());
           setScrollY(window.scrollY);
-          running = false;
+          running = null;
         });
       }
     };
@@ -37,10 +35,12 @@ const MenuContainer = ({
     window.addEventListener('scroll', handler);
     window.addEventListener('click', close);
     return () => {
-      cancel = true;
       window.removeEventListener('resize', handler);
       window.removeEventListener('scroll', handler);
       window.removeEventListener('click', close);
+      if (running) {
+        window.cancelAnimationFrame(running);
+      }
     };
   }, [reference.current, close, setBounds, setScrollY]);
 

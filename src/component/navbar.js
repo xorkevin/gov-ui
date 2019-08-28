@@ -81,65 +81,63 @@ const Navbar = ({sidebar, left, right, hideOnScroll, styletop, children}) => {
   const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
-    let cancel = false;
     if (sidebar) {
       return;
     }
-    let running = false;
+    let running = null;
     const handler = () => {
       if (!running) {
-        running = true;
-        window.requestAnimationFrame(() => {
-          if (cancel) {
-            return;
-          }
+        running = window.requestAnimationFrame(() => {
           const position = window.pageYOffset;
           if (position < 256) {
             setTop(true);
           } else {
             setTop(false);
           }
-          running = false;
+          running = null;
         });
       }
     };
     window.addEventListener('scroll', handler);
+    window.addEventListener('resize', handler);
     handler();
     return () => {
-      cancel = true;
       window.removeEventListener('scroll', handler);
+      window.removeEventListener('resize', handler);
+      if (running) {
+        window.cancelAnimationFrame(running);
+      }
     };
   }, [sidebar, setTop]);
 
   useEffect(() => {
-    let cancel = false;
     if (sidebar || !hideOnScroll) {
       return;
     }
     let position = window.pageYOffset;
-    let running = false;
+    let running = null;
     const handler = () => {
       if (!running) {
-        running = true;
-        window.requestAnimationFrame(() => {
-          if (cancel) {
-            return;
-          }
+        running = window.requestAnimationFrame(() => {
           const nextPosition = window.pageYOffset;
           const diff = nextPosition - position;
           if (Math.abs(diff) > scrollTriggerMargin) {
             setHidden(diff > 0);
             position = nextPosition;
           }
-          running = false;
+          running = null;
         });
       }
     };
     window.addEventListener('scroll', handler);
+    window.addEventListener('resize', handler);
     handler();
     return () => {
-      cancel = true;
       window.removeEventListener('scroll', handler);
+      window.removeEventListener('resize', handler);
+      if (running) {
+        window.cancelAnimationFrame(running);
+      }
     };
   }, [sidebar, hideOnScroll, setHidden]);
 

@@ -3,17 +3,17 @@ import React, {useState, useEffect, useCallback, useRef} from 'react';
 const useViewIntersectOnce = (refelem, callback) => {
   const [intersected, setIntersect] = useState(false);
   useEffect(() => {
-    let cancelRef = {current: false};
     if (intersected) {
       return;
     }
 
-    let running = false;
+    let cancelRef = {current: false};
+    let running = null;
     const handler = () => {
       if (!running) {
-        running = true;
-        window.requestAnimationFrame(async () => {
-          if (cancelRef.current || !refelem.current) {
+        running = window.requestAnimationFrame(async () => {
+          if (!refelem.current) {
+            running = null;
             return;
           }
           const innerHeight = window.innerHeight;
@@ -32,9 +32,8 @@ const useViewIntersectOnce = (refelem, callback) => {
           ) {
             setIntersect(true);
             callback(cancelRef);
-          } else {
-            running = false;
           }
+          running = null;
         });
       }
     };
@@ -45,6 +44,9 @@ const useViewIntersectOnce = (refelem, callback) => {
       cancelRef.current = true;
       window.removeEventListener('scroll', handler);
       window.removeEventListener('resize', handler);
+      if (running) {
+        window.cancelAnimationFrame(running);
+      }
     };
   }, [intersected, setIntersect, refelem, callback]);
   return intersected;
