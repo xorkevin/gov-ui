@@ -1,13 +1,79 @@
 import React, {Fragment, useCallback} from 'react';
+import {emailRegex} from 'utility';
 import {useAPICall} from 'apiclient';
 import Section from 'component/section';
 import Card from 'component/card';
 import Button from 'component/button';
-import Input, {useForm} from 'component/form';
+import {Form, Input, useForm} from 'component/form';
 
 import {URL} from 'config';
 
 const selectAPISetup = (api) => api.setupz;
+
+const formErrCheck = ({password, email, password_confirm, email_confirm}) => {
+  const err = {};
+  if (password.length > 0 && password.length < 10) {
+    err.password = true;
+  }
+  if (password_confirm.length > 0 && password_confirm !== password) {
+    err.password_confirm = 'Must match password';
+  }
+  if (email.length > 0 && !emailRegex.test(email)) {
+    err.email = true;
+  }
+  if (email_confirm.length > 0 && email_confirm !== email) {
+    err.email_confirm = 'Must match email';
+  }
+  return err;
+};
+
+const formValidCheck = ({
+  username,
+  password,
+  email,
+  first_name,
+  last_name,
+  orgname,
+  password_confirm,
+  email_confirm,
+}) => {
+  const valid = {};
+  if (username.length > 2) {
+    valid.username = true;
+  }
+  if (password.length > 9) {
+    valid.password = true;
+  }
+  if (emailRegex.test(email)) {
+    valid.email = true;
+  }
+  if (first_name.length > 0) {
+    valid.first_name = true;
+  }
+  if (last_name.length > 0) {
+    valid.last_name = true;
+  }
+  if (orgname.length > 0) {
+    valid.orgname = true;
+  }
+  if (password.length > 0 && password_confirm === password) {
+    valid.password_confirm = true;
+  }
+  if (email_confirm.length > 0 && email_confirm === email) {
+    valid.email_confirm = true;
+  }
+  return valid;
+};
+
+const prehookValidate = ([form]) => {
+  const {password, email, password_confirm, email_confirm} = form;
+  if (password !== password_confirm) {
+    return 'Passwords do not match';
+  }
+  if (email !== email_confirm) {
+    return 'Emails do not match';
+  }
+};
 
 const SetupContainer = ({history}) => {
   const navigateHome = useCallback(() => {
@@ -21,32 +87,15 @@ const SetupContainer = ({history}) => {
     first_name: '',
     last_name: '',
     orgname: '',
-  });
-
-  const [formConfirmState, updateFormConfirm] = useForm({
     password_confirm: '',
     email_confirm: '',
   });
-
-  const prehook = useCallback(
-    ([form]) => {
-      const {password, email} = form;
-      const {password_confirm, email_confirm} = formConfirmState;
-      if (password !== password_confirm) {
-        return 'Passwords do not match';
-      }
-      if (email !== email_confirm) {
-        return 'Emails do not match';
-      }
-    },
-    [formConfirmState],
-  );
 
   const [setupState, execSetup] = useAPICall(
     selectAPISetup,
     [formState],
     {orgname: ''},
-    {prehook},
+    {prehook: prehookValidate},
   );
 
   const {success, err, data} = setupState;
@@ -70,78 +119,46 @@ const SetupContainer = ({history}) => {
           </Fragment>
         }
       >
-        <Section subsection sectionTitle="Organization">
-          <Input
-            label="organization name"
-            name="orgname"
-            value={formState.orgname}
-            onChange={updateForm}
-            fullWidth
-          />
-        </Section>
-        <Section subsection sectionTitle="Admin Account">
-          <Input
-            label="first name"
-            name="first_name"
-            value={formState.first_name}
-            onChange={updateForm}
-            fullWidth
-          />
-          <Input
-            label="last name"
-            name="last_name"
-            value={formState.last_name}
-            onChange={updateForm}
-            fullWidth
-          />
-          <Input
-            label="username"
-            name="username"
-            value={formState.username}
-            onChange={updateForm}
-            fullWidth
-          />
-          <Input
-            label="password"
-            type="password"
-            name="password"
-            value={formState.password}
-            onChange={updateForm}
-            fullWidth
-          />
-          <Input
-            label="confirm password"
-            type="password"
-            name="password_confirm"
-            value={formConfirmState.password_confirm}
-            onChange={updateFormConfirm}
-            fullWidth
-          />
-          <Input
-            label="email"
-            name="email"
-            value={formState.email}
-            onChange={updateForm}
-            fullWidth
-          />
-          <Input
-            label="confirm email"
-            name="email_confirm"
-            value={formConfirmState.email_confirm}
-            onChange={updateFormConfirm}
-            onEnter={execSetup}
-            fullWidth
-          />
-        </Section>
-        {err && <span>{err}</span>}
-        {success && (
-          <span>
-            <span>{data && data.orgname} has been created</span>
-            <Button outline onClick={navigateHome}>
-              Finish
-            </Button>
-          </span>
-        )}
+        <Form
+          formState={formState}
+          onChange={updateForm}
+          onEnter={execSetup}
+          errCheck={formErrCheck}
+          validCheck={formValidCheck}
+        >
+          <Section subsection sectionTitle="Organization">
+            <Input label="organization name" name="orgname" fullWidth />
+          </Section>
+          <Section subsection sectionTitle="Admin Account">
+            <Input label="first name" name="first_name" fullWidth />
+            <Input label="last name" name="last_name" fullWidth />
+            <Input label="username" name="username" fullWidth />
+            <Input
+              label="password"
+              type="password"
+              name="password"
+              info="Must be at least 10 characters"
+              fullWidth
+            />
+            <Input
+              label="confirm password"
+              type="password"
+              name="password_confirm"
+              fullWidth
+            />
+            <Input label="email" name="email" fullWidth />
+            <Input label="confirm email" name="email_confirm" fullWidth />
+          </Section>
+          {err && <span>{err}</span>}
+          {success && (
+            <span>
+              <span>{data && data.orgname} has been created</span>
+              <Button outline onClick={navigateHome}>
+                Finish
+              </Button>
+            </span>
+          )}
+        </Form>
       </Card>
     </Section>
   );

@@ -1,4 +1,5 @@
 import React, {Fragment, useState, useCallback} from 'react';
+import {emailRegex} from 'utility';
 import {useSnackbar} from 'service/snackbar';
 import Section from 'component/section';
 import {Form, Input, useForm} from 'component/form';
@@ -69,7 +70,6 @@ const TableData = [
   },
 ];
 
-const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]+$/;
 const phoneRegex = /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/;
 const imageSetType = new Set(['image/png', 'image/jpeg']);
 const formErrCheck = ({

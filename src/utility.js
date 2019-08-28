@@ -79,6 +79,8 @@ const max = (a, b) => (a > b ? a : b);
 
 const max0 = (a) => max(a, 0);
 
+const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]+$/;
+
 export {
   formatStr,
   formatStrArgs,
@@ -91,4 +93,5 @@ export {
   searchParamsToString,
   max,
   max0,
+  emailRegex,
 };
