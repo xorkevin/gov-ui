@@ -293,7 +293,7 @@ const useAPICall = (
 
 const selectAPINull = () => null;
 
-const useResource = (selector, args, initState, opts) => {
+const useResource = (selector, args = [], initState, opts) => {
   const [apiState, execute] = useAPICall(selector, args, initState, opts);
 
   useEffect(() => {
