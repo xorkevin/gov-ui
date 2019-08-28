@@ -1,6 +1,6 @@
 import React, {Fragment, useState, useCallback} from 'react';
 import {emailRegex} from 'utility';
-import {useSnackbar} from 'service/snackbar';
+import {useSnackbarView} from 'service/snackbar';
 import Section from 'component/section';
 import {Form, Input, useForm} from 'component/form';
 import Card from 'component/card';
@@ -166,16 +166,12 @@ const FormContainer = () => {
     console.log(formState);
   }, [formState]);
 
-  const snackbar = useSnackbar();
-
-  const displaySnack = useCallback(() => {
-    snackbar(
-      <Fragment>
-        <span>Hello, World</span>
-        <Button>Reply</Button>
-      </Fragment>,
-    );
-  }, [snackbar]);
+  const displaySnackbar = useSnackbarView(
+    <Fragment>
+      <span>Hello, World</span>
+      <Button>Reply</Button>
+    </Fragment>,
+  );
 
   return (
     <Section id="form" sectionTitle="Form" container padded narrow>
@@ -302,7 +298,7 @@ const FormContainer = () => {
             <Button fixedWidth outline>
               Save
             </Button>
-            <Button fixedWidth primary onClick={displaySnack}>
+            <Button fixedWidth primary onClick={displaySnackbar}>
               Submit
             </Button>
           </Fragment>

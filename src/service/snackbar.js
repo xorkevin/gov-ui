@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useRef} from 'react';
 import {useSelector, useDispatch, useStore} from 'react-redux';
 import SnackbarComponent from 'component/snackbar';
 
@@ -89,6 +89,18 @@ const useSnackbar = () => {
   return display;
 };
 
+const useSnackbarView = (view, delay) => {
+  const viewRef = useRef(view);
+  viewRef.current = view;
+  const snackbar = useSnackbar();
+
+  const display = useCallback(() => {
+    snackbar(viewRef.current, delay);
+  }, [snackbar, viewRef, delay]);
+
+  return display;
+};
+
 // Higher Order
 
 const SnackbarContainer = () => {
@@ -96,4 +108,10 @@ const SnackbarContainer = () => {
   return <SnackbarComponent show={show}>{fragment}</SnackbarComponent>;
 };
 
-export {Snackbar as default, useSnackbarState, useSnackbar, SnackbarContainer};
+export {
+  Snackbar as default,
+  useSnackbarState,
+  useSnackbar,
+  useSnackbarView,
+  SnackbarContainer,
+};

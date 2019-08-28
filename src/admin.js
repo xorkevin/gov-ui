@@ -9,6 +9,7 @@ import {
 } from 'react-router-dom';
 
 import {useDarkMode} from 'service/settings';
+import {SnackbarContainer} from 'service/snackbar';
 import {
   useAuthState,
   useLogout,
@@ -175,6 +176,7 @@ const Admin = () => {
           </div>
         </Grid>
       </Footer>
+      <SnackbarContainer />
     </div>
   );
 };

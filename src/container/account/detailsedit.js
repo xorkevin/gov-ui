@@ -1,24 +1,34 @@
 import React, {Fragment, useCallback} from 'react';
+import {useSnackbarView} from 'service/snackbar';
 import {Link} from 'react-router-dom';
 import {useAuthCall, useAuthResource} from 'service/auth';
 import Section from 'component/section';
 import Card from 'component/card';
 import Button from 'component/button';
-import Input, {useForm} from 'component/form';
+import {Form, Input, useForm} from 'component/form';
 
 const selectAPIEditAccount = (api) => api.u.user.edit;
 const selectAPIAccount = (api) => api.u.user.get;
 
 const AccountDetailsEdit = () => {
+  const displaySnackbar = useSnackbarView(
+    <Fragment>
+      <span>Changes saved</span>
+    </Fragment>,
+  );
+
   const [formState, updateForm] = useForm({
     username: '',
     first_name: '',
     last_name: '',
   });
 
-  const [accountState, execEditAccount] = useAuthCall(selectAPIEditAccount, [
-    formState,
-  ]);
+  const [accountState, execEditAccount] = useAuthCall(
+    selectAPIEditAccount,
+    [formState],
+    {},
+    {posthook: displaySnackbar},
+  );
 
   const posthook = useCallback(
     (_status, {username, first_name, last_name}) => {
@@ -67,30 +77,17 @@ const AccountDetailsEdit = () => {
       {successGetAccount && (
         <Card size="md" restrictWidth center bar={bar}>
           <Section subsection sectionTitle="Account Details">
-            <Input
-              label="username"
-              name="username"
-              value={formState.username}
+            <Form
+              formState={formState}
               onChange={updateForm}
-              fullWidth
-            />
-            <Input
-              label="first name"
-              name="first_name"
-              value={formState.first_name}
-              onChange={updateForm}
-              fullWidth
-            />
-            <Input
-              label="last name"
-              name="last_name"
-              value={formState.last_name}
-              onChange={updateForm}
-              fullWidth
-            />
+              onEnter={execEditAccount}
+            >
+              <Input label="username" name="username" fullWidth />
+              <Input label="first name" name="first_name" fullWidth />
+              <Input label="last name" name="last_name" fullWidth />
+            </Form>
           </Section>
           {err && <span>{err}</span>}
-          {success && <span>Changes saved</span>}
         </Card>
       )}
       {errGetAccount && <span>{errGetAccount}</span>}
