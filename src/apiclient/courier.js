@@ -7,7 +7,7 @@ export default {
         method: 'GET',
         transformer: (amount, offset) => [[amount, offset], null],
         expectdata: true,
-        selector: (status, data) => data.links,
+        selector: (_status, data) => data.links,
         err: 'Unable to get links',
       },
       id: {

@@ -40,7 +40,7 @@ const ManageUser = ({history, match}) => {
     if (searchFormState.username.length > 0) {
       history.push(`/manage/user/${searchFormState.username}`);
     }
-  }, [searchFormState]);
+  }, [searchFormState, history]);
 
   const [formState, updateForm] = useForm({
     add: '',
@@ -52,7 +52,7 @@ const ManageUser = ({history, match}) => {
     updateForm('add', '');
     updateForm('remove', '');
   }, [reexecute, updateForm]);
-  const [rankState, execRank] = useAuthCall(
+  const [_rankState, execRank] = useAuthCall(
     selectAPIRank,
     [user.userid, formState.add, formState.remove],
     {},

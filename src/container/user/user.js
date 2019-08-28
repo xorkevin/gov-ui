@@ -26,7 +26,7 @@ const UserDetails = ({match}) => {
   );
   const imageURL = useURL(selectAPIImage, [userid]);
 
-  const {success: successProfile, err: errProfile, data: profile} = useResource(
+  const {err: errProfile, data: profile} = useResource(
     userid.length > 0 ? selectAPIProfile : selectAPINull,
     [userid],
     {bio: '', image: ''},

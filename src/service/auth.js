@@ -105,7 +105,7 @@ const useLoginCall = (username, password) => {
   });
 
   const login = useCallback(async () => {
-    const [data, status, err] = await execute();
+    const [data, _status, err] = await execute();
     if (err) {
       return;
     }
@@ -160,7 +160,7 @@ const useRelogin = () => {
     const {userid, authTags, time} = data;
     dispatch(LoginSuccess(userid, authTags, time));
     return [data, status, err];
-  }, [dispatch, store, execEx, execRe]);
+  }, [dispatch, store, execEx, execRe, execLogout]);
 
   return relogin;
 };
@@ -170,7 +170,7 @@ const useAuth = (callback) => {
   const store = useStore();
 
   const exec = useCallback(async () => {
-    const [data, status, err] = await relogin();
+    const [_data, _status, err] = await relogin();
     if (err) {
       return err;
     }
@@ -192,7 +192,7 @@ const useAuthResource = (selector, args, initState, opts = {}) => {
 
   const reloginhook = useCallback(
     async (...args) => {
-      const [data, status, err] = await relogin();
+      const [_data, _status, err] = await relogin();
       if (err) {
         return err;
       }

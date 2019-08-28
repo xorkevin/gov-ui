@@ -19,7 +19,7 @@ const AccountEmailEdit = ({match}) => {
     formState.password,
   ]);
 
-  const {loading, success, err} = emailState;
+  const {success, err} = emailState;
 
   const bar = success ? (
     <Fragment>

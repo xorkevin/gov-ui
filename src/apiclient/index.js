@@ -1,4 +1,10 @@
-import React, {useState, useEffect, useCallback, useContext} from 'react';
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useContext,
+  useRef,
+} from 'react';
 import {formatStrArgs, max0} from 'utility';
 import courierAPI from './courier';
 import profileAPI from './profile';
@@ -20,14 +26,14 @@ const defaultTransformer = (...args) => {
   return [args.slice(0, k), args[k], null, null];
 };
 
-const defaultSelector = (status, data) => {
+const defaultSelector = (_status, data) => {
   if (data) {
     return data;
   }
   return null;
 };
 
-const defaultErrHandler = (defaultMessage) => (status, data) => {
+const defaultErrHandler = (defaultMessage) => (_status, data) => {
   if (data && data.message) {
     return data.message;
   }
@@ -166,7 +172,10 @@ const BASEOPTS = Object.freeze({
   credentials: 'include',
 });
 
-const APIClient = makeAPIClient(APIBASE_URL, BASEOPTS, API);
+// eslint-disable-next-line no-undef
+const baseUrl = APIBASE_URL;
+
+const APIClient = makeAPIClient(baseUrl, BASEOPTS, API);
 
 // Hooks
 
@@ -329,7 +338,6 @@ const usePaginate = (limit = 8, offset = 0) => {
   return {
     value,
     next: end ? endNextPage : next,
-    prev,
     prev,
     set,
     first,

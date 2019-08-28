@@ -1,7 +1,6 @@
 import React, {Fragment, useCallback} from 'react';
 import {useAPICall} from 'apiclient';
 import Section from 'component/section';
-import FaIcon from 'component/faicon';
 import Card from 'component/card';
 import Button from 'component/button';
 import Input, {useForm} from 'component/form';
@@ -49,7 +48,7 @@ const SetupContainer = ({history}) => {
     {prehook},
   );
 
-  const {loading, success, err, data} = setupState;
+  const {success, err, data} = setupState;
 
   return (
     <Section container padded>

@@ -96,7 +96,7 @@ const Img = ({
           }
           setImgsrc(src);
           setImgloaded(true);
-        } catch (e) {}
+        } catch (_e) {}
       } else {
         setImgsrc(src);
       }

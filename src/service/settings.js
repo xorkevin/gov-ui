@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import {useCallback} from 'react';
 import {useSelector, useDispatch, useStore} from 'react-redux';
 import {getCookie, setCookie} from 'utility';
 

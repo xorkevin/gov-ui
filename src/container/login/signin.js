@@ -19,7 +19,7 @@ const SigninContainer = () => {
     formState.password,
   );
 
-  const {loading, success, err, data} = loginState;
+  const {err} = loginState;
 
   return (
     <Section container padded>

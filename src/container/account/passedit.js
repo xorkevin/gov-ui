@@ -28,7 +28,7 @@ const AccountPassEdit = () => {
     {prehook},
   );
 
-  const {loading, success, err} = passState;
+  const {success, err} = passState;
 
   const bar = success ? (
     <Fragment>

@@ -11,7 +11,7 @@ import Time from 'component/time';
 const selectAPIAccount = (api) => api.u.user.get;
 
 const AccountDetails = ({match}) => {
-  const {loading, success, err, data} = useAuthResource(selectAPIAccount, [], {
+  const {success, err, data} = useAuthResource(selectAPIAccount, [], {
     userid: '',
     username: '',
     auth_tags: '',

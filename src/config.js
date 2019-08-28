@@ -1,67 +1,7 @@
-const apibase = APIBASE_URL;
-const healthzbase = apibase + '/healthz';
-const ubase = apibase + '/u';
-const userbase = ubase + '/user';
-const passwordbase = userbase + '/password';
-const authbase = ubase + '/auth';
-const profilebase = apibase + '/profile';
-const courierbase = apibase + '/courier';
-const courierlink = courierbase + '/link';
-
-const API = {
-  setupz: apibase + '/setupz',
-  healthz: {
-    check: healthzbase + '/check',
-  },
-  u: {
-    user: {
-      new: userbase,
-      confirm: userbase + '/confirm',
-      password: {
-        forgot: passwordbase + '/forgot',
-        confirm: passwordbase + '/forgot/reset',
-      },
-      id: userbase + '/id/{0}',
-      name: userbase + '/name/{0}',
-      idprivate: userbase + '/id/{0}/private',
-      ids: userbase + '/ids?ids={0}',
-      nameprivate: userbase + '/name/{0}/private',
-      get: userbase,
-      sessions: userbase + '/sessions',
-      edit: userbase,
-      email: {
-        edit: userbase + '/email',
-        confirm: userbase + '/email/verify',
-      },
-      editpassword: userbase + '/password',
-      rank: userbase + '/id/{0}/rank',
-    },
-    auth: {
-      login: authbase + '/login',
-      exchange: authbase + '/exchange',
-      refresh: authbase + '/refresh',
-    },
-  },
-  profile: {
-    new: profilebase,
-    edit: profilebase,
-    get: profilebase,
-    image: profilebase + '/image',
-    id: profilebase + '/{0}',
-    idimage: profilebase + '/{0}/image',
-  },
-  courier: {
-    link: {
-      get: courierlink + '?amount={0}&offset={1}',
-      new: courierlink,
-      id: courierlink + '/{0}',
-    },
-  },
-};
-
 const URL = Object.freeze({
   home: '/',
   login: '/x/login',
+  // eslint-disable-next-line no-undef
   courier: COURIERBASE_URL,
 });
 
@@ -71,4 +11,4 @@ const mountainPreview =
 const thamesPreview =
   'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEA8ADwAAD/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAYACoDAREAAhEBAxEB/8QAGwAAAQQDAAAAAAAAAAAAAAAABQIEBgcACAn/xAAsEAABAwMCAgkFAAAAAAAAAAABAgMEAAUREiEGEwcjMTJBUWGDkSKhwdHw/8QAGQEBAQADAQAAAAAAAAAAAAAAAQIDBAUA/8QAIBEAAgIABwEBAAAAAAAAAAAAAAECEQMEEhMUIUEFUf/aAAwDAQACEQMRAD8AtluVbFuKAuEfOTnrh+6xPPteMFkU/QpDVb1Y0zWD7wqH9BGVZILRmopGRJaPuCjnJjxWh/CbjOpCmpLSwQFbLB2O4quQmGyFYbCUKCtafmjdTHQ0FUuJwN0/NVrQaWc3mrnOfuT7bcheQpZALgT4nzrekklZy4t3RieILskZbcfAT2qydvCpeHH0tTl4WNwmHZUaO9Nel63EB0BErSCN8DG/8a13hGZYgi6XziOx3aQ+yh0xU6BrSSRpA2zv96NiMonnjSjLoMWjpQuKYTjhkkhIOU8zceGcZrXnle+jPDNuuw5E6RLuuIys3VzKm0nt9KNgeSa4TkPx7k+BEd76snQcjeuxSOXbFIlTOQ80mO91iAnuHb6gfxUyinTLhJq0S2FPlNIiDkO6o4CBlJGBjBoSVEtuySQb6tYW28w4pLgAIKTUuIqbIxxJZluSnZVtQtCNjywg49aUv0GxzDNyERkGK9s2kdw+VToRaZ//2Q';
 
-export {API, URL, mountainPreview, thamesPreview};
+export {URL, mountainPreview, thamesPreview};

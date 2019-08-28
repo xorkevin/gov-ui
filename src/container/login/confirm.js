@@ -1,4 +1,4 @@
-import React, {Fragment, useCallback} from 'react';
+import React, {Fragment} from 'react';
 import {Link} from 'react-router-dom';
 import {useAPICall} from 'apiclient';
 import Section from 'component/section';
@@ -17,7 +17,7 @@ const ConfirmAccount = ({match}) => {
     formState.key,
   ]);
 
-  const {loading, success, err} = confirmState;
+  const {success, err} = confirmState;
 
   const bar = success ? (
     <Fragment>

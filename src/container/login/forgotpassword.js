@@ -13,11 +13,11 @@ const ForgotPassContainer = () => {
     username: '',
   });
 
-  const [forgotState, execForgot] = useAPICall(selectAPIForgotPass, [
+  const [_forgotState, execForgot] = useAPICall(selectAPIForgotPass, [
     formState.username,
   ]);
 
-  const {loading, success, err} = formState;
+  const {success, err} = formState;
 
   const bar = success ? (
     <Fragment>

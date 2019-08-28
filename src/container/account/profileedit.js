@@ -93,6 +93,7 @@ const ProfileEdit = () => {
           {errImage && <span>{errImage}</span>}
           {successImage && <span>Image updated</span>}
         </Section>
+        {errProfile && <span>{errProfile}</span>}
         {err && <span>{err}</span>}
         {success && <span>Changes saved</span>}
       </Card>

@@ -9,7 +9,7 @@ export default {
     url: '/sessions',
     method: 'GET',
     expectdata: true,
-    selector: (status, data) => data && data.active_sessions,
+    selector: (_status, data) => data && data.active_sessions,
     err: 'Could not get sessions',
     children: {
       del: {
@@ -146,7 +146,7 @@ export default {
     method: 'GET',
     transformer: (userids) => [[userids], null],
     expectdata: true,
-    selector: (status, data) => data.users,
+    selector: (_status, data) => data.users,
     err: 'Unable to get user info',
   },
   create: {

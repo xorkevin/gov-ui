@@ -42,7 +42,7 @@ const CreateAccount = () => {
     {prehook},
   );
 
-  const {loading, success, err} = createState;
+  const {success, err} = createState;
 
   const bar = success ? (
     <Fragment>

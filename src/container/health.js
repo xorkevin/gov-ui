@@ -20,7 +20,7 @@ const HealthContainer = () => {
               <div>Server Errors:</div>
               <ul>
                 {data.errs.map((errstring) => (
-                  <li>{errstring}</li>
+                  <li key={errstring}>{errstring}</li>
                 ))}
               </ul>
             </Fragment>

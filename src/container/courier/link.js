@@ -66,19 +66,20 @@ const CourierLink = () => {
   });
 
   const page = usePaginate(LIMIT);
+  const pageSetEnd = page.setEnd;
 
   const [userids, setUserids] = useState([]);
 
   const posthook = useCallback(
     (links) => {
-      page.setEnd(links.length < LIMIT);
+      pageSetEnd(links.length < LIMIT);
       setUserids(
         Array.from(new Set(links.map(({creatorid}) => creatorid))).sort(),
       );
     },
-    [page.setEnd, setUserids],
+    [pageSetEnd, setUserids],
   );
-  const {success, err, data: links, reexecute} = useAuthResource(
+  const {err, data: links, reexecute} = useAuthResource(
     selectAPILinks,
     [LIMIT, page.value],
     [],
@@ -93,11 +94,13 @@ const CourierLink = () => {
   const usernames = Object.fromEntries(
     users.map(({userid, username, first_name, last_name}) => [
       userid,
-      <Tooltip tooltip={first_name + ' ' + last_name}>{username}</Tooltip>,
+      <Tooltip key={userid} tooltip={first_name + ' ' + last_name}>
+        {username}
+      </Tooltip>,
     ]),
   );
 
-  const prehook = useCallback(({linkid, url}) => {
+  const prehook = useCallback(({url}) => {
     if (url.length === 0) {
       return 'A url must be provided';
     }

@@ -22,9 +22,6 @@ const MenuContainer = ({
     const handler = () => {
       if (!running) {
         running = window.requestAnimationFrame(() => {
-          if (cancel) {
-            return;
-          }
           setBounds(reference.current.getBoundingClientRect());
           setScrollY(window.scrollY);
           running = null;
@@ -42,7 +39,7 @@ const MenuContainer = ({
         window.cancelAnimationFrame(running);
       }
     };
-  }, [reference.current, close, setBounds, setScrollY]);
+  }, [reference, close, setBounds, setScrollY]);
 
   const k = ['menu'];
   const s = {};

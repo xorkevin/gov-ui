@@ -29,11 +29,7 @@ const AccountDetailsEdit = () => {
     [updateForm],
   );
 
-  const {
-    loadingGetAccount,
-    success: successGetAccount,
-    err: errGetAccount,
-  } = useAuthResource(
+  const {success: successGetAccount, err: errGetAccount} = useAuthResource(
     selectAPIAccount,
     [],
     {
@@ -44,7 +40,7 @@ const AccountDetailsEdit = () => {
     {posthook},
   );
 
-  const {loading, success, err} = accountState;
+  const {success, err} = accountState;
 
   const bar = success ? (
     <Fragment>

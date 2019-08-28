@@ -4,7 +4,7 @@ export default {
     method: 'POST',
     transformer: (username, password) => [null, {username, password}],
     expectdata: true,
-    selector: (status, data) => {
+    selector: (_status, data) => {
       const {userid, auth_tags: authTags, exp: time} = data.claims;
       return {
         userid,
@@ -18,7 +18,7 @@ export default {
     url: '/exchange',
     method: 'POST',
     expectdata: true,
-    selector: (status, data) => {
+    selector: (_status, data) => {
       const {userid, auth_tags: authTags, exp: time} = data.claims;
       return {
         userid,
@@ -32,7 +32,7 @@ export default {
     url: '/refresh',
     method: 'POST',
     expectdata: true,
-    selector: (status, data) => {
+    selector: (_status, data) => {
       const {userid, auth_tags: authTags, exp: time} = data.claims;
       return {
         userid,

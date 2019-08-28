@@ -1,9 +1,6 @@
 import React, {lazy, Suspense} from 'react';
 import {Switch, Route, Redirect} from 'react-router-dom';
-import {useAuthState} from 'service/auth';
 import Section from 'component/section';
-
-import {URL} from 'config';
 
 const SigninContainer = lazy(() => import('container/login/signin'));
 const CreateContainer = lazy(() => import('container/login/create'));

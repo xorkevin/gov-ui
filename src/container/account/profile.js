@@ -13,15 +13,11 @@ const selectAPIProfileImage = (api) => api.profile.id.image;
 const selectAPICreateProfile = (api) => api.profile.create;
 
 const Profile = () => {
-  const {loading, success, err, status, data} = useAuthResource(
-    selectAPIProfile,
-    [],
-    {
-      contact_email: '',
-      bio: '',
-      image: '',
-    },
-  );
+  const {success, err, status, data} = useAuthResource(selectAPIProfile, [], {
+    contact_email: '',
+    bio: '',
+    image: '',
+  });
 
   const canCreate = status === 404;
 

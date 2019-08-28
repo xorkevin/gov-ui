@@ -19,7 +19,7 @@ const AccountEmailConfirm = ({match}) => {
     formState.password,
   ]);
 
-  const {loading, success, err} = confirmState;
+  const {success, err} = confirmState;
 
   const bar = success ? (
     <Fragment>
