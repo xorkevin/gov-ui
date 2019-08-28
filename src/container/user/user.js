@@ -10,6 +10,7 @@ const selectAPIProfile = (api) => api.profile.id;
 const selectAPIImage = (api) => api.profile.id.image;
 
 const UserDetails = ({match}) => {
+  const username = match.params.username || '';
   const [userid, setUserid] = useState('');
 
   const posthook = useCallback(
@@ -19,8 +20,8 @@ const UserDetails = ({match}) => {
     [setUserid],
   );
   const {success: successAccount, err: errAccount, data: account} = useResource(
-    selectAPIUser,
-    [match.params.username || ''],
+    username.length > 0 ? selectAPIUser : selectAPINull,
+    [username],
     {first_name: '', last_name: '', username: '', creation_time: ''},
     {posthook},
   );

@@ -70,23 +70,11 @@ const CourierLink = () => {
 
   const [userids, setUserids] = useState([]);
 
-  const posthook = useCallback(
-    (links) => {
-      pageSetEnd(links.length < LIMIT);
-      setUserids(
-        Array.from(new Set(links.map(({creatorid}) => creatorid))).sort(),
-      );
-    },
-    [pageSetEnd, setUserids],
-  );
-  const {err, data: links, reexecute} = useAuthResource(
-    selectAPILinks,
-    [LIMIT, page.value],
-    [],
-    {posthook},
-  );
-
-  const {err: errUsername, data: users} = useAuthResource(
+  const {
+    err: errUsername,
+    data: users,
+    reexecute: reexecuteUsernames,
+  } = useAuthResource(
     userids.length > 0 ? selectAPIUsers : selectAPINull,
     [userids.join(',')],
     [],
@@ -98,6 +86,23 @@ const CourierLink = () => {
         {username}
       </Tooltip>,
     ]),
+  );
+
+  const posthook = useCallback(
+    (links) => {
+      pageSetEnd(links.length < LIMIT);
+      setUserids(
+        Array.from(new Set(links.map(({creatorid}) => creatorid))).sort(),
+      );
+      reexecuteUsernames();
+    },
+    [pageSetEnd, setUserids, reexecuteUsernames],
+  );
+  const {err, data: links, reexecute} = useAuthResource(
+    selectAPILinks,
+    [LIMIT, page.value],
+    [],
+    {posthook},
   );
 
   const prehook = useCallback(({url}) => {
