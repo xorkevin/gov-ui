@@ -74,15 +74,29 @@ const CourierLink = () => {
   const page = usePaginate(LIMIT);
   const pageSetEnd = page.setEnd;
 
-  const [userids, setUserids] = useState([]);
+  const [userids, setUserids] = useState('');
 
-  const {
-    err: errUsername,
-    data: users,
-    reexecute: reexecuteUsernames,
-  } = useAuthResource(
+  const posthook = useCallback(
+    (_status, links) => {
+      pageSetEnd(links.length < LIMIT);
+      setUserids(
+        Array.from(new Set(links.map(({creatorid}) => creatorid)))
+          .sort()
+          .join(','),
+      );
+    },
+    [pageSetEnd, setUserids],
+  );
+  const {err, data: links, reexecute: reexecuteLinks} = useAuthResource(
+    selectAPILinks,
+    [LIMIT, page.value],
+    [],
+    {posthook},
+  );
+
+  const {err: errUsername, data: users} = useAuthResource(
     userids.length > 0 ? selectAPIUsers : selectAPINull,
-    [userids.join(',')],
+    [userids],
     [],
   );
   const usernames = Object.fromEntries(
@@ -92,23 +106,6 @@ const CourierLink = () => {
         {username}
       </Tooltip>,
     ]),
-  );
-
-  const posthook = useCallback(
-    (_status, links, opts) => {
-      pageSetEnd(links.length < LIMIT);
-      setUserids(
-        Array.from(new Set(links.map(({creatorid}) => creatorid))).sort(),
-      );
-      reexecuteUsernames(opts);
-    },
-    [pageSetEnd, setUserids, reexecuteUsernames],
-  );
-  const {err, data: links, reexecute: reexecuteLinks} = useAuthResource(
-    selectAPILinks,
-    [LIMIT, page.value],
-    [],
-    {posthook},
   );
 
   const prehook = useCallback(([form]) => {

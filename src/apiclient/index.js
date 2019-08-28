@@ -312,7 +312,8 @@ const useResource = (selector, args, initState, opts) => {
         execute(opts);
       }
     },
-    [selector, execute],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selector, execute, ...args],
   );
 
   return {...apiState, reexecute};
