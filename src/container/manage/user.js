@@ -47,11 +47,14 @@ const ManageUser = ({history, match}) => {
     remove: '',
   });
 
-  const posthook = useCallback(() => {
-    reexecute();
-    updateForm('add', '');
-    updateForm('remove', '');
-  }, [reexecute, updateForm]);
+  const posthook = useCallback(
+    (_status, _data, opts) => {
+      reexecute(opts);
+      updateForm('add', '');
+      updateForm('remove', '');
+    },
+    [reexecute, updateForm],
+  );
   const [_rankState, execRank] = useAuthCall(
     selectAPIRank,
     [user.userid, formState.add, formState.remove],

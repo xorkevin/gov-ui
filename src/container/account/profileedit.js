@@ -17,7 +17,7 @@ const ProfileEdit = () => {
   });
 
   const posthook = useCallback(
-    ({contact_email, bio}) => {
+    (_status, {contact_email, bio}) => {
       updateForm('contact_email', contact_email);
       updateForm('bio', bio);
     },

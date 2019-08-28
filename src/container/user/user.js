@@ -14,7 +14,7 @@ const UserDetails = ({match}) => {
   const [userid, setUserid] = useState('');
 
   const posthook = useCallback(
-    (data) => {
+    (_status, data) => {
       setUserid(data.userid);
     },
     [setUserid],

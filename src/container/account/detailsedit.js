@@ -21,7 +21,7 @@ const AccountDetailsEdit = () => {
   ]);
 
   const posthook = useCallback(
-    ({username, first_name, last_name}) => {
+    (_status, {username, first_name, last_name}) => {
       updateForm('username', username);
       updateForm('first_name', first_name);
       updateForm('last_name', last_name);

@@ -1,4 +1,4 @@
-import React, {Fragment} from 'react';
+import React, {Fragment, useCallback} from 'react';
 import {useAuthCall, useAuthResource} from 'service/auth';
 import Section from 'component/section';
 import Card from 'component/card';
@@ -18,11 +18,17 @@ const AccountSessions = () => {
 
   const {success, err, data, reexecute} = useAuthResource(selectAPISessions);
 
+  const posthook = useCallback(
+    (_status, _data, opts) => {
+      reexecute(opts);
+    },
+    [reexecute],
+  );
   const [deleteState, execDelete] = useAuthCall(
     selectAPISessionDelete,
     [sessionids],
     {},
-    {posthook: reexecute},
+    {posthook},
   );
 
   const {success: successDelete, err: errDelete} = deleteState;

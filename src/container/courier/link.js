@@ -19,11 +19,17 @@ const selectAPIDelete = (api) => api.courier.link.id.del;
 const selectAPIUsers = (api) => api.u.user.ids;
 
 const LinkRow = ({linkid, url, username, creation_time, reexecute}) => {
+  const posthook = useCallback(
+    (_status, _data, opts) => {
+      reexecute(opts);
+    },
+    [reexecute],
+  );
   const [deleteState, execDelete] = useAuthCall(
     selectAPIDelete,
     [linkid],
     {},
-    {posthook: reexecute},
+    {posthook},
   );
 
   const {err} = deleteState;
@@ -89,16 +95,16 @@ const CourierLink = () => {
   );
 
   const posthook = useCallback(
-    (links) => {
+    (_status, links, opts) => {
       pageSetEnd(links.length < LIMIT);
       setUserids(
         Array.from(new Set(links.map(({creatorid}) => creatorid))).sort(),
       );
-      reexecuteUsernames();
+      reexecuteUsernames(opts);
     },
     [pageSetEnd, setUserids, reexecuteUsernames],
   );
-  const {err, data: links, reexecute} = useAuthResource(
+  const {err, data: links, reexecute: reexecuteLinks} = useAuthResource(
     selectAPILinks,
     [LIMIT, page.value],
     [],
@@ -110,11 +116,14 @@ const CourierLink = () => {
       return 'A url must be provided';
     }
   }, []);
-  const posthookRefresh = useCallback(() => {
-    updateForm('linkid', '');
-    updateForm('url', '');
-    reexecute();
-  }, [reexecute, updateForm]);
+  const posthookRefresh = useCallback(
+    (_status, _data, opts) => {
+      reexecuteLinks(opts);
+      updateForm('linkid', '');
+      updateForm('url', '');
+    },
+    [reexecuteLinks, updateForm],
+  );
   const [createState, execCreate] = useAuthCall(
     selectAPICreate,
     [formState],
@@ -167,7 +176,7 @@ const CourierLink = () => {
               url={url}
               username={usernames[creatorid] || creatorid}
               creation_time={creation_time}
-              reexecute={reexecute}
+              reexecute={reexecuteLinks}
             />
           ))}
         </Table>

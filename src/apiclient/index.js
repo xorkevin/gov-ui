@@ -257,7 +257,7 @@ const useAPICall = (
       }
 
       if (posthook) {
-        const err = await posthook(data, status);
+        const err = await posthook(status, data, {cancelRef});
         if (cancelRef && cancelRef.current) {
           return [null, -1, API_CANCEL];
         }
@@ -306,9 +306,14 @@ const useResource = (selector, args, initState, opts) => {
     };
   }, [selector, execute]);
 
-  const reexecute = useCallback(() => {
-    execute();
-  }, [execute]);
+  const reexecute = useCallback(
+    (opts) => {
+      if (selector !== selectAPINull) {
+        execute(opts);
+      }
+    },
+    [selector, execute],
+  );
 
   return {...apiState, reexecute};
 };
