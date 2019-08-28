@@ -15,7 +15,8 @@ const ConfirmReset = ({match}) => {
     password_confirm: '',
   });
 
-  const prehook = useCallback(({new_password, password_confirm}) => {
+  const prehook = useCallback(([form]) => {
+    const {new_password, password_confirm} = form;
     if (new_password !== password_confirm) {
       return 'Passwords do not match';
     }

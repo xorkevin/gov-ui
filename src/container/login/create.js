@@ -23,7 +23,8 @@ const CreateAccount = () => {
   });
 
   const prehook = useCallback(
-    ({password, email}) => {
+    ([form]) => {
+      const {password, email} = form;
       const {password_confirm, email_confirm} = formConfirmState;
       if (password !== password_confirm) {
         return 'Passwords do not match';

@@ -167,15 +167,17 @@ const useRelogin = () => {
 
 const useAuth = (callback) => {
   const relogin = useRelogin();
-  const store = useStore();
 
-  const exec = useCallback(async () => {
-    const [_data, _status, err] = await relogin();
-    if (err) {
-      return err;
-    }
-    return callback(store.getState().Auth);
-  }, [relogin, store, callback]);
+  const exec = useCallback(
+    async (opts) => {
+      const [_data, _status, err] = await relogin();
+      if (err) {
+        return err;
+      }
+      return callback(opts);
+    },
+    [relogin, callback],
+  );
 
   return exec;
 };
@@ -191,13 +193,13 @@ const useAuthResource = (selector, args, initState, opts = {}) => {
   const {prehook} = opts;
 
   const reloginhook = useCallback(
-    async (...args) => {
+    async (args, opts) => {
       const [_data, _status, err] = await relogin();
       if (err) {
         return err;
       }
       if (prehook) {
-        return prehook(...args);
+        return prehook(args, opts);
       }
     },
     [relogin, prehook],

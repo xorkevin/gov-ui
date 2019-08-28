@@ -111,7 +111,8 @@ const CourierLink = () => {
     {posthook},
   );
 
-  const prehook = useCallback(({url}) => {
+  const prehook = useCallback(([form]) => {
+    const {url} = form;
     if (url.length === 0) {
       return 'A url must be provided';
     }

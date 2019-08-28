@@ -219,7 +219,7 @@ const useAPICall = (
       );
 
       if (prehook) {
-        const err = await prehook(...argsRef.current);
+        const err = await prehook([argsRef.current], {cancelRef});
         if (cancelRef && cancelRef.current) {
           return [null, -1, API_CANCEL];
         }
