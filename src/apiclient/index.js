@@ -205,9 +205,13 @@ const useAPICall = (
     data: initState,
   });
   const route = useAPI(selector);
+  const initStateRef = useRef(initState);
+  initStateRef.current = initState;
+  const argsRef = useRef(args);
+  argsRef.current = args;
 
   const apicall = useCallback(
-    async (args, prehook, posthook, {cancelRef} = {}) => {
+    async ({cancelRef} = {}) => {
       setApiState((s) =>
         Object.assign({}, s, {
           loading: true,
@@ -215,7 +219,7 @@ const useAPICall = (
       );
 
       if (prehook) {
-        const err = await prehook(...args);
+        const err = await prehook(...argsRef.current);
         if (cancelRef && cancelRef.current) {
           return [null, -1, API_CANCEL];
         }
@@ -225,7 +229,7 @@ const useAPICall = (
             success: false,
             err,
             status: -1,
-            data: initState,
+            data: initStateRef.current,
           });
           if (errhook) {
             errhook('prehook', err);
@@ -234,7 +238,7 @@ const useAPICall = (
         }
       }
 
-      const [data, status, err] = await route(...args);
+      const [data, status, err] = await route(...argsRef.current);
       if (cancelRef && cancelRef.current) {
         return [null, -1, API_CANCEL];
       }
@@ -244,7 +248,7 @@ const useAPICall = (
           success: false,
           err,
           status,
-          data: initState,
+          data: initStateRef.current,
         });
         if (errhook) {
           errhook('api', err);
@@ -281,17 +285,10 @@ const useAPICall = (
       });
       return [data, status, err];
     },
-    [setApiState, route],
+    [setApiState, argsRef, initStateRef, route, prehook, posthook, errhook],
   );
 
-  const execute = useCallback(
-    (opts) => {
-      return apicall(args, prehook, posthook, opts);
-    },
-    [prehook, posthook, apicall, ...args],
-  );
-
-  return [apiState, execute];
+  return [apiState, apicall];
 };
 
 const selectAPINull = () => null;

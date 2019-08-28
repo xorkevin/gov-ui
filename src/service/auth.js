@@ -218,70 +218,78 @@ const ProtectedFallback = ProtectedFallbackContext.Provider;
 
 const redirectParamName = 'redir';
 
-const Protected = (child, allowedAuth) => (props) => {
-  const history = props.history;
-  const navigateLogin = useCallback(() => {
-    const {pathname} = history.location;
-    const search = getSearchParams(history.location.search);
-    search.delete(redirectParamName);
-    if (pathname !== URL.home) {
-      search.set(redirectParamName, pathname);
-    }
-    history.replace({
-      pathname: URL.login,
-      search: searchParamsToString(search),
-    });
-  }, [history]);
-  const {valid, loggedIn, authTags} = useAuthState();
-  const fallback = useContext(ProtectedFallbackContext);
+const Protected = (child, allowedAuth) => {
+  const Inner = (props) => {
+    const history = props.history;
+    const navigateLogin = useCallback(() => {
+      const {pathname} = history.location;
+      const search = getSearchParams(history.location.search);
+      search.delete(redirectParamName);
+      if (pathname !== URL.home) {
+        search.set(redirectParamName, pathname);
+      }
+      history.replace({
+        pathname: URL.login,
+        search: searchParamsToString(search),
+      });
+    }, [history]);
+    const {valid, loggedIn, authTags} = useAuthState();
+    const fallback = useContext(ProtectedFallbackContext);
 
-  useEffect(() => {
-    if (valid && !loggedIn) {
-      navigateLogin();
-    }
-  }, [valid, loggedIn]);
+    useEffect(() => {
+      if (valid && !loggedIn) {
+        navigateLogin();
+      }
+    }, [valid, loggedIn, navigateLogin]);
 
-  const authorized = useMemo(() => {
-    if (!allowedAuth) {
-      return true;
-    }
-    const authTagSet = new Set(authTags.split(','));
-    if (!Array.isArray(allowedAuth)) {
-      return authTagSet.has(allowedAuth);
-    }
-    const intersection = new Set(allowedAuth.filter((x) => authTagSet.has(x)));
-    return intersection.size > 0;
-  }, [allowedAuth, authTags]);
+    const authorized = useMemo(() => {
+      if (!allowedAuth) {
+        return true;
+      }
+      const authTagSet = new Set(authTags.split(','));
+      if (!Array.isArray(allowedAuth)) {
+        return authTagSet.has(allowedAuth);
+      }
+      const intersection = new Set(
+        allowedAuth.filter((x) => authTagSet.has(x)),
+      );
+      return intersection.size > 0;
+    }, [authTags]);
 
-  if (!authorized) {
-    return fallback;
-  }
-  return React.createElement(child, props);
+    if (!authorized) {
+      return fallback;
+    }
+    return React.createElement(child, props);
+  };
+  return Inner;
 };
 
-const AntiProtected = (child) => (props) => {
-  const history = props.history;
-  const navigateBack = useCallback(() => {
-    const search = getSearchParams(history.location.search);
-    let redir = search.get(redirectParamName);
-    search.delete(redirectParamName);
-    if (!redir) {
-      redir = URL.home;
-    }
-    history.replace({
-      pathname: redir,
-      search: searchParamsToString(search),
-    });
-  }, [history]);
-  const {loggedIn} = useAuthState();
+const AntiProtected = (child) => {
+  const Inner = (props) => {
+    const history = props.history;
+    const navigateBack = useCallback(() => {
+      const search = getSearchParams(history.location.search);
+      let redir = search.get(redirectParamName);
+      search.delete(redirectParamName);
+      if (!redir) {
+        redir = URL.home;
+      }
+      history.replace({
+        pathname: redir,
+        search: searchParamsToString(search),
+      });
+    }, [history]);
+    const {loggedIn} = useAuthState();
 
-  useEffect(() => {
-    if (loggedIn) {
-      navigateBack();
-    }
-  }, [loggedIn]);
+    useEffect(() => {
+      if (loggedIn) {
+        navigateBack();
+      }
+    }, [loggedIn, navigateBack]);
 
-  return React.createElement(child, props);
+    return React.createElement(child, props);
+  };
+  return Inner;
 };
 
 export {
