@@ -81,6 +81,15 @@ const max0 = (a) => max(a, 0);
 
 const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]+$/;
 
+const isValidURL = (url) => {
+  try {
+    new URL(url);
+    return true;
+  } catch (_e) {
+    return false;
+  }
+};
+
 export {
   formatStr,
   formatStrArgs,
@@ -94,4 +103,5 @@ export {
   max,
   max0,
   emailRegex,
+  isValidURL,
 };

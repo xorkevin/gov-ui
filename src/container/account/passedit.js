@@ -31,8 +31,7 @@ const formValidCheck = ({new_password, password_confirm}) => {
   return valid;
 };
 
-const prehookValidate = ([form]) => {
-  const {new_password, password_confirm} = form;
+const prehookValidate = ([_old_pass, new_password, password_confirm]) => {
   if (new_password !== password_confirm) {
     return 'Passwords do not match';
   }
@@ -53,7 +52,11 @@ const AccountPassEdit = () => {
 
   const [passState, execEditPass] = useAuthCall(
     selectAPIEditPass,
-    [formState.old_password, formState.new_password],
+    [
+      formState.old_password,
+      formState.new_password,
+      formState.password_confirm,
+    ],
     {},
     {prehook: prehookValidate, posthook: displaySnackbar},
   );

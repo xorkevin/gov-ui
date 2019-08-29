@@ -1,4 +1,5 @@
 import React, {Fragment, useState, useCallback} from 'react';
+import {isValidURL} from 'utility';
 import {usePaginate, selectAPINull} from 'apiclient';
 import {useAuthCall, useAuthResource} from 'service/auth';
 import Section from 'component/section';
@@ -7,7 +8,7 @@ import Button from 'component/button';
 import Time from 'component/time';
 import Anchor from 'component/anchor';
 import Tooltip from 'component/tooltip';
-import Input, {useForm} from 'component/form';
+import {Form, Input, useForm} from 'component/form';
 
 import {URL} from 'config';
 
@@ -17,6 +18,30 @@ const selectAPILinks = (api) => api.courier.link.get;
 const selectAPICreate = (api) => api.courier.link.create;
 const selectAPIDelete = (api) => api.courier.link.id.del;
 const selectAPIUsers = (api) => api.u.user.ids;
+
+const formErrCheck = ({url}) => {
+  const err = {};
+  if (url.length > 0 && !isValidURL(url)) {
+    err.url = true;
+  }
+  return err;
+};
+
+const formValidCheck = ({url}) => {
+  const valid = {};
+  if (url.length > 0 && isValidURL(url)) {
+    valid.url = true;
+  }
+  return valid;
+};
+
+const prehookValidate = ([form]) => {
+  console.log(form);
+  const {url} = form;
+  if (url.length === 0) {
+    return 'A url must be provided';
+  }
+};
 
 const LinkRow = ({linkid, url, username, creation_time, reexecute}) => {
   const posthook = useCallback(
@@ -108,12 +133,6 @@ const CourierLink = () => {
     ]),
   );
 
-  const prehook = useCallback(([form]) => {
-    const {url} = form;
-    if (url.length === 0) {
-      return 'A url must be provided';
-    }
-  }, []);
   const posthookRefresh = useCallback(
     (_status, _data, opts) => {
       reexecuteLinks(opts);
@@ -126,7 +145,7 @@ const CourierLink = () => {
     selectAPICreate,
     [formState],
     {},
-    {prehook, posthook: posthookRefresh},
+    {prehook: prehookValidate, posthook: posthookRefresh},
   );
 
   const {err: errCreate} = createState;
@@ -134,21 +153,20 @@ const CourierLink = () => {
   return (
     <div>
       <Section subsection sectionTitle="Add Link">
-        <Input
-          label="link id"
-          info="usage: /link/:linkid; (optional)"
-          name="linkid"
-          value={formState.linkid}
-          onChange={updateForm}
-        />
-        <Input
-          label="link url"
-          info="destination url"
-          name="url"
-          value={formState.url}
+        <Form
+          formState={formState}
           onChange={updateForm}
           onEnter={execCreate}
-        />
+          errCheck={formErrCheck}
+          validCheck={formValidCheck}
+        >
+          <Input
+            label="link id"
+            info="usage: /link/:linkid; (optional)"
+            name="linkid"
+          />
+          <Input label="link url" info="destination url" name="url" />
+        </Form>
         <Button onClick={execCreate}>Add Link</Button>
         {errCreate && <span>{errCreate}</span>}
       </Section>
