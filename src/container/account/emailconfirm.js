@@ -4,7 +4,7 @@ import {useAuthCall} from 'service/auth';
 import Section from 'component/section';
 import Card from 'component/card';
 import Button from 'component/button';
-import Input, {useForm} from 'component/form';
+import {Form, Input, useForm} from 'component/form';
 
 const selectAPIConfirmEmail = (api) => api.u.user.email.edit.confirm;
 
@@ -41,22 +41,10 @@ const AccountEmailConfirm = ({match}) => {
   return (
     <Card size="md" restrictWidth center bar={bar}>
       <Section subsection sectionTitle="Account Details">
-        <Input
-          label="code"
-          name="key"
-          value={formState.key}
-          onChange={updateForm}
-          fullWidth
-        />
-        <Input
-          label="password"
-          type="password"
-          name="password"
-          value={formState.password}
-          onChange={updateForm}
-          onEnter={execConfirm}
-          fullWidth
-        />
+        <Form formState={formState} onChange={updateForm} onEnter={execConfirm}>
+          <Input label="code" name="key" fullWidth />
+          <Input label="password" type="password" name="password" fullWidth />
+        </Form>
       </Section>
       {err && <span>{err}</span>}
       {success && <span>Email updated</span>}

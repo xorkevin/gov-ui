@@ -1,12 +1,29 @@
 import React, {Fragment} from 'react';
 import {Link} from 'react-router-dom';
+import {emailRegex} from 'utility';
 import {useAuthCall} from 'service/auth';
 import Section from 'component/section';
 import Card from 'component/card';
 import Button from 'component/button';
-import Input, {useForm} from 'component/form';
+import {Form, Input, useForm} from 'component/form';
 
 const selectAPIEditEmail = (api) => api.u.user.email.edit;
+
+const formErrCheck = ({email}) => {
+  const err = {};
+  if (email.length > 0 && !emailRegex.test(email)) {
+    err.email = true;
+  }
+  return err;
+};
+
+const formValidCheck = ({email}) => {
+  const valid = {};
+  if (emailRegex.test(email)) {
+    valid.email = true;
+  }
+  return valid;
+};
 
 const AccountEmailEdit = ({match}) => {
   const [formState, updateForm] = useForm({
@@ -41,28 +58,22 @@ const AccountEmailEdit = ({match}) => {
   return (
     <Card size="md" restrictWidth center bar={bar}>
       <Section subsection sectionTitle="Account Details">
-        <Input
-          label="email"
-          name="email"
-          value={formState.email}
-          onChange={updateForm}
-          fullWidth
-        />
-        <Input
-          label="password"
-          type="password"
-          name="password"
-          value={formState.password}
+        <Form
+          formState={formState}
           onChange={updateForm}
           onEnter={execEditEmail}
-          fullWidth
-        />
+          errCheck={formErrCheck}
+          validCheck={formValidCheck}
+        >
+          <Input label="email" name="email" fullWidth />
+          <Input label="password" type="password" name="password" fullWidth />
+        </Form>
       </Section>
       {err && <span>{err}</span>}
       {success && (
         <span>
-          Confirm your email change with a code emailed to the address provided
-          above
+          Confirm your email change with the code emailed to the address
+          provided above
         </span>
       )}
     </Card>
