@@ -1,4 +1,4 @@
-import React, {Fragment, useCallback} from 'react';
+import React, {Fragment} from 'react';
 import {Link} from 'react-router-dom';
 import {useAPICall} from 'apiclient';
 import Section from 'component/section';
@@ -8,6 +8,12 @@ import Input, {useForm} from 'component/form';
 
 const selectAPIResetPass = (api) => api.u.user.pass.forgot.confirm;
 
+const prehookValidate = ([_key, new_password, password_confirm]) => {
+  if (new_password !== password_confirm) {
+    return 'Passwords do not match';
+  }
+};
+
 const ConfirmReset = ({match}) => {
   const [formState, updateForm] = useForm({
     key: match.params.key || '',
@@ -15,18 +21,11 @@ const ConfirmReset = ({match}) => {
     password_confirm: '',
   });
 
-  const prehook = useCallback(([form]) => {
-    const {new_password, password_confirm} = form;
-    if (new_password !== password_confirm) {
-      return 'Passwords do not match';
-    }
-  }, []);
-
   const [resetState, execReset] = useAPICall(
     selectAPIResetPass,
-    [formState.key, formState.new_password],
+    [formState.key, formState.new_password, formState.password_confirm],
     {},
-    {prehook},
+    {prehook: prehookValidate},
   );
 
   const {success, err} = resetState;

@@ -1,4 +1,4 @@
-import React, {Fragment, useCallback} from 'react';
+import React, {Fragment} from 'react';
 import {Link} from 'react-router-dom';
 import {useAPICall} from 'apiclient';
 import Section from 'component/section';
@@ -8,6 +8,16 @@ import Input, {useForm} from 'component/form';
 
 const selectAPICreateAccount = (api) => api.u.user.create;
 
+const prehookValidate = ([form]) => {
+  const {password, email, password_confirm, email_confirm} = form;
+  if (password !== password_confirm) {
+    return 'Passwords do not match';
+  }
+  if (email !== email_confirm) {
+    return 'Emails do not match';
+  }
+};
+
 const CreateAccount = () => {
   const [formState, updateForm] = useForm({
     username: '',
@@ -15,32 +25,15 @@ const CreateAccount = () => {
     email: '',
     first_name: '',
     last_name: '',
-  });
-
-  const [formConfirmState, updateFormConfirm] = useForm({
     password_confirm: '',
     email_confirm: '',
   });
-
-  const prehook = useCallback(
-    ([form]) => {
-      const {password, email} = form;
-      const {password_confirm, email_confirm} = formConfirmState;
-      if (password !== password_confirm) {
-        return 'Passwords do not match';
-      }
-      if (email !== email_confirm) {
-        return 'Emails do not match';
-      }
-    },
-    [formConfirmState],
-  );
 
   const [createState, execCreate] = useAPICall(
     selectAPICreateAccount,
     [formState],
     {},
-    {prehook},
+    {prehook: prehookValidate},
   );
 
   const {success, err} = createState;
@@ -105,8 +98,8 @@ const CreateAccount = () => {
           label="confirm password"
           type="password"
           name="password_confirm"
-          value={formConfirmState.password_confirm}
-          onChange={updateFormConfirm}
+          value={formState.password_confirm}
+          onChange={updateForm}
           fullWidth
         />
         <Input
@@ -119,8 +112,8 @@ const CreateAccount = () => {
         <Input
           label="confirm email"
           name="email_confirm"
-          value={formConfirmState.email_confirm}
-          onChange={updateFormConfirm}
+          value={formState.email_confirm}
+          onChange={updateForm}
           onEnter={execCreate}
           fullWidth
         />
