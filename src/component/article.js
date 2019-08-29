@@ -1,5 +1,4 @@
 import React from 'react';
-import Section from 'component/section';
 import Chip from 'component/chip';
 import Time from 'component/time';
 

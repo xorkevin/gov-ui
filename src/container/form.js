@@ -1,4 +1,4 @@
-import React, {Fragment, useState, useCallback} from 'react';
+import React, {Fragment, useCallback} from 'react';
 import {emailRegex} from 'utility';
 import {useSnackbarView} from 'service/snackbar';
 import Section from 'component/section';
