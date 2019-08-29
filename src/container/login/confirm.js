@@ -4,7 +4,7 @@ import {useAPICall} from 'apiclient';
 import Section from 'component/section';
 import Card from 'component/card';
 import Button from 'component/button';
-import Input, {useForm} from 'component/form';
+import {Form, Input, useForm} from 'component/form';
 
 const selectAPIConfirmAccount = (api) => api.u.user.create.confirm;
 
@@ -46,13 +46,9 @@ const ConfirmAccount = ({match}) => {
         title={<h3>Confirm account</h3>}
         bar={bar}
       >
-        <Input
-          label="code"
-          name="key"
-          value={formState.key}
-          onChange={updateForm}
-          fullWidth
-        />
+        <Form formState={formState} onChange={updateForm} onEnter={execConfirm}>
+          <Input label="code" name="key" fullWidth />
+        </Form>
         {err && <span>{err}</span>}
         {success && (
           <span>

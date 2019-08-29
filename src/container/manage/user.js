@@ -7,7 +7,7 @@ import ListItem from 'component/list';
 import Chip from 'component/chip';
 import Time from 'component/time';
 import Button from 'component/button';
-import Input, {useForm} from 'component/form';
+import {Form, Input, useForm} from 'component/form';
 
 const selectAPIUser = (api) => api.u.user.name;
 const selectAPIRank = (api) => api.u.user.id.edit.rank;
@@ -74,14 +74,13 @@ const ManageUser = ({history, match}) => {
     return (
       <Card size="lg" restrictWidth center bar={bar}>
         <Section subsection sectionTitle="Search User">
-          <Input
-            label="username"
-            name="username"
-            value={searchFormState.username}
+          <Form
+            formState={searchFormState}
             onChange={updateSearchForm}
             onEnter={navigateUser}
-            fullWidth
-          />
+          >
+            <Input label="username" name="username" fullWidth />
+          </Form>
         </Section>
       </Card>
     );
@@ -131,20 +130,10 @@ const ManageUser = ({history, match}) => {
                 .map((tag) => <Chip key={tag.trim()}>{tag.trim()}</Chip>)
             }
           />
-          <Input
-            label="add"
-            name="add"
-            value={formState.add}
-            onChange={updateForm}
-            fullWidth
-          />
-          <Input
-            label="remove"
-            name="remove"
-            value={formState.remove}
-            onChange={updateForm}
-            fullWidth
-          />
+          <Form formState={formState} onChange={updateForm} onEnter={execRank}>
+            <Input label="add" name="add" fullWidth />
+            <Input label="remove" name="remove" fullWidth />
+          </Form>
         </Section>
       </Card>
     );

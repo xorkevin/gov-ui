@@ -6,7 +6,7 @@ import Menu from 'component/menu';
 import FaIcon from 'component/faicon';
 import Card from 'component/card';
 import Button from 'component/button';
-import Input, {useForm} from 'component/form';
+import {Form, Input, useForm} from 'component/form';
 
 const SigninContainer = () => {
   const [formState, updateForm] = useForm({
@@ -54,22 +54,10 @@ const SigninContainer = () => {
           </Fragment>
         }
       >
-        <Input
-          label="username / email"
-          name="username"
-          value={formState.username}
-          onChange={updateForm}
-          fullWidth
-        />
-        <Input
-          label="password"
-          type="password"
-          name="password"
-          value={formState.password}
-          onChange={updateForm}
-          onEnter={execLogin}
-          fullWidth
-        />
+        <Form formState={formState} onChange={updateForm} onEnter={execLogin}>
+          <Input label="username / email" name="username" fullWidth />
+          <Input label="password" type="password" name="password" fullWidth />
+        </Form>
         {err && <span>{err}</span>}
       </Card>
     </Section>
