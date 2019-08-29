@@ -9,6 +9,7 @@
   padding: 16px;
   z-index: 128;
   transition: $transition-normal;
+  pointer-events: none;
 
   &.hidden {
     transform: translateY(100%);
@@ -21,8 +22,17 @@
     flex-wrap: wrap;
     max-width: 100%;
     padding: 16px;
-    border-radius: 8px;
-    background-color: $background-dark-solid;
+    border-radius: 4px;
+    background-color: $color-grey-900;
     color: $color-text-light-1-5;
+    pointer-events: auto;
+  }
+}
+
+body.dark {
+  .snackbar {
+    .inner {
+      background-color: $color-grey-800;
+    }
   }
 }

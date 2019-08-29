@@ -34,11 +34,11 @@ $color-text-light-2: rgba($white, 0.7) !default; // secondary
 $color-text-light-3: rgba($white, 0.5) !default; // disabled/hint/icons
 $color-text-light-4: rgba($white, 0.12) !default; // dividers
 
-// $color-grey-900: #212121;
-// $color-grey-800: #424242;
-// $color-grey-300: #E0E0E0;
-// $color-grey-100: #F5F5F5;
-// $color-grey-50 : #FAFAFA;
+$color-grey-900: #212121 !default;
+$color-grey-800: #424242 !default;
+$color-grey-300: #e0e0e0 !default;
+$color-grey-100: #f5f5f5 !default;
+$color-grey-50: #fafafa !default;
 
 $color-valid: #308457 !default;
 $color-valid-light: #5bc38c !default;
