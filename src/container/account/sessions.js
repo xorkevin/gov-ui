@@ -1,75 +1,96 @@
 import React, {Fragment, useCallback} from 'react';
 import {useAuthCall, useAuthResource} from 'service/auth';
+import {useSnackbar, useSnackbarView} from 'service/snackbar';
 import Section from 'component/section';
-import Card from 'component/card';
+import Table from 'component/table';
 import Button from 'component/button';
 import Time from 'component/time';
-import Input, {useForm} from 'component/form';
 
 const selectAPISessions = (api) => api.u.user.sessions;
 const selectAPISessionDelete = (api) => api.u.user.sessions.del;
 
-const AccountSessions = () => {
-  const [formState, updateForm] = useForm();
-
-  const sessionids = Object.keys(formState)
-    .sort()
-    .join(',');
-
-  const {success, err, data, reexecute} = useAuthResource(selectAPISessions);
-
-  const posthook = useCallback(
-    (_status, _data, opts) => {
-      reexecute(opts);
-    },
-    [reexecute],
-  );
-  const [deleteState, execDelete] = useAuthCall(
+const SessionRow = ({session_id, ip, time, user_agent, posthook, errhook}) => {
+  const [_deleteState, execDelete] = useAuthCall(
     selectAPISessionDelete,
-    [sessionids],
+    [session_id],
     {},
-    {posthook},
-  );
-
-  const {success: successDelete, err: errDelete} = deleteState;
-
-  const bar = (
-    <Fragment>
-      <Button primary onClick={execDelete}>
-        Delete
-      </Button>
-    </Fragment>
+    {posthook, errhook},
   );
 
   return (
-    <Card size="lg" restrictWidth center bar={bar}>
-      <Section subsection sectionTitle="Active Sessions">
-        {success &&
-          data.map((session) => {
-            return (
-              <div key={session.session_id}>
-                <Input
-                  type="checkbox"
-                  label={
-                    <span>
-                      {session.ip} | last accessed{' '}
-                      <Time value={session.time * 1000} />
-                    </span>
-                  }
-                  name={session.session_id}
-                  checked={formState[session.session_id] || false}
-                  onChange={updateForm}
-                  fullWidth
-                />
-                <span>{session.user_agent}</span>
-              </div>
-            );
-          })}
-      </Section>
+    <tr>
+      <td>{ip}</td>
+      <td>{user_agent}</td>
+      <td>
+        <Time value={time * 1000} />
+      </td>
+      <td>
+        <Button text onClick={execDelete}>
+          Delete
+        </Button>
+      </td>
+    </tr>
+  );
+};
+
+const AccountSessions = () => {
+  const displaySnackbar = useSnackbarView(
+    <Fragment>
+      <span>Session deleted</span>
+    </Fragment>,
+  );
+
+  const snackbar = useSnackbar();
+  const displayErrSnack = useCallback(
+    (_stage, err) => {
+      snackbar(
+        <Fragment>
+          <span>Failed to delete session: {err}</span>
+        </Fragment>,
+      );
+    },
+    [snackbar],
+  );
+
+  const {err, data, reexecute} = useAuthResource(selectAPISessions, [], []);
+
+  const posthookDelete = useCallback(
+    (_status, _data, opts) => {
+      displaySnackbar();
+      reexecute(opts);
+    },
+    [reexecute, displaySnackbar],
+  );
+
+  return (
+    <Section subsection sectionTitle="Active Sessions">
       {err && <span>{err}</span>}
-      {errDelete && <span>{errDelete}</span>}
-      {successDelete && <span>Sessions deleted</span>}
-    </Card>
+      <Table
+        fullWidth
+        head={
+          <Fragment>
+            <th>IP address</th>
+            <th>Browser info</th>
+            <th>Last accessed</th>
+            <th></th>
+          </Fragment>
+        }
+      >
+        {data.map(({session_id, ip, time, user_agent}) => {
+          return (
+            <SessionRow
+              key={session_id}
+              session_id={session_id}
+              ip={ip}
+              time={time}
+              user_agent={user_agent}
+              posthook={posthookDelete}
+              errhook={displayErrSnack}
+            />
+          );
+        })}
+      </Table>
+    </Section>
   );
 };
 

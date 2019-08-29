@@ -2,6 +2,7 @@ import React, {Fragment, useState, useCallback} from 'react';
 import {isValidURL} from 'utility';
 import {usePaginate, selectAPINull} from 'apiclient';
 import {useAuthCall, useAuthResource} from 'service/auth';
+import {useSnackbar} from 'service/snackbar';
 import Section from 'component/section';
 import Table from 'component/table';
 import Button from 'component/button';
@@ -43,21 +44,13 @@ const prehookValidate = ([form]) => {
   }
 };
 
-const LinkRow = ({linkid, url, username, creation_time, reexecute}) => {
-  const posthook = useCallback(
-    (_status, _data, opts) => {
-      reexecute(opts);
-    },
-    [reexecute],
-  );
-  const [deleteState, execDelete] = useAuthCall(
+const LinkRow = ({linkid, url, username, creation_time, posthook, errhook}) => {
+  const [_deleteState, execDelete] = useAuthCall(
     selectAPIDelete,
     [linkid],
     {},
-    {posthook},
+    {posthook, errhook},
   );
-
-  const {err} = deleteState;
 
   return (
     <tr>
@@ -84,13 +77,24 @@ const LinkRow = ({linkid, url, username, creation_time, reexecute}) => {
         <Button text onClick={execDelete}>
           Delete
         </Button>
-        {err && <small>{err}</small>}
       </td>
     </tr>
   );
 };
 
 const CourierLink = () => {
+  const snackbar = useSnackbar();
+  const displayErrSnack = useCallback(
+    (_stage, err) => {
+      snackbar(
+        <Fragment>
+          <span>Failed to delete link: {err}</span>
+        </Fragment>,
+      );
+    },
+    [snackbar],
+  );
+
   const [formState, updateForm] = useForm({
     linkid: '',
     url: '',
@@ -148,6 +152,13 @@ const CourierLink = () => {
     {prehook: prehookValidate, posthook: posthookRefresh},
   );
 
+  const posthookDelete = useCallback(
+    (_status, _data, opts) => {
+      reexecuteLinks(opts);
+    },
+    [reexecuteLinks],
+  );
+
   const {err: errCreate} = createState;
 
   return (
@@ -192,7 +203,8 @@ const CourierLink = () => {
               url={url}
               username={usernames[creatorid] || creatorid}
               creation_time={creation_time}
-              reexecute={reexecuteLinks}
+              posthook={posthookDelete}
+              errhook={displayErrSnack}
             />
           ))}
         </Table>
