@@ -66,7 +66,7 @@ const Input = ({
     if (context.onChange) {
       onChange = context.onChange;
     }
-    if (context.onEnter) {
+    if (!textarea && context.onEnter) {
       onEnter = context.onEnter;
     }
     if (context.error) {
