@@ -1,12 +1,35 @@
 import React, {Fragment} from 'react';
 import {Link} from 'react-router-dom';
 import {useAPICall} from 'apiclient';
+import {useSnackbarView} from 'service/snackbar';
 import Section from 'component/section';
 import Card from 'component/card';
 import Button from 'component/button';
-import Input, {useForm} from 'component/form';
+import {Form, Input, useForm} from 'component/form';
 
 const selectAPIResetPass = (api) => api.u.user.pass.forgot.confirm;
+
+const formErrCheck = ({new_password, password_confirm}) => {
+  const err = {};
+  if (new_password.length > 0 && new_password.length < 10) {
+    err.new_password = true;
+  }
+  if (password_confirm.length > 0 && password_confirm !== new_password) {
+    err.password_confirm = 'Must match password';
+  }
+  return err;
+};
+
+const formValidCheck = ({new_password, password_confirm}) => {
+  const valid = {};
+  if (new_password.length > 9) {
+    valid.new_password = true;
+  }
+  if (password_confirm.length > 0 && password_confirm === new_password) {
+    valid.password_confirm = true;
+  }
+  return valid;
+};
 
 const prehookValidate = ([_key, new_password, password_confirm]) => {
   if (new_password !== password_confirm) {
@@ -15,6 +38,12 @@ const prehookValidate = ([_key, new_password, password_confirm]) => {
 };
 
 const ConfirmReset = ({match}) => {
+  const displaySnackbar = useSnackbarView(
+    <Fragment>
+      <span>Password updated</span>
+    </Fragment>,
+  );
+
   const [formState, updateForm] = useForm({
     key: match.params.key || '',
     new_password: '',
@@ -25,7 +54,7 @@ const ConfirmReset = ({match}) => {
     selectAPIResetPass,
     [formState.key, formState.new_password, formState.password_confirm],
     {},
-    {prehook: prehookValidate},
+    {prehook: prehookValidate, posthook: displaySnackbar},
   );
 
   const {success, err} = resetState;
@@ -57,36 +86,29 @@ const ConfirmReset = ({match}) => {
         title={<h3>Reset password</h3>}
         bar={bar}
       >
-        <Input
-          label="code"
-          name="key"
-          value={formState.key}
-          onChange={updateForm}
-          fullWidth
-        />
-        <Input
-          label="new password"
-          type="password"
-          name="new_password"
-          value={formState.new_password}
-          onChange={updateForm}
-          fullWidth
-        />
-        <Input
-          label="confirm password"
-          type="password"
-          name="password_confirm"
-          value={formState.password_confirm}
+        <Form
+          formState={formState}
           onChange={updateForm}
           onEnter={execReset}
-          fullWidth
-        />
+          errCheck={formErrCheck}
+          validCheck={formValidCheck}
+        >
+          <Input label="code" name="key" fullWidth />
+          <Input
+            label="new password"
+            type="password"
+            name="new_password"
+            info="Must be at least 10 characters"
+            fullWidth
+          />
+          <Input
+            label="confirm password"
+            type="password"
+            name="password_confirm"
+            fullWidth
+          />
+        </Form>
         {err && <span>{err}</span>}
-        {success && (
-          <span>
-            <span>Your password has been reset</span>
-          </span>
-        )}
       </Card>
     </Section>
   );

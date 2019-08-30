@@ -4,7 +4,7 @@ import {useAPICall} from 'apiclient';
 import Section from 'component/section';
 import Card from 'component/card';
 import Button from 'component/button';
-import Input, {useForm} from 'component/form';
+import {Form, Input, useForm} from 'component/form';
 
 const selectAPIForgotPass = (api) => api.u.user.pass.forgot;
 
@@ -13,11 +13,11 @@ const ForgotPassContainer = () => {
     username: '',
   });
 
-  const [_forgotState, execForgot] = useAPICall(selectAPIForgotPass, [
+  const [forgotState, execForgot] = useAPICall(selectAPIForgotPass, [
     formState.username,
   ]);
 
-  const {success, err} = formState;
+  const {success, err} = forgotState;
 
   const bar = success ? (
     <Fragment>
@@ -46,18 +46,13 @@ const ForgotPassContainer = () => {
         title={<h3>Forgot password</h3>}
         bar={bar}
       >
-        <Input
-          label="username / email"
-          name="username"
-          value={formState.username}
-          onChange={updateForm}
-          onEnter={execForgot}
-          fullWidth
-        />
+        <Form formState={formState} onChange={updateForm} onEnter={execForgot}>
+          <Input label="username / email" name="username" fullWidth />
+        </Form>
         {err && <span>{err}</span>}
         {success && (
           <span>
-            <span>Reset your password with a code emailed to you</span>
+            <span>Reset your password with the code emailed to you</span>
           </span>
         )}
       </Card>

@@ -127,7 +127,13 @@ const CreateAccount = () => {
           <Input label="first name" name="first_name" fullWidth />
           <Input label="last name" name="last_name" fullWidth />
           <Input label="username" name="username" fullWidth />
-          <Input label="password" type="password" name="password" fullWidth />
+          <Input
+            label="password"
+            type="password"
+            name="password"
+            info="Must be at least 10 characters"
+            fullWidth
+          />
           <Input
             label="confirm password"
             type="password"
