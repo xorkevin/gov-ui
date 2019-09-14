@@ -1,5 +1,6 @@
 import React, {Fragment} from 'react';
 import {Link} from 'react-router-dom';
+import {getSearchParams} from 'utility';
 import {useAPICall} from 'apiclient';
 import {useSnackbarView} from 'service/snackbar';
 import Section from 'component/section';
@@ -37,7 +38,7 @@ const prehookValidate = ([_key, new_password, password_confirm]) => {
   }
 };
 
-const ConfirmReset = ({match}) => {
+const ConfirmReset = ({history}) => {
   const displaySnackbar = useSnackbarView(
     <Fragment>
       <span>Password updated</span>
@@ -45,7 +46,7 @@ const ConfirmReset = ({match}) => {
   );
 
   const [formState, updateForm] = useForm({
-    key: match.params.key || '',
+    key: getSearchParams(history.location.search).get('key') || '',
     new_password: '',
     password_confirm: '',
   });

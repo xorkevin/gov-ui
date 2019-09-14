@@ -1,5 +1,6 @@
 import React, {Fragment} from 'react';
 import {Link} from 'react-router-dom';
+import {getSearchParams} from 'utility';
 import {useAPICall} from 'apiclient';
 import Section from 'component/section';
 import Card from 'component/card';
@@ -8,9 +9,9 @@ import {Form, Input, useForm} from 'component/form';
 
 const selectAPIConfirmAccount = (api) => api.u.user.create.confirm;
 
-const ConfirmAccount = ({match}) => {
+const ConfirmAccount = ({history}) => {
   const [formState, updateForm] = useForm({
-    key: match.params.key || '',
+    key: getSearchParams(history.location.search).get('key') || '',
   });
 
   const [confirmState, execConfirm] = useAPICall(selectAPIConfirmAccount, [

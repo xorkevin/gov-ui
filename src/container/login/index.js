@@ -23,12 +23,12 @@ const LoginContainer = ({match}) => {
         <Route path={`${match.path}/login`} component={SigninContainer} />
         <Route path={`${match.path}/create`} component={CreateContainer} />
         <Route
-          path={`${match.path}/confirm/:key?`}
+          path={`${match.path}/confirm`}
           component={CreateConfirmContainer}
         />
         <Route path={`${match.path}/forgot`} component={ForgotPassContainer} />
         <Route
-          path={`${match.path}/forgotconfirm/:key?`}
+          path={`${match.path}/forgotconfirm`}
           component={ResetPassContainer}
         />
         <Redirect to={`${match.path}/login`} />

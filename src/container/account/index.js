@@ -41,7 +41,7 @@ const Account = ({match}) => {
       <Suspense fallback={FallbackView}>
         <Switch>
           <Route
-            path={`${match.path}/account/email/confirm/:key?`}
+            path={`${match.path}/account/email/confirm`}
             component={EmailConfirmContainer}
           />
           <Route
