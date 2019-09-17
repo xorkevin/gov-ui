@@ -113,10 +113,10 @@ const API = {
     url: '/healthz',
     children: {
       check: {
-        url: '/check',
+        url: '/report',
         method: 'GET',
         expectdata: true,
-        err: 'Could not get time from api server',
+        err: 'Could not get health report from api server',
       },
     },
   },

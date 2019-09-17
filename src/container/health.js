@@ -1,6 +1,7 @@
 import React, {Fragment} from 'react';
 import {useResource} from 'apiclient';
 import Section from 'component/section';
+import Time from 'component/time';
 
 const selectAPIHealth = (api) => api.healthz.check;
 
@@ -14,7 +15,9 @@ const HealthContainer = () => {
       {loading && <span>Loading</span>}
       {success && (
         <Fragment>
-          <div>{data.time}</div>
+          <div>
+            <Time value={data.time * 1000} />
+          </div>
           {data.errs && (
             <Fragment>
               <div>Server Errors:</div>
