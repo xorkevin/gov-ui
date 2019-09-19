@@ -8,6 +8,7 @@ import Button from 'component/button';
 import Time from 'component/time';
 import Anchor from 'component/anchor';
 import FaIcon from 'component/faicon';
+import Img from 'component/image';
 import {Form, Input, useForm} from 'component/form';
 
 const LIMIT = 32;
@@ -31,7 +32,7 @@ const BrandRow = ({brandid, creation_time, posthook, errhook}) => {
       <td>{brandid}</td>
       <td>
         <Anchor ext href={imageURL}>
-          image
+          <Img rounded imgWidth={256} imgHeight={256} src={imageURL} />
         </Anchor>
       </td>
       <td>
