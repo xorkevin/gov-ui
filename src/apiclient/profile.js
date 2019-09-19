@@ -16,7 +16,7 @@ export default {
         method: 'PUT',
         transformer: (file) => {
           const formData = new FormData();
-          formData.append('image', file);
+          formData.set('image', file);
           return [null, formData];
         },
         expectdata: false,

@@ -1,6 +1,6 @@
-import React, {Fragment, useState, useCallback} from 'react';
+import React, {Fragment, useCallback} from 'react';
 import {isValidURL} from 'utility';
-import {usePaginate, selectAPINull} from 'apiclient';
+import {usePaginate} from 'apiclient';
 import {useAuthCall, useAuthResource} from 'service/auth';
 import {useSnackbar} from 'service/snackbar';
 import Section from 'component/section';
@@ -8,7 +8,6 @@ import Table from 'component/table';
 import Button from 'component/button';
 import Time from 'component/time';
 import Anchor from 'component/anchor';
-import Tooltip from 'component/tooltip';
 import {Form, Input, useForm} from 'component/form';
 
 import {URL} from 'config';
@@ -18,7 +17,6 @@ const LIMIT = 32;
 const selectAPILinks = (api) => api.courier.link.get;
 const selectAPICreate = (api) => api.courier.link.create;
 const selectAPIDelete = (api) => api.courier.link.id.del;
-const selectAPIUsers = (api) => api.u.user.ids;
 
 const formErrCheck = ({url}) => {
   const err = {};
@@ -37,14 +35,13 @@ const formValidCheck = ({url}) => {
 };
 
 const prehookValidate = ([form]) => {
-  console.log(form);
   const {url} = form;
   if (url.length === 0) {
     return 'A url must be provided';
   }
 };
 
-const LinkRow = ({linkid, url, username, creation_time, posthook, errhook}) => {
+const LinkRow = ({linkid, url, creation_time, posthook, errhook}) => {
   const [_deleteState, execDelete] = useAuthCall(
     selectAPIDelete,
     [linkid],
@@ -69,7 +66,6 @@ const LinkRow = ({linkid, url, username, creation_time, posthook, errhook}) => {
           image
         </Anchor>
       </td>
-      <td>{username}</td>
       <td>
         <Time value={creation_time * 1000} />
       </td>
@@ -103,47 +99,26 @@ const CourierLink = () => {
   const page = usePaginate(LIMIT);
   const pageSetEnd = page.setEnd;
 
-  const [userids, setUserids] = useState('');
-
   const posthook = useCallback(
     (_status, links) => {
       pageSetEnd(links.length < LIMIT);
-      setUserids(
-        Array.from(new Set(links.map(({creatorid}) => creatorid)))
-          .sort()
-          .join(','),
-      );
     },
-    [pageSetEnd, setUserids],
+    [pageSetEnd],
   );
-  const {err, data: links, reexecute: reexecuteLinks} = useAuthResource(
+  const {err, data: links, reexecute} = useAuthResource(
     selectAPILinks,
     [LIMIT, page.value],
     [],
     {posthook},
   );
 
-  const {err: errUsername, data: users} = useAuthResource(
-    userids.length > 0 ? selectAPIUsers : selectAPINull,
-    [userids],
-    [],
-  );
-  const usernames = Object.fromEntries(
-    users.map(({userid, username, first_name, last_name}) => [
-      userid,
-      <Tooltip key={userid} tooltip={first_name + ' ' + last_name}>
-        {username}
-      </Tooltip>,
-    ]),
-  );
-
   const posthookRefresh = useCallback(
     (_status, _data, opts) => {
-      reexecuteLinks(opts);
+      reexecute(opts);
       updateForm('linkid', '');
       updateForm('url', '');
     },
-    [reexecuteLinks, updateForm],
+    [reexecute, updateForm],
   );
   const [createState, execCreate] = useAuthCall(
     selectAPICreate,
@@ -154,9 +129,9 @@ const CourierLink = () => {
 
   const posthookDelete = useCallback(
     (_status, _data, opts) => {
-      reexecuteLinks(opts);
+      reexecute(opts);
     },
-    [reexecuteLinks],
+    [reexecute],
   );
 
   const {err: errCreate} = createState;
@@ -181,7 +156,7 @@ const CourierLink = () => {
         <Button onClick={execCreate}>Add Link</Button>
         {errCreate && <span>{errCreate}</span>}
       </Section>
-      {(err || errUsername) && <span>{err || errUsername}</span>}
+      {err && <span>{err}</span>}
       <Section subsection sectionTitle="Links">
         <Table
           fullWidth
@@ -190,18 +165,16 @@ const CourierLink = () => {
               <th>shortlink</th>
               <th>url</th>
               <th>qr code</th>
-              <th>creator</th>
               <th>creation time</th>
               <th></th>
             </Fragment>
           }
         >
-          {links.map(({linkid, url, creatorid, creation_time}) => (
+          {links.map(({linkid, url, creation_time}) => (
             <LinkRow
               key={linkid}
               linkid={linkid}
               url={url}
-              username={usernames[creatorid] || creatorid}
               creation_time={creation_time}
               posthook={posthookDelete}
               errhook={displayErrSnack}
