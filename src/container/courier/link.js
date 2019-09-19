@@ -1,4 +1,4 @@
-import React, {Fragment, useCallback} from 'react';
+import React, {Fragment, useCallback, useMemo} from 'react';
 import {isValidURL} from 'utility';
 import {usePaginate} from 'apiclient';
 import {useAuthCall, useAuthResource} from 'service/auth';
@@ -13,10 +13,12 @@ import {Form, Input, useForm} from 'component/form';
 import {URL} from 'config';
 
 const LIMIT = 32;
+const BRAND_LIMIT = 128;
 
 const selectAPILinks = (api) => api.courier.link.get;
 const selectAPICreate = (api) => api.courier.link.create;
 const selectAPIDelete = (api) => api.courier.link.id.del;
+const selectAPIBrands = (api) => api.courier.brand.get;
 
 const formErrCheck = ({url}) => {
   const err = {};
@@ -94,6 +96,7 @@ const CourierLink = () => {
   const [formState, updateForm] = useForm({
     linkid: '',
     url: '',
+    brandid: '',
   });
 
   const page = usePaginate(LIMIT);
@@ -117,6 +120,7 @@ const CourierLink = () => {
       reexecute(opts);
       updateForm('linkid', '');
       updateForm('url', '');
+      updateForm('brandid', '');
     },
     [reexecute, updateForm],
   );
@@ -136,6 +140,17 @@ const CourierLink = () => {
 
   const {err: errCreate} = createState;
 
+  const {err: errBrand, data: brands} = useAuthResource(
+    selectAPIBrands,
+    [BRAND_LIMIT, 0],
+    [],
+  );
+  const brandOptions = useMemo(() => {
+    const k = brands.map(({brandid}) => ({text: brandid, value: brandid}));
+    k.unshift({text: 'None', value: ''});
+    return k;
+  }, [brands]);
+
   return (
     <div>
       <Section subsection sectionTitle="Add Link">
@@ -152,9 +167,16 @@ const CourierLink = () => {
             name="linkid"
           />
           <Input label="link url" info="destination url" name="url" />
+          <Input
+            label="qr brand"
+            info="(optional)"
+            dropdown={brandOptions}
+            name="brandid"
+          />
         </Form>
         <Button onClick={execCreate}>Add Link</Button>
         {errCreate && <span>{errCreate}</span>}
+        {errBrand && <span>{errBrand}</span>}
       </Section>
       {err && <span>{err}</span>}
       <Section subsection sectionTitle="Links">
