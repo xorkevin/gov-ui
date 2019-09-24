@@ -1,4 +1,5 @@
 import React, {useState, useCallback} from 'react';
+import {useParams} from 'react-router-dom';
 import {useURL, useResource, selectAPINull} from 'apiclient';
 import {Grid, Column} from 'component/grid';
 import Section from 'component/section';
@@ -9,8 +10,8 @@ const selectAPIUser = (api) => api.u.user.name;
 const selectAPIProfile = (api) => api.profile.id;
 const selectAPIImage = (api) => api.profile.id.image;
 
-const UserDetails = ({match}) => {
-  const username = match.params.username || '';
+const UserDetails = () => {
+  const {username} = useParams();
   const [userid, setUserid] = useState('');
 
   const posthook = useCallback(
@@ -20,7 +21,7 @@ const UserDetails = ({match}) => {
     [setUserid],
   );
   const {success: successAccount, err: errAccount, data: account} = useResource(
-    username.length > 0 ? selectAPIUser : selectAPINull,
+    username && username.length > 0 ? selectAPIUser : selectAPINull,
     [username],
     {first_name: '', last_name: '', username: '', creation_time: ''},
     {posthook},

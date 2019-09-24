@@ -1,5 +1,5 @@
 import React, {Fragment, useState, useCallback} from 'react';
-import {useHistory} from 'react-router-dom';
+import {useParams, useHistory} from 'react-router-dom';
 import {useResource, selectAPINull} from 'apiclient';
 import {useAuthCall} from 'service/auth';
 import Section from 'component/section';
@@ -13,17 +13,17 @@ import {Form, Input, useForm} from 'component/form';
 const selectAPIUser = (api) => api.u.user.name;
 const selectAPIRank = (api) => api.u.user.id.edit.rank;
 
-const ManageUser = ({match}) => {
+const ManageUser = () => {
   const history = useHistory();
+  const {username} = useParams();
 
-  const username = match.params.username || '';
-  const displayUser = username.length > 0;
+  const displayUser = username && username.length > 0;
 
   const [editMode, setEdit] = useState(false);
   const toggleEditMode = useCallback(() => setEdit((e) => !e), [setEdit]);
 
   const {err: errUser, data: user, reexecute} = useResource(
-    username.length > 0 ? selectAPIUser : selectAPINull,
+    displayUser ? selectAPIUser : selectAPINull,
     [username],
     {
       userid: '',
