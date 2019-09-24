@@ -1,4 +1,5 @@
 import React, {Fragment, useState, useCallback} from 'react';
+import {useHistory} from 'react-router-dom';
 import {useResource, selectAPINull} from 'apiclient';
 import {useAuthCall} from 'service/auth';
 import Section from 'component/section';
@@ -12,7 +13,9 @@ import {Form, Input, useForm} from 'component/form';
 const selectAPIUser = (api) => api.u.user.name;
 const selectAPIRank = (api) => api.u.user.id.edit.rank;
 
-const ManageUser = ({history, match}) => {
+const ManageUser = ({match}) => {
+  const history = useHistory();
+
   const username = match.params.username || '';
   const displayUser = username.length > 0;
 

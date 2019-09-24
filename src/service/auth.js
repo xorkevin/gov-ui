@@ -1,4 +1,5 @@
 import React, {useEffect, useCallback, useMemo, useContext} from 'react';
+import {useLocation, useHistory} from 'react-router-dom';
 import {useSelector, useDispatch, useStore} from 'react-redux';
 import {
   getCookie,
@@ -225,27 +226,24 @@ const redirectParamName = 'redir';
 
 const Protected = (child, allowedAuth) => {
   const Inner = (props) => {
-    const history = props.history;
-    const navigateLogin = useCallback(() => {
-      const {pathname} = history.location;
-      const search = getSearchParams(history.location.search);
-      search.delete(redirectParamName);
-      if (pathname !== URL.home) {
-        search.set(redirectParamName, pathname);
-      }
-      history.replace({
-        pathname: URL.login,
-        search: searchParamsToString(search),
-      });
-    }, [history]);
+    const {pathname, search} = useLocation();
+    const history = useHistory();
     const {valid, loggedIn, authTags} = useAuthState();
     const fallback = useContext(ProtectedFallbackContext);
 
     useEffect(() => {
       if (valid && !loggedIn) {
-        navigateLogin();
+        const searchParams = getSearchParams(search);
+        searchParams.delete(redirectParamName);
+        if (pathname !== URL.home) {
+          searchParams.set(redirectParamName, pathname);
+        }
+        history.replace({
+          pathname: URL.login,
+          search: searchParamsToString(searchParams),
+        });
       }
-    }, [valid, loggedIn, navigateLogin]);
+    }, [valid, loggedIn, pathname, search, history]);
 
     const authorized = useMemo(() => {
       if (!allowedAuth) {
@@ -271,26 +269,24 @@ const Protected = (child, allowedAuth) => {
 
 const AntiProtected = (child) => {
   const Inner = (props) => {
-    const history = props.history;
-    const navigateBack = useCallback(() => {
-      const search = getSearchParams(history.location.search);
-      let redir = search.get(redirectParamName);
-      search.delete(redirectParamName);
-      if (!redir) {
-        redir = URL.home;
-      }
-      history.replace({
-        pathname: redir,
-        search: searchParamsToString(search),
-      });
-    }, [history]);
+    const {search} = useLocation();
+    const history = useHistory();
     const {loggedIn} = useAuthState();
 
     useEffect(() => {
       if (loggedIn) {
-        navigateBack();
+        const searchParams = getSearchParams(search);
+        let redir = searchParams.get(redirectParamName);
+        searchParams.delete(redirectParamName);
+        if (!redir) {
+          redir = URL.home;
+        }
+        history.replace({
+          pathname: redir,
+          search: searchParamsToString(searchParams),
+        });
       }
-    }, [loggedIn, navigateBack]);
+    }, [loggedIn, search, history]);
 
     return React.createElement(child, props);
   };

@@ -1,5 +1,5 @@
 import React, {Fragment} from 'react';
-import {Link} from 'react-router-dom';
+import {Link, useLocation} from 'react-router-dom';
 import {getSearchParams} from 'utility';
 import {useAuthCall} from 'service/auth';
 import Section from 'component/section';
@@ -9,9 +9,11 @@ import {Form, Input, useForm} from 'component/form';
 
 const selectAPIConfirmEmail = (api) => api.u.user.email.edit.confirm;
 
-const AccountEmailConfirm = ({history}) => {
+const AccountEmailConfirm = () => {
+  const {search} = useLocation();
+
   const [formState, updateForm] = useForm({
-    key: getSearchParams(history.location.search).get('key') || '',
+    key: getSearchParams(search).get('key') || '',
     password: '',
   });
 

@@ -1,4 +1,5 @@
 import React, {Fragment, useCallback} from 'react';
+import {useHistory} from 'react-router-dom';
 import {emailRegex} from 'utility';
 import {useAPICall} from 'apiclient';
 import Section from 'component/section';
@@ -75,7 +76,8 @@ const prehookValidate = ([form]) => {
   }
 };
 
-const SetupContainer = ({history}) => {
+const SetupContainer = () => {
+  const history = useHistory();
   const navigateHome = useCallback(() => {
     history.push(URL.home);
   }, [history]);

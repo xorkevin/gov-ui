@@ -1,5 +1,12 @@
 import React, {Fragment, lazy, Suspense} from 'react';
-import {Switch, Route, Redirect, NavLink, withRouter} from 'react-router-dom';
+import {
+  Switch,
+  Route,
+  Redirect,
+  NavLink,
+  useLocation,
+  withRouter,
+} from 'react-router-dom';
 
 import {useDarkMode} from 'service/settings';
 import {SnackbarContainer} from 'service/snackbar';
@@ -26,14 +33,15 @@ const FallbackView = (
 
 const styletoppaths = new Set(['/']);
 
-const App = ({location}) => {
+const App = () => {
+  const {pathname} = useLocation();
   const [dark, toggleDark] = useDarkMode();
 
   return (
     <div>
       <Navbar
         hideOnScroll
-        styletop={styletoppaths.has(location.pathname)}
+        styletop={styletoppaths.has(pathname)}
         left={
           <Fragment>
             <Navitem home scroll>
