@@ -1,5 +1,5 @@
-import React, {Component, lazy, Suspense} from 'react';
-import {Switch, Route, Redirect} from 'react-router-dom';
+import React, {lazy, Suspense} from 'react';
+import {Switch, Route, Redirect, useRouteMatch} from 'react-router-dom';
 
 import Section from 'component/section';
 
@@ -11,21 +11,19 @@ const FallbackView = (
   </Section>
 );
 
-class UserContainer extends Component {
-  render() {
-    const {match} = this.props;
-    return (
-      <Suspense fallback={FallbackView}>
-        <Switch>
-          <Route
-            path={`${match.url}/:username?`}
-            component={UserDetailsContainer}
-          />
-          <Redirect to={`${match.url}/`} />
-        </Switch>
-      </Suspense>
-    );
-  }
-}
+const UserContainer = () => {
+  const match = useRouteMatch();
+
+  return (
+    <Suspense fallback={FallbackView}>
+      <Switch>
+        <Route path={`${match.path}/:username?`}>
+          <UserDetailsContainer />
+        </Route>
+        <Redirect to={`${match.path}/`} />
+      </Switch>
+    </Suspense>
+  );
+};
 
 export default UserContainer;

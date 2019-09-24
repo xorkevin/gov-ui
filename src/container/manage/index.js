@@ -1,5 +1,11 @@
 import React, {Fragment, lazy, Suspense} from 'react';
-import {Switch, Route, Redirect, NavLink} from 'react-router-dom';
+import {
+  Switch,
+  Route,
+  Redirect,
+  NavLink,
+  useRouteMatch,
+} from 'react-router-dom';
 import Section from 'component/section';
 import Tabbar from 'component/tabbar';
 
@@ -11,23 +17,24 @@ const FallbackView = (
   </Section>
 );
 
-const ManageContainer = ({match}) => {
+const ManageContainer = () => {
+  const match = useRouteMatch();
+
   return (
     <Section container narrow padded sectionTitle="Settings">
       <Tabbar
         left={
           <Fragment>
-            <NavLink to={`${match.path}/user`}>User</NavLink>
+            <NavLink to={`${match.url}/user`}>User</NavLink>
           </Fragment>
         }
       />
       <Suspense fallback={FallbackView}>
         <Switch>
-          <Route
-            path={`${match.url}/user/:username?`}
-            component={ManageUserContainer}
-          />
-          <Redirect to={`${match.url}/user`} />
+          <Route path={`${match.path}/user/:username?`}>
+            <ManageUserContainer />
+          </Route>
+          <Redirect to={`${match.path}/user`} />
         </Switch>
       </Suspense>
     </Section>

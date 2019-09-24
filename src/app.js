@@ -23,7 +23,6 @@ import FaIcon from 'component/faicon';
 const HomeContainer = lazy(() => import('container/home'));
 const FormContainer = lazy(() => import('container/form'));
 const CardContainer = lazy(() => import('container/card'));
-const HealthContainer = lazy(() => import('container/health'));
 
 const FallbackView = (
   <Section container padded narrow>
@@ -58,9 +57,6 @@ const App = () => {
             <Navitem>
               <NavLink to="/cards">Cards</NavLink>
             </Navitem>
-            <Navitem>
-              <NavLink to="/health">Health</NavLink>
-            </Navitem>
           </Fragment>
         }
         right={
@@ -92,10 +88,15 @@ const App = () => {
       <MainContent>
         <Suspense fallback={FallbackView}>
           <Switch>
-            <Route exact path="/" component={HomeContainer} />
-            <Route path="/form" component={FormContainer} />
-            <Route path="/cards" component={CardContainer} />
-            <Route path="/health" component={HealthContainer} />
+            <Route exact path="/">
+              <HomeContainer />
+            </Route>
+            <Route path="/form">
+              <FormContainer />
+            </Route>
+            <Route path="/cards">
+              <CardContainer />
+            </Route>
             <Redirect to="/" />
           </Switch>
         </Suspense>

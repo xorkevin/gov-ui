@@ -1,5 +1,5 @@
 import React, {lazy, Suspense} from 'react';
-import {Switch, Route, Redirect} from 'react-router-dom';
+import {Switch, Route, Redirect, useRouteMatch} from 'react-router-dom';
 import Section from 'component/section';
 
 const SigninContainer = lazy(() => import('container/login/signin'));
@@ -16,21 +16,27 @@ const FallbackView = (
   </Section>
 );
 
-const LoginContainer = ({match}) => {
+const LoginContainer = () => {
+  const match = useRouteMatch();
+
   return (
     <Suspense fallback={FallbackView}>
       <Switch>
-        <Route path={`${match.path}/login`} component={SigninContainer} />
-        <Route path={`${match.path}/create`} component={CreateContainer} />
-        <Route
-          path={`${match.path}/confirm`}
-          component={CreateConfirmContainer}
-        />
-        <Route path={`${match.path}/forgot`} component={ForgotPassContainer} />
-        <Route
-          path={`${match.path}/forgotconfirm`}
-          component={ResetPassContainer}
-        />
+        <Route path={`${match.path}/login`}>
+          <SigninContainer />
+        </Route>
+        <Route path={`${match.path}/create`}>
+          <CreateContainer />
+        </Route>
+        <Route path={`${match.path}/confirm`}>
+          <CreateConfirmContainer />
+        </Route>
+        <Route path={`${match.path}/forgot`}>
+          <ForgotPassContainer />
+        </Route>
+        <Route path={`${match.path}/forgotconfirm`}>
+          <ResetPassContainer />
+        </Route>
         <Redirect to={`${match.path}/login`} />
       </Switch>
     </Suspense>

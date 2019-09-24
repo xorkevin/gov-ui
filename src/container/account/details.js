@@ -1,5 +1,5 @@
 import React, {Fragment} from 'react';
-import {Link} from 'react-router-dom';
+import {Link, useRouteMatch} from 'react-router-dom';
 import {useAuthResource} from 'service/auth';
 import Section from 'component/section';
 import Card from 'component/card';
@@ -10,7 +10,9 @@ import Time from 'component/time';
 
 const selectAPIAccount = (api) => api.u.user.get;
 
-const AccountDetails = ({match}) => {
+const AccountDetails = () => {
+  const match = useRouteMatch();
+
   const {success, err, data} = useAuthResource(selectAPIAccount, [], {
     userid: '',
     username: '',
@@ -33,13 +35,13 @@ const AccountDetails = ({match}) => {
 
   const bar = (
     <Fragment>
-      <Link to={`${match.path}/edit`}>
+      <Link to={`${match.url}/edit`}>
         <Button outline>Edit</Button>
       </Link>
-      <Link to={`${match.path}/email`}>
+      <Link to={`${match.url}/email`}>
         <Button outline>Change Email</Button>
       </Link>
-      <Link to={`${match.path}/pass`}>
+      <Link to={`${match.url}/pass`}>
         <Button outline>Change Password</Button>
       </Link>
     </Fragment>

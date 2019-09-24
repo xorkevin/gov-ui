@@ -132,14 +132,30 @@ const Admin = () => {
         <ProtectedFallback value={UnAuthFallback}>
           <Suspense fallback={FallbackView}>
             <Switch>
-              <Route exact path="/" component={AdminContainer} />
-              <Route path="/x" component={LoginContainer} />
-              <Route path="/a" component={AccountContainer} />
-              <Route path="/u" component={UserContainer} />
-              <Route path="/manage" component={ManageContainer} />
-              <Route path="/health" component={HealthContainer} />
-              <Route path="/courier" component={CourierContainer} />
-              <Route path="/setup" component={SetupContainer} />
+              <Route exact path="/">
+                <AdminContainer />
+              </Route>
+              <Route path="/x">
+                <LoginContainer />
+              </Route>
+              <Route path="/a">
+                <AccountContainer />
+              </Route>
+              <Route path="/u">
+                <UserContainer />
+              </Route>
+              <Route path="/manage">
+                <ManageContainer />
+              </Route>
+              <Route path="/health">
+                <HealthContainer />
+              </Route>
+              <Route path="/courier">
+                <CourierContainer />
+              </Route>
+              <Route path="/setup">
+                <SetupContainer />
+              </Route>
               <Redirect to="/" />
             </Switch>
           </Suspense>

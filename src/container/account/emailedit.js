@@ -1,5 +1,5 @@
 import React, {Fragment} from 'react';
-import {Link} from 'react-router-dom';
+import {Link, useRouteMatch} from 'react-router-dom';
 import {emailRegex} from 'utility';
 import {useAuthCall} from 'service/auth';
 import Section from 'component/section';
@@ -25,7 +25,9 @@ const formValidCheck = ({email}) => {
   return valid;
 };
 
-const AccountEmailEdit = ({match}) => {
+const AccountEmailEdit = () => {
+  const match = useRouteMatch();
+
   const [formState, updateForm] = useForm({
     email: '',
     password: '',
@@ -40,7 +42,7 @@ const AccountEmailEdit = ({match}) => {
 
   const bar = success ? (
     <Fragment>
-      <Link to={`${match.path}/confirm`}>
+      <Link to={`${match.url}/confirm`}>
         <Button outline>Confirm</Button>
       </Link>
     </Fragment>

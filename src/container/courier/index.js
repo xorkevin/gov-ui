@@ -1,5 +1,11 @@
 import React, {Fragment, lazy, Suspense} from 'react';
-import {Switch, Route, Redirect, NavLink} from 'react-router-dom';
+import {
+  Switch,
+  Route,
+  Redirect,
+  NavLink,
+  useRouteMatch,
+} from 'react-router-dom';
 import Section from 'component/section';
 import Tabbar from 'component/tabbar';
 import FaIcon from 'component/faicon';
@@ -13,16 +19,18 @@ const FallbackView = (
   </Section>
 );
 
-const CourierContainer = ({match}) => {
+const CourierContainer = () => {
+  const match = useRouteMatch();
+
   return (
     <Section container narrow padded sectionTitle="Courier">
       <Tabbar
         left={
           <Fragment>
-            <NavLink to={`${match.path}/link`}>
+            <NavLink to={`${match.url}/link`}>
               <FaIcon icon="link" /> Link
             </NavLink>
-            <NavLink to={`${match.path}/brand`}>
+            <NavLink to={`${match.url}/brand`}>
               <FaIcon icon="shield" /> Brand
             </NavLink>
           </Fragment>
@@ -30,9 +38,13 @@ const CourierContainer = ({match}) => {
       />
       <Suspense fallback={FallbackView}>
         <Switch>
-          <Route path={`${match.url}/link`} component={CourierLink} />
-          <Route path={`${match.url}/brand`} component={CourierBrand} />
-          <Redirect to={`${match.url}/link`} />
+          <Route path={`${match.path}/link`}>
+            <CourierLink />
+          </Route>
+          <Route path={`${match.path}/brand`}>
+            <CourierBrand />
+          </Route>
+          <Redirect to={`${match.path}/link`} />
         </Switch>
       </Suspense>
     </Section>
