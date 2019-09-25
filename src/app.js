@@ -1,12 +1,5 @@
 import React, {Fragment, lazy, Suspense} from 'react';
-import {
-  Switch,
-  Route,
-  Redirect,
-  NavLink,
-  useLocation,
-  withRouter,
-} from 'react-router-dom';
+import {Switch, Route, Redirect, NavLink, useLocation} from 'react-router-dom';
 
 import {useDarkMode} from 'service/settings';
 import {SnackbarContainer} from 'service/snackbar';
@@ -137,4 +130,4 @@ const App = () => {
   );
 };
 
-export default withRouter(App);
+export default App;

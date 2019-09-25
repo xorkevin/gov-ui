@@ -1,12 +1,5 @@
 import React, {Fragment, lazy, Suspense} from 'react';
-import {
-  Switch,
-  Route,
-  Redirect,
-  NavLink,
-  Link,
-  withRouter,
-} from 'react-router-dom';
+import {Switch, Route, Redirect, NavLink, Link} from 'react-router-dom';
 
 import {useDarkMode} from 'service/settings';
 import {SnackbarContainer} from 'service/snackbar';
@@ -197,4 +190,4 @@ const Admin = () => {
   );
 };
 
-export default withRouter(Admin);
+export default Admin;
