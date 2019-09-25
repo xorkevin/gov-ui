@@ -145,7 +145,9 @@ const useRelogin = () => {
     if (Date.now() / 1000 > timeRefresh) {
       const [data, status, err] = await execRe();
       if (err) {
-        execLogout();
+        if (status !== -1) {
+          execLogout();
+        }
         return [data, status, err];
       }
       dispatch(Refresh());
@@ -155,7 +157,9 @@ const useRelogin = () => {
     }
     const [data, status, err] = await execEx();
     if (err) {
-      execLogout();
+      if (status !== -1) {
+        execLogout();
+      }
       return [data, status, err];
     }
     const {userid, authTags, time} = data;
