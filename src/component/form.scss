@@ -244,7 +244,7 @@ textarea {
     flex-direction: column;
     z-index: 1;
     border-radius: 4px;
-    font-size: 0.75rem;
+    font-size: 0.85rem;
     background-color: $white;
     box-shadow: $shadow-box-dark;
 
@@ -368,6 +368,21 @@ body.dark {
 
         &:after {
           background-color: $color-valid-light;
+        }
+      }
+    }
+  }
+
+  .fuzzyoptions {
+    & > .options-container {
+      background-color: lighten($color-primary-dark, 6.25%);
+
+      & > * {
+        color: $color-text-light-1-5;
+
+        &:hover {
+          color: $color-accent;
+          background-color: lighten($color-primary-dark, 3.125%);
         }
       }
     }
