@@ -226,7 +226,7 @@ textarea {
   }
 }
 
-.options {
+.input-options {
   position: absolute;
   width: 0;
   height: 0;
@@ -377,7 +377,7 @@ body.dark {
     }
   }
 
-  .options {
+  .input-options {
     & > .options-container {
       background-color: lighten($color-primary-dark, 6.25%);
 

@@ -67,7 +67,7 @@ const OptionsContainer = ({align, position, fixed, reference, children}) => {
     };
   }, [reference, setBounds, setScrollY]);
 
-  const k = ['options'];
+  const k = ['input-options'];
   const s = {};
 
   if (align === 'right') {
