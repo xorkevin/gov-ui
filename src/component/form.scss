@@ -257,6 +257,10 @@ textarea {
 
       &:hover {
         cursor: pointer;
+      }
+
+      &.selected,
+      &:hover {
         color: $color-primary-light;
         background-color: $color-text-dark-4;
       }
@@ -380,6 +384,7 @@ body.dark {
       & > * {
         color: $color-text-light-1-5;
 
+        &.selected,
         &:hover {
           color: $color-accent;
           background-color: lighten($color-primary-dark, 3.125%);

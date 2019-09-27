@@ -107,7 +107,15 @@ const preventDefault = (e) => {
   e.preventDefault();
 };
 
-const Option = ({close, reference, updateForm, name, value, children}) => {
+const Option = ({
+  close,
+  reference,
+  updateForm,
+  name,
+  value,
+  selected,
+  children,
+}) => {
   const handler = useCallback(() => {
     if (updateForm) {
       updateForm(name, value);
@@ -115,12 +123,21 @@ const Option = ({close, reference, updateForm, name, value, children}) => {
     close();
     reference.current.blur();
   }, [close, reference, updateForm, name, value]);
+
+  const k = [];
+  if (selected) {
+    k.push('selected');
+  }
+
   return (
-    <div onMouseDown={preventDefault} onClick={handler}>
+    <div className={k.join(' ')} onMouseDown={preventDefault} onClick={handler}>
       {children}
     </div>
   );
 };
+
+const max = (a, b) => (a > b ? a : b);
+const min = (a, b) => (a < b ? a : b);
 
 const Select = ({
   id,
@@ -128,7 +145,6 @@ const Select = ({
   name,
   value,
   onChange,
-  onKeyPress,
   align,
   position,
   fixed,
@@ -136,15 +152,36 @@ const Select = ({
   updateForm,
 }) => {
   const [hidden, setHidden] = useState(true);
+  const [index, setIndex] = useState(0);
   const optelem = useRef(null);
 
   const setHiddenHandler = useCallback(() => {
     setHidden(true);
-  }, [setHidden]);
+    setIndex(0);
+  }, [setHidden, setIndex]);
 
   const setVisibleHandler = useCallback(() => {
     setHidden(false);
-  }, [setHidden]);
+    setIndex(0);
+  }, [setHidden, setIndex]);
+
+  const handleKeyDown = useCallback(
+    (e) => {
+      if (e.key === 'ArrowDown') {
+        setIndex((i) => min(i + 1, dropdowninput.length - 1));
+      } else if (e.key === 'ArrowUp') {
+        setIndex((i) => max(i - 1, 0));
+      } else if (e.key === 'Enter') {
+        if (dropdowninput.length > 0) {
+          updateForm(
+            name,
+            dropdowninput[min(max(index, 0), dropdowninput.length - 1)].value,
+          );
+        }
+      }
+    },
+    [setIndex, updateForm, name, dropdowninput, index],
+  );
 
   return (
     <Fragment>
@@ -157,19 +194,19 @@ const Select = ({
             fixed={fixed}
             reference={optelem}
           >
-            {Array.isArray(dropdowninput) &&
-              dropdowninput.map((i) => (
-                <Option
-                  key={i.value}
-                  close={setHiddenHandler}
-                  reference={optelem}
-                  updateForm={updateForm}
-                  name={name}
-                  value={i.value}
-                >
-                  {i.value}
-                </Option>
-              ))}
+            {dropdowninput.map((i, idx) => (
+              <Option
+                key={i.value}
+                close={setHiddenHandler}
+                reference={optelem}
+                updateForm={updateForm}
+                name={name}
+                value={i.value}
+                selected={index === idx}
+              >
+                {i.value}
+              </Option>
+            ))}
           </OptionsContainer>,
           document.body,
         )}
@@ -180,10 +217,10 @@ const Select = ({
         name={name}
         value={value}
         onChange={onChange}
-        onKeyPress={onKeyPress}
         placeholder=" "
         onFocus={setVisibleHandler}
         onBlur={setHiddenHandler}
+        onKeyDown={handleKeyDown}
       />
     </Fragment>
   );
@@ -260,8 +297,8 @@ const Input = ({
     if (!onEnter) {
       return () => {};
     }
-    return (target) => {
-      if (target.key === 'Enter') {
+    return (e) => {
+      if (e.key === 'Enter') {
         onEnter();
       }
     };
@@ -292,7 +329,7 @@ const Input = ({
   }
 
   let inp = null;
-  if (dropdowninput) {
+  if (dropdowninput && Array.isArray(dropdowninput)) {
     inp = (
       <Select
         id={id}
@@ -300,26 +337,24 @@ const Input = ({
         name={name}
         value={value}
         onChange={handleChange}
-        onKeyPress={handleEnter}
         dropdowninput={dropdowninput}
         updateForm={onChange}
       />
     );
-  } else if (dropdown) {
+  } else if (dropdown && Array.isArray(dropdown)) {
     inp = (
       <select
         id={id}
         value={value}
         multiple={multiple}
         onChange={handleChange}
-        onKeyPress={handleEnter}
+        onKeyDown={handleEnter}
       >
-        {Array.isArray(dropdown) &&
-          dropdown.map((i) => (
-            <option key={i.value} value={i.value}>
-              {i.text}
-            </option>
-          ))}
+        {dropdown.map((i) => (
+          <option key={i.value} value={i.value}>
+            {i.text}
+          </option>
+        ))}
       </select>
     );
   } else if (textarea) {
@@ -329,7 +364,7 @@ const Input = ({
         name={name}
         value={value}
         onChange={handleChange}
-        onKeyPress={handleEnter}
+        onKeyDown={handleEnter}
         placeholder=" "
       />
     );
@@ -342,7 +377,7 @@ const Input = ({
             type={type}
             name={name}
             onChange={handleChange}
-            onKeyPress={handleEnter}
+            onKeyDown={handleEnter}
             accept={accept}
             capture={capture}
             placeholder=" "
@@ -358,7 +393,7 @@ const Input = ({
             value={value}
             checked={checked === value}
             onChange={handleChange}
-            onKeyPress={handleEnter}
+            onKeyDown={handleEnter}
             placeholder=" "
           />
         );
@@ -372,7 +407,7 @@ const Input = ({
             value={value}
             checked={checked}
             onChange={handleChange}
-            onKeyPress={handleEnter}
+            onKeyDown={handleEnter}
             placeholder=" "
           />
         );
@@ -385,7 +420,7 @@ const Input = ({
             name={name}
             value={value}
             onChange={handleChange}
-            onKeyPress={handleEnter}
+            onKeyDown={handleEnter}
             placeholder=" "
           />
         );
