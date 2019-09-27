@@ -285,20 +285,20 @@ const FormContainer = () => {
         <Input
           label="Editor"
           info="Your favorite text editor"
-          fuzzyselect={[{value: 'Ed'}, {value: 'Vim'}, {value: 'Emacs'}]}
+          dropdowninput={[{value: 'Ed'}, {value: 'Vim'}, {value: 'Emacs'}]}
           name="editor"
         />
         <Input
           label="Editor"
           info="Your favorite text editor"
-          fuzzyselect={[{value: 'Ed'}, {value: 'Vim'}, {value: 'Emacs'}]}
+          dropdowninput={[{value: 'Ed'}, {value: 'Vim'}, {value: 'Emacs'}]}
           name="editor"
           error="fuzzy error"
         />
         <Input
           label="Editor"
           info="Your favorite text editor"
-          fuzzyselect={[{value: 'Ed'}, {value: 'Vim'}, {value: 'Emacs'}]}
+          dropdowninput={[{value: 'Ed'}, {value: 'Vim'}, {value: 'Emacs'}]}
           name="editor"
           valid
         />

@@ -67,7 +67,7 @@ const OptionsContainer = ({align, position, fixed, reference, children}) => {
     };
   }, [reference, setBounds, setScrollY]);
 
-  const k = ['fuzzyoptions'];
+  const k = ['options'];
   const s = {};
 
   if (align === 'right') {
@@ -103,7 +103,26 @@ const OptionsContainer = ({align, position, fixed, reference, children}) => {
   );
 };
 
-const FuzzySelect = ({
+const preventDefault = (e) => {
+  e.preventDefault();
+};
+
+const Option = ({close, reference, updateForm, name, value, children}) => {
+  const handler = useCallback(() => {
+    if (updateForm) {
+      updateForm(name, value);
+    }
+    close();
+    reference.current.blur();
+  }, [close, reference, updateForm, name, value]);
+  return (
+    <div onMouseDown={preventDefault} onClick={handler}>
+      {children}
+    </div>
+  );
+};
+
+const Select = ({
   id,
   type,
   name,
@@ -113,7 +132,8 @@ const FuzzySelect = ({
   align,
   position,
   fixed,
-  children,
+  dropdowninput,
+  updateForm,
 }) => {
   const [hidden, setHidden] = useState(true);
   const optelem = useRef(null);
@@ -137,7 +157,19 @@ const FuzzySelect = ({
             fixed={fixed}
             reference={optelem}
           >
-            {children}
+            {Array.isArray(dropdowninput) &&
+              dropdowninput.map((i) => (
+                <Option
+                  key={i.value}
+                  close={setHiddenHandler}
+                  reference={optelem}
+                  updateForm={updateForm}
+                  name={name}
+                  value={i.value}
+                >
+                  {i.value}
+                </Option>
+              ))}
           </OptionsContainer>,
           document.body,
         )}
@@ -157,16 +189,6 @@ const FuzzySelect = ({
   );
 };
 
-const FuzzyOption = ({onChange, name, value, children}) => {
-  const setVal = useCallback(() => {
-    if (onChange) {
-      onChange(name, value);
-    }
-  }, [onChange, name, value]);
-  // onMouseDown required to occur before onBlur
-  return <div onMouseDown={setVal}>{children}</div>;
-};
-
 const Input = ({
   type,
   name,
@@ -179,7 +201,7 @@ const Input = ({
   valid,
   dropdown,
   multiple,
-  fuzzyselect,
+  dropdowninput,
   textarea,
   accept,
   capture,
@@ -199,7 +221,7 @@ const Input = ({
       }
     }
     onChange = onChange || context.onChange;
-    if (!textarea && !fuzzyselect) {
+    if (!textarea && !dropdowninput) {
       onEnter = onEnter || context.onEnter;
     }
     if (context.error) {
@@ -270,28 +292,18 @@ const Input = ({
   }
 
   let inp = null;
-  if (fuzzyselect) {
+  if (dropdowninput) {
     inp = (
-      <FuzzySelect
+      <Select
         id={id}
         type={type}
         name={name}
         value={value}
         onChange={handleChange}
         onKeyPress={handleEnter}
-      >
-        {Array.isArray(fuzzyselect) &&
-          fuzzyselect.map((i) => (
-            <FuzzyOption
-              key={i.value}
-              onChange={onChange}
-              name={name}
-              value={i.value}
-            >
-              {i.value}
-            </FuzzyOption>
-          ))}
-      </FuzzySelect>
+        dropdowninput={dropdowninput}
+        updateForm={onChange}
+      />
     );
   } else if (dropdown) {
     inp = (
