@@ -160,6 +160,7 @@ const FormContainer = () => {
     radioval: false,
     fileval: undefined,
     lang: '200',
+    editor: 'Vim',
   });
 
   const logFormState = useCallback(() => {
@@ -279,6 +280,26 @@ const FormContainer = () => {
             {text: 'Prolog', value: '500'},
           ]}
           name="lang"
+          valid
+        />
+        <Input
+          label="Editor"
+          info="Your favorite text editor"
+          fuzzyselect={[{value: 'Ed'}, {value: 'Vim'}, {value: 'Emacs'}]}
+          name="editor"
+        />
+        <Input
+          label="Editor"
+          info="Your favorite text editor"
+          fuzzyselect={[{value: 'Ed'}, {value: 'Vim'}, {value: 'Emacs'}]}
+          name="editor"
+          error="fuzzy error"
+        />
+        <Input
+          label="Editor"
+          info="Your favorite text editor"
+          fuzzyselect={[{value: 'Ed'}, {value: 'Vim'}, {value: 'Emacs'}]}
+          name="editor"
           valid
         />
       </Form>

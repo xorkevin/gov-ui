@@ -226,6 +226,68 @@ textarea {
   }
 }
 
+.fuzzyoptions {
+  position: absolute;
+  width: 0;
+  height: 0;
+  z-index: 129;
+
+  &.fixed {
+    position: fixed;
+  }
+
+  & > .options-container {
+    position: absolute;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+    z-index: 1;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    background-color: $white;
+    box-shadow: $shadow-box-dark;
+
+    & > * {
+      display: block;
+      width: 100%;
+      padding: 8px 16px;
+      transition: $transition-normal;
+      color: $color-text-dark-1;
+
+      &:hover {
+        cursor: pointer;
+        color: $color-primary-light;
+        background-color: $color-text-dark-4;
+      }
+    }
+  }
+
+  &.left {
+    & > .options-container {
+      left: 0;
+    }
+  }
+
+  &.right {
+    & > .options-container {
+      right: 0;
+    }
+  }
+
+  &.top {
+    & > .options-container {
+      bottom: 2px;
+    }
+  }
+
+  &.bottom {
+    & > .options-container {
+      top: 2px;
+    }
+  }
+}
+
 body.dark {
   .input {
     &.normal > input,
