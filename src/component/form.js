@@ -240,6 +240,7 @@ const Input = ({
   multiple,
   dropdowninput,
   textarea,
+  toggle,
   accept,
   capture,
   checked,
@@ -320,6 +321,10 @@ const Input = ({
       break;
     default:
       k.push('normal');
+  }
+
+  if (toggle) {
+    k.push('toggle');
   }
 
   if (wide) {

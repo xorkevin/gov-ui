@@ -140,6 +140,7 @@ textarea {
   & > select {
     -moz-appearance: none;
     -webkit-appearance: none;
+    appearance: none;
     background: none;
 
     & ~ .dropdown-arrow {
@@ -160,6 +161,7 @@ textarea {
     & > option {
       -moz-appearance: none;
       -webkit-appearance: none;
+      appearance: none;
       background: none;
     }
   }
@@ -176,6 +178,45 @@ textarea {
 
       & + label {
         vertical-align: middle;
+      }
+    }
+  }
+
+  /* toggle switch */
+  &.toggle {
+    & > input {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      outline: none;
+      display: inline-block;
+      width: 3em;
+      height: 1.5em;
+      border-radius: 1.5em;
+      padding: 2px;
+      position: relative;
+      background-color: $color-text-dark-4;
+      transition: $transition-normal;
+
+      &:after {
+        content: '';
+        display: block;
+        width: 50%;
+        height: 100%;
+        border-radius: 50%;
+        position: relative;
+        top: 0;
+        left: 0;
+        background-color: $white;
+        transition: $transition-normal;
+      }
+
+      &:checked {
+        background-color: $color-valid-light;
+
+        &:after {
+          left: 50%;
+        }
       }
     }
   }
@@ -339,6 +380,20 @@ body.dark {
 
       & > option {
         color: $color-text-dark-1;
+      }
+    }
+
+    &.toggle {
+      & > input {
+        background-color: $color-text-light-4;
+
+        &:after {
+          background-color: $white;
+        }
+
+        &:checked {
+          background-color: $color-valid-light;
+        }
       }
     }
   }

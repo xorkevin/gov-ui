@@ -201,6 +201,7 @@ const FormContainer = () => {
     confirm_password: '',
     checkbox: false,
     checkbox2: false,
+    toggle: false,
     radioval: false,
     fileval: undefined,
     lang: '200',
@@ -264,6 +265,13 @@ const FormContainer = () => {
           info="This is a checkbox"
           type="checkbox"
           name="checkbox2"
+        />
+        <Input
+          label="Toggle me"
+          info="This is a toggle"
+          type="checkbox"
+          toggle
+          name="toggle"
         />
         <Input
           label="Radio one"
