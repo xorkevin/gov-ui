@@ -10,7 +10,8 @@
     "build-admin": "webpack --mode production --env.production --progress --color --config webpack.admin.config.js",
     "build-dev": "webpack-dev-server --mode development --env.development -w --hot --progress --color",
     "build-admin-dev": "webpack-dev-server --mode development --env.development -w --hot --progress --color --config webpack.admin.config.js",
-    "serve": "node hyperserver.js"
+    "serve": "node hyperserver.js",
+    "storybook": "start-storybook -p 3002"
   },
   "repository": {
     "type": "git",
@@ -27,6 +28,8 @@
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/preset-env": "^7.6.2",
     "@babel/preset-react": "^7.0.0",
+    "@storybook/addon-actions": "^5.2.1",
+    "@storybook/react": "^5.2.1",
     "babel-eslint": "^10.0.3",
     "babel-loader": "^8.0.6",
     "copy-webpack-plugin": "^5.0.3",

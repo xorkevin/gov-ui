@@ -30,6 +30,9 @@ dev:
 dev-admin:
 	npm run build-admin-dev
 
+dev-story:
+	npm run storybook
+
 build: clean-bin
 	npm run build
 
