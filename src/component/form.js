@@ -458,4 +458,30 @@ const useForm = (initState = {}) => {
   return [formState, updateForm];
 };
 
-export {Input, useForm, Form, Input as default};
+const matchChars = (from, to) => {
+  let j = 0;
+  for (let i = 0; i < from.length; i++) {
+    while (j < to.length && to[j] !== from[i]) {
+      j++;
+    }
+    if (j >= to.length) {
+      return false;
+    }
+    j++;
+  }
+  return true;
+};
+
+const fuzzyFilter = (count, options, map, search) => {
+  const s = search.toLowerCase();
+  const matches = [];
+  for (let i = 0; i < options.length && matches.length < count; i++) {
+    const k = options[i];
+    if (matchChars(s, map(k).toLowerCase())) {
+      matches.push(k);
+    }
+  }
+  return matches;
+};
+
+export {Input, useForm, fuzzyFilter, Form, Input as default};

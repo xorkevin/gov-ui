@@ -1,8 +1,8 @@
-import React, {Fragment, useCallback} from 'react';
+import React, {Fragment, useCallback, useMemo} from 'react';
 import {emailRegex} from 'utility';
 import {useSnackbarView} from 'service/snackbar';
 import Section from 'component/section';
-import {Form, Input, useForm} from 'component/form';
+import {Form, Input, useForm, fuzzyFilter} from 'component/form';
 import Card from 'component/card';
 import Button from 'component/button';
 import Table from 'component/table';
@@ -68,6 +68,48 @@ const TableData = [
     name: 'Galdor of the Havens',
     description: 'messenger from Círdan of the Grey Havens.',
   },
+];
+
+const Tools = [
+  {value: 'man'},
+  {value: 'ls'},
+  {value: 'pwd'},
+  {value: 'cd'},
+  {value: 'cat'},
+  {value: 'echo'},
+  {value: 'tee'},
+  {value: 'head'},
+  {value: 'tail'},
+  {value: 'less'},
+  {value: 'more'},
+  {value: 'tr'},
+  {value: 'cut'},
+  {value: 'awk'},
+  {value: 'sed'},
+  {value: 'sort'},
+  {value: 'grep'},
+  {value: 'wc'},
+  {value: 'bc'},
+  {value: 'diff'},
+  {value: 'patch'},
+  {value: 'chmod'},
+  {value: 'chown'},
+  {value: 'cp'},
+  {value: 'mv'},
+  {value: 'rm'},
+  {value: 'ln'},
+  {value: 'date'},
+  {value: 'df'},
+  {value: 'du'},
+  {value: 'find'},
+  {value: 'xargs'},
+  {value: 'ed'},
+  {value: 'vi'},
+  {value: 'vim'},
+  {value: 'nvim'},
+  {value: 'emacs'},
+  {value: 'nano'},
+  {value: 'tar'},
 ];
 
 const phoneRegex = /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/;
@@ -147,6 +189,8 @@ const formValidCheck = ({
   return valid;
 };
 
+const getEditorVal = (i) => i.value;
+
 const FormContainer = () => {
   const [formState, updateForm] = useForm({
     name: '',
@@ -160,7 +204,7 @@ const FormContainer = () => {
     radioval: false,
     fileval: undefined,
     lang: '200',
-    editor: 'Vim',
+    tool: '',
   });
 
   const logFormState = useCallback(() => {
@@ -172,6 +216,11 @@ const FormContainer = () => {
       <span>Hello, World</span>
       <Button>Reply</Button>
     </Fragment>,
+  );
+
+  const tools = useMemo(
+    () => fuzzyFilter(16, Tools, getEditorVal, formState.tool),
+    [formState.tool],
   );
 
   return (
@@ -283,23 +332,23 @@ const FormContainer = () => {
           valid
         />
         <Input
-          label="Editor"
-          info="Your favorite text editor"
-          dropdowninput={[{value: 'Ed'}, {value: 'Vim'}, {value: 'Emacs'}]}
-          name="editor"
+          label="Unix tool"
+          info="Your favorite unix tool"
+          dropdowninput={tools}
+          name="tool"
         />
         <Input
-          label="Editor"
-          info="Your favorite text editor"
-          dropdowninput={[{value: 'Ed'}, {value: 'Vim'}, {value: 'Emacs'}]}
-          name="editor"
+          label="Unix tool"
+          info="Your favorite unix tool"
+          dropdowninput={tools}
+          name="tool"
           error="fuzzy error"
         />
         <Input
-          label="Editor"
-          info="Your favorite text editor"
-          dropdowninput={[{value: 'Ed'}, {value: 'Vim'}, {value: 'Emacs'}]}
-          name="editor"
+          label="Unix tool"
+          info="Your favorite text tool"
+          dropdowninput={tools}
+          name="tool"
           valid
         />
       </Form>

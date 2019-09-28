@@ -261,8 +261,8 @@ textarea {
 
       &.selected,
       &:hover {
-        color: $color-primary-light;
-        background-color: $color-text-dark-4;
+        color: $color-primary;
+        background-color: $color-primary-transparent;
       }
     }
   }
