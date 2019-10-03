@@ -136,9 +136,6 @@ const Option = ({
   );
 };
 
-const max = (a, b) => (a > b ? a : b);
-const min = (a, b) => (a < b ? a : b);
-
 const Select = ({
   id,
   type,
@@ -168,19 +165,43 @@ const Select = ({
   const handleKeyDown = useCallback(
     (e) => {
       if (e.key === 'ArrowDown') {
-        setIndex((i) => min(i + 1, dropdowninput.length - 1));
+        setIndex((i) => {
+          if (i + 1 > dropdowninput.length - 1) {
+            return 0;
+          }
+          return i + 1;
+        });
       } else if (e.key === 'ArrowUp') {
-        setIndex((i) => max(i - 1, 0));
+        setIndex((i) => {
+          if (i - 1 < 0) {
+            return dropdowninput.length - 1;
+          }
+          return i - 1;
+        });
       } else if (e.key === 'Enter') {
         if (dropdowninput.length > 0) {
-          updateForm(
-            name,
-            dropdowninput[min(max(index, 0), dropdowninput.length - 1)].value,
-          );
+          if (index < 0 || index > dropdowninput.length - 1) {
+            updateForm(name, dropdowninput[0].value);
+            setIndex(0);
+          } else {
+            updateForm(name, dropdowninput[index].value);
+          }
+          setHidden(true);
         }
       }
     },
-    [setIndex, updateForm, name, dropdowninput, index],
+    [setIndex, setHidden, updateForm, name, dropdowninput, index],
+  );
+
+  const handleChange = useCallback(
+    (e) => {
+      if (index < 0 || index > dropdowninput.length - 1) {
+        setIndex(0);
+      }
+      setHidden(false);
+      onChange(e);
+    },
+    [setIndex, setHidden, onChange, dropdowninput.length, index],
   );
 
   return (
@@ -216,7 +237,7 @@ const Select = ({
         type={type}
         name={name}
         value={value}
-        onChange={onChange}
+        onChange={handleChange}
         placeholder=" "
         onFocus={setVisibleHandler}
         onBlur={setHiddenHandler}
