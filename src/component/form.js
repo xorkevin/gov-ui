@@ -166,27 +166,29 @@ const Select = ({
     (e) => {
       if (e.key === 'ArrowDown') {
         setIndex((i) => {
-          if (i + 1 > dropdowninput.length - 1) {
-            return 0;
+          let k = i + 1;
+          if (k > dropdowninput.length - 1 || k < 0) {
+            k = 0;
           }
-          return i + 1;
+          return k;
         });
       } else if (e.key === 'ArrowUp') {
         setIndex((i) => {
-          if (i - 1 < 0) {
-            return dropdowninput.length - 1;
+          let k = i - 1;
+          if (k < 0 || k > dropdowninput.length - 1) {
+            k = dropdowninput.length - 1;
           }
-          return i - 1;
+          return k;
         });
       } else if (e.key === 'Enter') {
         if (dropdowninput.length > 0) {
-          if (index < 0 || index > dropdowninput.length - 1) {
-            updateForm(name, dropdowninput[0].value);
-            setIndex(0);
-          } else {
-            updateForm(name, dropdowninput[index].value);
+          let k = index;
+          if (k < 0 || k > dropdowninput.length - 1) {
+            k = 0;
           }
+          updateForm(name, dropdowninput[k].value);
           setHidden(true);
+          setIndex(0);
         }
       }
     },
@@ -195,13 +197,12 @@ const Select = ({
 
   const handleChange = useCallback(
     (e) => {
-      if (index < 0 || index > dropdowninput.length - 1) {
-        setIndex(0);
+      if (hidden) {
+        setHidden(false);
       }
-      setHidden(false);
       onChange(e);
     },
-    [setIndex, setHidden, onChange, dropdowninput.length, index],
+    [setHidden, onChange, hidden],
   );
 
   return (

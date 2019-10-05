@@ -220,7 +220,7 @@ const FormContainer = () => {
   );
 
   const tools = useMemo(
-    () => fuzzyFilter(16, Tools, getEditorVal, formState.tool),
+    () => fuzzyFilter(8, Tools, getEditorVal, formState.tool),
     [formState.tool],
   );
 
