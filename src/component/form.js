@@ -110,19 +110,17 @@ const preventDefault = (e) => {
 const Option = ({
   close,
   reference,
-  updateForm,
+  onChange,
   name,
   value,
   selected,
   children,
 }) => {
   const handler = useCallback(() => {
-    if (updateForm) {
-      updateForm(name, value);
-    }
+    onChange(name, value);
     close();
     reference.current.blur();
-  }, [close, reference, updateForm, name, value]);
+  }, [close, reference, onChange, name, value]);
 
   const k = [];
   if (selected) {
@@ -146,7 +144,6 @@ const Select = ({
   position,
   fixed,
   dropdowninput,
-  updateForm,
 }) => {
   const [hidden, setHidden] = useState(true);
   const [index, setIndex] = useState(0);
@@ -186,13 +183,13 @@ const Select = ({
           if (k < 0 || k > dropdowninput.length - 1) {
             k = 0;
           }
-          updateForm(name, dropdowninput[k].value);
+          onChange(name, dropdowninput[k].value);
           setHidden(true);
           setIndex(0);
         }
       }
     },
-    [setIndex, setHidden, updateForm, name, dropdowninput, index],
+    [setIndex, setHidden, onChange, name, dropdowninput, index],
   );
 
   const handleChange = useCallback(
@@ -200,9 +197,9 @@ const Select = ({
       if (hidden) {
         setHidden(false);
       }
-      onChange(e);
+      onChange(name, e.target.value);
     },
-    [setHidden, onChange, hidden],
+    [setHidden, onChange, name, hidden],
   );
 
   return (
@@ -221,7 +218,7 @@ const Select = ({
                 key={i.value}
                 close={setHiddenHandler}
                 reference={optelem}
-                updateForm={updateForm}
+                onChange={onChange}
                 name={name}
                 value={i.value}
                 selected={index === idx}
@@ -292,29 +289,33 @@ const Input = ({
     }
   }
 
-  const handleChange = useMemo(() => {
+  const changeFunc = useMemo(() => {
     if (!onChange) {
       return () => {};
     }
+    return onChange;
+  }, [onChange]);
+
+  const handleChange = useMemo(() => {
     switch (type) {
       case 'file':
         return (event) => {
           if (event.target.files.length < 1) {
-            onChange(name, undefined);
+            changeFunc(name, undefined);
           } else {
-            onChange(name, event.target.files[0]);
+            changeFunc(name, event.target.files[0]);
           }
         };
       case 'checkbox':
         return (event) => {
-          onChange(name, event.target.checked);
+          changeFunc(name, event.target.checked);
         };
       default:
         return (event) => {
-          onChange(name, event.target.value);
+          changeFunc(name, event.target.value);
         };
     }
-  }, [type, name, onChange]);
+  }, [type, name, changeFunc]);
 
   const handleEnter = useMemo(() => {
     if (!onEnter) {
@@ -363,9 +364,8 @@ const Input = ({
         type={type}
         name={name}
         value={value}
-        onChange={handleChange}
+        onChange={changeFunc}
         dropdowninput={dropdowninput}
-        updateForm={onChange}
       />
     );
   } else if (dropdown && Array.isArray(dropdown)) {
