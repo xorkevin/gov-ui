@@ -206,6 +206,7 @@ const FormContainer = () => {
     fileval: undefined,
     lang: '200',
     tool: '',
+    tool2: [],
   });
 
   const logFormState = useCallback(() => {
@@ -222,6 +223,11 @@ const FormContainer = () => {
   const tools = useMemo(
     () => fuzzyFilter(8, Tools, getEditorVal, formState.tool),
     [formState.tool],
+  );
+
+  const tools2 = useMemo(
+    () => fuzzyFilter(8, Tools, getEditorVal, formState._search_tool2),
+    [formState._search_tool2],
   );
 
   return (
@@ -354,10 +360,17 @@ const FormContainer = () => {
         />
         <Input
           label="Unix tool"
-          info="Your favorite text tool"
+          info="Your favorite unix tool"
           dropdowninput={tools}
           name="tool"
           valid
+        />
+        <Input
+          label="Multiple unix tools"
+          info="Your favorite unix tools"
+          multiple
+          dropdowninput={tools2}
+          name="tool2"
         />
       </Form>
       <Button fixedWidth primary onClick={logFormState}>

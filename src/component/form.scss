@@ -73,6 +73,7 @@ textarea {
       text-align: left;
     }
 
+    &.shift,
     &:focus,
     &:not(:placeholder-shown) {
       & + label {

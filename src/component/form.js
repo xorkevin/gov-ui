@@ -107,20 +107,12 @@ const preventDefault = (e) => {
   e.preventDefault();
 };
 
-const Option = ({
-  close,
-  reference,
-  onChange,
-  name,
-  value,
-  selected,
-  children,
-}) => {
+const Option = ({close, reference, setValue, value, selected, children}) => {
   const handler = useCallback(() => {
-    onChange(name, value);
+    setValue(value);
     close();
     reference.current.blur();
-  }, [close, reference, onChange, name, value]);
+  }, [close, reference, setValue, value]);
 
   const k = [];
   if (selected) {
@@ -139,12 +131,14 @@ const Select = ({
   type,
   name,
   value,
+  multiple,
   onChange,
   align,
   position,
   fixed,
   dropdowninput,
 }) => {
+  const [searchVal, setSearchVal] = useState('');
   const [hidden, setHidden] = useState(true);
   const [index, setIndex] = useState(0);
   const optelem = useRef(null);
@@ -158,6 +152,23 @@ const Select = ({
     setHidden(false);
     setIndex(0);
   }, [setHidden, setIndex]);
+
+  const setValueMultiple = useCallback(
+    (v) => {
+      onChange(name, Array.from(new Set(value).add(v)).sort());
+      setSearchVal('');
+    },
+    [setSearchVal, onChange, name, value],
+  );
+
+  const setValueSingle = useCallback(
+    (v) => {
+      onChange(name, v);
+    },
+    [onChange, name],
+  );
+
+  const setValue = multiple ? setValueMultiple : setValueSingle;
 
   const handleKeyDown = useCallback(
     (e) => {
@@ -183,13 +194,13 @@ const Select = ({
           if (k < 0 || k > dropdowninput.length - 1) {
             k = 0;
           }
-          onChange(name, dropdowninput[k].value);
+          setValue(dropdowninput[k].value);
           setHidden(true);
           setIndex(0);
         }
       }
     },
-    [setIndex, setHidden, onChange, name, dropdowninput, index],
+    [setIndex, setHidden, setValue, dropdowninput, index],
   );
 
   const handleChange = useCallback(
@@ -197,10 +208,20 @@ const Select = ({
       if (hidden) {
         setHidden(false);
       }
-      onChange(name, e.target.value);
+      if (multiple) {
+        setSearchVal(e.target.value);
+        onChange('_search_' + name, e.target.value);
+      } else {
+        onChange(name, e.target.value);
+      }
     },
-    [setHidden, onChange, name, hidden],
+    [setHidden, setSearchVal, onChange, name, multiple, hidden],
   );
+
+  const k = [];
+  if (multiple && Array.isArray(value) && value.length > 0) {
+    k.push('shift');
+  }
 
   return (
     <Fragment>
@@ -218,8 +239,7 @@ const Select = ({
                 key={i.value}
                 close={setHiddenHandler}
                 reference={optelem}
-                onChange={onChange}
-                name={name}
+                setValue={setValue}
                 value={i.value}
                 selected={index === idx}
               >
@@ -229,12 +249,14 @@ const Select = ({
           </OptionsContainer>,
           document.body,
         )}
+      {multiple && <span>{value}</span>}
       <input
         ref={optelem}
         id={id}
+        className={k.join(' ')}
         type={type}
         name={name}
-        value={value}
+        value={multiple ? searchVal : value}
         onChange={handleChange}
         placeholder=" "
         onFocus={setVisibleHandler}
@@ -299,20 +321,20 @@ const Input = ({
   const handleChange = useMemo(() => {
     switch (type) {
       case 'file':
-        return (event) => {
-          if (event.target.files.length < 1) {
+        return (e) => {
+          if (e.target.files.length < 1) {
             changeFunc(name, undefined);
           } else {
-            changeFunc(name, event.target.files[0]);
+            changeFunc(name, e.target.files[0]);
           }
         };
       case 'checkbox':
-        return (event) => {
-          changeFunc(name, event.target.checked);
+        return (e) => {
+          changeFunc(name, e.target.checked);
         };
       default:
-        return (event) => {
-          changeFunc(name, event.target.value);
+        return (e) => {
+          changeFunc(name, e.target.value);
         };
     }
   }, [type, name, changeFunc]);
@@ -364,6 +386,7 @@ const Input = ({
         type={type}
         name={name}
         value={value}
+        multiple={multiple}
         onChange={changeFunc}
         dropdowninput={dropdowninput}
       />
@@ -499,7 +522,7 @@ const matchChars = (from, to) => {
   return true;
 };
 
-const fuzzyFilter = (count, options, map, search) => {
+const fuzzyFilter = (count, options, map, search = '') => {
   const s = search.toLowerCase();
   const matches = [];
   for (let i = 0; i < options.length && matches.length < count; i++) {
