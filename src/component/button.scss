@@ -105,10 +105,10 @@ body.dark {
       }
 
       &.raised {
-        border: 1px solid $color-text-light-2;
+        background-color: $color-text-light-4;
 
         &:hover {
-          border-color: $color-text-light-1-5;
+          color: $color-text-light-1-5;
         }
       }
     }
