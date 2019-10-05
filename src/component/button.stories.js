@@ -1,11 +1,10 @@
 import React from 'react';
-import {action} from '@storybook/addon-actions';
 
 import Button from 'component/button';
 
 export default {title: 'Button'};
 
-export const plain = () => <Button onClick={action('clicked')}>Button</Button>;
+export const plain = () => <Button>Button</Button>;
 
 export const fixedWidth = () => <Button fixedWidth>Fixed Width</Button>;
 
