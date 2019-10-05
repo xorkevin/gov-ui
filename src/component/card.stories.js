@@ -3,7 +3,7 @@ import Card from 'component/card';
 import Button from 'component/button';
 import FaIcon from 'component/faicon';
 import ListItem from 'component/list';
-import {mountainPreview, thamesPreview} from 'config';
+import {mountainPreview} from 'config';
 
 export default {title: 'Card'};
 

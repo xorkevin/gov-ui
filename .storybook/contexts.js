@@ -10,7 +10,6 @@ import {useDarkMode} from 'service/settings';
 import MainContent from 'component/maincontent';
 import Section from 'component/section';
 import {Navbar, Navitem} from 'component/navbar';
-import Menu from 'component/menu';
 import FaIcon from 'component/faicon';
 import Anchor from 'component/anchor';
 
@@ -30,24 +29,12 @@ const App = ({children}) => {
         right={
           <Fragment>
             <Navitem>
-              <Menu
-                icon={
-                  <Fragment>
-                    <FaIcon icon="cog" /> Settings
-                  </Fragment>
-                }
-                size="md"
-                fixed
-                align="right"
-                position="bottom"
-              >
-                <span onClick={toggleDark}>
-                  <FaIcon icon="bolt" /> {dark ? 'Light' : 'Dark'} Mode
-                </span>
-                <Anchor ext href="https://github.com/xorkevin">
-                  <FaIcon icon="github" /> xorkevin
-                </Anchor>
-              </Menu>
+              <span onClick={toggleDark}>{dark ? 'Dark' : 'Light'} Mode</span>
+            </Navitem>
+            <Navitem>
+              <Anchor ext href="https://github.com/xorkevin">
+                <FaIcon icon="github" /> xorkevin
+              </Anchor>
             </Navitem>
           </Fragment>
         }
