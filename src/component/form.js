@@ -9,6 +9,8 @@ import React, {
 } from 'react';
 import ReactDOM from 'react-dom';
 import {randomID} from 'utility';
+import Chip from 'component/chip';
+import FaIcon from 'component/faicon';
 
 const FormContext = React.createContext();
 
@@ -126,6 +128,20 @@ const Option = ({close, reference, setValue, value, selected, children}) => {
   );
 };
 
+const SelectValue = ({rmValue, value}) => {
+  const handler = useCallback(() => {
+    rmValue(value);
+  }, [rmValue, value]);
+
+  return (
+    <span className="select-value" onClick={handler}>
+      <Chip>
+        {value} <FaIcon icon="times" />
+      </Chip>
+    </span>
+  );
+};
+
 const Select = ({
   id,
   type,
@@ -153,10 +169,22 @@ const Select = ({
     setIndex(0);
   }, [setHidden, setIndex]);
 
+  const rmValue = useCallback(
+    (v) => {
+      const k = new Set(value);
+      k.delete(v);
+      onChange(name, Array.from(k).sort());
+    },
+    [onChange, name, value],
+  );
+
   const setValueMultiple = useCallback(
     (v) => {
-      onChange(name, Array.from(new Set(value).add(v)).sort());
+      const k = new Set(value);
+      k.add(v);
+      onChange(name, Array.from(k).sort());
       setSearchVal('');
+      onChange('_search_' + name, '');
     },
     [setSearchVal, onChange, name, value],
   );
@@ -189,7 +217,7 @@ const Select = ({
           return k;
         });
       } else if (e.key === 'Enter') {
-        if (dropdowninput.length > 0) {
+        if (dropdowninput.length > 0 && !hidden) {
           let k = index;
           if (k < 0 || k > dropdowninput.length - 1) {
             k = 0;
@@ -200,7 +228,7 @@ const Select = ({
         }
       }
     },
-    [setIndex, setHidden, setValue, dropdowninput, index],
+    [setIndex, setHidden, setValue, dropdowninput, index, hidden],
   );
 
   const handleChange = useCallback(
@@ -249,7 +277,14 @@ const Select = ({
           </OptionsContainer>,
           document.body,
         )}
-      {multiple && <span>{value}</span>}
+      {multiple && (
+        <span>
+          {Array.isArray(value) &&
+            value.map((i) => (
+              <SelectValue key={i} rmValue={rmValue} value={i} />
+            ))}
+        </span>
+      )}
       <input
         ref={optelem}
         id={id}

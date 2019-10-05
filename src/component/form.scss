@@ -221,6 +221,12 @@ textarea {
       }
     }
   }
+
+  .select-value {
+    &:hover {
+      cursor: pointer;
+    }
+  }
 }
 
 .input.invalid {
