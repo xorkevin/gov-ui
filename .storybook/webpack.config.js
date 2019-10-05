@@ -10,6 +10,8 @@ const createConfig = ({config}) => {
       'node_modules',
     ]);
 
+  config.module.rules = config.module.rules.filter((i) => !i.test.test('.css'));
+
   config.module.rules.push({
     test: /\.s?css$/,
     use: [

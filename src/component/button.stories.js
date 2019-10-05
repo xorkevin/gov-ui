@@ -1,9 +1,6 @@
 import React from 'react';
 import {action} from '@storybook/addon-actions';
 
-import 'main.scss';
-import 'style/storybook.scss';
-
 import Button from 'component/button';
 
 export default {title: 'Button'};
