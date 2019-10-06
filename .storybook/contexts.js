@@ -40,7 +40,7 @@ const App = ({children}) => {
         }
       />
       <MainContent>
-        <Section container padded narrow>
+        <Section container padded>
           {children}
         </Section>
       </MainContent>
