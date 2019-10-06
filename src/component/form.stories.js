@@ -6,8 +6,16 @@ export default {title: 'Form'};
 
 export const plain = () => <Input label="Name" name="name" />;
 
+export const wide = () => <Input wide label="Name" name="name" />;
+
+export const fullWidth = () => <Input fullWidth label="Name" name="name" />;
+
 export const info = () => (
   <Input label="Tagline" name="tagline" info="What describes you?" />
+);
+
+export const textarea = () => (
+  <Input textarea label="Bio" name="bio" info="Tell us about yourself" />
 );
 
 const phoneRegex = /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/;
