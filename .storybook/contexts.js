@@ -9,7 +9,7 @@ import store from 'store';
 import {useDarkMode} from 'service/settings';
 import MainContent from 'component/maincontent';
 import Section from 'component/section';
-import {Navbar, Navitem} from 'component/navbar';
+import Button from 'component/button';
 import FaIcon from 'component/faicon';
 import Anchor from 'component/anchor';
 
@@ -25,25 +25,15 @@ const App = ({children}) => {
   const [dark, toggleDark] = useDarkMode();
   return (
     <div>
-      <Navbar
-        right={
-          <Fragment>
-            <Navitem>
-              <span onClick={toggleDark}>{dark ? 'Dark' : 'Light'} Mode</span>
-            </Navitem>
-            <Navitem>
-              <Anchor ext href="https://github.com/xorkevin">
-                <FaIcon icon="github" /> xorkevin
-              </Anchor>
-            </Navitem>
-          </Fragment>
-        }
-      />
       <MainContent>
         <Section container padded>
           {children}
         </Section>
       </MainContent>
+      <Button onClick={toggleDark}>{dark ? 'Dark' : 'Light'} Mode</Button>
+      <Anchor ext href="https://github.com/xorkevin">
+        <FaIcon icon="github" /> xorkevin
+      </Anchor>
     </div>
   );
 };
