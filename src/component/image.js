@@ -7,7 +7,6 @@ const useViewIntersectOnce = (refelem, callback) => {
       return;
     }
 
-    let cancelRef = {current: false};
     let running = null;
     const handler = () => {
       if (!running) {
@@ -31,7 +30,7 @@ const useViewIntersectOnce = (refelem, callback) => {
             (elemBottom < bottomBound && elemBottom > topBound)
           ) {
             setIntersect(true);
-            callback(cancelRef);
+            callback();
           }
           running = null;
         });
@@ -41,7 +40,6 @@ const useViewIntersectOnce = (refelem, callback) => {
     window.addEventListener('resize', handler);
     handler();
     return () => {
-      cancelRef.current = true;
       window.removeEventListener('scroll', handler);
       window.removeEventListener('resize', handler);
       if (running) {
@@ -86,23 +84,17 @@ const Img = ({
     setImgloaded(true);
   }, [setImgloaded]);
 
-  const imgCallback = useCallback(
-    async (cancelRef) => {
-      if (fixed) {
-        try {
-          await deferLoadImage(src);
-          if (cancelRef && cancelRef.current) {
-            return;
-          }
-          setImgsrc(src);
-          setImgloaded(true);
-        } catch (_e) {}
-      } else {
-        setImgsrc(src);
-      }
-    },
-    [src, setImgsrc, setImgloaded, fixed],
-  );
+  const imgCallback = useCallback(async () => {
+    if (fixed) {
+      try {
+        await deferLoadImage(src);
+      } catch (_e) {}
+      setImgsrc(src);
+      setImgloaded(true);
+    } else {
+      setImgsrc(src);
+    }
+  }, [src, setImgsrc, setImgloaded, fixed]);
   useViewIntersectOnce(imgelem, imgCallback);
 
   const k = ['img'];
