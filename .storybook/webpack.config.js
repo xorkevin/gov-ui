@@ -10,7 +10,9 @@ const createConfig = ({config}) => {
       'node_modules',
     ]);
 
-  config.module.rules = config.module.rules.filter((i) => !i.test.test('.css'));
+  config.module.rules = config.module.rules.filter(
+    (i) => !i.test.test('.css') && !i.test.test('.ttf'),
+  );
 
   config.module.rules.push({
     test: /\.s?css$/,
@@ -19,6 +21,18 @@ const createConfig = ({config}) => {
       {loader: 'css-loader'},
       {loader: 'sass-loader'},
     ],
+  });
+  config.module.rules.push({
+    test: /\.(eot|svg|ttf|woff(2)?)(\?v=\d+\.\d+\.\d+)?/,
+    use: {
+      loader: 'file-loader',
+      options: {
+        name: '[name].[hash].[ext]',
+        outputPath: 'static/fonts/',
+        // required because otherwise path becomes static/static/fonts
+        publicPath: 'fonts/',
+      },
+    },
   });
 
   config.plugins.push(

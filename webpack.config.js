@@ -37,8 +37,8 @@ const createConfig = (env, argv) => {
           use: {
             loader: 'file-loader',
             options: {
-              name: '/[name].[hash].[ext]',
-              outputPath: 'static/fonts',
+              name: '[name].[hash].[ext]',
+              outputPath: 'static/fonts/',
             },
           },
         },
