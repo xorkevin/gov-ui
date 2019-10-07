@@ -3,7 +3,7 @@ import {Link, useRouteMatch} from 'react-router-dom';
 import {useAuthResource} from 'service/auth';
 import Section from 'component/section';
 import Card from 'component/card';
-import ListItem from 'component/list';
+import Description from 'component/description';
 import Chip from 'component/chip';
 import Button from 'component/button';
 import Time from 'component/time';
@@ -53,19 +53,19 @@ const AccountDetails = () => {
       {success && (
         <Card size="lg" restrictWidth center bar={bar}>
           <Section subsection sectionTitle="Account Details">
-            <ListItem label="userid" item={userid} />
-            <ListItem label="username" item={username} />
-            <ListItem label="first name" item={first_name} />
-            <ListItem label="last name" item={last_name} />
-            <ListItem
+            <Description label="userid" item={userid} />
+            <Description label="username" item={username} />
+            <Description label="first name" item={first_name} />
+            <Description label="last name" item={last_name} />
+            <Description
               label="roles"
               item={
                 auth_tags &&
                 auth_tags.split(',').map((tag) => <Chip key={tag}>{tag}</Chip>)
               }
             />
-            <ListItem label="email" item={email} />
-            <ListItem
+            <Description label="email" item={email} />
+            <Description
               label="creation time"
               item={<Time value={creation_time * 1000} />}
             />

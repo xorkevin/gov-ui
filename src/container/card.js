@@ -4,7 +4,7 @@ import Grid from 'component/grid';
 import Card from 'component/card';
 import Button from 'component/button';
 import FaIcon from 'component/faicon';
-import ListItem from 'component/list';
+import Description from 'component/description';
 
 import {mountainPreview, thamesPreview} from 'config';
 
@@ -138,8 +138,8 @@ const CardContainer = () => {
             dictum massa porta at. Mauris augue nisi, scelerisque ac suscipit
             sit amet, egestas ut risus. In hac habitasse platea dictumst.
             Vivamus nibh enim, dignissim quis consequat at, sagittis in magna.
-            <ListItem label="Project" item="Nuke" />
-            <ListItem label="Language" item="Javascript" />
+            <Description label="Project" item="Nuke" />
+            <Description label="Language" item="Javascript" />
           </Card>
           <Card
             size="md"

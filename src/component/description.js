@@ -1,12 +1,12 @@
 import React from 'react';
 
-const ListItem = ({label, item}) => {
+const Description = ({label, item}) => {
   return (
-    <dl className="list-item">
+    <dl className="description-item">
       <dt className="label">{label}</dt>
       <dd className="item">{item}</dd>
     </dl>
   );
 };
 
-export default ListItem;
+export default Description;

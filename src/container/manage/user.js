@@ -4,7 +4,7 @@ import {useResource, selectAPINull} from 'apiclient';
 import {useAuthCall} from 'service/auth';
 import Section from 'component/section';
 import Card from 'component/card';
-import ListItem from 'component/list';
+import Description from 'component/description';
 import Chip from 'component/chip';
 import Time from 'component/time';
 import Button from 'component/button';
@@ -104,9 +104,9 @@ const ManageUser = () => {
     return (
       <Card size="lg" restrictWidth center bar={bar}>
         <Section subsection sectionTitle="Edit Permissions">
-          <ListItem label="userid" item={user.userid} />
-          <ListItem label="username" item={user.username} />
-          <ListItem
+          <Description label="userid" item={user.userid} />
+          <Description label="username" item={user.username} />
+          <Description
             label="current roles"
             item={
               user.auth_tags.length > 0 &&
@@ -115,7 +115,7 @@ const ManageUser = () => {
                 .map((tag) => <Chip key={tag}>{tag}</Chip>)
             }
           />
-          <ListItem
+          <Description
             label="roles to add"
             item={
               formState.add.length > 0 &&
@@ -124,7 +124,7 @@ const ManageUser = () => {
                 .map((tag) => <Chip key={tag.trim()}>{tag.trim()}</Chip>)
             }
           />
-          <ListItem
+          <Description
             label="roles to remove"
             item={
               formState.remove.length > 0 &&
@@ -153,18 +153,18 @@ const ManageUser = () => {
   return (
     <Card size="lg" restrictWidth center bar={bar}>
       <Section subsection sectionTitle="Account Details">
-        <ListItem label="userid" item={user.userid} />
-        <ListItem label="username" item={user.username} />
-        <ListItem label="first name" item={user.first_name} />
-        <ListItem label="last name" item={user.last_name} />
-        <ListItem
+        <Description label="userid" item={user.userid} />
+        <Description label="username" item={user.username} />
+        <Description label="first name" item={user.first_name} />
+        <Description label="last name" item={user.last_name} />
+        <Description
           label="roles"
           item={
             user.auth_tags.length > 0 &&
             user.auth_tags.split(',').map((tag) => <Chip key={tag}>{tag}</Chip>)
           }
         />
-        <ListItem
+        <Description
           label="creation time"
           item={<Time value={user.creation_time * 1000} />}
         />

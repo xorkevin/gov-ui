@@ -4,7 +4,7 @@ import {useURL} from 'apiclient';
 import {useAuthState, useAuthCall, useAuthResource} from 'service/auth';
 import Section from 'component/section';
 import Card from 'component/card';
-import ListItem from 'component/list';
+import Description from 'component/description';
 import Button from 'component/button';
 import Img from 'component/image';
 
@@ -49,9 +49,9 @@ const Profile = () => {
       {success && (
         <Card size="lg" restrictWidth center bar={bar}>
           <Section subsection sectionTitle="Profile">
-            <ListItem label="contact email" item={data.contact_email} />
-            <ListItem label="bio" item={data.bio} />
-            <ListItem
+            <Description label="contact email" item={data.contact_email} />
+            <Description label="bio" item={data.bio} />
+            <Description
               label="profile image"
               item={
                 data.image && (

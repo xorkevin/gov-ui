@@ -1,13 +1,13 @@
 import React, {Fragment} from 'react';
-import ListItem from 'component/list';
+import Description from 'component/description';
 
-export default {title: 'ListItem'};
+export default {title: 'Description'};
 
 export const plain = () => (
   <Fragment>
-    <ListItem label="label" item="value" />
-    <ListItem label="another label" item="some value" />
-    <ListItem label="name" item="Kevin Wang" />
-    <ListItem label="project" item="Nuke" />
+    <Description label="label" item="value" />
+    <Description label="another label" item="some value" />
+    <Description label="name" item="Kevin Wang" />
+    <Description label="project" item="Nuke" />
   </Fragment>
 );
