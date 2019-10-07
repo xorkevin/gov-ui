@@ -1,10 +1,27 @@
 .listgroup {
-  border-radius: 4px;
   border: 1px solid $color-text-dark-4;
+  border-radius: 4px;
 
   & > .item {
     width: 100%;
-    padding: $listgroup-padding $listgroup-padding-h;
+    transition: $transition-normal;
+
+    & + .item {
+      border-top: 1px solid $color-text-dark-4;
+    }
+
+    &:hover {
+      background-color: $color-primary-transparent;
+    }
+
+    & > * {
+      color: unset;
+      text-decoration: unset;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      padding: $listgroup-padding $listgroup-padding-h;
+    }
   }
 
   &.sm {
@@ -23,5 +40,11 @@
 body.dark {
   .listgroup {
     border-color: $color-text-light-4;
+
+    & > .item {
+      &:hover {
+        background-color: $color-text-light-4;
+      }
+    }
   }
 }
