@@ -17,7 +17,13 @@ $card-md-size: $card-sm-size * 1.5 !default;
 $card-lg-size: $card-md-size * 1.5 !default;
 $card-padding: 8px !default;
 $card-padding-h: 20px !default;
-$card-margin: 8px !default;
+
+// ListGroup //
+$listgroup-sm-size: 256px !default;
+$listgroup-md-size: $listgroup-sm-size * 1.5 !default;
+$listgroup-lg-size: $listgroup-md-size * 1.5 !default;
+$listgroup-padding: 8px !default;
+$listgroup-padding-h: 20px !default;
 
 // Table //
 $table-gutter-padding: 8px !default;

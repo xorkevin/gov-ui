@@ -6,8 +6,14 @@ const ListItem = ({children}) => {
   return <div className={k.join(' ')}>{children}</div>;
 };
 
-const ListGroup = ({children}) => {
+const ListGroup = ({size, children}) => {
   const k = ['listgroup'];
+  switch (size) {
+    case 'sm':
+    case 'md':
+    case 'lg':
+      k.push(size);
+  }
 
   return <div className={k.join(' ')}>{children}</div>;
 };

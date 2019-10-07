@@ -1,0 +1,27 @@
+.listgroup {
+  border-radius: 4px;
+  border: 1px solid $color-text-dark-4;
+
+  & > .item {
+    width: 100%;
+    padding: $listgroup-padding $listgroup-padding-h;
+  }
+
+  &.sm {
+    width: $listgroup-sm-size;
+  }
+
+  &.md {
+    width: $listgroup-md-size;
+  }
+
+  &.lg {
+    width: $listgroup-lg-size;
+  }
+}
+
+body.dark {
+  .listgroup {
+    border-color: $color-text-light-4;
+  }
+}
