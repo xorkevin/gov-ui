@@ -10,3 +10,11 @@ export const plain = () => (
     <Chip>some chips</Chip>
   </Fragment>
 );
+
+export const primary = () => (
+  <Fragment>
+    <Chip primary>here</Chip>
+    <Chip primary>are</Chip>
+    <Chip primary>some chips</Chip>
+  </Fragment>
+);

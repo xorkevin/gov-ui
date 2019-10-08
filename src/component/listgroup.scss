@@ -5,10 +5,7 @@
   & > .item {
     width: 100%;
     transition: $transition-normal;
-
-    & + .item {
-      border-top: 1px solid $color-text-dark-4;
-    }
+    border: 1px solid $color-text-dark-4;
 
     &:hover {
       background-color: $color-primary-transparent;
@@ -19,6 +16,7 @@
       text-decoration: unset;
       width: 100%;
       display: flex;
+      justify-content: space-between;
       align-items: center;
       padding: $listgroup-padding $listgroup-padding-h;
     }
@@ -42,6 +40,8 @@ body.dark {
     border-color: $color-text-light-4;
 
     & > .item {
+      border-color: $color-text-light-4;
+
       &:hover {
         background-color: $color-text-light-4;
       }
