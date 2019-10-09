@@ -7,7 +7,6 @@ const createConfig = (api) => {
         '@babel/env',
         {
           modules: false,
-          loose: true,
           useBuiltIns: false,
           targets: {
             browsers: [
