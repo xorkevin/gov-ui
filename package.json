@@ -55,6 +55,7 @@
     "webpack-dev-server": "^3.8.2"
   },
   "dependencies": {
+    "@xorkevin/substation": "^0.1.0",
     "compression": "^1.7.4",
     "core-js": "^3.2.1",
     "express": "^4.17.1",

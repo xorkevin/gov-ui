@@ -1,5 +1,5 @@
 import React, {Fragment} from 'react';
-import {useResource} from 'apiclient';
+import {useResource} from '@xorkevin/substation';
 import Section from 'component/section';
 import Time from 'component/time';
 

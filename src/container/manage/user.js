@@ -1,6 +1,6 @@
 import React, {Fragment, useState, useCallback} from 'react';
 import {useParams, useHistory} from 'react-router-dom';
-import {useResource, selectAPINull} from 'apiclient';
+import {useResource, selectAPINull} from '@xorkevin/substation';
 import {useAuthCall} from 'service/auth';
 import Section from 'component/section';
 import Card from 'component/card';
@@ -58,12 +58,14 @@ const ManageUser = () => {
     },
     [reexecute, updateForm],
   );
-  const [_rankState, execRank] = useAuthCall(
+  const [rankState, execRank] = useAuthCall(
     selectAPIRank,
     [user.userid, formState.add, formState.remove],
     {},
     {posthook},
   );
+
+  const {err: errEdit} = rankState;
 
   if (!displayUser) {
     const bar = (
@@ -137,6 +139,7 @@ const ManageUser = () => {
             <Input label="add" name="add" fullWidth />
             <Input label="remove" name="remove" fullWidth />
           </Form>
+          {errEdit && <span>{errEdit}</span>}
         </Section>
       </Card>
     );

@@ -1,6 +1,6 @@
 import React, {Fragment, useCallback, useMemo} from 'react';
 import {isValidURL} from 'utility';
-import {usePaginate} from 'apiclient';
+import {usePaginate} from 'service/paginate';
 import {useAuthCall, useAuthResource} from 'service/auth';
 import {useSnackbar} from 'service/snackbar';
 import Section from 'component/section';

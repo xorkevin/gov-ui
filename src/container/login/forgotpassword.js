@@ -1,6 +1,6 @@
 import React, {Fragment} from 'react';
 import {Link} from 'react-router-dom';
-import {useAPICall} from 'apiclient';
+import {useAPICall} from '@xorkevin/substation';
 import Section from 'component/section';
 import Card from 'component/card';
 import Button from 'component/button';

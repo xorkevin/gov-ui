@@ -1,6 +1,6 @@
 import React, {Fragment} from 'react';
 import {Link} from 'react-router-dom';
-import {useURL} from 'apiclient';
+import {useURL} from '@xorkevin/substation';
 import {useAuthState, useAuthCall, useAuthResource} from 'service/auth';
 import Section from 'component/section';
 import Card from 'component/card';

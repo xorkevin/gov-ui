@@ -1,5 +1,6 @@
 import React, {Fragment, useCallback} from 'react';
-import {useURL, usePaginate} from 'apiclient';
+import {useURL} from '@xorkevin/substation';
+import {usePaginate} from 'service/paginate';
 import {useAuthCall, useAuthResource} from 'service/auth';
 import {useSnackbar} from 'service/snackbar';
 import Section from 'component/section';

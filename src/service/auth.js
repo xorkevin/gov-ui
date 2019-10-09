@@ -7,7 +7,7 @@ import {
   getSearchParams,
   searchParamsToString,
 } from 'utility';
-import {useAPI, useAPICall, useResource} from 'apiclient';
+import {useAPI, useAPICall, useResource} from '@xorkevin/substation';
 import {URL} from 'config';
 
 // Actions

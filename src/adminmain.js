@@ -5,9 +5,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {Provider} from 'react-redux';
 import {BrowserRouter} from 'react-router-dom';
+import {APIContext} from '@xorkevin/substation';
 
 import Admin from 'admin';
-import {APIContext, APIClient} from 'apiclient';
+import {APIClient} from 'service/apiclient';
 import store from 'adminstore';
 
 ReactDOM.render(

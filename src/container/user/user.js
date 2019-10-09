@@ -1,6 +1,6 @@
 import React, {useState, useCallback} from 'react';
 import {useParams} from 'react-router-dom';
-import {useURL, useResource, selectAPINull} from 'apiclient';
+import {useURL, useResource, selectAPINull} from '@xorkevin/substation';
 import {Grid, Column} from 'component/grid';
 import Section from 'component/section';
 import Card from 'component/card';
