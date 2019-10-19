@@ -1,8 +1,7 @@
 import {makeAPIClient} from '@xorkevin/substation';
+import {userAPIConfig} from '@xorkevin/turbine';
 import courierAPI from './courier';
 import profileAPI from './profile';
-import authAPI from './auth';
-import userAPI from './user';
 
 const API = {
   setupz: {
@@ -24,16 +23,7 @@ const API = {
   },
   u: {
     url: '/u',
-    children: {
-      user: {
-        url: '/user',
-        children: userAPI,
-      },
-      auth: {
-        url: '/auth',
-        children: authAPI,
-      },
-    },
+    children: userAPIConfig,
   },
   profile: {
     url: '/profile',

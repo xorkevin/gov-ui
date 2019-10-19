@@ -1,7 +1,7 @@
 import React, {Fragment, useState, useCallback} from 'react';
 import {useParams, useHistory} from 'react-router-dom';
 import {useResource, selectAPINull} from '@xorkevin/substation';
-import {useAuthCall} from 'service/auth';
+import {useAuthCall} from '@xorkevin/turbine';
 import Section from 'component/section';
 import Card from 'component/card';
 import Description from 'component/description';

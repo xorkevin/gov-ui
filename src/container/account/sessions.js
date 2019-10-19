@@ -1,5 +1,5 @@
 import React, {Fragment, useCallback} from 'react';
-import {useAuthCall, useAuthResource} from 'service/auth';
+import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {useSnackbar, useSnackbarView} from 'service/snackbar';
 import Section from 'component/section';
 import Table from 'component/table';

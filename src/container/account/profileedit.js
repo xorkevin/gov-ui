@@ -1,6 +1,6 @@
 import React, {Fragment, useCallback} from 'react';
 import {Link} from 'react-router-dom';
-import {useAuthCall, useAuthResource} from 'service/auth';
+import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {useSnackbarView} from 'service/snackbar';
 import Grid from 'component/grid';
 import Section from 'component/section';

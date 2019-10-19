@@ -1,6 +1,6 @@
 import React, {Fragment} from 'react';
 import {Link, useRouteMatch} from 'react-router-dom';
-import {useAuthResource} from 'service/auth';
+import {useAuthResource} from '@xorkevin/turbine';
 import Section from 'component/section';
 import Card from 'component/card';
 import Description from 'component/description';

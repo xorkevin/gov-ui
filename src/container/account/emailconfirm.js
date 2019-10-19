@@ -1,7 +1,7 @@
 import React, {Fragment} from 'react';
 import {Link, useLocation} from 'react-router-dom';
 import {getSearchParams} from 'utility';
-import {useAuthCall} from 'service/auth';
+import {useAuthCall} from '@xorkevin/turbine';
 import Section from 'component/section';
 import Card from 'component/card';
 import Button from 'component/button';

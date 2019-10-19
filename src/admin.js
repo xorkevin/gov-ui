@@ -1,15 +1,14 @@
 import React, {Fragment, lazy, Suspense} from 'react';
 import {Switch, Route, Redirect, NavLink, Link} from 'react-router-dom';
-
-import {useDarkMode} from 'service/settings';
-import {SnackbarContainer} from 'service/snackbar';
 import {
   useAuthState,
   useLogout,
   Protected,
   AntiProtected,
-  ProtectedFallback,
-} from 'service/auth';
+} from '@xorkevin/turbine';
+
+import {useDarkMode} from 'service/settings';
+import {SnackbarContainer} from 'service/snackbar';
 
 import MainContent from 'component/maincontent';
 import Section from 'component/section';
@@ -41,12 +40,6 @@ const SetupContainer = lazy(() => import('container/setup'));
 const FallbackView = (
   <Section container padded narrow>
     Loading
-  </Section>
-);
-
-const UnAuthFallback = (
-  <Section container padded narrow>
-    Unauthorized
   </Section>
 );
 
@@ -122,37 +115,35 @@ const Admin = () => {
       )}
 
       <MainContent withSidebar={loggedIn} sectionNoMargin>
-        <ProtectedFallback value={UnAuthFallback}>
-          <Suspense fallback={FallbackView}>
-            <Switch>
-              <Route exact path="/">
-                <AdminContainer />
-              </Route>
-              <Route path="/x">
-                <LoginContainer />
-              </Route>
-              <Route path="/a">
-                <AccountContainer />
-              </Route>
-              <Route path="/u">
-                <UserContainer />
-              </Route>
-              <Route path="/manage">
-                <ManageContainer />
-              </Route>
-              <Route path="/health">
-                <HealthContainer />
-              </Route>
-              <Route path="/courier">
-                <CourierContainer />
-              </Route>
-              <Route path="/setup">
-                <SetupContainer />
-              </Route>
-              <Redirect to="/" />
-            </Switch>
-          </Suspense>
-        </ProtectedFallback>
+        <Suspense fallback={FallbackView}>
+          <Switch>
+            <Route exact path="/">
+              <AdminContainer />
+            </Route>
+            <Route path="/x">
+              <LoginContainer />
+            </Route>
+            <Route path="/a">
+              <AccountContainer />
+            </Route>
+            <Route path="/u">
+              <UserContainer />
+            </Route>
+            <Route path="/manage">
+              <ManageContainer />
+            </Route>
+            <Route path="/health">
+              <HealthContainer />
+            </Route>
+            <Route path="/courier">
+              <CourierContainer />
+            </Route>
+            <Route path="/setup">
+              <SetupContainer />
+            </Route>
+            <Redirect to="/" />
+          </Switch>
+        </Suspense>
       </MainContent>
 
       <Footer withSidebar={loggedIn}>

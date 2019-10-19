@@ -1,7 +1,7 @@
 import React, {Fragment, useCallback} from 'react';
 import {useURL} from '@xorkevin/substation';
 import {usePaginate} from 'service/paginate';
-import {useAuthCall, useAuthResource} from 'service/auth';
+import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {useSnackbar} from 'service/snackbar';
 import Section from 'component/section';
 import Table from 'component/table';
