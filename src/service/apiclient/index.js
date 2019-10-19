@@ -1,30 +1,12 @@
 import {makeAPIClient} from '@xorkevin/substation';
-import {userAPIConfig} from '@xorkevin/turbine';
+import {GovAuthAPI} from '@xorkevin/turbine';
 import courierAPI from './courier';
 import profileAPI from './profile';
 
 const API = {
-  setupz: {
-    url: '/setupz',
-    method: 'POST',
-    expectdata: true,
-    err: 'Could not run server setup',
-  },
-  healthz: {
-    url: '/healthz',
-    children: {
-      check: {
-        url: '/report',
-        method: 'GET',
-        expectdata: true,
-        err: 'Could not get health report from api server',
-      },
-    },
-  },
-  u: {
-    url: '/u',
-    children: userAPIConfig,
-  },
+  setupz: GovAuthAPI.setupz(),
+  healthz: GovAuthAPI.healthz(),
+  u: GovAuthAPI.user('/u'),
   profile: {
     url: '/profile',
     children: profileAPI,

@@ -3,7 +3,7 @@ import {useResource} from '@xorkevin/substation';
 import Section from 'component/section';
 import Time from 'component/time';
 
-const selectAPIHealth = (api) => api.healthz.check;
+const selectAPIHealth = (api) => api.healthz.report;
 
 const HealthContainer = () => {
   const {loading, success, err, data} = useResource(selectAPIHealth, [], {
