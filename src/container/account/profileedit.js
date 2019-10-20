@@ -1,12 +1,16 @@
 import React, {Fragment, useCallback} from 'react';
 import {Link} from 'react-router-dom';
 import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
-import {useSnackbarView} from 'service/snackbar';
-import Grid from 'component/grid';
-import Section from 'component/section';
-import Card from 'component/card';
-import Button from 'component/button';
-import {Form, Input, useForm} from 'component/form';
+import {
+  Grid,
+  Section,
+  Card,
+  Button,
+  Form,
+  Input,
+  useForm,
+  useSnackbarView,
+} from '@xorkevin/nuke';
 
 const selectAPIProfile = (api) => api.profile.get;
 const selectAPIEdit = (api) => api.profile.edit;

@@ -1,6 +1,6 @@
 import React, {lazy, Suspense} from 'react';
 import {Switch, Route, Redirect, useRouteMatch} from 'react-router-dom';
-import Section from 'component/section';
+import {Section} from '@xorkevin/nuke';
 
 const SigninContainer = lazy(() => import('container/login/signin'));
 const CreateContainer = lazy(() => import('container/login/create'));

@@ -2,15 +2,19 @@ import React, {Fragment, useCallback, useMemo} from 'react';
 import {isValidURL} from 'utility';
 import {usePaginate} from 'service/paginate';
 import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
-import {useSnackbar} from 'service/snackbar';
-import Section from 'component/section';
-import Table from 'component/table';
-import Button from 'component/button';
-import Time from 'component/time';
-import Anchor from 'component/anchor';
-import {Form, Input, useForm} from 'component/form';
+import {
+  Section,
+  Table,
+  Button,
+  Time,
+  Anchor,
+  Form,
+  Input,
+  useForm,
+  useSnackbar,
+} from '@xorkevin/nuke';
 
-import {URL} from 'config';
+import {URL} from 'example/config';
 
 const LIMIT = 32;
 const BRAND_LIMIT = 128;

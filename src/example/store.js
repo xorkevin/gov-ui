@@ -2,13 +2,12 @@ import {createStore, combineReducers, applyMiddleware} from 'redux';
 import thunk from 'redux-thunk';
 
 import Auth from '@xorkevin/turbine';
-import Settings from 'service/settings';
-import Snackbar from 'service/snackbar';
+import {DarkMode, Snackbar} from '@xorkevin/nuke';
 
 const store = createStore(
   combineReducers({
     Auth,
-    Settings,
+    DarkMode,
     Snackbar,
   }),
   applyMiddleware(thunk),

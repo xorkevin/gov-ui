@@ -2,12 +2,9 @@ import React, {Fragment, useCallback} from 'react';
 import {useHistory} from 'react-router-dom';
 import {emailRegex} from 'utility';
 import {useAPICall} from '@xorkevin/substation';
-import Section from 'component/section';
-import Card from 'component/card';
-import Button from 'component/button';
-import {Form, Input, useForm} from 'component/form';
+import {Section, Card, Button, Form, Input, useForm} from '@xorkevin/nuke';
 
-import {URL} from 'config';
+import {URL} from 'example/config';
 
 const selectAPISetup = (api) => api.setupz;
 

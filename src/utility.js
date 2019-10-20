@@ -11,28 +11,10 @@ const formatStr = (str, ...args) => {
   return formatStrArgs(str, args);
 };
 
-const ALPHABET =
-  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-';
-
-const randomID = (len = 8) => {
-  const idarr = [];
-  for (let i = 0; i < len; i++) {
-    idarr.push(ALPHABET[Math.floor(ALPHABET.length * Math.random())]);
-  }
-  return idarr.join('');
-};
-
 const IS_WEB = typeof window !== 'undefined';
 
 const isWeb = () => {
   return IS_WEB;
-};
-
-const logger = (store) => (next) => (action) => {
-  console.log('dispatching', action);
-  let result = next(action);
-  console.log('next state', store.getState());
-  return result;
 };
 
 const COOKIE = {
@@ -93,9 +75,7 @@ const isValidURL = (url) => {
 export {
   formatStr,
   formatStrArgs,
-  randomID,
   isWeb,
-  logger,
   getCookie,
   setCookie,
   getSearchParams,

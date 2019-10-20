@@ -6,9 +6,7 @@ import {
   NavLink,
   useRouteMatch,
 } from 'react-router-dom';
-import Section from 'component/section';
-import Tabbar from 'component/tabbar';
-import FaIcon from 'component/faicon';
+import {Section, Tabbar, FaIcon} from '@xorkevin/nuke';
 
 const CourierLink = lazy(() => import('container/courier/link'));
 const CourierBrand = lazy(() => import('container/courier/brand'));

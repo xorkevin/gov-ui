@@ -1,10 +1,13 @@
 import React, {Fragment, useCallback} from 'react';
 import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
-import {useSnackbar, useSnackbarView} from 'service/snackbar';
-import Section from 'component/section';
-import Table from 'component/table';
-import Button from 'component/button';
-import Time from 'component/time';
+import {
+  Section,
+  Table,
+  Button,
+  Time,
+  useSnackbar,
+  useSnackbarView,
+} from '@xorkevin/nuke';
 
 const selectAPISessions = (api) => api.u.user.sessions;
 const selectAPISessionDelete = (api) => api.u.user.sessions.del;

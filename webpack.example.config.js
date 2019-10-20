@@ -4,7 +4,6 @@ const TerserPlugin = require('terser-webpack-plugin');
 const ExtractTextPlugin = require('mini-css-extract-plugin');
 const HtmlPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
-const BundleAnalyzer = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const createConfig = (env, argv) => {
   const config = {
@@ -12,7 +11,7 @@ const createConfig = (env, argv) => {
 
     context: path.resolve(__dirname, 'src'),
     entry: {
-      main: ['core-js/stable', 'main.js'],
+      main: ['core-js/stable', 'example/main.js'],
     },
     resolve: {
       modules: [path.resolve(__dirname, 'src'), 'node_modules'],
@@ -76,7 +75,7 @@ const createConfig = (env, argv) => {
         title: 'Nuke',
         filename: 'index.html',
         inject: 'body',
-        template: '../template/index.html',
+        template: 'example/template/index.html',
       }),
       new ExtractTextPlugin({
         filename: 'static/[name].[contenthash].css',
@@ -84,7 +83,7 @@ const createConfig = (env, argv) => {
       }),
       new CopyPlugin([
         {
-          from: '../public',
+          from: 'example/public',
         },
       ]),
     ],
@@ -103,16 +102,16 @@ const createConfig = (env, argv) => {
     },
 
     devServer: {
-      contentBase: path.resolve(__dirname, 'public'),
+      contentBase: path.resolve(__dirname, 'example/public'),
       compress: true,
       host: '0.0.0.0',
-      port: 3000,
+      port: 3001,
       disableHostCheck: true,
       historyApiFallback: true,
     },
   };
 
-  if (env && env.development) {
+  if (argv.mode === 'development') {
     config.plugins.push(
       new webpack.DefinePlugin({
         APIBASE_URL: JSON.stringify('http://localhost:8080/api'),
@@ -126,7 +125,6 @@ const createConfig = (env, argv) => {
         COURIERBASE_URL: JSON.stringify('/link'),
       }),
     );
-    //config.plugins.push(new BundleAnalyzer({analyzerMode: 'static', openAnalyzer: true}));
   }
 
   return config;

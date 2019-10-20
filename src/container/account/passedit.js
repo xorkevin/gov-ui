@@ -1,11 +1,15 @@
 import React, {Fragment} from 'react';
 import {Link} from 'react-router-dom';
 import {useAuthCall} from '@xorkevin/turbine';
-import {useSnackbarView} from 'service/snackbar';
-import Section from 'component/section';
-import Card from 'component/card';
-import Button from 'component/button';
-import {Form, Input, useForm} from 'component/form';
+import {
+  Section,
+  Card,
+  Button,
+  Form,
+  Input,
+  useForm,
+  useSnackbarView,
+} from '@xorkevin/nuke';
 
 const selectAPIEditPass = (api) => api.u.user.pass.edit;
 

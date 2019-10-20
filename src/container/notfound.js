@@ -1,5 +1,5 @@
 import React from 'react';
-import Section from 'component/section';
+import {Section} from '@xorkevin/nuke';
 
 const NotFound = () => {
   return (

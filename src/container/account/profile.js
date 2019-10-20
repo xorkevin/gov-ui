@@ -2,11 +2,7 @@ import React, {Fragment} from 'react';
 import {Link} from 'react-router-dom';
 import {useURL} from '@xorkevin/substation';
 import {useAuthState, useAuthCall, useAuthResource} from '@xorkevin/turbine';
-import Section from 'component/section';
-import Card from 'component/card';
-import Description from 'component/description';
-import Button from 'component/button';
-import Img from 'component/image';
+import {Section, Card, Description, Button, Img} from '@xorkevin/nuke';
 
 const selectAPIProfile = (api) => api.profile.get;
 const selectAPIProfileImage = (api) => api.profile.id.image;

@@ -2,13 +2,17 @@ import React, {Fragment, useState, useCallback} from 'react';
 import {useParams, useHistory} from 'react-router-dom';
 import {useResource, selectAPINull} from '@xorkevin/substation';
 import {useAuthCall} from '@xorkevin/turbine';
-import Section from 'component/section';
-import Card from 'component/card';
-import Description from 'component/description';
-import Chip from 'component/chip';
-import Time from 'component/time';
-import Button from 'component/button';
-import {Form, Input, useForm} from 'component/form';
+import {
+  Section,
+  Card,
+  Description,
+  Chip,
+  Time,
+  Button,
+  Form,
+  Input,
+  useForm,
+} from '@xorkevin/nuke';
 
 const selectAPIUser = (api) => api.u.user.name;
 const selectAPIRank = (api) => api.u.user.id.edit.rank;

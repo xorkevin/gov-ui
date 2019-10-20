@@ -2,10 +2,7 @@ import React, {Fragment} from 'react';
 import {Link, useRouteMatch} from 'react-router-dom';
 import {emailRegex} from 'utility';
 import {useAuthCall} from '@xorkevin/turbine';
-import Section from 'component/section';
-import Card from 'component/card';
-import Button from 'component/button';
-import {Form, Input, useForm} from 'component/form';
+import {Section, Card, Button, Form, Input, useForm} from '@xorkevin/nuke';
 
 const selectAPIEditEmail = (api) => api.u.user.email.edit;
 

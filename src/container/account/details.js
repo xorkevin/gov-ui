@@ -1,12 +1,7 @@
 import React, {Fragment} from 'react';
 import {Link, useRouteMatch} from 'react-router-dom';
 import {useAuthResource} from '@xorkevin/turbine';
-import Section from 'component/section';
-import Card from 'component/card';
-import Description from 'component/description';
-import Chip from 'component/chip';
-import Button from 'component/button';
-import Time from 'component/time';
+import {Section, Card, Description, Chip, Button, Time} from '@xorkevin/nuke';
 
 const selectAPIAccount = (api) => api.u.user.get;
 

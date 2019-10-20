@@ -1,7 +1,6 @@
 import React, {Fragment} from 'react';
 import {useResource} from '@xorkevin/substation';
-import Section from 'component/section';
-import Time from 'component/time';
+import {Section, Time} from '@xorkevin/nuke';
 
 const selectAPIHealth = (api) => api.healthz.report;
 

@@ -2,10 +2,7 @@ import React, {Fragment} from 'react';
 import {Link, useLocation} from 'react-router-dom';
 import {getSearchParams} from 'utility';
 import {useAPICall} from '@xorkevin/substation';
-import Section from 'component/section';
-import Card from 'component/card';
-import Button from 'component/button';
-import {Form, Input, useForm} from 'component/form';
+import {Section, Card, Button, Form, Input, useForm} from '@xorkevin/nuke';
 
 const selectAPIConfirmAccount = (api) => api.u.user.create.confirm;
 

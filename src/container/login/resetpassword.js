@@ -2,11 +2,15 @@ import React, {Fragment} from 'react';
 import {Link, useLocation} from 'react-router-dom';
 import {getSearchParams} from 'utility';
 import {useAPICall} from '@xorkevin/substation';
-import {useSnackbarView} from 'service/snackbar';
-import Section from 'component/section';
-import Card from 'component/card';
-import Button from 'component/button';
-import {Form, Input, useForm} from 'component/form';
+import {
+  Section,
+  Card,
+  Button,
+  Form,
+  Input,
+  useForm,
+  useSnackbarView,
+} from '@xorkevin/nuke';
 
 const selectAPIResetPass = (api) => api.u.user.pass.forgot.confirm;
 

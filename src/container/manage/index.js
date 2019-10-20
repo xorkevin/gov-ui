@@ -6,8 +6,7 @@ import {
   NavLink,
   useRouteMatch,
 } from 'react-router-dom';
-import Section from 'component/section';
-import Tabbar from 'component/tabbar';
+import {Section, Tabbar} from '@xorkevin/nuke';
 
 const ManageUserContainer = lazy(() => import('container/manage/user'));
 

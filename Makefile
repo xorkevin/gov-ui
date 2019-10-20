@@ -1,24 +1,17 @@
-# METADATA
-VERSION=v0.1.0
-
 # CMD
 BIN_DIR=bin
-BIN_ADMIN_DIR=bin_admin
 
 # DOCKER
-IMAGE_NAME=nuke
+IMAGE_NAME=gov-ui
 
-.PHONY: all clean-bin clean-bin-admin clean format dev dev-admin build build-admin start start-admin serve serve-admin build-docker produp proddown
+.PHONY: all clean-bin clean format dev build start serve
 
-all: build build-admin
+all: build
 
 clean-bin:
 	if [ -d $(BIN_DIR) ]; then rm -r $(BIN_DIR); fi
 
-clean-bin-admin:
-	if [ -d $(BIN_ADMIN_DIR) ]; then rm -r $(BIN_ADMIN_DIR); fi
-
-clean: clean-bin clean-bin-admin
+clean: clean-bin
 
 format:
 	npx prettier --write --arrow-parens always --single-quote --trailing-comma all --no-bracket-spacing "src/**/*.js"
@@ -27,33 +20,21 @@ format:
 dev:
 	npm run build-dev
 
-dev-admin:
-	npm run build-admin-dev
-
-dev-story:
-	npm run storybook
-
 build: clean-bin
 	npm run build
-
-build-admin: clean-bin-admin
-	npm run build-admin
 
 start:
 	npm run serve
 
-start-admin:
-	NUKE_MODE=admin npm run serve
-
 serve: build start
-
-serve-admin: build-admin start-admin
 
 ## gen
 .PHONY: gen
 
 gen:
 	./servicedef-gen.sh
+
+.PHONY: build-docker produp proddown
 
 ## docker
 build-docker:

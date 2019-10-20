@@ -1,5 +1,5 @@
 import 'fork-awesome/css/fork-awesome.min.css';
-import 'main.scss';
+import 'example/main.scss';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -7,11 +7,11 @@ import {Provider} from 'react-redux';
 import {BrowserRouter} from 'react-router-dom';
 import {APIContext} from '@xorkevin/substation';
 import {AuthContext} from '@xorkevin/turbine';
+import {Section} from '@xorkevin/nuke';
 
-import Admin from 'admin';
-import {APIClient} from 'service/apiclient';
-import store from 'adminstore';
-import Section from 'component/section';
+import App from 'example/app';
+import {APIClient} from 'example/apiclient';
+import store from 'example/store';
 
 const UnAuthFallback = (
   <Section container padded narrow>
@@ -36,7 +36,7 @@ ReactDOM.render(
       <BrowserRouter>
         <APIContext.Provider value={APIClient}>
           <AuthContext.Provider value={AuthContextValue}>
-            <Admin />
+            <App />
           </AuthContext.Provider>
         </APIContext.Provider>
       </BrowserRouter>
