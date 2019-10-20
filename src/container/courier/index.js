@@ -1,4 +1,4 @@
-import React, {Fragment, lazy, Suspense} from 'react';
+import React, {Fragment} from 'react';
 import {
   Switch,
   Route,
@@ -8,14 +8,8 @@ import {
 } from 'react-router-dom';
 import {Section, Tabbar, FaIcon} from '@xorkevin/nuke';
 
-const CourierLink = lazy(() => import('container/courier/link'));
-const CourierBrand = lazy(() => import('container/courier/brand'));
-
-const FallbackView = (
-  <Section container padded narrow>
-    Loading
-  </Section>
-);
+import CourierLink from 'container/courier/link';
+import CourierBrand from 'container/courier/brand';
 
 const Courier = () => {
   const match = useRouteMatch();
@@ -34,17 +28,15 @@ const Courier = () => {
           </Fragment>
         }
       />
-      <Suspense fallback={FallbackView}>
-        <Switch>
-          <Route path={`${match.path}/link`}>
-            <CourierLink />
-          </Route>
-          <Route path={`${match.path}/brand`}>
-            <CourierBrand />
-          </Route>
-          <Redirect to={`${match.path}/link`} />
-        </Switch>
-      </Suspense>
+      <Switch>
+        <Route path={`${match.path}/link`}>
+          <CourierLink />
+        </Route>
+        <Route path={`${match.path}/brand`}>
+          <CourierBrand />
+        </Route>
+        <Redirect to={`${match.path}/link`} />
+      </Switch>
     </Section>
   );
 };

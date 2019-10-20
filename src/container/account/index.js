@@ -1,4 +1,4 @@
-import React, {Fragment, lazy, Suspense} from 'react';
+import React, {Fragment} from 'react';
 import {
   Switch,
   Route,
@@ -8,28 +8,14 @@ import {
 } from 'react-router-dom';
 import {Section, Tabbar} from '@xorkevin/nuke';
 
-const EmailConfirmContainer = lazy(() =>
-  import('container/account/emailconfirm'),
-);
-const EmailEditContainer = lazy(() => import('container/account/emailedit'));
-const PassEditContainer = lazy(() => import('container/account/passedit'));
-const AccountEditContainer = lazy(() =>
-  import('container/account/detailsedit'),
-);
-const AccountDetailsContainer = lazy(() => import('container/account/details'));
-const ProfileEditContainer = lazy(() =>
-  import('container/account/profileedit'),
-);
-const ProfileDetailsContainer = lazy(() => import('container/account/profile'));
-const AccountSessionsContainer = lazy(() =>
-  import('container/account/sessions'),
-);
-
-const FallbackView = (
-  <Section container padded narrow>
-    Loading
-  </Section>
-);
+import EmailConfirmContainer from 'container/account/emailconfirm';
+import EmailEditContainer from 'container/account/emailedit';
+import PassEditContainer from 'container/account/passedit';
+import AccountEditContainer from 'container/account/detailsedit';
+import AccountDetailsContainer from 'container/account/details';
+import ProfileEditContainer from 'container/account/profileedit';
+import ProfileDetailsContainer from 'container/account/profile';
+import AccountSessionsContainer from 'container/account/sessions';
 
 const Account = () => {
   const match = useRouteMatch();
@@ -45,35 +31,33 @@ const Account = () => {
           </Fragment>
         }
       />
-      <Suspense fallback={FallbackView}>
-        <Switch>
-          <Route path={`${match.path}/account/email/confirm`}>
-            <EmailConfirmContainer />
-          </Route>
-          <Route path={`${match.path}/account/email`}>
-            <EmailEditContainer />
-          </Route>
-          <Route path={`${match.path}/account/pass`}>
-            <PassEditContainer />
-          </Route>
-          <Route path={`${match.path}/account/edit`}>
-            <AccountEditContainer />
-          </Route>
-          <Route path={`${match.path}/account`}>
-            <AccountDetailsContainer />
-          </Route>
-          <Route path={`${match.path}/profile/edit`}>
-            <ProfileEditContainer />
-          </Route>
-          <Route path={`${match.path}/profile`}>
-            <ProfileDetailsContainer />
-          </Route>
-          <Route path={`${match.path}/sessions`}>
-            <AccountSessionsContainer />
-          </Route>
-          <Redirect to={`${match.path}/account`} />
-        </Switch>
-      </Suspense>
+      <Switch>
+        <Route path={`${match.path}/account/email/confirm`}>
+          <EmailConfirmContainer />
+        </Route>
+        <Route path={`${match.path}/account/email`}>
+          <EmailEditContainer />
+        </Route>
+        <Route path={`${match.path}/account/pass`}>
+          <PassEditContainer />
+        </Route>
+        <Route path={`${match.path}/account/edit`}>
+          <AccountEditContainer />
+        </Route>
+        <Route path={`${match.path}/account`}>
+          <AccountDetailsContainer />
+        </Route>
+        <Route path={`${match.path}/profile/edit`}>
+          <ProfileEditContainer />
+        </Route>
+        <Route path={`${match.path}/profile`}>
+          <ProfileDetailsContainer />
+        </Route>
+        <Route path={`${match.path}/sessions`}>
+          <AccountSessionsContainer />
+        </Route>
+        <Redirect to={`${match.path}/account`} />
+      </Switch>
     </Section>
   );
 };

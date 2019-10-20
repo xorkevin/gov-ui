@@ -44,7 +44,7 @@ const FallbackView = (
   </Section>
 );
 
-const Admin = () => {
+const App = () => {
   const [dark, toggleDark] = useDarkMode();
   const logout = useLogout();
   const {loggedIn} = useAuthState();
@@ -182,4 +182,4 @@ const Admin = () => {
   );
 };
 
-export default Admin;
+export default App;

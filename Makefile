@@ -4,14 +4,15 @@ BIN_DIR=bin
 # DOCKER
 IMAGE_NAME=gov-ui
 
-.PHONY: all clean-bin clean format dev build start serve
+.PHONY: all clean-bin clean format dev build start serve publish
 
 all: build
 
 clean-bin:
 	if [ -d $(BIN_DIR) ]; then rm -r $(BIN_DIR); fi
 
-clean: clean-bin
+clean:
+	rm -rf dist/
 
 format:
 	npx prettier --write --arrow-parens always --single-quote --trailing-comma all --no-bracket-spacing "src/**/*.js"
@@ -20,7 +21,7 @@ format:
 dev:
 	npm run build-dev
 
-build: clean-bin
+build: clean
 	npm run build
 
 start:

@@ -1,4 +1,4 @@
-import React, {Fragment, lazy, Suspense} from 'react';
+import React, {Fragment} from 'react';
 import {
   Switch,
   Route,
@@ -8,13 +8,7 @@ import {
 } from 'react-router-dom';
 import {Section, Tabbar} from '@xorkevin/nuke';
 
-const ManageUserContainer = lazy(() => import('container/manage/user'));
-
-const FallbackView = (
-  <Section container padded narrow>
-    Loading
-  </Section>
-);
+import ManageUserContainer from 'container/manage/user';
 
 const Manage = () => {
   const match = useRouteMatch();
@@ -28,14 +22,12 @@ const Manage = () => {
           </Fragment>
         }
       />
-      <Suspense fallback={FallbackView}>
-        <Switch>
-          <Route path={`${match.path}/user/:username?`}>
-            <ManageUserContainer />
-          </Route>
-          <Redirect to={`${match.path}/user`} />
-        </Switch>
-      </Suspense>
+      <Switch>
+        <Route path={`${match.path}/user/:username?`}>
+          <ManageUserContainer />
+        </Route>
+        <Redirect to={`${match.path}/user`} />
+      </Switch>
     </Section>
   );
 };

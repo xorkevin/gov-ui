@@ -7,7 +7,16 @@ const createConfig = (env, argv) => {
     target: 'web',
 
     context: path.resolve(__dirname, 'src'),
-    entry: 'index.js',
+    entry: {
+      account: 'container/account',
+      courier: 'container/courier',
+      login: 'container/login',
+      manage: 'container/manage',
+      setup: 'container/setup',
+      govapi: 'apiconfig',
+      govcontext: 'govcontext',
+      'gov-ui': 'index.js',
+    },
     resolve: {
       modules: [path.resolve(__dirname, 'src'), 'node_modules'],
     },
@@ -33,7 +42,7 @@ const createConfig = (env, argv) => {
 
     output: {
       path: path.resolve(__dirname, 'dist'),
-      filename: 'gov-ui.js',
+      filename: '[name].js',
       library: 'govui',
       libraryTarget: 'umd',
     },
