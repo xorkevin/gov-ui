@@ -16,7 +16,7 @@ import {
 
 import {URL} from 'example/config';
 
-const LIMIT = 2;
+const LIMIT = 32;
 const BRAND_LIMIT = 128;
 
 const selectAPILinks = (api) => api.courier.link.get;
