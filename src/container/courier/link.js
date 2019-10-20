@@ -1,6 +1,5 @@
 import React, {Fragment, useState, useCallback, useMemo} from 'react';
 import {isValidURL} from 'utility';
-import {usePaginate} from 'service/paginate';
 import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
   Section,
@@ -11,6 +10,7 @@ import {
   Form,
   Input,
   useForm,
+  usePaginate,
   useSnackbar,
 } from '@xorkevin/nuke';
 

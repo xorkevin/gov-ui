@@ -69,7 +69,7 @@
     "redux": "^4.0.0"
   },
   "dependencies": {
-    "@xorkevin/nuke": "^0.1.0",
+    "@xorkevin/nuke": "^0.1.1",
     "@xorkevin/substation": "^0.1.2",
     "@xorkevin/turbine": "^0.1.4"
   }
