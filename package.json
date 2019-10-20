@@ -1,11 +1,12 @@
 {
   "name": "@xorkevin/gov-ui",
-  "version": "0.3.0-0",
+  "version": "0.3.0-1",
   "description": "a reactive frontend for governor",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
   },
   "main": "dist/gov-ui.js",
+  "sideEfects": false,
   "scripts": {
     "build": "webpack --mode production --progress --color",
     "build-dev": "webpack-dev-server --config webpack.example.config.js --mode development -w --hot --progress --color",
@@ -72,7 +73,7 @@
     "redux": "^4.0.0"
   },
   "dependencies": {
-    "@xorkevin/nuke": "^0.1.1",
+    "@xorkevin/nuke": "^0.1.2",
     "@xorkevin/substation": "^0.1.2",
     "@xorkevin/turbine": "^0.1.4"
   }

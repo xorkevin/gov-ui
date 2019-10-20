@@ -1,4 +1,10 @@
-import React, {Fragment, useState, useCallback, useMemo} from 'react';
+import React, {
+  Fragment,
+  useState,
+  useCallback,
+  useMemo,
+  useContext,
+} from 'react';
 import {isValidURL} from 'utility';
 import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
@@ -14,7 +20,7 @@ import {
   useSnackbar,
 } from '@xorkevin/nuke';
 
-import {URL} from 'example/config';
+import {GovContext} from 'govcontext';
 
 const LIMIT = 32;
 const BRAND_LIMIT = 128;
@@ -48,6 +54,8 @@ const prehookValidate = ([form]) => {
 };
 
 const LinkRow = ({linkid, url, creation_time, posthook, errhook}) => {
+  const ctx = useContext(GovContext);
+
   const [_deleteState, execDelete] = useAuthCall(
     selectAPIDelete,
     [linkid],
@@ -58,8 +66,8 @@ const LinkRow = ({linkid, url, creation_time, posthook, errhook}) => {
   return (
     <tr>
       <td>
-        <Anchor ext href={URL.courier + '/' + linkid}>
-          {URL.courier + '/' + linkid}
+        <Anchor ext href={ctx.courierPath + '/' + linkid}>
+          {ctx.courierPath + '/' + linkid}
         </Anchor>
       </td>
       <td>
@@ -68,7 +76,7 @@ const LinkRow = ({linkid, url, creation_time, posthook, errhook}) => {
         </Anchor>
       </td>
       <td>
-        <Anchor ext href={URL.courier + '/' + linkid + '/image'}>
+        <Anchor ext href={ctx.courierPath + '/' + linkid + '/image'}>
           image
         </Anchor>
       </td>

@@ -9,6 +9,7 @@ import {APIContext} from '@xorkevin/substation';
 import {AuthContext} from '@xorkevin/turbine';
 import {Section} from '@xorkevin/nuke';
 
+import {GovContext} from 'govcontext';
 import App from 'example/app';
 import {APIClient} from 'example/api';
 import store from 'example/store';
@@ -30,13 +31,21 @@ const AuthContextValue = Object.freeze({
   loginPath: '/x/login',
 });
 
+const GovContextValue = Object.freeze({
+  homePath: '/',
+  // eslint-disable-next-line no-undef
+  courierPath: COURIERBASE_URL,
+});
+
 ReactDOM.render(
   <div id="mount">
     <Provider store={store}>
       <BrowserRouter>
         <APIContext.Provider value={APIClient}>
           <AuthContext.Provider value={AuthContextValue}>
-            <App />
+            <GovContext.Provider value={GovContextValue}>
+              <App />
+            </GovContext.Provider>
           </AuthContext.Provider>
         </APIContext.Provider>
       </BrowserRouter>
