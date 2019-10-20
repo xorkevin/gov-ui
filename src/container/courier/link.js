@@ -1,10 +1,4 @@
-import React, {
-  Fragment,
-  useState,
-  useCallback,
-  useMemo,
-  useContext,
-} from 'react';
+import React, {Fragment, useState, useCallback, useMemo} from 'react';
 import {isValidURL} from 'utility';
 import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
@@ -19,8 +13,6 @@ import {
   usePaginate,
   useSnackbar,
 } from '@xorkevin/nuke';
-
-import {GovContext} from 'govcontext';
 
 const LIMIT = 32;
 const BRAND_LIMIT = 128;
@@ -53,9 +45,14 @@ const prehookValidate = ([form]) => {
   }
 };
 
-const LinkRow = ({linkid, url, creation_time, posthook, errhook}) => {
-  const ctx = useContext(GovContext);
-
+const LinkRow = ({
+  courierPath,
+  linkid,
+  url,
+  creation_time,
+  posthook,
+  errhook,
+}) => {
   const [_deleteState, execDelete] = useAuthCall(
     selectAPIDelete,
     [linkid],
@@ -66,8 +63,8 @@ const LinkRow = ({linkid, url, creation_time, posthook, errhook}) => {
   return (
     <tr>
       <td>
-        <Anchor ext href={ctx.courierPath + '/' + linkid}>
-          {ctx.courierPath + '/' + linkid}
+        <Anchor ext href={courierPath + '/' + linkid}>
+          {courierPath + '/' + linkid}
         </Anchor>
       </td>
       <td>
@@ -76,7 +73,7 @@ const LinkRow = ({linkid, url, creation_time, posthook, errhook}) => {
         </Anchor>
       </td>
       <td>
-        <Anchor ext href={ctx.courierPath + '/' + linkid + '/image'}>
+        <Anchor ext href={courierPath + '/' + linkid + '/image'}>
           image
         </Anchor>
       </td>
@@ -92,7 +89,7 @@ const LinkRow = ({linkid, url, creation_time, posthook, errhook}) => {
   );
 };
 
-const CourierLink = () => {
+const CourierLink = ({courierPath}) => {
   const snackbar = useSnackbar();
   const displayErrSnack = useCallback(
     (_stage, err) => {
@@ -207,6 +204,7 @@ const CourierLink = () => {
           {links.map(({linkid, url, creation_time}) => (
             <LinkRow
               key={linkid}
+              courierPath={courierPath}
               linkid={linkid}
               url={url}
               creation_time={creation_time}

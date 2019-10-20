@@ -44,6 +44,12 @@ const FallbackView = (
   </Section>
 );
 
+const GovContextValue = Object.freeze({
+  homePath: '/',
+  // eslint-disable-next-line no-undef
+  courierPath: COURIERBASE_URL,
+});
+
 const App = () => {
   const [dark, toggleDark] = useDarkMode();
   const logout = useLogout();
@@ -137,10 +143,10 @@ const App = () => {
               <HealthContainer />
             </Route>
             <Route path="/courier">
-              <CourierContainer />
+              <CourierContainer courierPath={GovContextValue.courierPath} />
             </Route>
             <Route path="/setup">
-              <SetupContainer />
+              <SetupContainer homePath={GovContextValue.homePath} />
             </Route>
             <Redirect to="/" />
           </Switch>

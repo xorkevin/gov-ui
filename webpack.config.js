@@ -14,7 +14,6 @@ const createConfig = (env, argv) => {
       manage: 'container/manage',
       setup: 'container/setup',
       govapi: 'apiconfig',
-      govcontext: 'govcontext',
       'gov-ui': 'index.js',
     },
     resolve: {

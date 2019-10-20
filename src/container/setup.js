@@ -1,10 +1,8 @@
-import React, {Fragment, useCallback, useContext} from 'react';
+import React, {Fragment, useCallback} from 'react';
 import {useHistory} from 'react-router-dom';
 import {emailRegex} from 'utility';
 import {useAPICall} from '@xorkevin/substation';
 import {Section, Card, Button, Form, Input, useForm} from '@xorkevin/nuke';
-
-import {GovContext} from 'govcontext';
 
 const selectAPISetup = (api) => api.setupz;
 
@@ -73,12 +71,11 @@ const prehookValidate = ([form]) => {
   }
 };
 
-const Setup = () => {
-  const ctx = useContext(GovContext);
+const Setup = ({homePath}) => {
   const history = useHistory();
   const navigateHome = useCallback(() => {
-    history.push(ctx.homePath);
-  }, [history, ctx.homePath]);
+    history.push(homePath);
+  }, [history, homePath]);
 
   const [formState, updateForm] = useForm({
     username: '',

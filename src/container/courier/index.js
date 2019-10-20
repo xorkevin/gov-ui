@@ -11,7 +11,7 @@ import {Section, Tabbar, FaIcon} from '@xorkevin/nuke';
 import CourierLink from 'container/courier/link';
 import CourierBrand from 'container/courier/brand';
 
-const Courier = () => {
+const Courier = ({courierPath}) => {
   const match = useRouteMatch();
 
   return (
@@ -30,7 +30,7 @@ const Courier = () => {
       />
       <Switch>
         <Route path={`${match.path}/link`}>
-          <CourierLink />
+          <CourierLink courierPath={courierPath} />
         </Route>
         <Route path={`${match.path}/brand`}>
           <CourierBrand />
