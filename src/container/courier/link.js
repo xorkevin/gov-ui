@@ -1,4 +1,4 @@
-import React, {Fragment, useCallback, useMemo} from 'react';
+import React, {Fragment, useState, useCallback, useMemo} from 'react';
 import {isValidURL} from 'utility';
 import {usePaginate} from 'service/paginate';
 import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
@@ -16,7 +16,7 @@ import {
 
 import {URL} from 'example/config';
 
-const LIMIT = 32;
+const LIMIT = 2;
 const BRAND_LIMIT = 128;
 
 const selectAPILinks = (api) => api.courier.link.get;
@@ -103,14 +103,14 @@ const CourierLink = () => {
     brandid: '',
   });
 
-  const page = usePaginate(LIMIT);
-  const pageSetEnd = page.setEnd;
+  const [endPage, setEndPage] = useState(true);
+  const page = usePaginate(LIMIT, endPage);
 
   const posthook = useCallback(
     (_status, links) => {
-      pageSetEnd(links.length < LIMIT);
+      setEndPage(links.length < LIMIT);
     },
-    [pageSetEnd],
+    [setEndPage],
   );
   const {err, data: links, reexecute} = useAuthResource(
     selectAPILinks,
@@ -207,6 +207,11 @@ const CourierLink = () => {
             />
           ))}
         </Table>
+        <div>
+          <Button onClick={page.prev}>prev</Button>
+          {page.num}
+          <Button onClick={page.next}>next</Button>
+        </div>
       </Section>
     </div>
   );

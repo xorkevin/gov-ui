@@ -57,10 +57,6 @@ const searchParamsToString = (search) => {
   return k;
 };
 
-const max = (a, b) => (a > b ? a : b);
-
-const max0 = (a) => max(a, 0);
-
 const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]+$/;
 
 const isValidURL = (url) => {
@@ -80,8 +76,6 @@ export {
   setCookie,
   getSearchParams,
   searchParamsToString,
-  max,
-  max0,
   emailRegex,
   isValidURL,
 };

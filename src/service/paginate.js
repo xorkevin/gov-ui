@@ -1,11 +1,12 @@
 import {useState, useCallback} from 'react';
-import {max0} from 'utility';
+
+const max = (a, b) => (a > b ? a : b);
+const max0 = (a) => max(a, 0);
 
 const endNextPage = () => {};
 
-const usePaginate = (limit = 8, offset = 0) => {
-  const [value, setVal] = useState(offset);
-  const [end, setEnd] = useState(false);
+const usePaginate = (limit = 8, end = false) => {
+  const [value, setVal] = useState(0);
 
   const next = useCallback(() => setVal((i) => max0(i + limit)), [
     setVal,
@@ -20,11 +21,11 @@ const usePaginate = (limit = 8, offset = 0) => {
 
   return {
     value,
+    num: Math.floor(value / max(limit, 1)) + 1,
     next: end ? endNextPage : next,
     prev,
     set,
     first,
-    setEnd,
   };
 };
 

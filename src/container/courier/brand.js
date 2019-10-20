@@ -1,4 +1,4 @@
-import React, {Fragment, useCallback} from 'react';
+import React, {Fragment, useState, useCallback} from 'react';
 import {useURL} from '@xorkevin/substation';
 import {usePaginate} from 'service/paginate';
 import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
@@ -70,14 +70,14 @@ const CourierBrand = () => {
     image: undefined,
   });
 
-  const page = usePaginate(LIMIT);
-  const pageSetEnd = page.setEnd;
+  const [endPage, setEndPage] = useState(true);
+  const page = usePaginate(LIMIT, endPage);
 
   const posthook = useCallback(
     (_status, brands) => {
-      pageSetEnd(brands.length < LIMIT);
+      setEndPage(brands.length < LIMIT);
     },
-    [pageSetEnd],
+    [setEndPage],
   );
   const {err, data: brands, reexecute} = useAuthResource(
     selectAPIBrands,
@@ -154,6 +154,11 @@ const CourierBrand = () => {
             />
           ))}
         </Table>
+        <div>
+          <Button onClick={page.prev}>prev</Button>
+          {page.num}
+          <Button onClick={page.next}>next</Button>
+        </div>
       </Section>
     </div>
   );
