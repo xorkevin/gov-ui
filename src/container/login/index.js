@@ -16,7 +16,7 @@ const FallbackView = (
   </Section>
 );
 
-const LoginContainer = () => {
+const Login = () => {
   const match = useRouteMatch();
 
   return (
@@ -43,4 +43,4 @@ const LoginContainer = () => {
   );
 };
 
-export default LoginContainer;
+export {Login as default, Login};

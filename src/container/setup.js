@@ -73,7 +73,7 @@ const prehookValidate = ([form]) => {
   }
 };
 
-const SetupContainer = () => {
+const Setup = () => {
   const history = useHistory();
   const navigateHome = useCallback(() => {
     history.push(URL.home);
@@ -163,4 +163,4 @@ const SetupContainer = () => {
   );
 };
 
-export default SetupContainer;
+export {Setup as default, Setup};

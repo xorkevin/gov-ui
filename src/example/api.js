@@ -1,20 +1,13 @@
 import {makeAPIClient} from '@xorkevin/substation';
 import {GovAuthAPI} from '@xorkevin/turbine';
-import courierAPI from './courier';
-import profileAPI from './profile';
+import {GovAPI} from 'apiconfig';
 
 const API = {
   setupz: GovAuthAPI.setupz(),
   healthz: GovAuthAPI.healthz(),
   u: GovAuthAPI.user('/u'),
-  profile: {
-    url: '/profile',
-    children: profileAPI,
-  },
-  courier: {
-    url: '/courier',
-    children: courierAPI,
-  },
+  profile: GovAPI.profile('/profile'),
+  courier: GovAPI.courier('/courier'),
 };
 
 const BASEOPTS = Object.freeze({

@@ -78,4 +78,4 @@ const Account = () => {
   );
 };
 
-export default Account;
+export {Account as default, Account};

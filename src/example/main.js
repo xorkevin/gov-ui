@@ -10,7 +10,7 @@ import {AuthContext} from '@xorkevin/turbine';
 import {Section} from '@xorkevin/nuke';
 
 import App from 'example/app';
-import {APIClient} from 'example/apiclient';
+import {APIClient} from 'example/api';
 import store from 'example/store';
 
 const UnAuthFallback = (

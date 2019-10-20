@@ -20,7 +20,7 @@ import {
   FaIcon,
 } from '@xorkevin/nuke';
 
-const AdminContainer = Protected(lazy(() => import('container/admin')));
+const AdminContainer = Protected(lazy(() => import('example/admin')));
 const LoginContainer = AntiProtected(lazy(() => import('container/login')));
 const AccountContainer = Protected(lazy(() => import('container/account')));
 const UserContainer = Protected(lazy(() => import('container/user')));
@@ -29,7 +29,7 @@ const ManageContainer = Protected(
   'admin',
 );
 const HealthContainer = Protected(
-  lazy(() => import('container/health')),
+  lazy(() => import('example/health')),
   'admin',
 );
 const CourierContainer = Protected(

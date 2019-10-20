@@ -16,7 +16,7 @@ const FallbackView = (
   </Section>
 );
 
-const ManageContainer = () => {
+const Manage = () => {
   const match = useRouteMatch();
 
   return (
@@ -40,4 +40,4 @@ const ManageContainer = () => {
   );
 };
 
-export default ManageContainer;
+export {Manage as default, Manage};

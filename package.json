@@ -2,8 +2,10 @@
   "name": "@xorkevin/gov-ui",
   "version": "0.2.1",
   "description": "a reactive frontend for governor",
-  "private": true,
-  "main": "index.js",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
+  "main": "dist/gov-ui.js",
   "scripts": {
     "build": "webpack --mode production --progress --color",
     "build-dev": "webpack-dev-server --config webpack.example.config.js --mode development -w --hot --progress --color",
@@ -58,7 +60,8 @@
     "webpack": "^4.41.2",
     "webpack-bundle-analyzer": "^3.6.0",
     "webpack-cli": "^3.3.9",
-    "webpack-dev-server": "^3.8.2"
+    "webpack-dev-server": "^3.8.2",
+    "webpack-node-externals": "^1.7.2"
   },
   "peerDependencies": {
     "fork-awesome": "^1.1.7",

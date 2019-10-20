@@ -11,7 +11,7 @@ const FallbackView = (
   </Section>
 );
 
-const UserContainer = () => {
+const User = () => {
   const match = useRouteMatch();
 
   return (
@@ -26,4 +26,4 @@ const UserContainer = () => {
   );
 };
 
-export default UserContainer;
+export {User as default, User};

@@ -17,7 +17,7 @@ const FallbackView = (
   </Section>
 );
 
-const CourierContainer = () => {
+const Courier = () => {
   const match = useRouteMatch();
 
   return (
@@ -49,4 +49,4 @@ const CourierContainer = () => {
   );
 };
 
-export default CourierContainer;
+export {Courier as default, Courier};

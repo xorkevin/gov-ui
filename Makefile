@@ -28,6 +28,9 @@ start:
 
 serve: build start
 
+publish: build
+	npm publish
+
 ## gen
 .PHONY: gen
 
