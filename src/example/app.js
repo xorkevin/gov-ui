@@ -62,7 +62,7 @@ const App = () => {
           sidebar
           left={
             <Fragment>
-              <Navitem home>
+              <Navitem>
                 <NavLink exact to="/">
                   <FaIcon icon="home" />
                   <small>Home</small>

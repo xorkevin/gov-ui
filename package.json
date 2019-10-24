@@ -74,9 +74,9 @@
     "react-router": "^5.1.0",
     "react-router-dom": "^5.1.0",
     "redux": "^4.0.0",
-    "@xorkevin/nuke": "^0.1.2",
+    "@xorkevin/nuke": "^0.1.4",
     "@xorkevin/substation": "^0.1.2",
-    "@xorkevin/turbine": "^0.1.4"
+    "@xorkevin/turbine": "^0.1.5"
   },
   "dependencies": {}
 }
