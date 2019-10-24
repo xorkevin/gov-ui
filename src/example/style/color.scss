@@ -1,26 +1,41 @@
 // Color //
-$black: #000000 !default;
-$white: #ffffff !default;
-$color-primary: #224a7f !default;
-$color-primary-light: lighten($color-primary, 12.5%) !default;
-$color-primary-dark: #222832 !default;
+$black: #000000;
+$white: #ffffff;
+
+$color-grey-900: #212121 !default;
+$color-grey-800: #424242 !default;
+$color-grey-300: #e0e0e0 !default;
+$color-grey-100: #f5f5f5 !default;
+$color-grey-50: #fafafa !default;
+
+$color-body-background: #fdfdfd !default;
+
+$color-base: #224a7f !default;
+
+$color-base-light: lighten($color-base, 12.5%) !default;
+
+$color-base-dark: #222832 !default;
+
 $color-accent: #ffb74d !default;
 $color-accent-light: lighten($color-accent, 12.5%) !default;
-$background: #fcfcfc !default;
-$background-dark: darken($color-primary-dark, 6.25%) !default;
-$background-transparent: rgba($white, 0.97) !default;
-$background-dark-solid: #111111 !default;
-$background-full-transparent: rgba($white, 0) !default;
-$background-dark-transparent: rgba($color-primary-dark, 0.75) !default;
 
-$color-primary-transparent: rgba(
-  desaturate($color-primary, 12.5%),
-  0.12
-) !default;
-$color-primary-light-transparent: rgba(
-  desaturate($color-primary, 25%),
-  0.2
-) !default;
+$color-back-light-1: rgba($white, 1) !default;
+$color-back-light-1-5: rgba($white, 0.97) !default;
+$color-back-light-2: rgba($white, 0.9) !default;
+$color-back-light-3: rgba($white, 0.12) !default;
+$color-back-light-4: rgba($white, 0.08) !default;
+$color-back-light-transparent: rgba($white, 0) !default;
+
+$color-back-dark-1: rgba($black, 0.87) !default;
+$color-back-dark-3: rgba($black, 0.12) !default;
+$color-back-dark-4: rgba($black, 0.08) !default;
+
+$color-back-base-light-4: rgba(desaturate($color-base, 12.5%), 0.12) !default;
+
+$color-back-base-dark-1: darken($color-base-dark, 6.25%) !default;
+$color-back-base-dark-2: $color-base-dark !default;
+$color-back-base-dark-3: lighten($color-base-dark, 3.125%) !default;
+$color-back-base-dark-4: rgba($color-back-base-dark-3, 0.5) !default;
 
 $color-text-dark-1: rgba($black, 0.87) !default; // primary
 $color-text-dark-1-5: rgba($black, 0.75) !default; // primary
@@ -34,12 +49,6 @@ $color-text-light-2: rgba($white, 0.7) !default; // secondary
 $color-text-light-3: rgba($white, 0.5) !default; // disabled/hint/icons
 $color-text-light-4: rgba($white, 0.12) !default; // dividers
 
-$color-grey-900: #212121 !default;
-$color-grey-800: #424242 !default;
-$color-grey-300: #e0e0e0 !default;
-$color-grey-100: #f5f5f5 !default;
-$color-grey-50: #fafafa !default;
-
 $color-valid: #308457 !default;
 $color-valid-light: #5bc38c !default;
 $color-invalid: #a72222 !default;
@@ -47,12 +56,8 @@ $color-invalid-light: #f15656 !default;
 
 $shadow-box: 0 2px 4px 0 $color-text-dark-4, 0 2px 8px 0 $color-text-dark-4;
 $shadow-box-2: 0 1px 2px 0 $color-text-dark-4, 0 1px 4px 0 $color-text-dark-4;
-$shadow-button: 0 2px 4px 0 $color-text-dark-4, 0 2px 8px 0 $color-text-dark-4;
-$shadow-button-raised: 0 4px 8px 0 lighten($color-text-dark-4, 12.5%),
+$shadow-box-raised: 0 4px 8px 0 lighten($color-text-dark-4, 12.5%),
   0 4px 16px 0 lighten($color-text-dark-4, 12.5%);
 $shadow-text: 0 2px 16px $color-text-dark-4, 0 2px 8px $color-text-dark-4,
   0 2px 4px $color-text-dark-4;
 $shadow-box-blur: 0 0 4px -1px $color-text-dark-4, 0 0 8px 0 $color-text-dark-4;
-$shadow-box-blur-dark: 0 0 4px 1px $color-text-dark-4,
-  0 0 8px 0 $color-text-dark-4, 0 0 16px 0 $color-text-dark-4;
-$shadow-box-dark: 0 1px 4px 0 $color-text-dark-4, 0 1px 8px 0 $color-text-dark-4;

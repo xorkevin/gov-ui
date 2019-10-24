@@ -1,3 +1,34 @@
+// Typography //
+$typography-base-font: 'Lato', Arial, Verdana, sans-serif !default;
+$typography-base-size: 14px !default;
+$typography-article-font: 'Source Serif Pro', Palatino, Georgia, serif !default;
+$typography-mono-font: 'Hack', monospace !default;
+
+// Button //
+$button-min-width: 96px !default;
+$button-margin: 8px !default;
+
+// Card //
+$card-sm-size: 256px !default;
+$card-md-size: $card-sm-size * 1.5 !default;
+$card-lg-size: $card-md-size * 1.5 !default;
+
+// Container //
+$container-padding: 8px !default;
+
+// Description //
+$description-margin: 4px !default;
+$description-label-width: 25% !default;
+$description-item-width: 75% !default;
+
+// Footer //
+$footer-padding-top: 64px !default;
+$footer-padding-bottom: 128px !default;
+
+// Form //
+$form-input-width: 256px !default;
+$form-input-width-wide: $form-input-width * 2 !default;
+
 // Grid //
 $grid-sm-breakpoint: 512px * 1.5 !default;
 $grid-md-breakpoint: $grid-sm-breakpoint * 1.5 !default;
@@ -5,53 +36,41 @@ $grid-lg-breakpoint: $grid-md-breakpoint * 1.5 !default;
 $grid-gutter-padding: 8px !default;
 $grid-vertical-padding: 8px !default;
 
-// Typography //
-$typography-base-font: 'Lato', Arial, Verdana, sans-serif;
-$typography-base-size: 14px !default;
-$typography-article-font: 'Source Serif Pro', Palatino, Georgia, serif;
-$typography-mono-font: 'Hack', monospace;
-
-// Card //
-$card-sm-size: 256px !default;
-$card-md-size: $card-sm-size * 1.5 !default;
-$card-lg-size: $card-md-size * 1.5 !default;
-$card-padding: 8px !default;
-$card-padding-h: 20px !default;
+// Image //
+$image-sm-size: 512px !default;
+$image-md-size: $image-sm-size * 1.5 !default;
+$image-lg-size: $image-md-size * 1.5 !default;
 
 // ListGroup //
 $listgroup-sm-size: 256px !default;
 $listgroup-md-size: $listgroup-sm-size * 1.5 !default;
 $listgroup-lg-size: $listgroup-md-size * 1.5 !default;
-$listgroup-padding: 8px !default;
-$listgroup-padding-h: 20px !default;
-
-// Table //
-$table-gutter-padding: 8px !default;
-$table-vertical-padding: 8px !default;
 
 // Menu //
 $menu-sm-size: 128px !default;
 $menu-md-size: $menu-sm-size * 1.5 !default;
 $menu-lg-size: $menu-md-size * 1.5 !default;
 
-// Button //
-$button-padding: 8px !default;
-$button-padding-h: $button-padding * 2 !default;
-$button-min-width: 48px !default;
-
-// Hero //
-$hero-sm-size: 512px !default;
-$hero-md-size: $hero-sm-size * 1.5 !default;
-$hero-lg-size: $hero-md-size * 1.5 !default;
-
 // Nav //
 $nav-height: 64px !default;
 $nav-width: 64px !default;
 
+// Section //
+$section-margin: $nav-height !default;
+
+// Snackbar //
+$snackbar-padding: 16px !default;
+
 // Tab //
 $tab-height: 32px !default;
+$tab-margin: 16px !default;
+
+// Table //
+$table-width: 512px !default;
+$table-padding: 8px !default;
+$table-padding-h: 8px !default;
 
 // Transitions //
-$transition-normal: 0.125s cubic-bezier(0.4, 0, 0.2, 1);
-$transition-fast: 0.0625s cubic-bezier(0.4, 0, 0.2, 1);
-$transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-normal: 0.125s cubic-bezier(0.4, 0, 0.2, 1) !default;
+$transition-fast: 0.0625s cubic-bezier(0.4, 0, 0.2, 1) !default;
+$transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1) !default;
