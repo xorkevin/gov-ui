@@ -17,7 +17,7 @@ import ProfileEditContainer from 'container/account/profileedit';
 import ProfileDetailsContainer from 'container/account/profile';
 import AccountSessionsContainer from 'container/account/sessions';
 
-const Account = () => {
+const Account = ({showProfile}) => {
   const match = useRouteMatch();
 
   return (
@@ -26,7 +26,9 @@ const Account = () => {
         left={
           <Fragment>
             <NavLink to={`${match.path}/account`}>Account</NavLink>
-            <NavLink to={`${match.path}/profile`}>Profile</NavLink>
+            {showProfile && (
+              <NavLink to={`${match.path}/profile`}>Profile</NavLink>
+            )}
             <NavLink to={`${match.path}/sessions`}>Sessions</NavLink>
           </Fragment>
         }
@@ -47,12 +49,16 @@ const Account = () => {
         <Route path={`${match.path}/account`}>
           <AccountDetailsContainer />
         </Route>
-        <Route path={`${match.path}/profile/edit`}>
-          <ProfileEditContainer />
-        </Route>
-        <Route path={`${match.path}/profile`}>
-          <ProfileDetailsContainer />
-        </Route>
+        {showProfile && (
+          <Route path={`${match.path}/profile/edit`}>
+            <ProfileEditContainer />
+          </Route>
+        )}
+        {showProfile && (
+          <Route path={`${match.path}/profile`}>
+            <ProfileDetailsContainer />
+          </Route>
+        )}
         <Route path={`${match.path}/sessions`}>
           <AccountSessionsContainer />
         </Route>

@@ -131,7 +131,7 @@ const App = () => {
               <LoginContainer />
             </Route>
             <Route path="/a">
-              <AccountContainer />
+              <AccountContainer showProfile />
             </Route>
             <Route path="/u">
               <UserContainer />
