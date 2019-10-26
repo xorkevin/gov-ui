@@ -1,7 +1,5 @@
 *
 !Dockerfile
-!package.json
-!package-lock.json
-!server.js
-!adminserver.js
-!hyperserver.js
+!server/package.json
+!server/package-lock.json
+!server/server.js

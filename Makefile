@@ -1,9 +1,6 @@
 # CMD
 BIN_DIR=bin
 
-# DOCKER
-IMAGE_NAME=gov-ui
-
 .PHONY: all clean-bin clean format dev build start serve publish
 
 all: build
@@ -25,24 +22,20 @@ build: clean
 	npm run build
 
 start:
-	npm run serve
+	node server/server.js
 
 serve: build start
 
 publish: build
 	npm publish
 
-## gen
-.PHONY: gen
-
-gen:
-	./servicedef-gen.sh
-
-.PHONY: build-docker produp proddown
-
 ## docker
+DOCKER_IMAGE_NAME=govui
+DOCKER_VERSION=v0.3.3
+DOCKER_FILE=./Dockerfile
+.PHONY: build-docker produp proddown
 build-docker:
-	docker build -f ./Dockerfile -t $(IMAGE_NAME):$(VERSION) -t $(IMAGE_NAME):latest .
+	docker build -f $(DOCKER_FILE) -t $(DOCKER_IMAGE_NAME):$(DOCKER_VERSION) -t $(DOCKER_IMAGE_NAME):latest .
 
 produp:
 	docker-compose -f dc.main.yaml -f dc.compose.yaml up -d
@@ -51,8 +44,13 @@ proddown:
 	docker-compose -f dc.main.yaml -f dc.compose.yaml down
 
 ## service
-SERVICE_STACK=nuke
-.PHONY: launch danger-land
+SERVICE_STACK=govui
+SERVICE_DEF_DIR=defs
+SERVICE_DEF_NAME=$(SERVICE_DEF_DIR)/dc.$(SERVICE_STACK).yaml
+.PHONY: service launch danger-land
+service:
+	./servicedef-gen.sh $(SERVICE_DEF_DIR) $(SERVICE_DEF_NAME)
+
 launch:
 	docker stack deploy -c defs/dc.nuke.yaml $(SERVICE_STACK)
 

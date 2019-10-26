@@ -37,4 +37,4 @@ function start(port) {
   app.listen(port);
 }
 
-module.exports = start;
+start(3030);

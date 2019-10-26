@@ -1,0 +1,18 @@
+{
+  "name": "gov-ui-server",
+  "version": "0.1.0",
+  "private": true,
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "serve": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "xorkevin",
+  "license": "MPL-2.0",
+  "dependencies": {
+    "compression": "^1.7.4",
+    "express": "^4.17.1",
+    "morgan": "^1.9.1"
+  }
+}

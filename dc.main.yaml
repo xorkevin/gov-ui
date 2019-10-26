@@ -1,15 +1,7 @@
-version: "3.7"
+version: '3.7'
 
 services:
   app:
-    image: nuke:latest
+    image: govui:latest
     volumes:
       - ./bin:/app/bin
-      - ./bin_admin:/app/bin_admin
-  admin:
-    image: nuke:latest
-    volumes:
-      - ./bin:/app/bin
-      - ./bin_admin:/app/bin_admin
-    environment:
-      NUKE_MODE: admin

@@ -1,5 +1,5 @@
-out=defs
-rm -rf $out
-mkdir -p $out
+source ./source.sh
+rm -rf $1
+mkdir -p $1
 
-docker-compose -f dc.main.yaml -f dc.service.yaml config > $out/dc.nuke.yaml
+docker-compose -f dc.main.yaml -f dc.service.yaml config > $2
