@@ -52,7 +52,7 @@ service:
 	./servicedef-gen.sh $(SERVICE_DEF_DIR) $(SERVICE_DEF_NAME)
 
 launch:
-	docker stack deploy -c defs/dc.nuke.yaml $(SERVICE_STACK)
+	docker stack deploy -c $(SERVICE_DEF_NAME) $(SERVICE_STACK)
 
 danger-land:
 	docker stack rm $(SERVICE_STACK)
