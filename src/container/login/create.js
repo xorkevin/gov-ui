@@ -89,7 +89,7 @@ const CreateAccount = () => {
 
   const bar = success ? (
     <Fragment>
-      <Link to="/x/confirm">
+      <Link to={`/x/confirm?email=${encodeURIComponent(formState.email)}`}>
         <Button outline>Confirm</Button>
       </Link>
     </Fragment>

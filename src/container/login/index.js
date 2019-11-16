@@ -24,7 +24,7 @@ const Login = () => {
       <Route path={`${match.path}/forgot`}>
         <ForgotPassContainer />
       </Route>
-      <Route path={`${match.path}/forgotconfirm`}>
+      <Route path={`${match.path}/resetpass`}>
         <ResetPassContainer />
       </Route>
       <Redirect to={`${match.path}/login`} />

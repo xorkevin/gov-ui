@@ -36,7 +36,7 @@ const formValidCheck = ({new_password, password_confirm}) => {
   return valid;
 };
 
-const prehookValidate = ([_key, new_password, password_confirm]) => {
+const prehookValidate = ([_userid, _key, new_password, password_confirm]) => {
   if (new_password !== password_confirm) {
     return 'Passwords do not match';
   }
@@ -52,6 +52,7 @@ const ConfirmReset = () => {
   );
 
   const [formState, updateForm] = useForm({
+    userid: getSearchParams(search).get('userid') || '',
     key: getSearchParams(search).get('key') || '',
     new_password: '',
     password_confirm: '',
@@ -59,7 +60,12 @@ const ConfirmReset = () => {
 
   const [resetState, execReset] = useAPICall(
     selectAPIResetPass,
-    [formState.key, formState.new_password, formState.password_confirm],
+    [
+      formState.userid,
+      formState.key,
+      formState.new_password,
+      formState.password_confirm,
+    ],
     {},
     {prehook: prehookValidate, posthook: displaySnackbar},
   );
@@ -100,6 +106,7 @@ const ConfirmReset = () => {
           errCheck={formErrCheck}
           validCheck={formValidCheck}
         >
+          <Input label="userid" name="userid" fullWidth />
           <Input label="code" name="key" fullWidth />
           <Input
             label="new password"

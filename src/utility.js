@@ -57,7 +57,7 @@ const searchParamsToString = (search) => {
   return k;
 };
 
-const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]+$/;
+const emailRegex = /^[a-z0-9_-][a-z0-9_+-]*(\.[a-z0-9_+-]+)*@[a-z0-9]+(-+[a-z0-9]+)*(\.[a-z0-9]+(-+[a-z0-9]+)*)*$/;
 
 const isValidURL = (url) => {
   try {

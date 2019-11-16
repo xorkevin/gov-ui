@@ -10,10 +10,12 @@ const ConfirmAccount = () => {
   const {search} = useLocation();
 
   const [formState, updateForm] = useForm({
+    email: getSearchParams(search).get('email') || '',
     key: getSearchParams(search).get('key') || '',
   });
 
   const [confirmState, execConfirm] = useAPICall(selectAPIConfirmAccount, [
+    formState.email,
     formState.key,
   ]);
 
@@ -47,6 +49,7 @@ const ConfirmAccount = () => {
         bar={bar}
       >
         <Form formState={formState} onChange={updateForm} onEnter={execConfirm}>
+          <Input label="email" name="email" fullWidth />
           <Input label="code" name="key" fullWidth />
         </Form>
         {err && <span>{err}</span>}

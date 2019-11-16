@@ -18,7 +18,7 @@ const ForgotPassContainer = () => {
 
   const bar = success ? (
     <Fragment>
-      <Link to="/x/forgotconfirm">
+      <Link to="/x/resetpass">
         <Button outline>Confirm</Button>
       </Link>
     </Fragment>
