@@ -52,20 +52,16 @@ const ConfirmReset = () => {
   );
 
   const [formState, updateForm] = useForm({
-    userid: getSearchParams(search).get('userid') || '',
     key: getSearchParams(search).get('key') || '',
     new_password: '',
     password_confirm: '',
   });
 
+  const [userid, key] = formState.key.split('.', 2);
+
   const [resetState, execReset] = useAPICall(
     selectAPIResetPass,
-    [
-      formState.userid,
-      formState.key,
-      formState.new_password,
-      formState.password_confirm,
-    ],
+    [userid, key, formState.new_password, formState.password_confirm],
     {},
     {prehook: prehookValidate, posthook: displaySnackbar},
   );
@@ -106,7 +102,6 @@ const ConfirmReset = () => {
           errCheck={formErrCheck}
           validCheck={formValidCheck}
         >
-          <Input label="userid" name="userid" fullWidth />
           <Input label="code" name="key" fullWidth />
           <Input
             label="new password"

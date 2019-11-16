@@ -1,7 +1,7 @@
 import React, {Fragment} from 'react';
 import {Link, useLocation} from 'react-router-dom';
 import {getSearchParams} from 'utility';
-import {useAuthCall, useAuthState} from '@xorkevin/turbine';
+import {useAuthCall} from '@xorkevin/turbine';
 import {Section, Card, Button, Form, Input, useForm} from '@xorkevin/nuke';
 
 const selectAPIConfirmEmail = (api) => api.u.user.email.edit.confirm;
@@ -9,16 +9,16 @@ const selectAPIConfirmEmail = (api) => api.u.user.email.edit.confirm;
 const AccountEmailConfirm = () => {
   const {search} = useLocation();
 
-  const {userid} = useAuthState();
-
   const [formState, updateForm] = useForm({
     key: getSearchParams(search).get('key') || '',
     password: '',
   });
 
+  const [userid, key] = formState.key.split('.', 2);
+
   const [confirmState, execConfirm] = useAuthCall(selectAPIConfirmEmail, [
     userid,
-    formState.key,
+    key,
     formState.password,
   ]);
 
