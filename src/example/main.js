@@ -19,7 +19,7 @@ const UnAuthFallback = (
   </Section>
 );
 
-const AuthContextValue = Object.freeze({
+const AuthContextValue = {
   selectReducerAuth: (store) => store.Auth,
   selectAPILogin: (api) => api.u.auth.login,
   selectAPIExchange: (api) => api.u.auth.exchange,
@@ -28,7 +28,8 @@ const AuthContextValue = Object.freeze({
   paramName: 'redir',
   homePath: '/',
   loginPath: '/x/login',
-});
+  authLoading: Promise.resolve(),
+};
 
 ReactDOM.render(
   <div id="mount">
