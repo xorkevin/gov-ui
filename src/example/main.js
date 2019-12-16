@@ -1,4 +1,6 @@
 import 'fork-awesome/css/fork-awesome.min.css';
+import 'inter-ui/inter.css';
+import 'typeface-merriweather/index.css';
 import 'example/main.scss';
 
 import React from 'react';
