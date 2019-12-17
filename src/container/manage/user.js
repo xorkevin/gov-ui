@@ -72,7 +72,7 @@ const ManageUser = () => {
 
   const {err: errEdit} = rankState;
 
-  if (!userSuccess) {
+  if (!userSuccess || !displayUser) {
     const bar = (
       <Fragment>
         <Button primary onClick={navigateUser}>

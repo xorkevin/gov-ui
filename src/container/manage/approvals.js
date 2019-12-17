@@ -1,5 +1,5 @@
 import React, {Fragment, useState, useCallback} from 'react';
-import {useAuthResource} from '@xorkevin/turbine';
+import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
   Section,
   Table,
@@ -10,11 +10,14 @@ import {
   Tooltip,
   FaIcon,
   usePaginate,
+  useSnackbar,
 } from '@xorkevin/nuke';
 
 const LIMIT = 32;
 
 const selectAPIApprovals = (api) => api.u.user.approvals.get;
+const selectAPIApprove = (api) => api.u.user.approvals.id.approve;
+const selectAPIDelete = (api) => api.u.user.approvals.id.del;
 
 const ApprovalsRow = ({
   userid,
@@ -24,7 +27,22 @@ const ApprovalsRow = ({
   first_name,
   last_name,
   creation_time,
+  posthook,
+  errhook,
 }) => {
+  const [_approveState, execApprove] = useAuthCall(
+    selectAPIApprove,
+    [userid],
+    {},
+    {posthook, errhook},
+  );
+  const [_deleteState, execDelete] = useAuthCall(
+    selectAPIDelete,
+    [userid],
+    {},
+    {posthook, errhook},
+  );
+
   return (
     <tr>
       <td>
@@ -55,11 +73,11 @@ const ApprovalsRow = ({
           align="right"
           position="bottom"
         >
-          <span>
-            <FaIcon icon="check" /> Accept
+          <span onClick={execApprove}>
+            <FaIcon icon="check" /> Approve
           </span>
-          <span>
-            <FaIcon icon="trash-o" /> Delete
+          <span onClick={execDelete}>
+            <FaIcon icon="trash" /> Delete
           </span>
         </Menu>
       </td>
@@ -68,6 +86,18 @@ const ApprovalsRow = ({
 };
 
 const Approvals = () => {
+  const snackbar = useSnackbar();
+  const displayErrSnack = useCallback(
+    (_status, err) => {
+      snackbar(
+        <Fragment>
+          <span>{err}</span>
+        </Fragment>,
+      );
+    },
+    [snackbar],
+  );
+
   const [endPage, setEndPage] = useState(true);
   const page = usePaginate(LIMIT, endPage);
 
@@ -77,11 +107,12 @@ const Approvals = () => {
     },
     [setEndPage],
   );
-  const {
-    err,
-    data: approvals,
-    reexecute: _reexecute,
-  } = useAuthResource(selectAPIApprovals, [LIMIT, page.value], [], {posthook});
+  const {err, data: approvals, reexecute} = useAuthResource(
+    selectAPIApprovals,
+    [LIMIT, page.value],
+    [],
+    {posthook},
+  );
 
   return (
     <div>
@@ -118,6 +149,8 @@ const Approvals = () => {
                 first_name={first_name}
                 last_name={last_name}
                 creation_time={creation_time}
+                posthook={reexecute}
+                errhook={displayErrSnack}
               />
             ),
           )}

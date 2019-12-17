@@ -92,10 +92,10 @@ const LinkRow = ({
 const CourierLink = ({courierPath}) => {
   const snackbar = useSnackbar();
   const displayErrSnack = useCallback(
-    (_stage, err) => {
+    (_status, err) => {
       snackbar(
         <Fragment>
-          <span>Failed to delete link: {err}</span>
+          <span>{err}</span>
         </Fragment>,
       );
     },
