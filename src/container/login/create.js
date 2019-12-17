@@ -67,7 +67,7 @@ const prehookValidate = ([form]) => {
   }
 };
 
-const CreateAccount = () => {
+const CreateAccount = ({userApprovals}) => {
   const [formState, updateForm] = useForm({
     username: '',
     password: '',
@@ -88,11 +88,19 @@ const CreateAccount = () => {
   const {success, err} = createState;
 
   const bar = success ? (
-    <Fragment>
-      <Link to={`/x/confirm?email=${encodeURIComponent(formState.email)}`}>
-        <Button outline>Confirm</Button>
-      </Link>
-    </Fragment>
+    userApprovals ? (
+      <Fragment>
+        <Link to="/x/login">
+          <Button outline>Back</Button>
+        </Link>
+      </Fragment>
+    ) : (
+      <Fragment>
+        <Link to={`/x/confirm?email=${encodeURIComponent(formState.email)}`}>
+          <Button outline>Confirm</Button>
+        </Link>
+      </Fragment>
+    )
   ) : (
     <Fragment>
       <Link to="/x/login">
@@ -141,14 +149,19 @@ const CreateAccount = () => {
           <Input label="confirm email" name="email_confirm" fullWidth />
         </Form>
         {err && <span>{err}</span>}
-        {success && (
-          <span>
+        {success &&
+          (userApprovals ? (
+            <span>
+              A new user request has been sent to an administrator. A
+              confirmation email will be emailed to the address you provided
+              above when the request is approved.
+            </span>
+          ) : (
             <span>
               Confirm your account with a code emailed to the address you
               provided above
             </span>
-          </span>
-        )}
+          ))}
       </Card>
     </Section>
   );

@@ -7,7 +7,7 @@ import CreateConfirmContainer from 'container/login/confirm';
 import ForgotPassContainer from 'container/login/forgotpassword';
 import ResetPassContainer from 'container/login/resetpassword';
 
-const Login = () => {
+const Login = ({userApprovals}) => {
   const match = useRouteMatch();
 
   return (
@@ -16,7 +16,7 @@ const Login = () => {
         <SigninContainer />
       </Route>
       <Route path={`${match.path}/create`}>
-        <CreateContainer />
+        <CreateContainer userApprovals={userApprovals} />
       </Route>
       <Route path={`${match.path}/confirm`}>
         <CreateConfirmContainer />

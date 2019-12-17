@@ -26,7 +26,7 @@ const AccountContainer = Protected(lazy(() => import('container/account')));
 const UserContainer = Protected(lazy(() => import('container/user')));
 const ManageContainer = Protected(
   lazy(() => import('container/manage')),
-  'admin',
+  ['admin', 'usr_user'],
 );
 const HealthContainer = Protected(
   lazy(() => import('example/health')),
@@ -34,7 +34,7 @@ const HealthContainer = Protected(
 );
 const CourierContainer = Protected(
   lazy(() => import('container/courier')),
-  'admin',
+  ['admin', 'usr_courier'],
 );
 const SetupContainer = lazy(() => import('container/setup'));
 
