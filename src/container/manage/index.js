@@ -9,22 +9,27 @@ import {
 import {Section, Tabbar} from '@xorkevin/nuke';
 
 import ManageUserContainer from 'container/manage/user';
+import ApprovalsContainer from 'container/manage/approvals';
 
 const Manage = () => {
   const match = useRouteMatch();
 
   return (
-    <Section container narrow padded sectionTitle="Settings">
+    <Section container narrow padded sectionTitle="Manage">
       <Tabbar
         left={
           <Fragment>
             <NavLink to={`${match.url}/user`}>User</NavLink>
+            <NavLink to={`${match.url}/approvals`}>Approvals</NavLink>
           </Fragment>
         }
       />
       <Switch>
         <Route path={`${match.path}/user/:username?`}>
           <ManageUserContainer />
+        </Route>
+        <Route path={`${match.path}/approvals`}>
+          <ApprovalsContainer />
         </Route>
         <Redirect to={`${match.path}/user`} />
       </Switch>

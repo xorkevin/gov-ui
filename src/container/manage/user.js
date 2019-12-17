@@ -26,18 +26,19 @@ const ManageUser = () => {
   const [editMode, setEdit] = useState(false);
   const toggleEditMode = useCallback(() => setEdit((e) => !e), [setEdit]);
 
-  const {err: errUser, data: user, reexecute} = useResource(
-    displayUser ? selectAPIUser : selectAPINull,
-    [username],
-    {
-      userid: '',
-      username: '',
-      first_name: '',
-      last_name: '',
-      auth_tags: '',
-      creation_time: 0,
-    },
-  );
+  const {
+    success: userSuccess,
+    err: errUser,
+    data: user,
+    reexecute,
+  } = useResource(displayUser ? selectAPIUser : selectAPINull, [username], {
+    userid: '',
+    username: '',
+    first_name: '',
+    last_name: '',
+    auth_tags: '',
+    creation_time: 0,
+  });
 
   const [searchFormState, updateSearchForm] = useForm({
     username: '',
@@ -71,7 +72,7 @@ const ManageUser = () => {
 
   const {err: errEdit} = rankState;
 
-  if (!displayUser) {
+  if (!userSuccess) {
     const bar = (
       <Fragment>
         <Button primary onClick={navigateUser}>
@@ -90,6 +91,7 @@ const ManageUser = () => {
           >
             <Input label="username" name="username" fullWidth />
           </Form>
+          {errUser && <span>{errUser}</span>}
         </Section>
       </Card>
     );
@@ -175,7 +177,6 @@ const ManageUser = () => {
           label="creation time"
           item={<Time value={user.creation_time * 1000} />}
         />
-        {errUser && <span>{errUser}</span>}
       </Section>
     </Card>
   );
