@@ -23,6 +23,7 @@ import {
 const AdminContainer = Protected(lazy(() => import('example/admin')));
 const LoginContainer = AntiProtected(lazy(() => import('container/login')));
 const AccountContainer = Protected(lazy(() => import('container/account')));
+const DeveloperContainer = Protected(lazy(() => import('container/developer')));
 const UserContainer = Protected(lazy(() => import('container/user')));
 const ManageContainer = Protected(
   lazy(() => import('container/manage')),
@@ -102,8 +103,11 @@ const App = () => {
                   align="left"
                   position="top"
                 >
-                  <Link to="/a/account">
+                  <Link to="/a">
                     <FaIcon icon="address-card-o" /> Account
+                  </Link>
+                  <Link to="/dev">
+                    <FaIcon icon="code" /> Developer
                   </Link>
                   <span onClick={toggleDark}>
                     <FaIcon icon="bolt" /> {dark ? 'Light' : 'Dark'} Mode
@@ -132,6 +136,9 @@ const App = () => {
             </Route>
             <Route path="/a">
               <AccountContainer showProfile />
+            </Route>
+            <Route path="/dev">
+              <DeveloperContainer />
             </Route>
             <Route path="/u">
               <UserContainer />

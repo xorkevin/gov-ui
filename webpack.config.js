@@ -10,6 +10,7 @@ const createConfig = (env, argv) => {
     entry: {
       account: 'container/account',
       courier: 'container/courier',
+      developer: 'container/developer',
       login: 'container/login',
       manage: 'container/manage',
       setup: 'container/setup',
