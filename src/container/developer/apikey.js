@@ -143,12 +143,14 @@ const ApikeyRow = ({
                 name="auth_tags"
               />
             </Form>
-            <Button primary onClick={execUpdate}>
-              <FaIcon icon="floppy-o" /> Save
-            </Button>
-            <Button text onClick={cancelEdit}>
-              Cancel
-            </Button>
+            <div>
+              <Button text onClick={cancelEdit}>
+                Cancel
+              </Button>
+              <Button primary onClick={execUpdate}>
+                <FaIcon icon="floppy-o" /> Save
+              </Button>
+            </div>
           </td>
         </tr>
       )}
