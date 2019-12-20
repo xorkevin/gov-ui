@@ -166,8 +166,9 @@ const Apikeys = () => {
                 <p>
                   This API Key allows anyone who has access to it to make API
                   requests on your behalf with the permissions you granted. As
-                  such, store the API Key secret below in a safe place, as you
-                  will <strong>not</strong> be able to view it again.
+                  such, for security purposes, store the API Key secret below in
+                  a safe place, as you will <strong>not</strong> be able to view
+                  it again.
                 </p>
                 <Description
                   label="Key ID"
