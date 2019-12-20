@@ -1,5 +1,5 @@
 import React, {Fragment, useState, useCallback} from 'react';
-import {useAuthResource} from '@xorkevin/turbine';
+import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
   Section,
   Table,
@@ -9,6 +9,9 @@ import {
   Time,
   Tooltip,
   FaIcon,
+  Input,
+  Form,
+  useForm,
   usePaginate,
   useSnackbar,
 } from '@xorkevin/nuke';
@@ -16,17 +19,17 @@ import {
 const LIMIT = 32;
 
 const selectAPIKeys = (api) => api.u.apikey.get;
+const selectAPICreate = (api) => api.u.apikey.create;
 
 const ApikeyRow = ({name, desc, keyid, auth_tags, time}) => {
   return (
     <tr>
       <td>
         <h5>{name}</h5>
-        <code>
-          <Tooltip tooltip="Key id used to reference this API key">
-            {keyid}
-          </Tooltip>
-        </code>
+        <p>
+          <h6>Key ID:</h6>
+          <code>{keyid}</code>
+        </p>
         <p>{desc}</p>
       </td>
       <td>
@@ -77,6 +80,12 @@ const Apikeys = () => {
     [snackbar],
   );
 
+  const [formState, updateForm] = useForm({
+    name: '',
+    desc: '',
+    auth_tags: '',
+  });
+
   const [endPage, setEndPage] = useState(true);
   const page = usePaginate(LIMIT, endPage);
 
@@ -86,14 +95,46 @@ const Apikeys = () => {
     },
     [setEndPage],
   );
-  const {
-    err,
-    data: apikeys,
-    reexecute: _reexecute,
-  } = useAuthResource(selectAPIKeys, [LIMIT, page.value], [], {posthook});
+  const {err, data: apikeys, reexecute} = useAuthResource(
+    selectAPIKeys,
+    [LIMIT, page.value],
+    [],
+    {posthook},
+  );
+
+  const posthookRefresh = useCallback(
+    (_status, _data, opts) => {
+      reexecute(opts);
+      updateForm('name', '');
+      updateForm('desc', '');
+      updateForm('auth_tags', '');
+    },
+    [reexecute, updateForm],
+  );
+  const [createState, execCreate] = useAuthCall(
+    selectAPICreate,
+    [formState],
+    {},
+    {posthook: posthookRefresh},
+  );
+  const {err: errCreate} = createState;
 
   return (
     <div>
+      <Section subsection sectionTitle="Create API Key">
+        <Form formState={formState} onChange={updateForm} onEnter={execCreate}>
+          <Input label="name" name="name" />
+          <Input label="description (optional)" name="desc" />
+
+          {formState.auth_tags.length > 0 &&
+            formState.auth_tags
+              .split(',')
+              .map((tag) => <Chip key={tag.trim()}>{tag.trim()}</Chip>)}
+          <Input label="permissions" name="auth_tags" />
+        </Form>
+        <Button onClick={execCreate}>Create</Button>
+        {errCreate && <span>{errCreate}</span>}
+      </Section>
       {err && <span>{err}</span>}
       <Section subsection sectionTitle="API Keys">
         <Table
