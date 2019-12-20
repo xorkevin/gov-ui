@@ -17,6 +17,7 @@ import {
   useForm,
   usePaginate,
   useSnackbar,
+  useSnackbarView,
   fuzzyFilter,
 } from '@xorkevin/nuke';
 
@@ -24,8 +25,17 @@ const LIMIT = 32;
 
 const selectAPIKeys = (api) => api.u.apikey.get;
 const selectAPICreate = (api) => api.u.apikey.create;
+//const selectAPIUpdate = (api) => api.u.apikey.id.edit;
+const selectAPIDelete = (api) => api.u.apikey.id.del;
 
-const ApikeyRow = ({name, desc, keyid, auth_tags, time}) => {
+const ApikeyRow = ({name, desc, keyid, auth_tags, time, posthook, errhook}) => {
+  const [_deleteState, execDelete] = useAuthCall(
+    selectAPIDelete,
+    [keyid],
+    {},
+    {posthook, errhook},
+  );
+
   return (
     <tr>
       <td>
@@ -61,7 +71,7 @@ const ApikeyRow = ({name, desc, keyid, auth_tags, time}) => {
           align="right"
           position="bottom"
         >
-          <span>
+          <span onClick={execDelete}>
             <FaIcon icon="trash" /> Delete
           </span>
         </Menu>
@@ -73,8 +83,13 @@ const ApikeyRow = ({name, desc, keyid, auth_tags, time}) => {
 const getAuthTagVal = (i) => i.value;
 
 const Apikeys = () => {
+  const displaySnackbar = useSnackbarView(
+    <Fragment>
+      <span>API Key deleted</span>
+    </Fragment>,
+  );
   const snackbar = useSnackbar();
-  const _displayErrSnack = useCallback(
+  const displayErrSnack = useCallback(
     (_status, err) => {
       snackbar(
         <Fragment>
@@ -136,6 +151,14 @@ const Apikeys = () => {
     [authTags, formState._search_auth_tags],
   );
 
+  const posthookDelete = useCallback(
+    (_status, _data, opts) => {
+      displaySnackbar();
+      reexecute(opts);
+    },
+    [reexecute, displaySnackbar],
+  );
+
   return (
     <div>
       <Section subsection sectionTitle="Create API Key">
@@ -190,7 +213,7 @@ const Apikeys = () => {
           head={
             <Fragment>
               <th>Name</th>
-              <th>Key id</th>
+              <th>Key ID</th>
               <th>Key</th>
               <th>Permissions</th>
               <th>Time</th>
@@ -205,6 +228,8 @@ const Apikeys = () => {
               desc={desc}
               auth_tags={auth_tags}
               time={time}
+              posthook={posthookDelete}
+              errhook={displayErrSnack}
             />
           ))}
         </Table>
