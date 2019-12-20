@@ -1,5 +1,5 @@
-import React, {Fragment, useState, useCallback} from 'react';
-import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
+import React, {Fragment, useState, useCallback, useMemo} from 'react';
+import {useAuthState, useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
   Section,
   Table,
@@ -14,6 +14,7 @@ import {
   useForm,
   usePaginate,
   useSnackbar,
+  fuzzyFilter,
 } from '@xorkevin/nuke';
 
 const LIMIT = 32;
@@ -26,11 +27,10 @@ const ApikeyRow = ({name, desc, keyid, auth_tags, time}) => {
     <tr>
       <td>
         <h5>{name}</h5>
-        <p>
-          <h6>Key ID:</h6>
-          <code>{keyid}</code>
-        </p>
         <p>{desc}</p>
+      </td>
+      <td>
+        <code>{keyid}</code>
       </td>
       <td>
         <Tooltip tooltip="For security purposes, the key cannot be shown">
@@ -67,6 +67,8 @@ const ApikeyRow = ({name, desc, keyid, auth_tags, time}) => {
   );
 };
 
+const getAuthTagVal = (i) => i.value;
+
 const Apikeys = () => {
   const snackbar = useSnackbar();
   const _displayErrSnack = useCallback(
@@ -83,7 +85,7 @@ const Apikeys = () => {
   const [formState, updateForm] = useForm({
     name: '',
     desc: '',
-    auth_tags: '',
+    auth_tags: [],
   });
 
   const [endPage, setEndPage] = useState(true);
@@ -107,17 +109,29 @@ const Apikeys = () => {
       reexecute(opts);
       updateForm('name', '');
       updateForm('desc', '');
-      updateForm('auth_tags', '');
+      updateForm('auth_tags', []);
     },
     [reexecute, updateForm],
   );
   const [createState, execCreate] = useAuthCall(
     selectAPICreate,
-    [formState],
+    [formState.name, formState.desc, formState.auth_tags.join(',')],
     {},
     {posthook: posthookRefresh},
   );
   const {err: errCreate} = createState;
+
+  const {authTags} = useAuthState();
+  const allPermissions = useMemo(
+    () =>
+      fuzzyFilter(
+        8,
+        authTags.split(',').map((tag) => ({value: tag})),
+        getAuthTagVal,
+        formState._search_auth_tags,
+      ),
+    [authTags, formState._search_auth_tags],
+  );
 
   return (
     <div>
@@ -126,11 +140,12 @@ const Apikeys = () => {
           <Input label="name" name="name" />
           <Input label="description (optional)" name="desc" />
 
-          {formState.auth_tags.length > 0 &&
-            formState.auth_tags
-              .split(',')
-              .map((tag) => <Chip key={tag.trim()}>{tag.trim()}</Chip>)}
-          <Input label="permissions" name="auth_tags" />
+          <Input
+            label="permissions"
+            multiple
+            dropdowninput={allPermissions}
+            name="auth_tags"
+          />
         </Form>
         <Button onClick={execCreate}>Create</Button>
         {errCreate && <span>{errCreate}</span>}
@@ -142,6 +157,7 @@ const Apikeys = () => {
           head={
             <Fragment>
               <th>Name</th>
+              <th>Key id</th>
               <th>Key</th>
               <th>Permissions</th>
               <th>Time</th>

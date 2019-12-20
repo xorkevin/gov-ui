@@ -18,6 +18,7 @@ userApi.children.apikey = {
     create: {
       url: '',
       method: 'POST',
+      transformer: (name, desc, auth_tags) => [null, {name, desc, auth_tags}],
       expectdata: true,
       err: 'Could not create apikey',
     },
@@ -27,7 +28,10 @@ userApi.children.apikey = {
         edit: {
           url: '',
           method: 'PUT',
-          transformer: (keyid, props) => [[keyid], props],
+          transformer: (keyid, name, desc, auth_tags) => [
+            [keyid],
+            {name, desc, auth_tags},
+          ],
           expectdata: false,
           err: 'Could not edit apikey',
         },
