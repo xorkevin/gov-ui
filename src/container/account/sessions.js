@@ -1,4 +1,4 @@
-import React, {Fragment, useCallback} from 'react';
+import React, {Fragment, useState, useCallback} from 'react';
 import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
   Section,
@@ -7,9 +7,12 @@ import {
   Time,
   useSnackbar,
   useSnackbarView,
+  usePaginate,
 } from '@xorkevin/nuke';
 
-const selectAPISessions = (api) => api.u.user.sessions;
+const LIMIT = 32;
+
+const selectAPISessions = (api) => api.u.user.sessions.get;
 const selectAPISessionDelete = (api) => api.u.user.sessions.del;
 
 const SessionRow = ({session_id, ip, time, user_agent, posthook, errhook}) => {
@@ -55,7 +58,21 @@ const AccountSessions = () => {
     [snackbar],
   );
 
-  const {err, data, reexecute} = useAuthResource(selectAPISessions, [], []);
+  const [endPage, setEndPage] = useState(true);
+  const page = usePaginate(LIMIT, endPage);
+
+  const posthook = useCallback(
+    (_status, links) => {
+      setEndPage(links.length < LIMIT);
+    },
+    [setEndPage],
+  );
+  const {err, data, reexecute} = useAuthResource(
+    selectAPISessions,
+    [LIMIT, page.value],
+    [],
+    {posthook},
+  );
 
   const posthookDelete = useCallback(
     (_status, _data, opts) => {
@@ -93,6 +110,11 @@ const AccountSessions = () => {
           );
         })}
       </Table>
+      <div>
+        <Button onClick={page.prev}>prev</Button>
+        {page.num}
+        <Button onClick={page.next}>next</Button>
+      </div>
     </Section>
   );
 };
