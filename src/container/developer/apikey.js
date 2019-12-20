@@ -1,6 +1,8 @@
 import React, {Fragment, useState, useCallback, useMemo} from 'react';
 import {useAuthState, useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
+  Grid,
+  Column,
   Section,
   Table,
   Menu,
@@ -9,6 +11,7 @@ import {
   Time,
   Tooltip,
   FaIcon,
+  Description,
   Input,
   Form,
   useForm,
@@ -119,7 +122,7 @@ const Apikeys = () => {
     {},
     {posthook: posthookRefresh},
   );
-  const {err: errCreate} = createState;
+  const {err: errCreate, success: successCreate, data: resCreate} = createState;
 
   const {authTags} = useAuthState();
   const allPermissions = useMemo(
@@ -136,19 +139,48 @@ const Apikeys = () => {
   return (
     <div>
       <Section subsection sectionTitle="Create API Key">
-        <Form formState={formState} onChange={updateForm} onEnter={execCreate}>
-          <Input label="name" name="name" />
-          <Input label="description (optional)" name="desc" />
+        <Grid>
+          <Column md={12}>
+            <Form
+              formState={formState}
+              onChange={updateForm}
+              onEnter={execCreate}
+            >
+              <Input label="name" name="name" />
+              <Input label="description (optional)" name="desc" />
 
-          <Input
-            label="permissions"
-            multiple
-            dropdowninput={allPermissions}
-            name="auth_tags"
-          />
-        </Form>
-        <Button onClick={execCreate}>Create</Button>
-        {errCreate && <span>{errCreate}</span>}
+              <Input
+                label="permissions"
+                multiple
+                dropdowninput={allPermissions}
+                name="auth_tags"
+              />
+            </Form>
+            <Button onClick={execCreate}>Create</Button>
+            {errCreate && <span>{errCreate}</span>}
+          </Column>
+          <Column md={12}>
+            {successCreate && (
+              <div>
+                <h4>Success! API Key Created</h4>
+                <p>
+                  This API Key allows anyone who has access to it to make API
+                  requests on your behalf with the permissions you granted. As
+                  such, store the API Key secret below in a safe place, as you
+                  will <strong>not</strong> be able to view it again.
+                </p>
+                <Description
+                  label="Key ID"
+                  item={<code>{resCreate.keyid}</code>}
+                />
+                <Description
+                  label="Secret"
+                  item={<code>{resCreate.key}</code>}
+                />
+              </div>
+            )}
+          </Column>
+        </Grid>
       </Section>
       {err && <span>{err}</span>}
       <Section subsection sectionTitle="API Keys">
