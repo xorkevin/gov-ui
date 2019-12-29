@@ -25,10 +25,7 @@ const LoginContainer = AntiProtected(lazy(() => import('container/login')));
 const AccountContainer = Protected(lazy(() => import('container/account')));
 const DeveloperContainer = Protected(lazy(() => import('container/developer')));
 const UserContainer = Protected(lazy(() => import('container/user')));
-const ManageContainer = Protected(
-  lazy(() => import('container/manage')),
-  ['admin', 'usr_user'],
-);
+const ManageContainer = lazy(() => import('container/manage'));
 const HealthContainer = Protected(
   lazy(() => import('example/health')),
   'admin',

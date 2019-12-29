@@ -6,10 +6,13 @@ import {
   NavLink,
   useRouteMatch,
 } from 'react-router-dom';
+import {Protected} from '@xorkevin/turbine';
 import {Section, Tabbar} from '@xorkevin/nuke';
 
 import ManageUserContainer from 'container/manage/user';
 import ApprovalsContainer from 'container/manage/approvals';
+
+const Approvals = Protected(ApprovalsContainer, ['admin', 'usr_user']);
 
 const Manage = () => {
   const match = useRouteMatch();
@@ -29,7 +32,7 @@ const Manage = () => {
           <ManageUserContainer />
         </Route>
         <Route path={`${match.path}/approvals`}>
-          <ApprovalsContainer />
+          <Approvals />
         </Route>
         <Redirect to={`${match.path}/user`} />
       </Switch>
