@@ -11,7 +11,7 @@ const createConfig = (env, argv) => {
 
     context: path.resolve(__dirname, 'src'),
     entry: {
-      main: ['core-js/stable', 'example/main.js'],
+      main: ['example/main.js'],
     },
     resolve: {
       modules: [path.resolve(__dirname, 'src'), 'node_modules'],
