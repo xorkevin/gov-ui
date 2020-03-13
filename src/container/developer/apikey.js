@@ -26,7 +26,21 @@ const LIMIT = 32;
 const selectAPIKeys = (api) => api.u.apikey.get;
 const selectAPICreate = (api) => api.u.apikey.create;
 const selectAPIUpdate = (api) => api.u.apikey.id.edit;
+const selectAPIRotate = (api) => api.u.apikey.id.rotate;
 const selectAPIDelete = (api) => api.u.apikey.id.del;
+
+const MODE_BASE = 0;
+const MODE_EDIT = 1;
+const MODE_ROTATE = 2;
+
+const API_KEY_MESSAGE = (
+  <p>
+    This API Key allows anyone who has access to it to make API requests on your
+    behalf with the permissions you granted. As such, for security purposes,
+    store the API Key secret below in a safe place, as you will{' '}
+    <strong>not</strong> be able to view it again.
+  </p>
+);
 
 const ApikeyRow = ({
   name,
@@ -49,11 +63,11 @@ const ApikeyRow = ({
     desc,
     auth_tags: auth_tags.split(','),
   });
-  const [edit, setEdit] = useState(false);
+  const [mode, setMode] = useState(MODE_BASE);
   const updateSuccess = useCallback(() => {
-    setEdit(false);
+    setMode(MODE_BASE);
     posthookUpd();
-  }, [setEdit, posthookUpd]);
+  }, [setMode, posthookUpd]);
   const [_updateState, execUpdate] = useAuthCall(
     selectAPIUpdate,
     [keyid, formState.name, formState.desc, formState.auth_tags.join(',')],
@@ -64,9 +78,9 @@ const ApikeyRow = ({
     updateForm('name', name);
     updateForm('desc', desc);
     updateForm('auth_tags', auth_tags.split(','));
-    setEdit(true);
-  }, [name, desc, auth_tags, updateForm, setEdit]);
-  const cancelEdit = useCallback(() => setEdit(false), [setEdit]);
+    setMode(MODE_EDIT);
+  }, [name, desc, auth_tags, updateForm, setMode]);
+  const cancelEdit = useCallback(() => setMode(MODE_BASE), [setMode]);
   const {authTags} = useAuthState();
   const allPermissions = useMemo(
     () =>
@@ -78,6 +92,16 @@ const ApikeyRow = ({
       ),
     [authTags, formState._search_auth_tags],
   );
+  const posthookRotate = useCallback(() => {
+    setMode(MODE_ROTATE);
+  }, [setMode]);
+  const [rotateState, execRotate] = useAuthCall(
+    selectAPIRotate,
+    [keyid],
+    {},
+    {posthook: posthookRotate, errhook},
+  );
+  const {success: successRotate, data: resRotate} = rotateState;
 
   return (
     <Fragment>
@@ -120,15 +144,18 @@ const ApikeyRow = ({
             <span onClick={beginEdit}>
               <FaIcon icon="pencil" /> Edit
             </span>
+            <span onClick={execRotate}>
+              <FaIcon icon="repeat" /> Rotate key
+            </span>
             <span onClick={execDelete}>
               <FaIcon icon="trash" /> Delete
             </span>
           </Menu>
         </td>
       </tr>
-      {edit && (
+      {mode === MODE_EDIT && (
         <tr>
-          <td colSpan={5}>
+          <td colSpan={6}>
             <Form
               formState={formState}
               onChange={updateForm}
@@ -151,6 +178,33 @@ const ApikeyRow = ({
                 <FaIcon icon="floppy-o" /> Save
               </Button>
             </div>
+          </td>
+        </tr>
+      )}
+      {mode === MODE_ROTATE && (
+        <tr>
+          <td colSpan={6}>
+            {successRotate && (
+              <div>
+                <div>
+                  <h4>API Key Rotated</h4>
+                  {API_KEY_MESSAGE}
+                  <Description
+                    label="Key ID"
+                    item={<code>{resRotate.keyid}</code>}
+                  />
+                  <Description
+                    label="Secret"
+                    item={<code>{resRotate.key}</code>}
+                  />
+                </div>
+                <div>
+                  <Button text onClick={cancelEdit}>
+                    Close
+                  </Button>
+                </div>
+              </div>
+            )}
           </td>
         </tr>
       )}
@@ -277,13 +331,7 @@ const Apikeys = () => {
             {successCreate && (
               <div>
                 <h4>Success! API Key Created</h4>
-                <p>
-                  This API Key allows anyone who has access to it to make API
-                  requests on your behalf with the permissions you granted. As
-                  such, for security purposes, store the API Key secret below in
-                  a safe place, as you will <strong>not</strong> be able to view
-                  it again.
-                </p>
+                {API_KEY_MESSAGE}
                 <Description
                   label="Key ID"
                   item={<code>{resCreate.keyid}</code>}
