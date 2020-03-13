@@ -24,6 +24,7 @@ import {
 const LIMIT = 32;
 
 const selectAPIKeys = (api) => api.u.apikey.get;
+const selectAPICheckKey = (api) => api.u.apikey.check;
 const selectAPICreate = (api) => api.u.apikey.create;
 const selectAPIUpdate = (api) => api.u.apikey.id.edit;
 const selectAPIRotate = (api) => api.u.apikey.id.rotate;
@@ -212,6 +213,51 @@ const ApikeyRow = ({
   );
 };
 
+const CheckKey = () => {
+  const displaySnackbar = useSnackbarView(
+    <Fragment>
+      <span>Key OK</span>
+    </Fragment>,
+  );
+  const [formState, updateForm] = useForm({
+    keyid: '',
+    key: '',
+    auth_tags: '',
+  });
+  const clearForm = useCallback(() => {
+    updateForm('keyid', '');
+    updateForm('key', '');
+    updateForm('auth_tags', '');
+  }, [updateForm]);
+  const [checkState, execCheckKey] = useAuthCall(
+    selectAPICheckKey,
+    [formState.keyid, formState.key, formState.auth_tags],
+    {},
+    {posthook: displaySnackbar},
+  );
+  const {err} = checkState;
+  return (
+    <div>
+      <Form formState={formState} onChange={updateForm} onEnter={execCheckKey}>
+        <Input label="Key ID" name="keyid" />
+        <Input label="Key" name="key" />
+        <div>
+          {formState.auth_tags.length > 0 &&
+            formState.auth_tags
+              .split(',')
+              .map((tag) => <Chip key={tag.trim()}>{tag.trim()}</Chip>)}
+        </div>
+        <Input label="roles" name="auth_tags" />
+      </Form>
+      <Button text onClick={clearForm}>
+        Clear
+      </Button>
+      <Button onClick={execCheckKey}>Check key</Button>
+      {err && <span>{err}</span>}
+    </div>
+  );
+};
+
 const getAuthTagVal = (i) => i.value;
 
 const Apikeys = () => {
@@ -378,6 +424,14 @@ const Apikeys = () => {
           {page.num}
           <Button onClick={page.next}>next</Button>
         </div>
+      </Section>
+      <Section subsection sectionTitle="Check key">
+        <h5>Warning</h5>
+        <p>
+          This should be used for <strong>debug</strong> purposes only. Rotate
+          keys after testing.
+        </p>
+        <CheckKey />
       </Section>
     </div>
   );
