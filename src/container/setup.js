@@ -29,7 +29,6 @@ const formValidCheck = ({
   email,
   first_name,
   last_name,
-  orgname,
   password_confirm,
   email_confirm,
 }) => {
@@ -48,9 +47,6 @@ const formValidCheck = ({
   }
   if (last_name.length > 0) {
     valid.last_name = true;
-  }
-  if (orgname.length > 0) {
-    valid.orgname = true;
   }
   if (password.length > 0 && password_confirm === password) {
     valid.password_confirm = true;
@@ -83,7 +79,6 @@ const Setup = ({homePath}) => {
     email: '',
     first_name: '',
     last_name: '',
-    orgname: '',
     password_confirm: '',
     email_confirm: '',
   });
@@ -91,11 +86,11 @@ const Setup = ({homePath}) => {
   const [setupState, execSetup] = useAPICall(
     selectAPISetup,
     [formState],
-    {orgname: ''},
+    {},
     {prehook: prehookValidate},
   );
 
-  const {success, err, data} = setupState;
+  const {success, err} = setupState;
 
   return (
     <Section container padded>
@@ -123,9 +118,6 @@ const Setup = ({homePath}) => {
           errCheck={formErrCheck}
           validCheck={formValidCheck}
         >
-          <Section subsection sectionTitle="Organization">
-            <Input label="organization name" name="orgname" fullWidth />
-          </Section>
           <Section subsection sectionTitle="Admin Account">
             <Input label="first name" name="first_name" fullWidth />
             <Input label="last name" name="last_name" fullWidth />
@@ -149,7 +141,7 @@ const Setup = ({homePath}) => {
           {err && <span>{err}</span>}
           {success && (
             <span>
-              <span>{data && data.orgname} has been created</span>
+              <span>Server setup</span>
               <Button outline onClick={navigateHome}>
                 Finish
               </Button>

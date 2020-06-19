@@ -2,7 +2,7 @@ import React, {Fragment} from 'react';
 import {useResource} from '@xorkevin/substation';
 import {Section, Time} from '@xorkevin/nuke';
 
-const selectAPIHealth = (api) => api.healthz.report;
+const selectAPIHealth = (api) => api.healthz.ready;
 
 const HealthContainer = () => {
   const {loading, success, err, data} = useResource(selectAPIHealth, [], {
