@@ -8,7 +8,7 @@ import {
 } from 'react-router-dom';
 import {Section, Tabbar} from '@xorkevin/nuke';
 
-import ApikeyContainer from 'container/developer/apikey';
+import ApikeyContainer from './apikey';
 
 const Developer = () => {
   const match = useRouteMatch();

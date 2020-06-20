@@ -8,14 +8,14 @@ import {
 } from 'react-router-dom';
 import {Section, Tabbar} from '@xorkevin/nuke';
 
-import EmailConfirmContainer from 'container/account/emailconfirm';
-import EmailEditContainer from 'container/account/emailedit';
-import PassEditContainer from 'container/account/passedit';
-import AccountEditContainer from 'container/account/detailsedit';
-import AccountDetailsContainer from 'container/account/details';
-import ProfileEditContainer from 'container/account/profileedit';
-import ProfileDetailsContainer from 'container/account/profile';
-import AccountSessionsContainer from 'container/account/sessions';
+import EmailConfirmContainer from './emailconfirm';
+import EmailEditContainer from './emailedit';
+import PassEditContainer from './passedit';
+import AccountEditContainer from './detailsedit';
+import AccountDetailsContainer from './details';
+import ProfileEditContainer from './profileedit';
+import ProfileDetailsContainer from './profile';
+import AccountSessionsContainer from './sessions';
 
 const Account = ({showProfile}) => {
   const match = useRouteMatch();

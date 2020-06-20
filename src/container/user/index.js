@@ -1,7 +1,7 @@
 import React from 'react';
 import {Switch, Route, Redirect, useRouteMatch} from 'react-router-dom';
 
-import UserDetailsContainer from 'container/user/user';
+import UserDetailsContainer from './user';
 
 const User = () => {
   const match = useRouteMatch();

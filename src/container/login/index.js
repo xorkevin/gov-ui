@@ -1,11 +1,11 @@
 import React from 'react';
 import {Switch, Route, Redirect, useRouteMatch} from 'react-router-dom';
 
-import SigninContainer from 'container/login/signin';
-import CreateContainer from 'container/login/create';
-import CreateConfirmContainer from 'container/login/confirm';
-import ForgotPassContainer from 'container/login/forgotpassword';
-import ResetPassContainer from 'container/login/resetpassword';
+import SigninContainer from './signin';
+import CreateContainer from './create';
+import CreateConfirmContainer from './confirm';
+import ForgotPassContainer from './forgotpassword';
+import ResetPassContainer from './resetpassword';
 
 const Login = ({userApprovals}) => {
   const match = useRouteMatch();

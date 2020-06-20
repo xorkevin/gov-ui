@@ -8,8 +8,8 @@ import {
 } from 'react-router-dom';
 import {Section, Tabbar, FaIcon} from '@xorkevin/nuke';
 
-import CourierLink from 'container/courier/link';
-import CourierBrand from 'container/courier/brand';
+import CourierLink from './link';
+import CourierBrand from './brand';
 
 const Courier = ({courierPath}) => {
   const match = useRouteMatch();

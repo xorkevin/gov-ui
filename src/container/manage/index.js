@@ -9,8 +9,8 @@ import {
 import {Protected} from '@xorkevin/turbine';
 import {Section, Tabbar} from '@xorkevin/nuke';
 
-import ManageUserContainer from 'container/manage/user';
-import ApprovalsContainer from 'container/manage/approvals';
+import ManageUserContainer from './user';
+import ApprovalsContainer from './approvals';
 
 const Approvals = Protected(ApprovalsContainer, ['admin', 'usr_user']);
 
