@@ -5,16 +5,38 @@ const ExtractTextPlugin = require('mini-css-extract-plugin');
 const HtmlPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
+const aliasModules = (names) => {
+  return Object.fromEntries(
+    names.map((name) => [
+      name,
+      path.resolve(__dirname, `node_modules/${name}`),
+    ]),
+  );
+};
+
+const govuiDeps = [
+  'core-js',
+  'react',
+  'react-router-dom',
+  '@xorkevin/substation',
+  '@xorkevin/turbine',
+  '@xorkevin/nuke',
+];
+
 const createConfig = (env, argv) => {
   const config = {
     target: 'web',
 
     context: path.resolve(__dirname, 'src'),
     entry: {
-      main: ['example/main.js'],
+      main: ['main.js'],
     },
     resolve: {
       modules: [path.resolve(__dirname, 'src'), 'node_modules'],
+      alias: {
+        ...aliasModules(govuiDeps),
+        '@xorkevin/gov-ui': path.resolve(__dirname, '..'),
+      },
     },
     module: {
       rules: [
@@ -75,17 +97,15 @@ const createConfig = (env, argv) => {
         title: 'Nuke',
         filename: 'index.html',
         inject: 'body',
-        template: 'example/template/index.html',
+        template: 'template/index.html',
       }),
       new ExtractTextPlugin({
         filename: 'static/[name].[contenthash].css',
         chunkFilename: 'static/chunk.[name].[contenthash].css',
       }),
-      new CopyPlugin([
-        {
-          from: 'example/public',
-        },
-      ]),
+      new CopyPlugin({
+        patterns: [{from: 'public'}],
+      }),
     ],
 
     output: {
@@ -102,7 +122,7 @@ const createConfig = (env, argv) => {
     },
 
     devServer: {
-      contentBase: path.resolve(__dirname, 'example/public'),
+      contentBase: path.resolve(__dirname, 'public'),
       compress: true,
       host: '0.0.0.0',
       port: 3000,

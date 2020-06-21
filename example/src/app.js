@@ -20,21 +20,33 @@ import {
   FaIcon,
 } from '@xorkevin/nuke';
 
-const AdminContainer = Protected(lazy(() => import('example/admin')));
-const LoginContainer = AntiProtected(lazy(() => import('container/login')));
-const AccountContainer = Protected(lazy(() => import('container/account')));
-const DeveloperContainer = Protected(lazy(() => import('container/developer')));
-const UserContainer = Protected(lazy(() => import('container/user')));
-const ManageContainer = lazy(() => import('container/manage'));
+const AdminContainer = Protected(lazy(() => import('admin')));
+const LoginContainer = AntiProtected(
+  lazy(() => import('@xorkevin/gov-ui/src/container/login')),
+);
+const AccountContainer = Protected(
+  lazy(() => import('@xorkevin/gov-ui/src/container/account')),
+);
+const DeveloperContainer = Protected(
+  lazy(() => import('@xorkevin/gov-ui/src/container/developer')),
+);
+const UserContainer = Protected(
+  lazy(() => import('@xorkevin/gov-ui/src/container/user')),
+);
+const ManageContainer = lazy(() =>
+  import('@xorkevin/gov-ui/src/container/manage'),
+);
 const HealthContainer = Protected(
-  lazy(() => import('example/health')),
+  lazy(() => import('health')),
   'admin',
 );
 const CourierContainer = Protected(
-  lazy(() => import('container/courier')),
+  lazy(() => import('@xorkevin/gov-ui/src/container/courier')),
   ['admin', 'usr_courier'],
 );
-const SetupContainer = lazy(() => import('container/setup'));
+const SetupContainer = lazy(() =>
+  import('@xorkevin/gov-ui/src/container/setup'),
+);
 
 const FallbackView = (
   <Section container padded narrow>

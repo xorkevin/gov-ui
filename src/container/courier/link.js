@@ -1,5 +1,5 @@
 import React, {Fragment, useState, useCallback, useMemo} from 'react';
-import {isValidURL} from 'utility';
+import {isValidURL} from '../../../utility';
 import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
   Section,

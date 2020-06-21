@@ -1,7 +1,7 @@
 import 'fork-awesome/css/fork-awesome.min.css';
 import 'inter-ui/inter.css';
 import 'typeface-merriweather/index.css';
-import 'example/main.scss';
+import 'main.scss';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -11,9 +11,9 @@ import {APIContext} from '@xorkevin/substation';
 import {AuthContext} from '@xorkevin/turbine';
 import {Section} from '@xorkevin/nuke';
 
-import App from 'example/app';
-import {APIClient} from 'example/api';
-import store from 'example/store';
+import App from 'app';
+import {APIClient} from 'api';
+import store from 'store';
 
 const UnAuthFallback = (
   <Section container padded narrow>
