@@ -10,7 +10,7 @@ const HealthContainer = () => {
     errs: [],
   });
   return (
-    <Section sectionTitle="Health Check" container padded>
+    <Section sectionTitle="Health Check" container narrow padded>
       {loading && <span>Loading</span>}
       {success && (
         <Fragment>
