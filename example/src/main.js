@@ -1,49 +1,64 @@
 import 'fork-awesome/css/fork-awesome.min.css';
 import 'inter-ui/inter.css';
 import 'typeface-merriweather/index.css';
+import '@xorkevin/nuke/main.scss';
 import 'main.scss';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Provider} from 'react-redux';
 import {BrowserRouter} from 'react-router-dom';
+import {RecoilRoot} from 'recoil';
 import {APIContext} from '@xorkevin/substation';
-import {AuthContext} from '@xorkevin/turbine';
-import {Section} from '@xorkevin/nuke';
+import {
+  AuthCtx,
+  TurbineDefaultOpts,
+  makeInitAuthState,
+} from '@xorkevin/turbine';
+import {
+  DarkModeCtx,
+  DarkModeDefaultOpts,
+  makeInitDarkModeState,
+  SnackbarCtx,
+  SnackbarDefaultOpts,
+  Container,
+} from '@xorkevin/nuke';
 
 import App from 'app';
 import {APIClient} from 'api';
-import store from 'store';
 
 const UnAuthFallback = (
-  <Section container padded narrow>
+  <Container padded narrow>
     Unauthorized
-  </Section>
+  </Container>
 );
 
-const AuthContextValue = {
-  selectReducerAuth: (store) => store.Auth,
-  selectAPILogin: (api) => api.u.auth.login,
-  selectAPIExchange: (api) => api.u.auth.exchange,
-  selectAPIRefresh: (api) => api.u.auth.refresh,
-  fallback: UnAuthFallback,
-  paramName: 'redir',
-  homePath: '/',
-  loginPath: '/x/login',
-  authLoading: Promise.resolve(),
+const authctx = Object.assign({}, TurbineDefaultOpts, {
+  fallbackView: UnAuthFallback,
+});
+const darkmodectx = Object.assign({}, DarkModeDefaultOpts);
+const snackbarctx = Object.assign({}, SnackbarDefaultOpts);
+
+const initAuthState = makeInitAuthState(authctx);
+const initDarkModeState = makeInitDarkModeState(darkmodectx);
+
+const init = (snap) => {
+  initAuthState(snap);
+  initDarkModeState(snap);
 };
 
 ReactDOM.render(
-  <div id="mount">
-    <Provider store={store}>
-      <BrowserRouter>
-        <APIContext.Provider value={APIClient}>
-          <AuthContext.Provider value={AuthContextValue}>
-            <App />
-          </AuthContext.Provider>
-        </APIContext.Provider>
-      </BrowserRouter>
-    </Provider>
-  </div>,
+  <RecoilRoot initializeState={init}>
+    <APIContext.Provider value={APIClient}>
+      <AuthCtx.Provider value={authctx}>
+        <DarkModeCtx.Provider value={darkmodectx}>
+          <SnackbarCtx.Provider value={snackbarctx}>
+            <BrowserRouter>
+              <App />
+            </BrowserRouter>
+          </SnackbarCtx.Provider>
+        </DarkModeCtx.Provider>
+      </AuthCtx.Provider>
+    </APIContext.Provider>
+  </RecoilRoot>,
   document.getElementById('mount'),
 );

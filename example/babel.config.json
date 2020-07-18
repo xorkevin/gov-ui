@@ -1,0 +1,16 @@
+{
+  "presets": [
+    "@babel/preset-react",
+    [
+      "@babel/preset-env",
+      {
+        "modules": false,
+        "useBuiltIns": "usage",
+        "corejs": 3,
+        "targets": {
+          "browsers": ["last 2 Chrome versions", "last 2 Firefox versions"]
+        }
+      }
+    ]
+  ]
+}

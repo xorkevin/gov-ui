@@ -34,13 +34,12 @@
   "peerDependencies": {
     "fork-awesome": "^1.1.7",
     "react": "^16.9.0",
-    "react-redux": "^7.1.0",
     "react-router": "^5.1.0",
     "react-router-dom": "^5.1.0",
-    "redux": "^4.0.0",
-    "@xorkevin/nuke": "^0.1.12",
-    "@xorkevin/substation": "^0.1.4",
-    "@xorkevin/turbine": "^0.1.11"
+    "recoil": "0.0.10",
+    "@xorkevin/nuke": "^0.1.13",
+    "@xorkevin/substation": "^0.1.5",
+    "@xorkevin/turbine": "^0.1.12"
   },
   "dependencies": {}
 }

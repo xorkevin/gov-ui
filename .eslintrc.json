@@ -36,7 +36,7 @@
     "react/display-name": "off",
     "react/prop-types": "off"
   },
-  "ignorePatterns": ["example/**"],
+  "ignorePatterns": ["example/bin/**", "example/webpack.config.js"],
   "settings": {
     "react": {
       "version": "detect"

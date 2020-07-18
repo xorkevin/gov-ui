@@ -16,7 +16,7 @@ const selectAPISessions = (api) => api.u.user.sessions.get;
 const selectAPISessionDelete = (api) => api.u.user.sessions.del;
 
 const SessionRow = ({session_id, ip, time, user_agent, posthook, errhook}) => {
-  const [_deleteState, execDelete] = useAuthCall(
+  const [_delete, execDelete] = useAuthCall(
     selectAPISessionDelete,
     [session_id],
     {},
@@ -67,7 +67,7 @@ const AccountSessions = () => {
     },
     [setEndPage],
   );
-  const {err, data, reexecute} = useAuthResource(
+  const [sessions, reexecute] = useAuthResource(
     selectAPISessions,
     [LIMIT, page.value],
     [],
@@ -84,7 +84,7 @@ const AccountSessions = () => {
 
   return (
     <Section subsection sectionTitle="Active Sessions">
-      {err && <span>{err}</span>}
+      {sessions.err && <span>{sessions.err}</span>}
       <Table
         fullWidth
         head={
@@ -96,7 +96,7 @@ const AccountSessions = () => {
           </Fragment>
         }
       >
-        {data.map(({session_id, ip, time, user_agent}) => {
+        {sessions.data.map(({session_id, ip, time, user_agent}) => {
           return (
             <SessionRow
               key={session_id}

@@ -79,7 +79,7 @@ const CourierBrand = () => {
     },
     [setEndPage],
   );
-  const {err, data: brands, reexecute} = useAuthResource(
+  const [brands, reexecute] = useAuthResource(
     selectAPIBrands,
     [LIMIT, page.value],
     [],
@@ -94,7 +94,7 @@ const CourierBrand = () => {
     },
     [reexecute, updateForm],
   );
-  const [createState, execCreate] = useAuthCall(
+  const [create, execCreate] = useAuthCall(
     selectAPICreate,
     [formState],
     {},
@@ -107,8 +107,6 @@ const CourierBrand = () => {
     },
     [reexecute],
   );
-
-  const {loading, err: errCreate} = createState;
 
   return (
     <div>
@@ -124,14 +122,14 @@ const CourierBrand = () => {
           />
         </Form>
         <Button onClick={execCreate}>Add Brand</Button>
-        {loading && (
+        {create.loading && (
           <Fragment>
             <FaIcon icon="cloud-upload" /> Uploading
           </Fragment>
         )}
-        {errCreate && <span>{errCreate}</span>}
+        {create.err && <span>{create.err}</span>}
       </Section>
-      {err && <span>{err}</span>}
+      {brands.err && <span>{brands.err}</span>}
       <Section subsection sectionTitle="Brands">
         <Table
           fullWidth
@@ -144,7 +142,7 @@ const CourierBrand = () => {
             </Fragment>
           }
         >
-          {brands.map(({brandid, creation_time}) => (
+          {brands.data.map(({brandid, creation_time}) => (
             <BrandRow
               key={brandid}
               brandid={brandid}

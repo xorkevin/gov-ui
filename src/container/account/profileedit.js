@@ -42,7 +42,7 @@ const ProfileEdit = () => {
     [updateForm],
   );
 
-  const {err: errProfile} = useAuthResource(
+  const [profile] = useAuthResource(
     selectAPIProfile,
     [],
     {
@@ -107,7 +107,7 @@ const ProfileEdit = () => {
           </Grid>
           {errImage && <span>{errImage}</span>}
         </Section>
-        {errProfile && <span>{errProfile}</span>}
+        {profile.err && <span>{profile.err}</span>}
         {err && <span>{err}</span>}
       </Card>
     </div>

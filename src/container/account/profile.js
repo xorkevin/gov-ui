@@ -1,7 +1,7 @@
 import React, {Fragment} from 'react';
 import {Link} from 'react-router-dom';
 import {useURL} from '@xorkevin/substation';
-import {useAuthState, useAuthCall, useAuthResource} from '@xorkevin/turbine';
+import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {Section, Card, Description, Button, Img} from '@xorkevin/nuke';
 
 const selectAPIProfile = (api) => api.profile.get;
@@ -9,18 +9,17 @@ const selectAPIProfileImage = (api) => api.profile.id.image;
 const selectAPICreateProfile = (api) => api.profile.create;
 
 const Profile = () => {
-  const {success, err, status, data} = useAuthResource(selectAPIProfile, [], {
+  const [profile] = useAuthResource(selectAPIProfile, [], {
     contact_email: '',
     bio: '',
     image: '',
   });
 
-  const canCreate = status === 404;
+  const canCreate = profile.status === 404;
 
-  const [createState, execCreate] = useAuthCall(selectAPICreateProfile);
-  const {success: successCreate, err: errCreate} = createState;
+  const [create, execCreate] = useAuthCall(selectAPICreateProfile);
 
-  const {userid} = useAuthState();
+  const {userid} = useAuthValue();
   const imageURL = useURL(selectAPIProfileImage, [userid]);
 
   const bar = (
@@ -40,20 +39,23 @@ const Profile = () => {
           </Button>
         </div>
       )}
-      {successCreate && <span>Profile created</span>}
-      {errCreate && <span>{errCreate}</span>}
-      {success && (
+      {create.success && <span>Profile created</span>}
+      {create.err && <span>{create.err}</span>}
+      {profile.success && (
         <Card size="lg" restrictWidth center bar={bar}>
           <Section subsection sectionTitle="Profile">
-            <Description label="contact email" item={data.contact_email} />
-            <Description label="bio" item={data.bio} />
+            <Description
+              label="contact email"
+              item={profile.data.contact_email}
+            />
+            <Description label="bio" item={profile.data.bio} />
             <Description
               label="profile image"
               item={
-                data.image && (
+                profile.data.image && (
                   <Img
                     rounded
-                    preview={data.image}
+                    preview={profile.data.image}
                     imgWidth={384}
                     imgHeight={384}
                     src={imageURL}
@@ -64,7 +66,7 @@ const Profile = () => {
           </Section>
         </Card>
       )}
-      {!canCreate && err && <span>{err}</span>}
+      {!canCreate && profile.err && <span>{profile.err}</span>}
     </div>
   );
 };

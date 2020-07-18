@@ -1,4 +1,4 @@
-import React, {useState, useCallback} from 'react';
+import React from 'react';
 import {useParams} from 'react-router-dom';
 import {useURL, useResource, selectAPINull} from '@xorkevin/substation';
 import {Grid, Column, Section, Card, Time} from '@xorkevin/nuke';
@@ -20,7 +20,6 @@ const UserDetails = () => {
       username: '',
       creation_time: '',
     },
-    {posthook},
   );
   const imageURL = useURL(selectAPIImage, [account.data.userid]);
 

@@ -1,5 +1,5 @@
 import React, {Fragment, useState, useCallback, useMemo} from 'react';
-import {useAuthState, useAuthCall, useAuthResource} from '@xorkevin/turbine';
+import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
   Grid,
   Column,
@@ -82,7 +82,7 @@ const ApikeyRow = ({
     setMode(MODE_EDIT);
   }, [name, desc, auth_tags, updateForm, setMode]);
   const cancelEdit = useCallback(() => setMode(MODE_BASE), [setMode]);
-  const {authTags} = useAuthState();
+  const {authTags} = useAuthValue();
   const allPermissions = useMemo(
     () =>
       fuzzyFilter(
@@ -96,13 +96,12 @@ const ApikeyRow = ({
   const posthookRotate = useCallback(() => {
     setMode(MODE_ROTATE);
   }, [setMode]);
-  const [rotateState, execRotate] = useAuthCall(
+  const [rotate, execRotate] = useAuthCall(
     selectAPIRotate,
     [keyid],
     {},
     {posthook: posthookRotate, errhook},
   );
-  const {success: successRotate, data: resRotate} = rotateState;
 
   return (
     <Fragment>
@@ -185,18 +184,18 @@ const ApikeyRow = ({
       {mode === MODE_ROTATE && (
         <tr>
           <td colSpan={6}>
-            {successRotate && (
+            {rotate.success && (
               <div>
                 <div>
                   <h4>API Key Rotated</h4>
                   {API_KEY_MESSAGE}
                   <Description
                     label="Key ID"
-                    item={<code>{resRotate.keyid}</code>}
+                    item={<code>{rotate.data.keyid}</code>}
                   />
                   <Description
                     label="Secret"
-                    item={<code>{resRotate.key}</code>}
+                    item={<code>{rotate.data.key}</code>}
                   />
                 </div>
                 <div>
@@ -229,13 +228,12 @@ const CheckKey = () => {
     updateForm('key', '');
     updateForm('auth_tags', '');
   }, [updateForm]);
-  const [checkState, execCheckKey] = useAuthCall(
+  const [checkKey, execCheckKey] = useAuthCall(
     selectAPICheckKey,
     [formState.keyid, formState.key, formState.auth_tags],
     {},
     {posthook: displaySnackbar},
   );
-  const {err} = checkState;
   return (
     <div>
       <Form formState={formState} onChange={updateForm} onEnter={execCheckKey}>
@@ -253,7 +251,7 @@ const CheckKey = () => {
         Clear
       </Button>
       <Button onClick={execCheckKey}>Check key</Button>
-      {err && <span>{err}</span>}
+      {checkKey.err && <span>{checkKey.err}</span>}
     </div>
   );
 };
@@ -298,7 +296,7 @@ const Apikeys = () => {
     },
     [setEndPage],
   );
-  const {err, data: apikeys, reexecute} = useAuthResource(
+  const [apikeys, reexecute] = useAuthResource(
     selectAPIKeys,
     [LIMIT, page.value],
     [],
@@ -314,15 +312,14 @@ const Apikeys = () => {
     },
     [reexecute, updateForm],
   );
-  const [createState, execCreate] = useAuthCall(
+  const [create, execCreate] = useAuthCall(
     selectAPICreate,
     [formState.name, formState.desc, formState.auth_tags.join(',')],
     {},
     {posthook: posthookRefresh},
   );
-  const {err: errCreate, success: successCreate, data: resCreate} = createState;
 
-  const {authTags} = useAuthState();
+  const {authTags} = useAuthValue();
   const allPermissions = useMemo(
     () =>
       fuzzyFilter(
@@ -371,27 +368,27 @@ const Apikeys = () => {
               />
             </Form>
             <Button onClick={execCreate}>Create</Button>
-            {errCreate && <span>{errCreate}</span>}
+            {create.err && <span>{create.err}</span>}
           </Column>
           <Column md={12}>
-            {successCreate && (
+            {create.success && (
               <div>
                 <h4>Success! API Key Created</h4>
                 {API_KEY_MESSAGE}
                 <Description
                   label="Key ID"
-                  item={<code>{resCreate.keyid}</code>}
+                  item={<code>{create.data.keyid}</code>}
                 />
                 <Description
                   label="Secret"
-                  item={<code>{resCreate.key}</code>}
+                  item={<code>{create.data.key}</code>}
                 />
               </div>
             )}
           </Column>
         </Grid>
       </Section>
-      {err && <span>{err}</span>}
+      {apikeys.err && <span>{apikeys.err}</span>}
       <Section subsection sectionTitle="API Keys">
         <Table
           fullWidth
@@ -405,7 +402,7 @@ const Apikeys = () => {
             </Fragment>
           }
         >
-          {apikeys.map(({name, desc, keyid, auth_tags, time}) => (
+          {apikeys.data.map(({name, desc, keyid, auth_tags, time}) => (
             <ApikeyRow
               key={keyid}
               keyid={keyid}

@@ -1,6 +1,6 @@
 import React, {Fragment} from 'react';
 import {Link} from 'react-router-dom';
-import {useLoginCall} from '@xorkevin/turbine';
+import {useLogin} from '@xorkevin/turbine';
 import {
   Section,
   Menu,
@@ -18,12 +18,7 @@ const SigninContainer = () => {
     password: '',
   });
 
-  const [loginState, execLogin] = useLoginCall(
-    formState.username,
-    formState.password,
-  );
-
-  const {err} = loginState;
+  const [login, execLogin] = useLogin(formState.username, formState.password);
 
   return (
     <Section container padded>
@@ -62,7 +57,7 @@ const SigninContainer = () => {
           <Input label="username / email" name="username" fullWidth />
           <Input label="password" type="password" name="password" fullWidth />
         </Form>
-        {err && <span>{err}</span>}
+        {login.err && <span>{login.err}</span>}
       </Card>
     </Section>
   );

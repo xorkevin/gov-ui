@@ -1,7 +1,7 @@
 import React, {Fragment, lazy, Suspense} from 'react';
 import {Switch, Route, Redirect, NavLink, Link} from 'react-router-dom';
 import {
-  useAuthState,
+  useAuthValue,
   useLogout,
   Protected,
   AntiProtected,
@@ -63,7 +63,7 @@ const GovContextValue = Object.freeze({
 const App = () => {
   const [dark, toggleDark] = useDarkMode();
   const logout = useLogout();
-  const {loggedIn} = useAuthState();
+  const {loggedIn} = useAuthValue();
 
   return (
     <div>

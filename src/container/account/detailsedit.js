@@ -27,7 +27,7 @@ const AccountDetailsEdit = () => {
     last_name: '',
   });
 
-  const [accountState, execEditAccount] = useAuthCall(
+  const [edit, execEditAccount] = useAuthCall(
     selectAPIEditAccount,
     [formState],
     {},
@@ -43,7 +43,7 @@ const AccountDetailsEdit = () => {
     [updateForm],
   );
 
-  const {success: successGetAccount, err: errGetAccount} = useAuthResource(
+  const [account] = useAuthResource(
     selectAPIAccount,
     [],
     {
@@ -54,9 +54,7 @@ const AccountDetailsEdit = () => {
     {posthook},
   );
 
-  const {success, err} = accountState;
-
-  const bar = success ? (
+  const bar = edit.success ? (
     <Fragment>
       <Link to="/a/account">
         <Button text>Back</Button>
@@ -78,7 +76,7 @@ const AccountDetailsEdit = () => {
 
   return (
     <Fragment>
-      {successGetAccount && (
+      {account.success && (
         <Card size="md" restrictWidth center bar={bar}>
           <Section subsection sectionTitle="Account Details">
             <Form
@@ -91,10 +89,10 @@ const AccountDetailsEdit = () => {
               <Input label="last name" name="last_name" fullWidth />
             </Form>
           </Section>
-          {err && <span>{err}</span>}
+          {edit.err && <span>{edit.err}</span>}
         </Card>
       )}
-      {errGetAccount && <span>{errGetAccount}</span>}
+      {account.err && <span>{account.err}</span>}
     </Fragment>
   );
 };

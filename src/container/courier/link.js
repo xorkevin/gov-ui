@@ -117,7 +117,7 @@ const CourierLink = ({courierPath}) => {
     },
     [setEndPage],
   );
-  const {err, data: links, reexecute} = useAuthResource(
+  const [links, reexecute] = useAuthResource(
     selectAPILinks,
     [LIMIT, page.value],
     [],
@@ -133,7 +133,7 @@ const CourierLink = ({courierPath}) => {
     },
     [reexecute, updateForm],
   );
-  const [createState, execCreate] = useAuthCall(
+  const [create, execCreate] = useAuthCall(
     selectAPICreate,
     [formState],
     {},
@@ -147,15 +147,9 @@ const CourierLink = ({courierPath}) => {
     [reexecute],
   );
 
-  const {err: errCreate} = createState;
-
-  const {err: errBrand, data: brands} = useAuthResource(
-    selectAPIBrands,
-    [BRAND_LIMIT, 0],
-    [],
-  );
+  const [brands] = useAuthResource(selectAPIBrands, [BRAND_LIMIT, 0], []);
   const brandOptions = useMemo(() => {
-    const k = brands.map(({brandid}) => ({text: brandid, value: brandid}));
+    const k = brands.data.map(({brandid}) => ({text: brandid, value: brandid}));
     k.unshift({text: 'None', value: ''});
     return k;
   }, [brands]);
@@ -184,10 +178,10 @@ const CourierLink = ({courierPath}) => {
           />
         </Form>
         <Button onClick={execCreate}>Add Link</Button>
-        {errCreate && <span>{errCreate}</span>}
-        {errBrand && <span>{errBrand}</span>}
+        {create.err && <span>{create.err}</span>}
+        {brands.err && <span>{brands.err}</span>}
       </Section>
-      {err && <span>{err}</span>}
+      {links.err && <span>{links.err}</span>}
       <Section subsection sectionTitle="Links">
         <Table
           fullWidth
@@ -201,7 +195,7 @@ const CourierLink = ({courierPath}) => {
             </Fragment>
           }
         >
-          {links.map(({linkid, url, creation_time}) => (
+          {links.data.map(({linkid, url, creation_time}) => (
             <LinkRow
               key={linkid}
               courierPath={courierPath}

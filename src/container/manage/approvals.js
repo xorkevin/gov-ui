@@ -107,7 +107,7 @@ const Approvals = () => {
     },
     [setEndPage],
   );
-  const {err, data: approvals, reexecute} = useAuthResource(
+  const [approvals, reexecute] = useAuthResource(
     selectAPIApprovals,
     [LIMIT, page.value],
     [],
@@ -116,7 +116,7 @@ const Approvals = () => {
 
   return (
     <div>
-      {err && <span>{err}</span>}
+      {approvals.err && <span>{approvals.err}</span>}
       <Section subsection sectionTitle="New User Requests">
         <Table
           fullWidth
@@ -130,7 +130,7 @@ const Approvals = () => {
             </Fragment>
           }
         >
-          {approvals.map(
+          {approvals.data.map(
             ({
               userid,
               username,

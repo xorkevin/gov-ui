@@ -8,7 +8,7 @@ const selectAPIAccount = (api) => api.u.user.get;
 const AccountDetails = () => {
   const match = useRouteMatch();
 
-  const {success, err, data} = useAuthResource(selectAPIAccount, [], {
+  const [account] = useAuthResource(selectAPIAccount, [], {
     userid: '',
     username: '',
     auth_tags: '',
@@ -17,16 +17,6 @@ const AccountDetails = () => {
     creation_time: 0,
     email: '',
   });
-
-  const {
-    userid,
-    username,
-    first_name,
-    last_name,
-    auth_tags,
-    email,
-    creation_time,
-  } = data;
 
   const bar = (
     <Fragment>
@@ -44,25 +34,27 @@ const AccountDetails = () => {
 
   return (
     <div>
-      {err && <span>{err}</span>}
-      {success && (
+      {account.err && <span>{account.err}</span>}
+      {account.success && (
         <Card size="lg" restrictWidth center bar={bar}>
           <Section subsection sectionTitle="Account Details">
-            <Description label="userid" item={userid} />
-            <Description label="username" item={username} />
-            <Description label="first name" item={first_name} />
-            <Description label="last name" item={last_name} />
+            <Description label="userid" item={account.data.userid} />
+            <Description label="username" item={account.data.username} />
+            <Description label="first name" item={account.data.first_name} />
+            <Description label="last name" item={account.data.last_name} />
             <Description
               label="roles"
               item={
-                auth_tags &&
-                auth_tags.split(',').map((tag) => <Chip key={tag}>{tag}</Chip>)
+                account.data.auth_tags &&
+                account.data.auth_tags
+                  .split(',')
+                  .map((tag) => <Chip key={tag}>{tag}</Chip>)
               }
             />
-            <Description label="email" item={email} />
+            <Description label="email" item={account.data.email} />
             <Description
               label="creation time"
-              item={<Time value={creation_time * 1000} />}
+              item={<Time value={account.data.creation_time * 1000} />}
             />
           </Section>
         </Card>
