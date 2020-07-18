@@ -5,23 +5,23 @@ import {Section, Time} from '@xorkevin/nuke';
 const selectAPIHealth = (api) => api.healthz.ready;
 
 const HealthContainer = () => {
-  const {loading, success, err, data} = useResource(selectAPIHealth, [], {
+  const [health] = useResource(selectAPIHealth, [], {
     time: '',
     errs: [],
   });
   return (
     <Section sectionTitle="Health Check" container narrow padded>
-      {loading && <span>Loading</span>}
-      {success && (
+      {health.loading && <span>Loading</span>}
+      {health.success && (
         <Fragment>
           <div>
-            <Time value={data.time * 1000} />
+            <Time value={health.data.time * 1000} />
           </div>
-          {data.errs && (
+          {health.data.errs && (
             <Fragment>
               <div>Server Errors:</div>
               <ul>
-                {data.errs.map((errstring) => (
+                {health.data.errs.map((errstring) => (
                   <li key={errstring}>{errstring}</li>
                 ))}
               </ul>
@@ -29,7 +29,7 @@ const HealthContainer = () => {
           )}
         </Fragment>
       )}
-      {err && <span>{err}</span>}
+      {health.err && <span>{health.err}</span>}
     </Section>
   );
 };

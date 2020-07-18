@@ -26,19 +26,18 @@ const ManageUser = () => {
   const [editMode, setEdit] = useState(false);
   const toggleEditMode = useCallback(() => setEdit((e) => !e), [setEdit]);
 
-  const {
-    success: userSuccess,
-    err: errUser,
-    data: user,
-    reexecute,
-  } = useResource(displayUser ? selectAPIUser : selectAPINull, [username], {
-    userid: '',
-    username: '',
-    first_name: '',
-    last_name: '',
-    auth_tags: '',
-    creation_time: 0,
-  });
+  const [user, reexecute] = useResource(
+    displayUser ? selectAPIUser : selectAPINull,
+    [username],
+    {
+      userid: '',
+      username: '',
+      first_name: '',
+      last_name: '',
+      auth_tags: '',
+      creation_time: 0,
+    },
+  );
 
   const [searchFormState, updateSearchForm] = useForm({
     username: '',
@@ -65,14 +64,12 @@ const ManageUser = () => {
   );
   const [rankState, execRank] = useAuthCall(
     selectAPIRank,
-    [user.userid, formState.add, formState.remove],
+    [user.data.userid, formState.add, formState.remove],
     {},
     {posthook},
   );
 
-  const {err: errEdit} = rankState;
-
-  if (!userSuccess || !displayUser) {
+  if (!user.success || !displayUser) {
     const bar = (
       <Fragment>
         <Button primary onClick={navigateUser}>
@@ -91,7 +88,7 @@ const ManageUser = () => {
           >
             <Input label="username" name="username" fullWidth />
           </Form>
-          {errUser && <span>{errUser}</span>}
+          {user.err && <span>{user.err}</span>}
         </Section>
       </Card>
     );
@@ -112,13 +109,13 @@ const ManageUser = () => {
     return (
       <Card size="lg" restrictWidth center bar={bar}>
         <Section subsection sectionTitle="Edit Permissions">
-          <Description label="userid" item={user.userid} />
-          <Description label="username" item={user.username} />
+          <Description label="userid" item={user.data.userid} />
+          <Description label="username" item={user.data.username} />
           <Description
             label="current roles"
             item={
-              user.auth_tags.length > 0 &&
-              user.auth_tags
+              user.data.auth_tags.length > 0 &&
+              user.data.auth_tags
                 .split(',')
                 .map((tag) => <Chip key={tag}>{tag}</Chip>)
             }
@@ -145,7 +142,7 @@ const ManageUser = () => {
             <Input label="add" name="add" fullWidth />
             <Input label="remove" name="remove" fullWidth />
           </Form>
-          {errEdit && <span>{errEdit}</span>}
+          {rankState.err && <span>{rankState.err}</span>}
         </Section>
       </Card>
     );
@@ -162,20 +159,22 @@ const ManageUser = () => {
   return (
     <Card size="lg" restrictWidth center bar={bar}>
       <Section subsection sectionTitle="Account Details">
-        <Description label="userid" item={user.userid} />
-        <Description label="username" item={user.username} />
-        <Description label="first name" item={user.first_name} />
-        <Description label="last name" item={user.last_name} />
+        <Description label="userid" item={user.data.userid} />
+        <Description label="username" item={user.data.username} />
+        <Description label="first name" item={user.data.first_name} />
+        <Description label="last name" item={user.data.last_name} />
         <Description
           label="roles"
           item={
-            user.auth_tags.length > 0 &&
-            user.auth_tags.split(',').map((tag) => <Chip key={tag}>{tag}</Chip>)
+            user.data.auth_tags.length > 0 &&
+            user.data.auth_tags
+              .split(',')
+              .map((tag) => <Chip key={tag}>{tag}</Chip>)
           }
         />
         <Description
           label="creation time"
-          item={<Time value={user.creation_time * 1000} />}
+          item={<Time value={user.data.creation_time * 1000} />}
         />
       </Section>
     </Card>

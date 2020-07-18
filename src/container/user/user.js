@@ -9,25 +9,24 @@ const selectAPIImage = (api) => api.profile.id.image;
 
 const UserDetails = () => {
   const {username} = useParams();
-  const [userid, setUserid] = useState('');
 
-  const posthook = useCallback(
-    (_status, data) => {
-      setUserid(data.userid);
-    },
-    [setUserid],
-  );
-  const {success: successAccount, err: errAccount, data: account} = useResource(
+  const [account] = useResource(
     username && username.length > 0 ? selectAPIUser : selectAPINull,
     [username],
-    {first_name: '', last_name: '', username: '', creation_time: ''},
+    {
+      userid: '',
+      first_name: '',
+      last_name: '',
+      username: '',
+      creation_time: '',
+    },
     {posthook},
   );
-  const imageURL = useURL(selectAPIImage, [userid]);
+  const imageURL = useURL(selectAPIImage, [account.data.userid]);
 
-  const {err: errProfile, data: profile} = useResource(
-    userid.length > 0 ? selectAPIProfile : selectAPINull,
-    [userid],
+  const [profile] = useResource(
+    account.data.userid.length > 0 ? selectAPIProfile : selectAPINull,
+    [account.data.userid],
     {bio: '', image: ''},
   );
 
@@ -35,26 +34,26 @@ const UserDetails = () => {
     <Section container padded>
       <Grid>
         <Column sm={8} md={6}>
-          {successAccount && (
+          {account.success && (
             <Card
               title=""
               imgHeight={384}
               imgWidth={384}
               background={imageURL}
-              preview={profile.image}
+              preview={profile.data.image}
             >
               <h4>
-                {account.first_name} {account.last_name}{' '}
-                <small>@{account.username}</small>
+                {account.data.first_name} {account.data.last_name}{' '}
+                <small>@{account.data.username}</small>
               </h4>
               <h6>
-                joined <Time value={account.creation_time * 1000} />
+                joined <Time value={account.data.creation_time * 1000} />
               </h6>
-              {profile.bio && <p>{profile.bio}</p>}
+              {profile.data.bio && <p>{profile.data.bio}</p>}
             </Card>
           )}
-          {(errAccount || errProfile) && (
-            <span>{errAccount || errProfile}</span>
+          {(account.err || profile.err) && (
+            <span>{account.err || profile.err}</span>
           )}
         </Column>
         <Column sm={16} md={18} />
