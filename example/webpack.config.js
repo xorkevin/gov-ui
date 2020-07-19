@@ -14,6 +14,10 @@ const aliasModules = (names) => {
   );
 };
 
+const esmpaths = (names) => {
+  return names.map((name) => path.resolve(__dirname, `node_modules/${name}`));
+};
+
 const govuiDeps = [
   'core-js',
   'react',
@@ -22,6 +26,14 @@ const govuiDeps = [
   '@xorkevin/turbine',
   '@xorkevin/nuke',
 ];
+
+const esModules = [
+  '@xorkevin/substation',
+  '@xorkevin/turbine',
+  '@xorkevin/nuke',
+];
+
+const temp = new Set();
 
 const createConfig = (env, argv) => {
   const config = {
@@ -42,6 +54,13 @@ const createConfig = (env, argv) => {
       rules: [
         {
           test: /\.js$/,
+          include: [
+            ...esmpaths(esModules),
+            path.resolve(__dirname, '../src'),
+            path.resolve(__dirname, '../index.js'),
+            path.resolve(__dirname, '../utility.js'),
+            path.resolve(__dirname, 'src'),
+          ],
           use: ['babel-loader', 'eslint-loader'],
         },
         {
