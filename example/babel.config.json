@@ -8,7 +8,7 @@
         "useBuiltIns": "usage",
         "corejs": 3,
         "targets": {
-          "browsers": ["last 2 Chrome versions", "last 2 Firefox versions"]
+          "browsers": ["last 1 Chrome versions", "last 1 Firefox versions"]
         }
       }
     ]
