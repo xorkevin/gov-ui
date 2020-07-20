@@ -1,6 +1,6 @@
 import React, {Fragment} from 'react';
 import {Link} from 'react-router-dom';
-import {emailRegex} from '../../../utility';
+import {emailRegex} from '../../utility';
 import {useAPICall} from '@xorkevin/substation';
 import {Section, Card, Button, Form, Input, useForm} from '@xorkevin/nuke';
 

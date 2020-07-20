@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack --mode production --progress --color",
-    "build-dev": "webpack-dev-server --mode development -w --hot --progress --color",
+    "build-dev": "webpack-dev-server --mode development -w --progress --color",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "xorkevin",
@@ -38,9 +38,9 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
-    "@xorkevin/nuke": "^0.1.13-0",
-    "@xorkevin/substation": "^0.1.5-0",
-    "@xorkevin/turbine": "^0.1.12-1",
+    "@xorkevin/nuke": "^0.1.13-1",
+    "@xorkevin/substation": "^0.1.5-1",
+    "@xorkevin/turbine": "^0.1.12-2",
     "fork-awesome": "^1.1.7",
     "inter-ui": "^3.13.1",
     "react": "^16.13.1",

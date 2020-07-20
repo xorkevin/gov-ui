@@ -6,6 +6,7 @@
     "registry": "https://npm.pkg.github.com/"
   },
   "main": "index.js",
+  "files": ["README.md", "LICENSE", "index.js", "src/**"],
   "sideEfects": false,
   "scripts": {
     "lint": "eslint .",

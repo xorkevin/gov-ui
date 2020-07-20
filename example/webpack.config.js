@@ -58,7 +58,6 @@ const createConfig = (env, argv) => {
             ...esmpaths(esModules),
             path.resolve(__dirname, '../src'),
             path.resolve(__dirname, '../index.js'),
-            path.resolve(__dirname, '../utility.js'),
             path.resolve(__dirname, 'src'),
           ],
           use: ['babel-loader', 'eslint-loader'],
@@ -99,7 +98,6 @@ const createConfig = (env, argv) => {
       },
       minimizer: [
         new TerserPlugin({
-          test: /\.js$/,
           cache: true,
           parallel: true,
           sourceMap: false,
@@ -141,6 +139,7 @@ const createConfig = (env, argv) => {
       port: 3000,
       disableHostCheck: true,
       historyApiFallback: true,
+      hot: false,
     },
   };
 

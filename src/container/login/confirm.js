@@ -1,6 +1,6 @@
 import React, {Fragment} from 'react';
 import {Link, useLocation} from 'react-router-dom';
-import {getSearchParams} from '../../../utility';
+import {getSearchParams} from '../../utility';
 import {useAPICall} from '@xorkevin/substation';
 import {Section, Card, Button, Form, Input, useForm} from '@xorkevin/nuke';
 
