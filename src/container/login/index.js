@@ -2,12 +2,12 @@ import React from 'react';
 import {Switch, Route, Redirect, useRouteMatch} from 'react-router-dom';
 
 import SigninContainer from './signin';
-import CreateContainer from './create';
-import CreateConfirmContainer from './confirm';
-import ForgotPassContainer from './forgotpassword';
-import ResetPassContainer from './resetpassword';
+//import CreateContainer from './create';
+//import CreateConfirmContainer from './confirm';
+//import ForgotPassContainer from './forgotpassword';
+//import ResetPassContainer from './resetpassword';
 
-const Login = ({userApprovals}) => {
+const Login = ({_userApprovals}) => {
   const match = useRouteMatch();
 
   return (
@@ -15,7 +15,7 @@ const Login = ({userApprovals}) => {
       <Route path={`${match.path}/login`}>
         <SigninContainer />
       </Route>
-      <Route path={`${match.path}/create`}>
+      {/*<Route path={`${match.path}/create`}>
         <CreateContainer userApprovals={userApprovals} />
       </Route>
       <Route path={`${match.path}/confirm`}>
@@ -26,10 +26,10 @@ const Login = ({userApprovals}) => {
       </Route>
       <Route path={`${match.path}/resetpass`}>
         <ResetPassContainer />
-      </Route>
+      </Route>*/}
       <Redirect to={`${match.path}/login`} />
     </Switch>
   );
 };
 
-export {Login as default, Login};
+export default Login;

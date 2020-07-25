@@ -1,11 +1,15 @@
 import React, {Fragment, lazy, Suspense} from 'react';
 import {Switch, Route, Redirect} from 'react-router-dom';
-import {useAuthValue, useLogout} from '@xorkevin/turbine';
+import {
+  useAuthValue,
+  useLogout,
+  Protected,
+  AntiProtected,
+} from '@xorkevin/turbine';
 import {
   useDarkModeValue,
   useSetDarkMode,
   SnackbarContainer,
-  MainContent,
   Container,
   Navbar,
   NavItem,
@@ -21,11 +25,10 @@ import {
 } from '@xorkevin/nuke';
 import AnchorSecondary from '@xorkevin/nuke/src/component/anchor/secondary';
 
-//const AdminContainer = Protected(lazy(() => import('admin')));
-const AdminContainer = lazy(() => import('admin'));
-//const LoginContainer = AntiProtected(
-//  lazy(() => import('@xorkevin/gov-ui/src/container/login')),
-//);
+const AdminContainer = Protected(lazy(() => import('admin')));
+const LoginContainer = AntiProtected(
+  lazy(() => import('@xorkevin/gov-ui/src/container/login')),
+);
 //const AccountContainer = Protected(
 //  lazy(() => import('@xorkevin/gov-ui/src/container/account')),
 //);
@@ -151,16 +154,15 @@ const App = () => {
         )}
       </Navbar>
 
-      <MainContent>
-        <Suspense fallback={FallbackView}>
-          <Switch>
-            <Route exact path="/">
-              <AdminContainer />
-            </Route>
-            {/*<Route path="/x">
-              <LoginContainer />
-            </Route>
-            <Route path="/a">
+      <Suspense fallback={FallbackView}>
+        <Switch>
+          <Route exact path="/">
+            <AdminContainer />
+          </Route>
+          <Route path="/x">
+            <LoginContainer />
+          </Route>
+          {/*<Route path="/a">
               <AccountContainer showProfile />
             </Route>
             <Route path="/dev">
@@ -182,10 +184,9 @@ const App = () => {
               <SetupContainer homePath={GovContextValue.homePath} />
             </Route>
             */}
-            <Redirect to="/" />
-          </Switch>
-        </Suspense>
-      </MainContent>
+          <Redirect to="/" />
+        </Switch>
+      </Suspense>
 
       <Footer>
         <Grid className="dark" justify="center" align="center">

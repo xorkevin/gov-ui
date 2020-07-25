@@ -1,65 +1,90 @@
 import React, {Fragment} from 'react';
-import {Link} from 'react-router-dom';
 import {useLogin} from '@xorkevin/turbine';
 import {
-  Section,
+  MainContent,
+  Container,
+  useMenu,
   Menu,
+  MenuItem,
   FaIcon,
   Card,
-  Button,
+  Field,
   Form,
-  Input,
   useForm,
 } from '@xorkevin/nuke';
+import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
+import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 
 const SigninContainer = () => {
-  const [formState, updateForm] = useForm({
+  const menu = useMenu();
+
+  const form = useForm({
     username: '',
     password: '',
   });
 
-  const [login, execLogin] = useLogin(formState.username, formState.password);
+  const [login, execLogin] = useLogin(form.state.username, form.state.password);
 
   return (
-    <Section container padded>
-      <Card
-        center
-        size="md"
-        restrictWidth
-        titleBar
-        title={<h3>Sign in</h3>}
-        bar={
-          <Fragment>
-            <Menu
-              icon={
-                <Button text>
-                  <FaIcon icon="ellipsis-v" />
-                </Button>
-              }
-              size="md"
-              align="left"
-              position="bottom"
+    <MainContent>
+      <Container padded narrow>
+        <Card
+          center
+          width="md"
+          title={
+            <Container padded>
+              <h3>Sign in</h3>
+            </Container>
+          }
+          bar={
+            <Fragment>
+              <ButtonTertiary
+                forwardedRef={menu.anchorRef}
+                onClick={menu.toggle}
+              >
+                <FaIcon icon="ellipsis-v" />
+              </ButtonTertiary>
+              {menu.show && (
+                <Menu size="md" anchor={menu.anchor} close={menu.close}>
+                  <MenuItem
+                    local
+                    link="/x/create"
+                    icon={<FaIcon icon="user-plus" />}
+                  >
+                    Create Account
+                  </MenuItem>
+                  <MenuItem
+                    local
+                    link="/x/forgot"
+                    icon={<FaIcon icon="unlock-alt" />}
+                  >
+                    Forgot Password
+                  </MenuItem>
+                </Menu>
+              )}
+              <ButtonPrimary onClick={execLogin}>Login</ButtonPrimary>
+            </Fragment>
+          }
+        >
+          <Container padded>
+            <Form
+              formState={form.state}
+              onChange={form.update}
+              onSubmit={execLogin}
             >
-              <Link to="/x/create">
-                <FaIcon icon="user-plus" /> Create Account
-              </Link>
-              <Link to="/x/forgot">
-                <FaIcon icon="unlock-alt" /> Forgot Password
-              </Link>
-            </Menu>
-            <Button primary onClick={execLogin}>
-              Login
-            </Button>
-          </Fragment>
-        }
-      >
-        <Form formState={formState} onChange={updateForm} onEnter={execLogin}>
-          <Input label="username / email" name="username" fullWidth />
-          <Input label="password" type="password" name="password" fullWidth />
-        </Form>
-        {login.err && <span>{login.err}</span>}
-      </Card>
-    </Section>
+              <Field name="username" label="username / email" fullWidth />
+              <Field
+                name="password"
+                type="password"
+                label="password"
+                fullWidth
+              />
+            </Form>
+            {login.err && <span>{login.err}</span>}
+          </Container>
+        </Card>
+      </Container>
+    </MainContent>
   );
 };
 
