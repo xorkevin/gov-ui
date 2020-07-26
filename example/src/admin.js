@@ -39,7 +39,7 @@ const AdminContainer = () => {
                 title={
                   <Container padded>
                     <h3>
-                      <FaIcon icon="heartbeat" /> Server health
+                      <FaIcon icon="heartbeat" /> Server Health
                     </h3>
                   </Container>
                 }
