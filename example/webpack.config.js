@@ -140,13 +140,19 @@ const createConfig = (env, argv) => {
       disableHostCheck: true,
       historyApiFallback: true,
       hot: false,
+      proxy: {
+        '/api': {
+          target: 'http://governor.dev.home:8080',
+          changeOrigin: true,
+        },
+      },
     },
   };
 
   if (argv.mode === 'development') {
     config.plugins.push(
       new webpack.DefinePlugin({
-        APIBASE_URL: JSON.stringify('http://governor.dev.home:8080/api'),
+        APIBASE_URL: JSON.stringify('/api'),
         COURIERBASE_URL: JSON.stringify('http://go.governor.dev.home:8080'),
       }),
     );

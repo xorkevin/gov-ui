@@ -11,7 +11,7 @@ import {
   FaIcon,
 } from '@xorkevin/nuke';
 
-const REFRESH_TIME = 5;
+const REFRESH_TIME = 15;
 
 const selectAPIHealth = (api) => api.healthz.ready;
 
