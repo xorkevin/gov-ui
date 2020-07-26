@@ -56,7 +56,7 @@ const FallbackView = (
 );
 
 const GovContextValue = Object.freeze({
-  homePath: '/',
+  userApprovals: false,
   // eslint-disable-next-line no-undef
   courierPath: COURIERBASE_URL,
 });
@@ -152,7 +152,7 @@ const App = () => {
             <AdminContainer />
           </Route>
           <Route path="/x">
-            <LoginContainer />
+            <LoginContainer userApprovals={GovContextValue.userApprovals} />
           </Route>
           {/*<Route path="/a">
               <AccountContainer showProfile />
@@ -170,7 +170,7 @@ const App = () => {
               <CourierContainer courierPath={GovContextValue.courierPath} />
             </Route>*/}
           <Route path="/setup">
-            <SetupContainer homePath={GovContextValue.homePath} />
+            <SetupContainer />
           </Route>
           <Redirect to="/" />
         </Switch>

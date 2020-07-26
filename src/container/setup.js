@@ -1,7 +1,8 @@
-import React, {Fragment} from 'react';
+import React, {Fragment, useContext} from 'react';
 import {Link} from 'react-router-dom';
 import {emailRegex} from '../utility';
 import {useAPICall} from '@xorkevin/substation';
+import {AuthCtx} from '@xorkevin/turbine';
 import {
   MainContent,
   Section,
@@ -78,7 +79,8 @@ const prehookValidate = ([form]) => {
   }
 };
 
-const Setup = ({homePath}) => {
+const Setup = () => {
+  const ctx = useContext(AuthCtx);
   const form = useForm({
     username: '',
     password: '',
@@ -111,12 +113,12 @@ const Setup = ({homePath}) => {
             bar={
               <ButtonGroup>
                 {setup.success ? (
-                  <Link to={homePath}>
+                  <Link to={ctx.pathHome}>
                     <ButtonPrimary>Finish</ButtonPrimary>
                   </Link>
                 ) : (
                   <Fragment>
-                    <Link to={homePath}>
+                    <Link to={ctx.pathHome}>
                       <ButtonTertiary>Cancel</ButtonTertiary>
                     </Link>
                     <ButtonPrimary onClick={execSetup}>Setup</ButtonPrimary>

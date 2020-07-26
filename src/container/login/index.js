@@ -2,12 +2,12 @@ import React from 'react';
 import {Switch, Route, Redirect, useRouteMatch} from 'react-router-dom';
 
 import SigninContainer from './signin';
-//import CreateContainer from './create';
-//import CreateConfirmContainer from './confirm';
+import CreateContainer from './create';
+import CreateConfirmContainer from './confirm';
 //import ForgotPassContainer from './forgotpassword';
 //import ResetPassContainer from './resetpassword';
 
-const Login = ({_userApprovals}) => {
+const Login = ({userApprovals}) => {
   const match = useRouteMatch();
 
   return (
@@ -15,13 +15,13 @@ const Login = ({_userApprovals}) => {
       <Route path={`${match.path}/login`}>
         <SigninContainer />
       </Route>
-      {/*<Route path={`${match.path}/create`}>
+      <Route path={`${match.path}/create`}>
         <CreateContainer userApprovals={userApprovals} />
       </Route>
       <Route path={`${match.path}/confirm`}>
         <CreateConfirmContainer />
       </Route>
-      <Route path={`${match.path}/forgot`}>
+      {/*<Route path={`${match.path}/forgot`}>
         <ForgotPassContainer />
       </Route>
       <Route path={`${match.path}/resetpass`}>

@@ -1,8 +1,21 @@
-import React, {Fragment} from 'react';
+import React, {Fragment, useContext} from 'react';
 import {Link} from 'react-router-dom';
 import {emailRegex} from '../../utility';
 import {useAPICall} from '@xorkevin/substation';
-import {Section, Card, Button, Form, Input, useForm} from '@xorkevin/nuke';
+import {AuthCtx} from '@xorkevin/turbine';
+import {
+  MainContent,
+  Section,
+  Container,
+  Card,
+  Field,
+  Form,
+  useForm,
+  ButtonGroup,
+} from '@xorkevin/nuke';
+import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
+import ButtonSecondary from '@xorkevin/nuke/src/component/button/secondary';
+import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 
 const selectAPICreateAccount = (api) => api.u.user.create;
 
@@ -68,7 +81,8 @@ const prehookValidate = ([form]) => {
 };
 
 const CreateAccount = ({userApprovals}) => {
-  const [formState, updateForm] = useForm({
+  const ctx = useContext(AuthCtx);
+  const form = useForm({
     username: '',
     password: '',
     email: '',
@@ -78,92 +92,104 @@ const CreateAccount = ({userApprovals}) => {
     email_confirm: '',
   });
 
-  const [createState, execCreate] = useAPICall(
+  const [create, execCreate] = useAPICall(
     selectAPICreateAccount,
-    [formState],
+    [form.state],
     {},
     {prehook: prehookValidate},
   );
 
-  const {success, err} = createState;
-
-  const bar = success ? (
-    userApprovals ? (
-      <Fragment>
-        <Link to="/x/login">
-          <Button outline>Back</Button>
-        </Link>
-      </Fragment>
-    ) : (
-      <Fragment>
-        <Link to={`/x/confirm?email=${encodeURIComponent(formState.email)}`}>
-          <Button outline>Confirm</Button>
-        </Link>
-      </Fragment>
-    )
-  ) : (
-    <Fragment>
-      <Link to="/x/login">
-        <Button text>Cancel</Button>
-      </Link>
-      <Button primary onClick={execCreate}>
-        Create
-      </Button>
-    </Fragment>
-  );
-
   return (
-    <Section container padded>
-      <Card
-        center
-        size="md"
-        restrictWidth
-        titleBar
-        title={<h3>Sign up</h3>}
-        bar={bar}
-      >
-        <Form
-          formState={formState}
-          onChange={updateForm}
-          onEnter={execCreate}
-          errCheck={formErrCheck}
-          validCheck={formValidCheck}
-        >
-          <Input label="first name" name="first_name" fullWidth />
-          <Input label="last name" name="last_name" fullWidth />
-          <Input label="username" name="username" fullWidth />
-          <Input
-            label="password"
-            type="password"
-            name="password"
-            info="Must be at least 10 characters"
-            fullWidth
-          />
-          <Input
-            label="confirm password"
-            type="password"
-            name="password_confirm"
-            fullWidth
-          />
-          <Input label="email" name="email" fullWidth />
-          <Input label="confirm email" name="email_confirm" fullWidth />
-        </Form>
-        {err && <span>{err}</span>}
-        {success &&
-          (userApprovals ? (
-            <span>
-              A new user request has been sent to an administrator. A
-              confirmation email will be emailed to the address you provided
-              above when the request is approved.
-            </span>
-          ) : (
-            <span>
-              Confirm your account with a code emailed to the address you
-              provided above
-            </span>
-          ))}
-      </Card>
-    </Section>
+    <MainContent>
+      <Section>
+        <Container padded>
+          <Card
+            center
+            width="md"
+            title={
+              <Container padded>
+                <h3>Sign up</h3>
+              </Container>
+            }
+            bar={
+              <ButtonGroup>
+                {create.success ? (
+                  userApprovals ? (
+                    <Link to={ctx.pathLogin}>
+                      <ButtonSecondary>Finish</ButtonSecondary>
+                    </Link>
+                  ) : (
+                    <Link
+                      to={`/x/confirm?email=${encodeURIComponent(
+                        form.state.email,
+                      )}`}
+                    >
+                      <ButtonSecondary>Confirm</ButtonSecondary>
+                    </Link>
+                  )
+                ) : (
+                  <Fragment>
+                    <Link to={ctx.pathLogin}>
+                      <ButtonTertiary>Cancel</ButtonTertiary>
+                    </Link>
+                    <ButtonPrimary onClick={execCreate}>Create</ButtonPrimary>
+                  </Fragment>
+                )}
+              </ButtonGroup>
+            }
+          >
+            <Container padded>
+              <Form
+                formState={form.state}
+                onChange={form.update}
+                onSubmit={execCreate}
+                errCheck={formErrCheck}
+                validCheck={formValidCheck}
+              >
+                <Field name="first_name" label="first name" fullWidth />
+                <Field name="last_name" label="last name" fullWidth />
+                <Field
+                  name="username"
+                  label="username"
+                  hint="Must be at least 3 characters"
+                  fullWidth
+                />
+                <Field
+                  name="password"
+                  type="password"
+                  label="password"
+                  hint="Must be at least 10 characters"
+                  hintRight={`${form.state.password.length} chars`}
+                  fullWidth
+                />
+                <Field
+                  name="password_confirm"
+                  type="password"
+                  label="confirm password"
+                  fullWidth
+                />
+                <Field name="email" label="email" fullWidth />
+                <Field name="email_confirm" label="confirm email" fullWidth />
+              </Form>
+              {create.err && <span>{create.err}</span>}
+              {create.success &&
+                (userApprovals ? (
+                  <span>
+                    A new user request has been sent to an administrator. A
+                    confirmation email will be emailed to the address you
+                    provided above when the request is approved.
+                  </span>
+                ) : (
+                  <span>
+                    Confirm your account with a code emailed to the address you
+                    provided above.
+                  </span>
+                ))}
+            </Container>
+          </Card>
+        </Container>
+      </Section>
+    </MainContent>
   );
 };
 

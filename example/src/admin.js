@@ -58,7 +58,7 @@ const AdminContainer = () => {
                           </ul>
                         </Fragment>
                       ) : (
-                        <div>&#x2713; All Systems Normal</div>
+                        <h5>&#x2713; All Systems Nominal</h5>
                       )}
                       <div>
                         Last checked <Time value={health.data.time * 1000} />
