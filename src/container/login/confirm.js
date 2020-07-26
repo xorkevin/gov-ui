@@ -1,8 +1,7 @@
-import React, {Fragment, useContext} from 'react';
+import React, {Fragment} from 'react';
 import {Link, useLocation} from 'react-router-dom';
 import {getSearchParams} from '../../utility';
 import {useAPICall} from '@xorkevin/substation';
-import {AuthCtx} from '@xorkevin/turbine';
 import {
   MainContent,
   Section,
@@ -19,8 +18,7 @@ import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 
 const selectAPIConfirmAccount = (api) => api.u.user.create.confirm;
 
-const ConfirmAccount = () => {
-  const ctx = useContext(AuthCtx);
+const ConfirmAccount = ({pathLogin}) => {
   const {search} = useLocation();
   const form = useForm({
     email: decodeURIComponent(getSearchParams(search).get('email') || ''),
@@ -47,12 +45,12 @@ const ConfirmAccount = () => {
             bar={
               <ButtonGroup>
                 {confirmAcct.success ? (
-                  <Link to={ctx.pathLogin}>
-                    <ButtonSecondary>Finish</ButtonSecondary>
+                  <Link to={pathLogin}>
+                    <ButtonSecondary>Sign in</ButtonSecondary>
                   </Link>
                 ) : (
                   <Fragment>
-                    <Link to={ctx.pathLogin}>
+                    <Link to={pathLogin}>
                       <ButtonTertiary>Cancel</ButtonTertiary>
                     </Link>
                     <ButtonPrimary onClick={execConfirm}>Confirm</ButtonPrimary>

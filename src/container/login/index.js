@@ -4,8 +4,8 @@ import {Switch, Route, Redirect, useRouteMatch} from 'react-router-dom';
 import SigninContainer from './signin';
 import CreateContainer from './create';
 import CreateConfirmContainer from './confirm';
-//import ForgotPassContainer from './forgotpassword';
-//import ResetPassContainer from './resetpassword';
+import ForgotPassContainer from './forgotpassword';
+import ResetPassContainer from './resetpassword';
 
 const Login = ({userApprovals}) => {
   const match = useRouteMatch();
@@ -16,17 +16,24 @@ const Login = ({userApprovals}) => {
         <SigninContainer />
       </Route>
       <Route path={`${match.path}/create`}>
-        <CreateContainer userApprovals={userApprovals} />
+        <CreateContainer
+          pathLogin={`${match.path}/login`}
+          pathConfirm={`${match.path}/confirm`}
+          userApprovals={userApprovals}
+        />
       </Route>
       <Route path={`${match.path}/confirm`}>
-        <CreateConfirmContainer />
+        <CreateConfirmContainer pathLogin={`${match.path}/login`} />
       </Route>
-      {/*<Route path={`${match.path}/forgot`}>
-        <ForgotPassContainer />
+      <Route path={`${match.path}/forgot`}>
+        <ForgotPassContainer
+          pathLogin={`${match.path}/login`}
+          pathResetPass={`${match.path}/resetpass`}
+        />
       </Route>
       <Route path={`${match.path}/resetpass`}>
-        <ResetPassContainer />
-      </Route>*/}
+        <ResetPassContainer pathLogin={`${match.path}/login`} />
+      </Route>
       <Redirect to={`${match.path}/login`} />
     </Switch>
   );

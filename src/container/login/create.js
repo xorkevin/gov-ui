@@ -1,8 +1,7 @@
-import React, {Fragment, useContext} from 'react';
+import React, {Fragment} from 'react';
 import {Link} from 'react-router-dom';
 import {emailRegex} from '../../utility';
 import {useAPICall} from '@xorkevin/substation';
-import {AuthCtx} from '@xorkevin/turbine';
 import {
   MainContent,
   Section,
@@ -80,8 +79,7 @@ const prehookValidate = ([form]) => {
   }
 };
 
-const CreateAccount = ({userApprovals}) => {
-  const ctx = useContext(AuthCtx);
+const CreateAccount = ({pathLogin, pathConfirm, userApprovals}) => {
   const form = useForm({
     username: '',
     password: '',
@@ -115,12 +113,12 @@ const CreateAccount = ({userApprovals}) => {
               <ButtonGroup>
                 {create.success ? (
                   userApprovals ? (
-                    <Link to={ctx.pathLogin}>
+                    <Link to={pathLogin}>
                       <ButtonSecondary>Finish</ButtonSecondary>
                     </Link>
                   ) : (
                     <Link
-                      to={`/x/confirm?email=${encodeURIComponent(
+                      to={`${pathConfirm}?email=${encodeURIComponent(
                         form.state.email,
                       )}`}
                     >
@@ -129,7 +127,7 @@ const CreateAccount = ({userApprovals}) => {
                   )
                 ) : (
                   <Fragment>
-                    <Link to={ctx.pathLogin}>
+                    <Link to={pathLogin}>
                       <ButtonTertiary>Cancel</ButtonTertiary>
                     </Link>
                     <ButtonPrimary onClick={execCreate}>Create</ButtonPrimary>

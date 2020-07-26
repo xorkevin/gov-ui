@@ -3,14 +3,18 @@ import {Link, useLocation} from 'react-router-dom';
 import {getSearchParams} from '../../utility';
 import {useAPICall} from '@xorkevin/substation';
 import {
+  MainContent,
   Section,
+  Container,
   Card,
-  Button,
+  Field,
   Form,
-  Input,
   useForm,
-  useSnackbarView,
+  ButtonGroup,
 } from '@xorkevin/nuke';
+import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
+import ButtonSecondary from '@xorkevin/nuke/src/component/button/secondary';
+import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 
 const selectAPIResetPass = (api) => api.u.user.pass.forgot.confirm;
 
@@ -42,85 +46,86 @@ const prehookValidate = ([_userid, _key, new_password, password_confirm]) => {
   }
 };
 
-const ConfirmReset = () => {
+const ResetPass = ({pathLogin}) => {
   const {search} = useLocation();
-
-  const displaySnackbar = useSnackbarView(
-    <Fragment>
-      <span>Password updated</span>
-    </Fragment>,
-  );
-
-  const [formState, updateForm] = useForm({
-    key: getSearchParams(search).get('key') || '',
+  const form = useForm({
+    key: decodeURIComponent(getSearchParams(search).get('key') || ''),
     new_password: '',
     password_confirm: '',
   });
 
-  const [userid, key] = formState.key.split('.', 2);
+  const [userid, key] = form.state.key.split('.', 2);
 
-  const [resetState, execReset] = useAPICall(
+  const [reset, execReset] = useAPICall(
     selectAPIResetPass,
-    [userid, key, formState.new_password, formState.password_confirm],
+    [userid, key, form.state.new_password, form.state.password_confirm],
     {},
-    {prehook: prehookValidate, posthook: displaySnackbar},
-  );
-
-  const {success, err} = resetState;
-
-  const bar = success ? (
-    <Fragment>
-      <Link to="/x/login">
-        <Button outline>Sign in</Button>
-      </Link>
-    </Fragment>
-  ) : (
-    <Fragment>
-      <Link to="/x/login">
-        <Button text>Cancel</Button>
-      </Link>
-      <Button primary onClick={execReset}>
-        Reset Password
-      </Button>
-    </Fragment>
+    {prehook: prehookValidate},
   );
 
   return (
-    <Section container padded>
-      <Card
-        center
-        size="md"
-        restrictWidth
-        titleBar
-        title={<h3>Reset password</h3>}
-        bar={bar}
-      >
-        <Form
-          formState={formState}
-          onChange={updateForm}
-          onEnter={execReset}
-          errCheck={formErrCheck}
-          validCheck={formValidCheck}
-        >
-          <Input label="code" name="key" fullWidth />
-          <Input
-            label="new password"
-            type="password"
-            name="new_password"
-            info="Must be at least 10 characters"
-            fullWidth
-          />
-          <Input
-            label="confirm password"
-            type="password"
-            name="password_confirm"
-            fullWidth
-          />
-        </Form>
-        {err && <span>{err}</span>}
-      </Card>
-    </Section>
+    <MainContent>
+      <Section>
+        <Container>
+          <Card
+            center
+            width="md"
+            title={
+              <Container padded>
+                <h3>Reset password</h3>
+              </Container>
+            }
+            bar={
+              <ButtonGroup>
+                {reset.success ? (
+                  <Link to={pathLogin}>
+                    <ButtonSecondary>Sign in</ButtonSecondary>
+                  </Link>
+                ) : (
+                  <Fragment>
+                    <Link to={pathLogin}>
+                      <ButtonTertiary>Cancel</ButtonTertiary>
+                    </Link>
+                    <ButtonPrimary onClick={execReset}>
+                      Reset Password
+                    </ButtonPrimary>
+                  </Fragment>
+                )}
+              </ButtonGroup>
+            }
+          >
+            <Container padded>
+              <Form
+                formState={form.state}
+                onChange={form.update}
+                onSubmit={execReset}
+                errCheck={formErrCheck}
+                validCheck={formValidCheck}
+              >
+                <Field name="key" label="code" fullWidth />
+                <Field
+                  name="new_password"
+                  type="password"
+                  label="new password"
+                  hint="Must be at least 10 characters"
+                  hintRight={`${form.state.new_password.length} chars`}
+                  fullWidth
+                />
+                <Field
+                  name="password_confirm"
+                  type="password"
+                  label="confirm password"
+                  fullWidth
+                />
+              </Form>
+              {reset.err && <span>{reset.err}</span>}
+              {reset.success && <span>Password updated.</span>}
+            </Container>
+          </Card>
+        </Container>
+      </Section>
+    </MainContent>
   );
 };
 
-export default ConfirmReset;
+export default ResetPass;

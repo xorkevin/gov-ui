@@ -1,59 +1,85 @@
 import React, {Fragment} from 'react';
 import {Link} from 'react-router-dom';
 import {useAPICall} from '@xorkevin/substation';
-import {Section, Card, Button, Form, Input, useForm} from '@xorkevin/nuke';
+import {
+  MainContent,
+  Section,
+  Container,
+  Card,
+  Field,
+  Form,
+  useForm,
+  ButtonGroup,
+} from '@xorkevin/nuke';
+import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
+import ButtonSecondary from '@xorkevin/nuke/src/component/button/secondary';
+import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 
 const selectAPIForgotPass = (api) => api.u.user.pass.forgot;
 
-const ForgotPassContainer = () => {
-  const [formState, updateForm] = useForm({
+const ForgotPassContainer = ({pathLogin, pathResetPass}) => {
+  const form = useForm({
     username: '',
   });
 
-  const [forgotState, execForgot] = useAPICall(selectAPIForgotPass, [
-    formState.username,
+  const [forgot, execForgot] = useAPICall(selectAPIForgotPass, [
+    form.state.username,
   ]);
 
-  const {success, err} = forgotState;
-
-  const bar = success ? (
-    <Fragment>
-      <Link to="/x/resetpass">
-        <Button outline>Confirm</Button>
-      </Link>
-    </Fragment>
-  ) : (
-    <Fragment>
-      <Link to="/x/login">
-        <Button text>Cancel</Button>
-      </Link>
-      <Button primary onClick={execForgot}>
-        Forgot Password
-      </Button>
-    </Fragment>
-  );
-
   return (
-    <Section container padded>
-      <Card
-        center
-        size="md"
-        restrictWidth
-        titleBar
-        title={<h3>Forgot password</h3>}
-        bar={bar}
-      >
-        <Form formState={formState} onChange={updateForm} onEnter={execForgot}>
-          <Input label="username / email" name="username" fullWidth />
-        </Form>
-        {err && <span>{err}</span>}
-        {success && (
-          <span>
-            <span>Reset your password with the code emailed to you</span>
-          </span>
-        )}
-      </Card>
-    </Section>
+    <MainContent>
+      <Section>
+        <Container padded>
+          <Card
+            center
+            width="md"
+            title={
+              <Container padded>
+                <h3>Forgot password</h3>
+              </Container>
+            }
+            bar={
+              <ButtonGroup>
+                {forgot.success ? (
+                  <Link to={pathResetPass}>
+                    <ButtonSecondary>Reset</ButtonSecondary>
+                  </Link>
+                ) : (
+                  <Fragment>
+                    <Link to={pathLogin}>
+                      <ButtonTertiary>Cancel</ButtonTertiary>
+                    </Link>
+                    <ButtonPrimary onClick={execForgot}>
+                      Forgot Password
+                    </ButtonPrimary>
+                  </Fragment>
+                )}
+              </ButtonGroup>
+            }
+          >
+            <Container padded>
+              <Form
+                formState={form.state}
+                onChange={form.update}
+                onSubmit={execForgot}
+              >
+                <Field name="username" label="username / email" fullWidth />
+              </Form>
+              {forgot.err && <span>{forgot.err}</span>}
+              {forgot.success && (
+                <span>
+                  <span>
+                    If the username or email is valid, an email with the code to
+                    reset your password has been has been sent to the
+                    corresponding email address.
+                  </span>
+                </span>
+              )}
+            </Container>
+          </Card>
+        </Container>
+      </Section>
+    </MainContent>
   );
 };
 
