@@ -41,10 +41,6 @@ const LoginContainer = AntiProtected(
 //const ManageContainer = lazy(() =>
 //  import('@xorkevin/gov-ui/src/container/manage'),
 //);
-//const HealthContainer = Protected(
-//  lazy(() => import('health')),
-//  'admin',
-//);
 //const CourierContainer = Protected(
 //  lazy(() => import('@xorkevin/gov-ui/src/container/courier')),
 //  ['admin', 'usr_courier'],
@@ -138,10 +134,6 @@ const App = () => {
         </NavItem>
         {loggedIn && (
           <Fragment>
-            <NavItem local link="/health">
-              <FaIcon icon="server" />
-              <small>Health</small>
-            </NavItem>
             <NavItem local link="/manage">
               <FaIcon icon="building" />
               <small>Manage</small>
@@ -173,9 +165,6 @@ const App = () => {
             </Route>
             <Route path="/manage">
               <ManageContainer />
-            </Route>
-            <Route path="/health">
-              <HealthContainer />
             </Route>
             <Route path="/courier">
               <CourierContainer courierPath={GovContextValue.courierPath} />
