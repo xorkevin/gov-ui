@@ -49,9 +49,9 @@ const LoginContainer = AntiProtected(
 //  lazy(() => import('@xorkevin/gov-ui/src/container/courier')),
 //  ['admin', 'usr_courier'],
 //);
-//const SetupContainer = lazy(() =>
-//  import('@xorkevin/gov-ui/src/container/setup'),
-//);
+const SetupContainer = lazy(() =>
+  import('@xorkevin/gov-ui/src/container/setup'),
+);
 
 const FallbackView = (
   <Container padded narrow>
@@ -59,11 +59,11 @@ const FallbackView = (
   </Container>
 );
 
-//const GovContextValue = Object.freeze({
-//  homePath: '/',
-//  // eslint-disable-next-line no-undef
-//  courierPath: COURIERBASE_URL,
-//});
+const GovContextValue = Object.freeze({
+  homePath: '/',
+  // eslint-disable-next-line no-undef
+  courierPath: COURIERBASE_URL,
+});
 
 const App = () => {
   const dark = useDarkModeValue();
@@ -179,11 +179,10 @@ const App = () => {
             </Route>
             <Route path="/courier">
               <CourierContainer courierPath={GovContextValue.courierPath} />
-            </Route>
-            <Route path="/setup">
-              <SetupContainer homePath={GovContextValue.homePath} />
-            </Route>
-            */}
+            </Route>*/}
+          <Route path="/setup">
+            <SetupContainer homePath={GovContextValue.homePath} />
+          </Route>
           <Redirect to="/" />
         </Switch>
       </Suspense>

@@ -1,8 +1,19 @@
-import React, {Fragment, useCallback} from 'react';
-import {useHistory} from 'react-router-dom';
+import React, {Fragment} from 'react';
+import {Link} from 'react-router-dom';
 import {emailRegex} from '../utility';
 import {useAPICall} from '@xorkevin/substation';
-import {Section, Card, Button, Form, Input, useForm} from '@xorkevin/nuke';
+import {
+  MainContent,
+  Section,
+  Container,
+  Card,
+  Field,
+  Form,
+  useForm,
+  ButtonGroup,
+} from '@xorkevin/nuke';
+import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
+import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 
 const selectAPISetup = (api) => api.setupz;
 
@@ -68,12 +79,7 @@ const prehookValidate = ([form]) => {
 };
 
 const Setup = ({homePath}) => {
-  const history = useHistory();
-  const navigateHome = useCallback(() => {
-    history.push(homePath);
-  }, [history, homePath]);
-
-  const [formState, updateForm] = useForm({
+  const form = useForm({
     username: '',
     password: '',
     email: '',
@@ -83,73 +89,87 @@ const Setup = ({homePath}) => {
     email_confirm: '',
   });
 
-  const [setupState, execSetup] = useAPICall(
+  const [setup, execSetup] = useAPICall(
     selectAPISetup,
-    [formState],
+    [form.state],
     {},
     {prehook: prehookValidate},
   );
 
-  const {success, err} = setupState;
-
   return (
-    <Section container padded>
-      <Card
-        center
-        size="md"
-        restrictWidth
-        titleBar
-        title={<h3>Setup</h3>}
-        bar={
-          <Fragment>
-            <Button text onClick={navigateHome}>
-              Cancel
-            </Button>
-            <Button primary onClick={execSetup}>
-              Setup
-            </Button>
-          </Fragment>
-        }
-      >
-        <Form
-          formState={formState}
-          onChange={updateForm}
-          onEnter={execSetup}
-          errCheck={formErrCheck}
-          validCheck={formValidCheck}
-        >
-          <Section subsection sectionTitle="Admin Account">
-            <Input label="first name" name="first_name" fullWidth />
-            <Input label="last name" name="last_name" fullWidth />
-            <Input label="username" name="username" fullWidth />
-            <Input
-              label="password"
-              type="password"
-              name="password"
-              info="Must be at least 10 characters"
-              fullWidth
-            />
-            <Input
-              label="confirm password"
-              type="password"
-              name="password_confirm"
-              fullWidth
-            />
-            <Input label="email" name="email" fullWidth />
-            <Input label="confirm email" name="email_confirm" fullWidth />
-          </Section>
-          {err && <span>{err}</span>}
-          {success && (
-            <span>
-              <span>Server setup</span>
-              <Button outline onClick={navigateHome}>
-                Finish
-              </Button>
-            </span>
-          )}
-        </Form>
-      </Card>
-    </Section>
+    <MainContent>
+      <Section>
+        <Container padded narrow>
+          <Card
+            center
+            width="md"
+            title={
+              <Container padded>
+                <h3>Setup</h3>
+              </Container>
+            }
+            bar={
+              <ButtonGroup>
+                {setup.success ? (
+                  <Link to={homePath}>
+                    <ButtonPrimary>Finish</ButtonPrimary>
+                  </Link>
+                ) : (
+                  <Fragment>
+                    <Link to={homePath}>
+                      <ButtonTertiary>Cancel</ButtonTertiary>
+                    </Link>
+                    <ButtonPrimary onClick={execSetup}>Setup</ButtonPrimary>
+                  </Fragment>
+                )}
+              </ButtonGroup>
+            }
+          >
+            <Container padded>
+              <h4>Admin Account</h4>
+              <Form
+                formState={form.state}
+                onChange={form.update}
+                onSubmit={execSetup}
+                errCheck={formErrCheck}
+                validCheck={formValidCheck}
+              >
+                <Field name="first_name" label="first name" fullWidth />
+                <Field name="last_name" label="last name" fullWidth />
+                <Field
+                  name="username"
+                  label="username"
+                  hint="Must be at least 3 characters"
+                  fullWidth
+                />
+                <Field
+                  name="password"
+                  type="password"
+                  label="password"
+                  hint="Must be at least 10 characters"
+                  hintRight={`${form.state.password.length} chars`}
+                  fullWidth
+                />
+                <Field
+                  name="password_confirm"
+                  type="password"
+                  label="confirm password"
+                  fullWidth
+                />
+                <Field name="email" label="email" fullWidth />
+                <Field name="email_confirm" label="confirm email" fullWidth />
+              </Form>
+              {setup.err && <span>{setup.err}</span>}
+              {setup.success && (
+                <span>
+                  <span>Server successfully setup</span>
+                </span>
+              )}
+            </Container>
+          </Card>
+        </Container>
+      </Section>
+    </MainContent>
   );
 };
 

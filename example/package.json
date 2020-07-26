@@ -38,7 +38,7 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
-    "@xorkevin/nuke": "^0.1.13-2",
+    "@xorkevin/nuke": "^0.1.13-3",
     "@xorkevin/substation": "^0.1.5-1",
     "@xorkevin/turbine": "^0.1.12-2",
     "fork-awesome": "^1.1.7",
