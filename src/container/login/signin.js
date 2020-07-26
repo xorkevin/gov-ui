@@ -11,6 +11,7 @@ import {
   Field,
   Form,
   useForm,
+  ButtonGroup,
 } from '@xorkevin/nuke';
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
@@ -38,12 +39,15 @@ const SigninContainer = () => {
           }
           bar={
             <Fragment>
-              <ButtonTertiary
-                forwardedRef={menu.anchorRef}
-                onClick={menu.toggle}
-              >
-                <FaIcon icon="ellipsis-v" />
-              </ButtonTertiary>
+              <ButtonGroup>
+                <ButtonTertiary
+                  forwardedRef={menu.anchorRef}
+                  onClick={menu.toggle}
+                >
+                  <FaIcon icon="ellipsis-v" />
+                </ButtonTertiary>
+                <ButtonPrimary onClick={execLogin}>Login</ButtonPrimary>
+              </ButtonGroup>
               {menu.show && (
                 <Menu size="md" anchor={menu.anchor} close={menu.close}>
                   <MenuItem
@@ -62,7 +66,6 @@ const SigninContainer = () => {
                   </MenuItem>
                 </Menu>
               )}
-              <ButtonPrimary onClick={execLogin}>Login</ButtonPrimary>
             </Fragment>
           }
         >
