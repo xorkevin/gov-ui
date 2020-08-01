@@ -1,56 +1,74 @@
-import React, {Fragment} from 'react';
+import React from 'react';
 import {Link, useLocation} from 'react-router-dom';
 import {getSearchParams} from '../../utility';
 import {useAuthCall} from '@xorkevin/turbine';
-import {Section, Card, Button, Form, Input, useForm} from '@xorkevin/nuke';
+import {
+  Container,
+  Card,
+  Field,
+  Form,
+  useForm,
+  ButtonGroup,
+} from '@xorkevin/nuke';
+import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
+import ButtonSecondary from '@xorkevin/nuke/src/component/button/secondary';
+import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 
-const selectAPIConfirmEmail = (api) => api.u.user.email.edit.confirm;
+const selectAPIConfirm = (api) => api.u.user.email.edit.confirm;
 
-const AccountEmailConfirm = () => {
+const AccountEmailConfirm = ({pathAccount}) => {
   const {search} = useLocation();
-
-  const [formState, updateForm] = useForm({
-    key: getSearchParams(search).get('key') || '',
+  const form = useForm({
+    key: decodeURIComponent(getSearchParams(search).get('key') || ''),
     password: '',
   });
 
-  const [userid, key] = formState.key.split('.', 2);
+  const [userid, key] = form.state.key.split('.', 2);
 
-  const [confirmState, execConfirm] = useAuthCall(selectAPIConfirmEmail, [
+  const [confirmState, execConfirm] = useAuthCall(selectAPIConfirm, [
     userid,
     key,
-    formState.password,
+    form.state.password,
   ]);
 
-  const {success, err} = confirmState;
-
-  const bar = success ? (
-    <Fragment>
-      <Link to="/a/account">
-        <Button primary>Back</Button>
-      </Link>
-    </Fragment>
-  ) : (
-    <Fragment>
-      <Link to="/a/account">
-        <Button text>Cancel</Button>
-      </Link>
-      <Button primary onClick={execConfirm}>
-        Update
-      </Button>
-    </Fragment>
-  );
-
   return (
-    <Card size="md" restrictWidth center bar={bar}>
-      <Section subsection sectionTitle="Account Details">
-        <Form formState={formState} onChange={updateForm} onEnter={execConfirm}>
-          <Input label="code" name="key" fullWidth />
-          <Input label="password" type="password" name="password" fullWidth />
+    <Card
+      center
+      width="md"
+      title={
+        <Container padded>
+          <h3>Confirm Email</h3>
+        </Container>
+      }
+      bar={
+        confirmState.success ? (
+          <ButtonGroup>
+            <Link to={pathAccount}>
+              <ButtonSecondary>Back</ButtonSecondary>
+            </Link>
+          </ButtonGroup>
+        ) : (
+          <ButtonGroup>
+            <Link to={pathAccount}>
+              <ButtonTertiary>Cancel</ButtonTertiary>
+            </Link>
+            <ButtonPrimary onClick={execConfirm}>Update</ButtonPrimary>
+          </ButtonGroup>
+        )
+      }
+    >
+      <Container padded>
+        <Form
+          formState={form.state}
+          onChange={form.update}
+          onSubmit={execConfirm}
+        >
+          <Field name="key" label="code" fullWidth />
+          <Field name="password" type="password" label="password" fullWidth />
         </Form>
-      </Section>
-      {err && <span>{err}</span>}
-      {success && <span>Email updated</span>}
+        {confirmState.err && <span>{confirmState.err}</span>}
+        {confirmState.success && <span>Email updated</span>}
+      </Container>
     </Card>
   );
 };

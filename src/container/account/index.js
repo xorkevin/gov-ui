@@ -4,8 +4,8 @@ import {MainContent, Section, Container, Tabbar, TabItem} from '@xorkevin/nuke';
 
 import AccountDetailsContainer from './details';
 import AccountEditContainer from './detailsedit';
-//import EmailConfirmContainer from './emailconfirm';
-//import EmailEditContainer from './emailedit';
+import EmailEditContainer from './emailedit';
+import EmailConfirmContainer from './emailconfirm';
 //import PassEditContainer from './passedit';
 //import ProfileEditContainer from './profileedit';
 //import ProfileDetailsContainer from './profile';
@@ -34,18 +34,25 @@ const Account = ({showProfile}) => {
           </Tabbar>
           <Switch>
             <Route exact path={`${match.path}/account`}>
-              <AccountDetailsContainer />
+              <AccountDetailsContainer
+                pathEdit={`${match.path}/account/edit`}
+                pathEmail={`${match.path}/account/email`}
+                pathPass={`${match.path}/account/pass`}
+              />
             </Route>
-            <Route path={`${match.path}/account/edit`}>
+            <Route exact path={`${match.path}/account/edit`}>
               <AccountEditContainer pathAccount={`${match.path}/account`} />
             </Route>
-            {/*<Route path={`${match.path}/account/email/confirm`}>
-              <EmailConfirmContainer />
+            <Route exact path={`${match.path}/account/email`}>
+              <EmailEditContainer
+                pathAccount={`${match.path}/account`}
+                pathConfirm={`${match.path}/account/email/confirm`}
+              />
             </Route>
-            <Route path={`${match.path}/account/email`}>
-              <EmailEditContainer />
+            <Route path={`${match.path}/account/email/confirm`}>
+              <EmailConfirmContainer pathAccount={`${match.path}/account`} />
             </Route>
-            <Route path={`${match.path}/account/pass`}>
+            {/*<Route path={`${match.path}/account/pass`}>
               <PassEditContainer />
             </Route>*/}
             {/*{showProfile && (

@@ -1,10 +1,20 @@
-import React, {Fragment} from 'react';
-import {Link, useRouteMatch} from 'react-router-dom';
+import React from 'react';
+import {Link} from 'react-router-dom';
 import {emailRegex} from '../../utility';
 import {useAuthCall} from '@xorkevin/turbine';
-import {Section, Card, Button, Form, Input, useForm} from '@xorkevin/nuke';
+import {
+  Container,
+  Card,
+  Field,
+  Form,
+  useForm,
+  ButtonGroup,
+} from '@xorkevin/nuke';
+import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
+import ButtonSecondary from '@xorkevin/nuke/src/component/button/secondary';
+import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 
-const selectAPIEditEmail = (api) => api.u.user.email.edit;
+const selectAPIEdit = (api) => api.u.user.email.edit;
 
 const formErrCheck = ({email}) => {
   const err = {};
@@ -22,59 +32,62 @@ const formValidCheck = ({email}) => {
   return valid;
 };
 
-const AccountEmailEdit = () => {
-  const match = useRouteMatch();
-
-  const [formState, updateForm] = useForm({
+const AccountEmailEdit = ({pathAccount, pathConfirm}) => {
+  const form = useForm({
     email: '',
     password: '',
   });
 
-  const [emailState, execEditEmail] = useAuthCall(selectAPIEditEmail, [
-    formState.email,
-    formState.password,
+  const [edit, execEdit] = useAuthCall(selectAPIEdit, [
+    form.state.email,
+    form.state.password,
   ]);
 
-  const {success, err} = emailState;
-
-  const bar = success ? (
-    <Fragment>
-      <Link to={`${match.url}/confirm`}>
-        <Button outline>Confirm</Button>
-      </Link>
-    </Fragment>
-  ) : (
-    <Fragment>
-      <Link to="/a/account">
-        <Button text>Cancel</Button>
-      </Link>
-      <Button primary onClick={execEditEmail}>
-        Update
-      </Button>
-    </Fragment>
-  );
-
   return (
-    <Card size="md" restrictWidth center bar={bar}>
-      <Section subsection sectionTitle="Account Details">
+    <Card
+      center
+      width="md"
+      title={
+        <Container padded>
+          <h3>Change Account Email</h3>
+        </Container>
+      }
+      bar={
+        edit.success ? (
+          <ButtonGroup>
+            <Link to={pathConfirm}>
+              <ButtonSecondary>Confirm</ButtonSecondary>
+            </Link>
+          </ButtonGroup>
+        ) : (
+          <ButtonGroup>
+            <Link to={pathAccount}>
+              <ButtonTertiary>Cancel</ButtonTertiary>
+            </Link>
+            <ButtonPrimary onClick={execEdit}>Update</ButtonPrimary>
+          </ButtonGroup>
+        )
+      }
+    >
+      <Container padded>
         <Form
-          formState={formState}
-          onChange={updateForm}
-          onEnter={execEditEmail}
+          formState={form.state}
+          onChange={form.update}
+          onSubmit={execEdit}
           errCheck={formErrCheck}
           validCheck={formValidCheck}
         >
-          <Input label="email" name="email" fullWidth />
-          <Input label="password" type="password" name="password" fullWidth />
+          <Field name="email" label="email" fullWidth />
+          <Field name="password" type="password" label="password" fullWidth />
         </Form>
-      </Section>
-      {err && <span>{err}</span>}
-      {success && (
-        <span>
-          Confirm your email change with the code emailed to the address
-          provided above
-        </span>
-      )}
+        {edit.err && <span>{edit.err}</span>}
+        {edit.success && (
+          <span>
+            Confirm your email change with the code emailed to the address
+            provided above.
+          </span>
+        )}
+      </Container>
     </Card>
   );
 };

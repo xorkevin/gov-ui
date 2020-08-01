@@ -1,5 +1,5 @@
 import React from 'react';
-import {Link, useRouteMatch} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import {useAuthResource} from '@xorkevin/turbine';
 import {
   Container,
@@ -13,9 +13,7 @@ import ButtonSecondary from '@xorkevin/nuke/src/component/button/secondary';
 
 const selectAPIAccount = (api) => api.u.user.get;
 
-const AccountDetails = () => {
-  const match = useRouteMatch();
-
+const AccountDetails = ({pathEdit, pathEmail, pathPass}) => {
   const [account] = useAuthResource(selectAPIAccount, [], {
     userid: '',
     username: '',
@@ -40,13 +38,13 @@ const AccountDetails = () => {
           }
           bar={
             <ButtonGroup>
-              <Link to={`${match.url}/edit`}>
+              <Link to={pathEdit}>
                 <ButtonSecondary>Edit</ButtonSecondary>
               </Link>
-              <Link to={`${match.url}/email`}>
+              <Link to={pathEmail}>
                 <ButtonSecondary>Change Email</ButtonSecondary>
               </Link>
-              <Link to={`${match.url}/pass`}>
+              <Link to={pathPass}>
                 <ButtonSecondary>Change Password</ButtonSecondary>
               </Link>
             </ButtonGroup>

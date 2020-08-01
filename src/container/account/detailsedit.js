@@ -66,7 +66,7 @@ const AccountDetailsEdit = ({pathAccount}) => {
           width="md"
           title={
             <Container padded>
-              <h3>Account Details</h3>
+              <h3>Update Account Info</h3>
             </Container>
           }
           bar={
