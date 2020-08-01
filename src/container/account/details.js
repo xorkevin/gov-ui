@@ -1,7 +1,15 @@
-import React, {Fragment} from 'react';
+import React from 'react';
 import {Link, useRouteMatch} from 'react-router-dom';
 import {useAuthResource} from '@xorkevin/turbine';
-import {Section, Card, Description, Chip, Button, Time} from '@xorkevin/nuke';
+import {
+  Container,
+  Card,
+  Description,
+  Chip,
+  ButtonGroup,
+  Time,
+} from '@xorkevin/nuke';
+import ButtonSecondary from '@xorkevin/nuke/src/component/button/secondary';
 
 const selectAPIAccount = (api) => api.u.user.get;
 
@@ -18,26 +26,33 @@ const AccountDetails = () => {
     email: '',
   });
 
-  const bar = (
-    <Fragment>
-      <Link to={`${match.url}/edit`}>
-        <Button outline>Edit</Button>
-      </Link>
-      <Link to={`${match.url}/email`}>
-        <Button outline>Change Email</Button>
-      </Link>
-      <Link to={`${match.url}/pass`}>
-        <Button outline>Change Password</Button>
-      </Link>
-    </Fragment>
-  );
-
   return (
     <div>
       {account.err && <span>{account.err}</span>}
       {account.success && (
-        <Card size="lg" restrictWidth center bar={bar}>
-          <Section subsection sectionTitle="Account Details">
+        <Card
+          center
+          width="lg"
+          title={
+            <Container padded>
+              <h3>Account Details</h3>
+            </Container>
+          }
+          bar={
+            <ButtonGroup>
+              <Link to={`${match.url}/edit`}>
+                <ButtonSecondary>Edit</ButtonSecondary>
+              </Link>
+              <Link to={`${match.url}/email`}>
+                <ButtonSecondary>Change Email</ButtonSecondary>
+              </Link>
+              <Link to={`${match.url}/pass`}>
+                <ButtonSecondary>Change Password</ButtonSecondary>
+              </Link>
+            </ButtonGroup>
+          }
+        >
+          <Container padded>
             <Description label="userid" item={account.data.userid} />
             <Description label="username" item={account.data.username} />
             <Description label="first name" item={account.data.first_name} />
@@ -56,7 +71,7 @@ const AccountDetails = () => {
               label="creation time"
               item={<Time value={account.data.creation_time * 1000} />}
             />
-          </Section>
+          </Container>
         </Card>
       )}
     </div>

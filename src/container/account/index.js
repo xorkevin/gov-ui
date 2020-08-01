@@ -1,70 +1,71 @@
-import React, {Fragment} from 'react';
-import {
-  Switch,
-  Route,
-  Redirect,
-  NavLink,
-  useRouteMatch,
-} from 'react-router-dom';
-import {Section, Tabbar} from '@xorkevin/nuke';
+import React from 'react';
+import {Switch, Route, Redirect, useRouteMatch} from 'react-router-dom';
+import {MainContent, Section, Container, Tabbar, TabItem} from '@xorkevin/nuke';
 
-import EmailConfirmContainer from './emailconfirm';
-import EmailEditContainer from './emailedit';
-import PassEditContainer from './passedit';
-import AccountEditContainer from './detailsedit';
+//import EmailConfirmContainer from './emailconfirm';
+//import EmailEditContainer from './emailedit';
+//import PassEditContainer from './passedit';
+//import AccountEditContainer from './detailsedit';
 import AccountDetailsContainer from './details';
-import ProfileEditContainer from './profileedit';
-import ProfileDetailsContainer from './profile';
-import AccountSessionsContainer from './sessions';
+//import ProfileEditContainer from './profileedit';
+//import ProfileDetailsContainer from './profile';
+//import AccountSessionsContainer from './sessions';
 
 const Account = ({showProfile}) => {
   const match = useRouteMatch();
 
   return (
-    <Section container narrow padded sectionTitle="Settings">
-      <Tabbar
-        left={
-          <Fragment>
-            <NavLink to={`${match.path}/account`}>Account</NavLink>
+    <MainContent>
+      <Section>
+        <Container padded narrow>
+          <h1>Settings</h1>
+          <Tabbar>
+            <TabItem link={`${match.path}/account`} local>
+              Account
+            </TabItem>
             {showProfile && (
-              <NavLink to={`${match.path}/profile`}>Profile</NavLink>
+              <TabItem link={`${match.path}/profile`} local>
+                Profile
+              </TabItem>
             )}
-            <NavLink to={`${match.path}/sessions`}>Sessions</NavLink>
-          </Fragment>
-        }
-      />
-      <Switch>
-        <Route path={`${match.path}/account/email/confirm`}>
-          <EmailConfirmContainer />
-        </Route>
-        <Route path={`${match.path}/account/email`}>
-          <EmailEditContainer />
-        </Route>
-        <Route path={`${match.path}/account/pass`}>
-          <PassEditContainer />
-        </Route>
-        <Route path={`${match.path}/account/edit`}>
-          <AccountEditContainer />
-        </Route>
-        <Route path={`${match.path}/account`}>
-          <AccountDetailsContainer />
-        </Route>
-        {showProfile && (
-          <Route path={`${match.path}/profile/edit`}>
-            <ProfileEditContainer />
-          </Route>
-        )}
-        {showProfile && (
-          <Route path={`${match.path}/profile`}>
-            <ProfileDetailsContainer />
-          </Route>
-        )}
-        <Route path={`${match.path}/sessions`}>
-          <AccountSessionsContainer />
-        </Route>
-        <Redirect to={`${match.path}/account`} />
-      </Switch>
-    </Section>
+            <TabItem link={`${match.path}/sessions`} local>
+              Sessions
+            </TabItem>
+          </Tabbar>
+          <Switch>
+            {/*<Route path={`${match.path}/account/email/confirm`}>
+              <EmailConfirmContainer />
+            </Route>
+            <Route path={`${match.path}/account/email`}>
+              <EmailEditContainer />
+            </Route>
+            <Route path={`${match.path}/account/pass`}>
+              <PassEditContainer />
+            </Route>
+            <Route path={`${match.path}/account/edit`}>
+              <AccountEditContainer />
+            </Route>*/}
+            <Route exact path={`${match.path}/account`}>
+              <AccountDetailsContainer />
+            </Route>
+            {/*{showProfile && (
+              <Route path={`${match.path}/profile/edit`}>
+                <ProfileEditContainer />
+              </Route>
+            )}
+            {showProfile && (
+              <Route path={`${match.path}/profile`}>
+                <ProfileDetailsContainer />
+              </Route>
+            )}
+            <Route path={`${match.path}/sessions`}>
+              <AccountSessionsContainer />
+            </Route>*/}
+            <Redirect to={`${match.path}/account`} />
+          </Switch>
+        </Container>
+      </Section>
+    </MainContent>
   );
 };
 

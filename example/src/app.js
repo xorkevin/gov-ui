@@ -29,9 +29,9 @@ const AdminContainer = Protected(lazy(() => import('admin')));
 const LoginContainer = AntiProtected(
   lazy(() => import('@xorkevin/gov-ui/src/container/login')),
 );
-//const AccountContainer = Protected(
-//  lazy(() => import('@xorkevin/gov-ui/src/container/account')),
-//);
+const AccountContainer = Protected(
+  lazy(() => import('@xorkevin/gov-ui/src/container/account')),
+);
 //const DeveloperContainer = Protected(
 //  lazy(() => import('@xorkevin/gov-ui/src/container/developer')),
 //);
@@ -154,10 +154,10 @@ const App = () => {
           <Route path="/x">
             <LoginContainer userApprovals={GovContextValue.userApprovals} />
           </Route>
-          {/*<Route path="/a">
-              <AccountContainer showProfile />
-            </Route>
-            <Route path="/dev">
+          <Route path="/a">
+            <AccountContainer showProfile />
+          </Route>
+          {/*<Route path="/dev">
               <DeveloperContainer />
             </Route>
             <Route path="/u">
