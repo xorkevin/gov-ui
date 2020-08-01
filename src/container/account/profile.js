@@ -1,49 +1,64 @@
-import React, {Fragment} from 'react';
+import React from 'react';
 import {Link} from 'react-router-dom';
 import {useURL} from '@xorkevin/substation';
 import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
-import {Section, Card, Description, Button, Img} from '@xorkevin/nuke';
+import {Container, Card, Description, ButtonGroup} from '@xorkevin/nuke';
+import Img from '@xorkevin/nuke/src/component/image/rounded';
+import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
+import ButtonSecondary from '@xorkevin/nuke/src/component/button/secondary';
 
 const selectAPIProfile = (api) => api.profile.get;
 const selectAPIProfileImage = (api) => api.profile.id.image;
 const selectAPICreateProfile = (api) => api.profile.create;
 
-const Profile = () => {
-  const [profile] = useAuthResource(selectAPIProfile, [], {
+const Profile = ({pathEdit}) => {
+  const [profile, reexecute] = useAuthResource(selectAPIProfile, [], {
     contact_email: '',
     bio: '',
     image: '',
   });
 
-  const canCreate = profile.status === 404;
+  const [create, execCreate] = useAuthCall(
+    selectAPICreateProfile,
+    [],
+    {},
+    {posthook: reexecute},
+  );
 
-  const [create, execCreate] = useAuthCall(selectAPICreateProfile);
+  const canCreate = profile.status === 404;
 
   const {userid} = useAuthValue();
   const imageURL = useURL(selectAPIProfileImage, [userid]);
 
-  const bar = (
-    <Fragment>
-      <Link to="/a/profile/edit">
-        <Button outline>Edit</Button>
-      </Link>
-    </Fragment>
-  );
+  if (canCreate) {
+    return (
+      <div>
+        <ButtonPrimary onClick={execCreate}>Create Profile</ButtonPrimary>
+        {create.err && <span>{create.err}</span>}
+      </div>
+    );
+  }
 
   return (
     <div>
-      {canCreate && (
-        <div>
-          <Button primary onClick={execCreate}>
-            Create Profile
-          </Button>
-        </div>
-      )}
-      {create.success && <span>Profile created</span>}
-      {create.err && <span>{create.err}</span>}
       {profile.success && (
-        <Card size="lg" restrictWidth center bar={bar}>
-          <Section subsection sectionTitle="Profile">
+        <Card
+          center
+          width="lg"
+          title={
+            <Container padded>
+              <h3>Profile</h3>
+            </Container>
+          }
+          bar={
+            <ButtonGroup>
+              <Link to={pathEdit}>
+                <ButtonSecondary>Edit</ButtonSecondary>
+              </Link>
+            </ButtonGroup>
+          }
+        >
+          <Container padded>
             <Description
               label="contact email"
               item={profile.data.contact_email}
@@ -53,20 +68,14 @@ const Profile = () => {
               label="profile image"
               item={
                 profile.data.image && (
-                  <Img
-                    rounded
-                    preview={profile.data.image}
-                    imgWidth={384}
-                    imgHeight={384}
-                    src={imageURL}
-                  />
+                  <Img src={imageURL} preview={profile.data.image} ratio={1} />
                 )
               }
             />
-          </Section>
+          </Container>
         </Card>
       )}
-      {!canCreate && profile.err && <span>{profile.err}</span>}
+      {profile.err && <span>{profile.err}</span>}
     </div>
   );
 };

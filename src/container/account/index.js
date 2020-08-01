@@ -7,8 +7,8 @@ import AccountEditContainer from './detailsedit';
 import EmailEditContainer from './emailedit';
 import EmailConfirmContainer from './emailconfirm';
 import PassEditContainer from './passedit';
-//import ProfileEditContainer from './profileedit';
-//import ProfileDetailsContainer from './profile';
+import ProfileDetailsContainer from './profile';
+import ProfileEditContainer from './profileedit';
 //import AccountSessionsContainer from './sessions';
 
 const Account = ({showProfile}) => {
@@ -55,17 +55,19 @@ const Account = ({showProfile}) => {
             <Route path={`${match.path}/account/pass`}>
               <PassEditContainer pathAccount={`${match.path}/account`} />
             </Route>
-            {/*{showProfile && (
-              <Route path={`${match.path}/profile/edit`}>
-                <ProfileEditContainer />
+            {showProfile && (
+              <Route exact path={`${match.path}/profile`}>
+                <ProfileDetailsContainer
+                  pathEdit={`${match.path}/profile/edit`}
+                />
               </Route>
             )}
             {showProfile && (
-              <Route path={`${match.path}/profile`}>
-                <ProfileDetailsContainer />
+              <Route exact path={`${match.path}/profile/edit`}>
+                <ProfileEditContainer pathProfile={`${match.path}/profile`} />
               </Route>
             )}
-            <Route path={`${match.path}/sessions`}>
+            {/*<Route path={`${match.path}/sessions`}>
               <AccountSessionsContainer />
             </Route>*/}
             <Redirect to={`${match.path}/account`} />
