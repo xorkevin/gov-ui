@@ -2,11 +2,11 @@ import React from 'react';
 import {Switch, Route, Redirect, useRouteMatch} from 'react-router-dom';
 import {MainContent, Section, Container, Tabbar, TabItem} from '@xorkevin/nuke';
 
+import AccountDetailsContainer from './details';
+import AccountEditContainer from './detailsedit';
 //import EmailConfirmContainer from './emailconfirm';
 //import EmailEditContainer from './emailedit';
 //import PassEditContainer from './passedit';
-//import AccountEditContainer from './detailsedit';
-import AccountDetailsContainer from './details';
 //import ProfileEditContainer from './profileedit';
 //import ProfileDetailsContainer from './profile';
 //import AccountSessionsContainer from './sessions';
@@ -33,6 +33,12 @@ const Account = ({showProfile}) => {
             </TabItem>
           </Tabbar>
           <Switch>
+            <Route exact path={`${match.path}/account`}>
+              <AccountDetailsContainer />
+            </Route>
+            <Route path={`${match.path}/account/edit`}>
+              <AccountEditContainer pathAccount={`${match.path}/account`} />
+            </Route>
             {/*<Route path={`${match.path}/account/email/confirm`}>
               <EmailConfirmContainer />
             </Route>
@@ -41,13 +47,7 @@ const Account = ({showProfile}) => {
             </Route>
             <Route path={`${match.path}/account/pass`}>
               <PassEditContainer />
-            </Route>
-            <Route path={`${match.path}/account/edit`}>
-              <AccountEditContainer />
             </Route>*/}
-            <Route exact path={`${match.path}/account`}>
-              <AccountDetailsContainer />
-            </Route>
             {/*{showProfile && (
               <Route path={`${match.path}/profile/edit`}>
                 <ProfileEditContainer />

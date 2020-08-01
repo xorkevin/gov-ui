@@ -1,46 +1,50 @@
-import React, {Fragment, useCallback} from 'react';
+import React, {useCallback} from 'react';
 import {Link} from 'react-router-dom';
 import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
-  Section,
+  Container,
   Card,
-  Button,
+  Field,
   Form,
-  Input,
   useForm,
+  SnackbarSurface,
   useSnackbarView,
+  ButtonGroup,
 } from '@xorkevin/nuke';
+import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
+import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 
-const selectAPIEditAccount = (api) => api.u.user.edit;
+const selectAPIEdit = (api) => api.u.user.edit;
 const selectAPIAccount = (api) => api.u.user.get;
 
-const AccountDetailsEdit = () => {
+const AccountDetailsEdit = ({pathAccount}) => {
   const displaySnackbar = useSnackbarView(
-    <Fragment>
-      <span>Changes saved</span>
-    </Fragment>,
+    <SnackbarSurface>&#x2713; Changes saved</SnackbarSurface>,
   );
 
-  const [formState, updateForm] = useForm({
+  const form = useForm({
     username: '',
     first_name: '',
     last_name: '',
   });
 
-  const [edit, execEditAccount] = useAuthCall(
-    selectAPIEditAccount,
-    [formState],
+  const [edit, execEdit] = useAuthCall(
+    selectAPIEdit,
+    [form.state],
     {},
     {posthook: displaySnackbar},
   );
 
+  const formAssign = form.assign;
   const posthook = useCallback(
     (_status, {username, first_name, last_name}) => {
-      updateForm('username', username);
-      updateForm('first_name', first_name);
-      updateForm('last_name', last_name);
+      formAssign({
+        username,
+        first_name,
+        last_name,
+      });
     },
-    [updateForm],
+    [formAssign],
   );
 
   const [account] = useAuthResource(
@@ -54,46 +58,44 @@ const AccountDetailsEdit = () => {
     {posthook},
   );
 
-  const bar = edit.success ? (
-    <Fragment>
-      <Link to="/a/account">
-        <Button text>Back</Button>
-      </Link>
-      <Button primary onClick={execEditAccount}>
-        Save
-      </Button>
-    </Fragment>
-  ) : (
-    <Fragment>
-      <Link to="/a/account">
-        <Button text>Cancel</Button>
-      </Link>
-      <Button primary onClick={execEditAccount}>
-        Save
-      </Button>
-    </Fragment>
-  );
-
   return (
-    <Fragment>
+    <div>
       {account.success && (
-        <Card size="md" restrictWidth center bar={bar}>
-          <Section subsection sectionTitle="Account Details">
+        <Card
+          center
+          width="md"
+          title={
+            <Container padded>
+              <h3>Account Details</h3>
+            </Container>
+          }
+          bar={
+            <ButtonGroup>
+              <Link to={pathAccount}>
+                <ButtonTertiary>
+                  {edit.success ? 'Back' : 'Cancel'}
+                </ButtonTertiary>
+              </Link>
+              <ButtonPrimary onClick={execEdit}>Save</ButtonPrimary>
+            </ButtonGroup>
+          }
+        >
+          <Container padded>
             <Form
-              formState={formState}
-              onChange={updateForm}
-              onEnter={execEditAccount}
+              formState={form.state}
+              onChange={form.update}
+              onSubmit={execEdit}
             >
-              <Input label="username" name="username" fullWidth />
-              <Input label="first name" name="first_name" fullWidth />
-              <Input label="last name" name="last_name" fullWidth />
+              <Field name="username" label="username" fullWidth />
+              <Field name="first_name" label="first name" fullWidth />
+              <Field name="last_name" label="last name" fullWidth />
             </Form>
-          </Section>
-          {edit.err && <span>{edit.err}</span>}
+            {edit.err && <span>{edit.err}</span>}
+          </Container>
         </Card>
       )}
       {account.err && <span>{account.err}</span>}
-    </Fragment>
+    </div>
   );
 };
 
