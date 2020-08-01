@@ -6,7 +6,7 @@ import AccountDetailsContainer from './details';
 import AccountEditContainer from './detailsedit';
 import EmailEditContainer from './emailedit';
 import EmailConfirmContainer from './emailconfirm';
-//import PassEditContainer from './passedit';
+import PassEditContainer from './passedit';
 //import ProfileEditContainer from './profileedit';
 //import ProfileDetailsContainer from './profile';
 //import AccountSessionsContainer from './sessions';
@@ -52,9 +52,9 @@ const Account = ({showProfile}) => {
             <Route path={`${match.path}/account/email/confirm`}>
               <EmailConfirmContainer pathAccount={`${match.path}/account`} />
             </Route>
-            {/*<Route path={`${match.path}/account/pass`}>
-              <PassEditContainer />
-            </Route>*/}
+            <Route path={`${match.path}/account/pass`}>
+              <PassEditContainer pathAccount={`${match.path}/account`} />
+            </Route>
             {/*{showProfile && (
               <Route path={`${match.path}/profile/edit`}>
                 <ProfileEditContainer />

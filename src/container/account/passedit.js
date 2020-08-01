@@ -1,17 +1,20 @@
-import React, {Fragment} from 'react';
+import React from 'react';
 import {Link} from 'react-router-dom';
 import {useAuthCall} from '@xorkevin/turbine';
 import {
-  Section,
+  Container,
   Card,
-  Button,
+  Field,
   Form,
-  Input,
   useForm,
+  SnackbarSurface,
   useSnackbarView,
+  ButtonGroup,
 } from '@xorkevin/nuke';
+import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
+import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 
-const selectAPIEditPass = (api) => api.u.user.pass.edit;
+const selectAPIEdit = (api) => api.u.user.pass.edit;
 
 const formErrCheck = ({new_password, password_confirm}) => {
   const err = {};
@@ -41,81 +44,85 @@ const prehookValidate = ([_old_pass, new_password, password_confirm]) => {
   }
 };
 
-const AccountPassEdit = () => {
+const AccountPassEdit = ({pathAccount}) => {
   const displaySnackbar = useSnackbarView(
-    <Fragment>
-      <span>Password updated</span>
-    </Fragment>,
+    <SnackbarSurface>Password updated</SnackbarSurface>,
   );
 
-  const [formState, updateForm] = useForm({
+  const form = useForm({
     old_password: '',
     new_password: '',
     password_confirm: '',
   });
 
-  const [passState, execEditPass] = useAuthCall(
-    selectAPIEditPass,
+  const [edit, execEdit] = useAuthCall(
+    selectAPIEdit,
     [
-      formState.old_password,
-      formState.new_password,
-      formState.password_confirm,
+      form.state.old_password,
+      form.state.new_password,
+      form.state.password_confirm,
     ],
     {},
     {prehook: prehookValidate, posthook: displaySnackbar},
   );
 
-  const {success, err} = passState;
-
-  const bar = success ? (
-    <Fragment>
-      <Link to="/a/account">
-        <Button text>Back</Button>
-      </Link>
-    </Fragment>
-  ) : (
-    <Fragment>
-      <Link to="/a/account">
-        <Button text>Cancel</Button>
-      </Link>
-      <Button primary onClick={execEditPass}>
-        Update
-      </Button>
-    </Fragment>
-  );
-
   return (
-    <Card size="md" restrictWidth center bar={bar}>
-      <Section subsection sectionTitle="Account Details">
+    <Card
+      center
+      width="md"
+      title={
+        <Container padded>
+          <h3>Change Account Password</h3>
+        </Container>
+      }
+      bar={
+        edit.success ? (
+          <ButtonGroup>
+            <Link to={pathAccount}>
+              <ButtonTertiary>Back</ButtonTertiary>
+            </Link>
+          </ButtonGroup>
+        ) : (
+          <ButtonGroup>
+            <Link to={pathAccount}>
+              <ButtonTertiary>Cancel</ButtonTertiary>
+            </Link>
+            <ButtonPrimary onClick={execEdit}>Update</ButtonPrimary>
+          </ButtonGroup>
+        )
+      }
+    >
+      <Container padded>
         <Form
-          formState={formState}
-          onChange={updateForm}
-          onEnter={execEditPass}
+          formState={form.state}
+          onChange={form.update}
+          onSubmit={execEdit}
           errCheck={formErrCheck}
           validCheck={formValidCheck}
         >
-          <Input
-            label="old password"
-            type="password"
+          <Field
             name="old_password"
+            type="password"
+            label="old password"
             fullWidth
           />
-          <Input
-            label="new password"
-            type="password"
+          <Field
             name="new_password"
-            info="Must be at least 10 characters"
+            type="password"
+            label="new password"
+            hint="Must be at least 10 characters"
+            hintRight={`${form.state.new_password.length} chars`}
             fullWidth
           />
-          <Input
-            label="confirm password"
-            type="password"
+          <Field
             name="password_confirm"
+            type="password"
+            label="confirm password"
             fullWidth
           />
         </Form>
-      </Section>
-      {err && <span>{err}</span>}
+        {edit.err && <span>{edit.err}</span>}
+      </Container>
     </Card>
   );
 };
