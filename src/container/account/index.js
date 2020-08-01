@@ -1,15 +1,26 @@
 import React from 'react';
 import {Switch, Route, Redirect, useRouteMatch} from 'react-router-dom';
-import {MainContent, Section, Container, Tabbar, TabItem} from '@xorkevin/nuke';
+import {
+  MainContent,
+  Section,
+  Container,
+  Grid,
+  Column,
+  Sidebar,
+  SidebarItem,
+  SidebarHeader,
+  SidebarDivider,
+  FaIcon,
+} from '@xorkevin/nuke';
 
 import AccountDetailsContainer from './details';
-import AccountEditContainer from './detailsedit';
-import EmailEditContainer from './emailedit';
+import SecurityContainer from './security';
 import EmailConfirmContainer from './emailconfirm';
-import PassEditContainer from './passedit';
-import ProfileDetailsContainer from './profile';
-import ProfileEditContainer from './profileedit';
 //import AccountSessionsContainer from './sessions';
+
+//const DeveloperContainer = Protected(
+//  lazy(() => import('@xorkevin/gov-ui/src/container/developer')),
+//);
 
 const Account = ({showProfile}) => {
   const match = useRouteMatch();
@@ -18,60 +29,68 @@ const Account = ({showProfile}) => {
     <MainContent>
       <Section>
         <Container padded narrow>
-          <h1>Settings</h1>
-          <Tabbar>
-            <TabItem link={`${match.path}/account`} local>
-              Account
-            </TabItem>
-            {showProfile && (
-              <TabItem link={`${match.path}/profile`} local>
-                Profile
-              </TabItem>
-            )}
-            <TabItem link={`${match.path}/sessions`} local>
-              Sessions
-            </TabItem>
-          </Tabbar>
-          <Switch>
-            <Route exact path={`${match.path}/account`}>
-              <AccountDetailsContainer
-                pathEdit={`${match.path}/account/edit`}
-                pathEmail={`${match.path}/account/email`}
-                pathPass={`${match.path}/account/pass`}
-              />
-            </Route>
-            <Route exact path={`${match.path}/account/edit`}>
-              <AccountEditContainer pathAccount={`${match.path}/account`} />
-            </Route>
-            <Route exact path={`${match.path}/account/email`}>
-              <EmailEditContainer
-                pathAccount={`${match.path}/account`}
-                pathConfirm={`${match.path}/account/email/confirm`}
-              />
-            </Route>
-            <Route path={`${match.path}/account/email/confirm`}>
-              <EmailConfirmContainer pathAccount={`${match.path}/account`} />
-            </Route>
-            <Route path={`${match.path}/account/pass`}>
-              <PassEditContainer pathAccount={`${match.path}/account`} />
-            </Route>
-            {showProfile && (
-              <Route exact path={`${match.path}/profile`}>
-                <ProfileDetailsContainer
-                  pathEdit={`${match.path}/profile/edit`}
-                />
-              </Route>
-            )}
-            {showProfile && (
-              <Route exact path={`${match.path}/profile/edit`}>
-                <ProfileEditContainer pathProfile={`${match.path}/profile`} />
-              </Route>
-            )}
-            {/*<Route path={`${match.path}/sessions`}>
-              <AccountSessionsContainer />
-            </Route>*/}
-            <Redirect to={`${match.path}/account`} />
-          </Switch>
+          <Grid>
+            <Column md={6}>
+              <Sidebar>
+                <SidebarHeader>Settings</SidebarHeader>
+                <SidebarItem
+                  link={`${match.path}/account`}
+                  local
+                  icon={<FaIcon icon="address-card-o" />}
+                >
+                  Account
+                </SidebarItem>
+                <SidebarItem
+                  link={`${match.path}/security`}
+                  local
+                  icon={<FaIcon icon="lock" />}
+                >
+                  Security
+                </SidebarItem>
+                <SidebarItem link={`${match.path}/sessions`} local>
+                  Sessions
+                </SidebarItem>
+                <SidebarDivider />
+                <SidebarHeader>Advanced</SidebarHeader>
+                <SidebarItem
+                  link={`${match.path}/dev`}
+                  local
+                  icon={<FaIcon icon="code" />}
+                >
+                  Developer
+                </SidebarItem>
+              </Sidebar>
+            </Column>
+            <Column md={18}>
+              <Switch>
+                <Route path={`${match.path}/account`}>
+                  <AccountDetailsContainer
+                    showProfile={showProfile}
+                    pathEdit={`${match.path}/account/edit`}
+                    pathEmail={`${match.path}/account/email`}
+                    pathPass={`${match.path}/account/pass`}
+                  />
+                </Route>
+                <Route path={`${match.path}/security`}>
+                  <SecurityContainer
+                    pathConfirm={`${match.path}/confirm/email`}
+                  />
+                </Route>
+                <Route path={`${match.path}/confirm/email`}>
+                  <EmailConfirmContainer
+                    pathSecurity={`${match.path}/security`}
+                  />
+                </Route>
+                {/*<Route path={`${match.path}/sessions`}>
+                  <AccountSessionsContainer />
+                </Route>
+                <Route path="/dev">
+                  <DeveloperContainer />
+                </Route>*/}
+                <Redirect to={`${match.path}/account`} />
+              </Switch>
+            </Column>
+          </Grid>
         </Container>
       </Section>
     </MainContent>

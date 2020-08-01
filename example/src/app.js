@@ -32,9 +32,6 @@ const LoginContainer = AntiProtected(
 const AccountContainer = Protected(
   lazy(() => import('@xorkevin/gov-ui/src/container/account')),
 );
-//const DeveloperContainer = Protected(
-//  lazy(() => import('@xorkevin/gov-ui/src/container/developer')),
-//);
 //const UserContainer = Protected(
 //  lazy(() => import('@xorkevin/gov-ui/src/container/user')),
 //);
@@ -87,9 +84,6 @@ const App = () => {
                       icon={<FaIcon icon="address-card-o" />}
                     >
                       Account
-                    </MenuItem>
-                    <MenuItem local link="/dev" icon={<FaIcon icon="code" />}>
-                      Developer
                     </MenuItem>
                   </Fragment>
                 )}
@@ -157,10 +151,7 @@ const App = () => {
           <Route path="/a">
             <AccountContainer showProfile />
           </Route>
-          {/*<Route path="/dev">
-              <DeveloperContainer />
-            </Route>
-            <Route path="/u">
+          {/* <Route path="/u">
               <UserContainer />
             </Route>
             <Route path="/manage">

@@ -63,7 +63,7 @@ const ForgotPassContainer = ({pathLogin, pathResetPass}) => {
                 onChange={form.update}
                 onSubmit={execForgot}
               >
-                <Field name="username" label="username / email" fullWidth />
+                <Field name="username" label="Username / Email" fullWidth />
               </Form>
               {forgot.err && <span>{forgot.err}</span>}
               {forgot.success && (

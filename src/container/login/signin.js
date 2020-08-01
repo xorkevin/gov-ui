@@ -77,11 +77,11 @@ const SigninContainer = () => {
                 onChange={form.update}
                 onSubmit={execLogin}
               >
-                <Field name="username" label="username / email" fullWidth />
+                <Field name="username" label="Username / Email" fullWidth />
                 <Field
                   name="password"
                   type="password"
-                  label="password"
+                  label="Password"
                   fullWidth
                 />
               </Form>

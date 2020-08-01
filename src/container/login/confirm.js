@@ -65,8 +65,8 @@ const ConfirmAccount = ({pathLogin}) => {
                 onChange={form.update}
                 onEnter={execConfirm}
               >
-                <Field name="email" label="email" fullWidth />
-                <Field name="key" label="code" fullWidth />
+                <Field name="email" label="Email" fullWidth />
+                <Field name="key" label="Code" fullWidth />
               </Form>
               {confirmAcct.err && <span>{confirmAcct.err}</span>}
               {confirmAcct.success && (

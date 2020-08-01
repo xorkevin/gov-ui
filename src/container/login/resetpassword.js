@@ -102,11 +102,11 @@ const ResetPass = ({pathLogin}) => {
                 errCheck={formErrCheck}
                 validCheck={formValidCheck}
               >
-                <Field name="key" label="code" fullWidth />
+                <Field name="key" label="Code" fullWidth />
                 <Field
                   name="new_password"
                   type="password"
-                  label="new password"
+                  label="New password"
                   hint="Must be at least 10 characters"
                   hintRight={`${form.state.new_password.length} chars`}
                   fullWidth
@@ -114,7 +114,7 @@ const ResetPass = ({pathLogin}) => {
                 <Field
                   name="password_confirm"
                   type="password"
-                  label="confirm password"
+                  label="Confirm password"
                   fullWidth
                 />
               </Form>

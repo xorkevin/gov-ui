@@ -144,18 +144,18 @@ const CreateAccount = ({pathLogin, pathConfirm, userApprovals}) => {
                 errCheck={formErrCheck}
                 validCheck={formValidCheck}
               >
-                <Field name="first_name" label="first name" fullWidth />
-                <Field name="last_name" label="last name" fullWidth />
+                <Field name="first_name" label="First name" fullWidth />
+                <Field name="last_name" label="Last name" fullWidth />
                 <Field
                   name="username"
-                  label="username"
+                  label="Username"
                   hint="Must be at least 3 characters"
                   fullWidth
                 />
                 <Field
                   name="password"
                   type="password"
-                  label="password"
+                  label="Password"
                   hint="Must be at least 10 characters"
                   hintRight={`${form.state.password.length} chars`}
                   fullWidth
@@ -163,11 +163,11 @@ const CreateAccount = ({pathLogin, pathConfirm, userApprovals}) => {
                 <Field
                   name="password_confirm"
                   type="password"
-                  label="confirm password"
+                  label="Confirm password"
                   fullWidth
                 />
-                <Field name="email" label="email" fullWidth />
-                <Field name="email_confirm" label="confirm email" fullWidth />
+                <Field name="email" label="Email" fullWidth />
+                <Field name="email_confirm" label="Confirm email" fullWidth />
               </Form>
               {create.err && <span>{create.err}</span>}
               {create.success &&
