@@ -134,13 +134,12 @@ const Profile = () => {
             )}
             <FieldFile
               name="image"
-              label="Edit"
               hint="Choose an image"
               accept="image/jpeg, image/png"
               onChange={imageform.update}
               fullWidth
             >
-              <ButtonTertiary>Select</ButtonTertiary>
+              <ButtonTertiary>Edit</ButtonTertiary>
             </FieldFile>
             <ButtonSecondary onClick={execEditImage}>
               <FaIcon icon="cloud-upload" /> Upload

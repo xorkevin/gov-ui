@@ -1,6 +1,6 @@
 import React, {Fragment, useCallback} from 'react';
 import {Link} from 'react-router-dom';
-import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
+import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
   Grid,
   Column,
@@ -8,11 +8,18 @@ import {
   Form,
   useForm,
   SnackbarSurface,
+  useSnackbar,
   useSnackbarView,
+  ListGroup,
+  ListItem,
+  usePaginate,
   ButtonGroup,
+  FaIcon,
+  Time,
 } from '@xorkevin/nuke';
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonSecondary from '@xorkevin/nuke/src/component/button/secondary';
+import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 import {emailRegex} from '../../utility';
 
 // Edit pass
@@ -66,6 +73,139 @@ const formValidCheckEmail = ({email}) => {
     valid.email = true;
   }
   return valid;
+};
+
+// Manage sessions
+
+const SESSIONS_LIMIT = 32;
+
+const selectAPISessions = (api) => api.u.user.sessions.get;
+const selectAPISessionDelete = (api) => api.u.user.sessions.del;
+
+const SessionRow = ({
+  session_id,
+  current,
+  ip,
+  time,
+  user_agent,
+  posthook,
+  errhook,
+}) => {
+  const [_delete, execDelete] = useAuthCall(
+    selectAPISessionDelete,
+    [session_id],
+    {},
+    {posthook, errhook},
+  );
+
+  return (
+    <ListItem>
+      <Grid justify="space-between" align="center" nowrap>
+        <Column>
+          <Grid align="center" nowrap>
+            <Column shrink="0">
+              <h3>
+                <FaIcon icon="desktop" />
+              </h3>
+            </Column>
+            <Column>
+              <h5>{user_agent}</h5>
+              <p>{ip}</p>
+              {current ? (
+                <p>Your current session</p>
+              ) : (
+                <p>
+                  Last accessed <Time value={time * 1000} />
+                </p>
+              )}
+            </Column>
+          </Grid>
+        </Column>
+        <Column shrink="0">
+          <ButtonTertiary onClick={execDelete} disabled={current}>
+            <FaIcon icon="trash" />
+          </ButtonTertiary>
+        </Column>
+      </Grid>
+    </ListItem>
+  );
+};
+
+const AccountSessions = () => {
+  const displaySnackbar = useSnackbarView(
+    <SnackbarSurface>Session deleted</SnackbarSurface>,
+  );
+
+  const snackbar = useSnackbar();
+  const displayErrSnack = useCallback(
+    (_stage, err) => {
+      snackbar(
+        <SnackbarSurface>Failed to delete session: {err}</SnackbarSurface>,
+      );
+    },
+    [snackbar],
+  );
+
+  const paginate = usePaginate(SESSIONS_LIMIT);
+
+  const setAtEnd = paginate.setAtEnd;
+  const posthook = useCallback(
+    (_status, sessions) => {
+      setAtEnd(sessions.length < SESSIONS_LIMIT);
+    },
+    [setAtEnd],
+  );
+  const [sessions, reexecute] = useAuthResource(
+    selectAPISessions,
+    [SESSIONS_LIMIT, paginate.index],
+    [],
+    {posthook},
+  );
+
+  const {sessionid} = useAuthValue();
+
+  const posthookDelete = useCallback(
+    (_status, _data, opts) => {
+      displaySnackbar();
+      reexecute(opts);
+    },
+    [reexecute, displaySnackbar],
+  );
+
+  return (
+    <Fragment>
+      <h3>Sessions</h3>
+      <hr />
+      <Grid>
+        <Column md={16}>
+          <ListGroup>
+            {sessions.data.map(({session_id, ip, time, user_agent}) => (
+              <SessionRow
+                key={session_id}
+                session_id={session_id}
+                current={session_id === sessionid}
+                ip={ip}
+                time={time}
+                user_agent={user_agent}
+                posthook={posthookDelete}
+                errhook={displayErrSnack}
+              />
+            ))}
+          </ListGroup>
+          <ButtonGroup>
+            <ButtonTertiary disabled={paginate.atFirst} onClick={paginate.prev}>
+              prev
+            </ButtonTertiary>
+            {paginate.page}
+            <ButtonTertiary disabled={paginate.atLast} onClick={paginate.next}>
+              next
+            </ButtonTertiary>
+          </ButtonGroup>
+          {sessions.err && <p>{sessions.err}</p>}
+        </Column>
+      </Grid>
+    </Fragment>
+  );
 };
 
 const AccountSecurity = ({pathConfirm}) => {
@@ -207,6 +347,7 @@ const AccountSecurity = ({pathConfirm}) => {
         </Fragment>
       )}
       {account.err && <p>{account.err}</p>}
+      <AccountSessions />
     </div>
   );
 };

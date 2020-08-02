@@ -16,7 +16,6 @@ import {
 import AccountDetailsContainer from './details';
 import SecurityContainer from './security';
 import EmailConfirmContainer from './emailconfirm';
-//import AccountSessionsContainer from './sessions';
 
 //const DeveloperContainer = Protected(
 //  lazy(() => import('@xorkevin/gov-ui/src/container/developer')),
@@ -46,9 +45,6 @@ const Account = ({showProfile}) => {
                   icon={<FaIcon icon="lock" />}
                 >
                   Security
-                </SidebarItem>
-                <SidebarItem link={`${match.path}/sessions`} local>
-                  Sessions
                 </SidebarItem>
                 <SidebarDivider />
                 <SidebarHeader>Advanced</SidebarHeader>
@@ -81,10 +77,7 @@ const Account = ({showProfile}) => {
                     pathSecurity={`${match.path}/security`}
                   />
                 </Route>
-                {/*<Route path={`${match.path}/sessions`}>
-                  <AccountSessionsContainer />
-                </Route>
-                <Route path="/dev">
+                {/*<Route path="/dev">
                   <DeveloperContainer />
                 </Route>*/}
                 <Redirect to={`${match.path}/account`} />
