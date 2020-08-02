@@ -122,7 +122,7 @@ const SessionRow = ({
 
   const platform = getPlatform(parsePlatform, user_agent);
 
-  const j = ['session-indicator'];
+  const j = ['account-session-indicator'];
   if (current) {
     j.push('current');
   }
