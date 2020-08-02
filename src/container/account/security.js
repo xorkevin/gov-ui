@@ -82,6 +82,27 @@ const SESSIONS_LIMIT = 32;
 const selectAPISessions = (api) => api.u.user.sessions.get;
 const selectAPISessionDelete = (api) => api.u.user.sessions.del;
 
+const getPlatform = (parsePlatform, user_agent) => {
+  const {name, os, mobile} = parsePlatform(user_agent);
+  console.log(name, os, mobile);
+  if (name.length > 0) {
+    if (os.length > 0) {
+      return {
+        desc: `${name} on ${os}`,
+        mobile,
+      };
+    }
+    return {
+      desc: name,
+      mobile,
+    };
+  }
+  return {
+    desc: user_agent,
+    mobile,
+  };
+};
+
 const SessionRow = ({
   session_id,
   current,
@@ -90,6 +111,7 @@ const SessionRow = ({
   user_agent,
   posthook,
   errhook,
+  parsePlatform,
 }) => {
   const [_delete, execDelete] = useAuthCall(
     selectAPISessionDelete,
@@ -97,6 +119,8 @@ const SessionRow = ({
     {},
     {posthook, errhook},
   );
+
+  const platform = getPlatform(parsePlatform, user_agent);
 
   const j = ['session-indicator'];
   if (current) {
@@ -112,12 +136,12 @@ const SessionRow = ({
               <span className={j.join(' ')}></span>
             </Column>
             <Column shrink="0">
-              <h3>
-                <FaIcon icon="desktop" />
-              </h3>
+              <FaIcon
+                icon={platform.mobile ? 'mobile fa-2x' : 'desktop fa-2x'}
+              />
             </Column>
             <Column>
-              <h5>{user_agent}</h5>
+              <h5>{platform.desc}</h5>
               <p>{ip}</p>
               {current ? (
                 <p>Your current session</p>
@@ -141,7 +165,7 @@ const SessionRow = ({
   );
 };
 
-const AccountSessions = () => {
+const AccountSessions = ({parsePlatform}) => {
   const displaySnackbar = useSnackbarView(
     <SnackbarSurface>Session deleted</SnackbarSurface>,
   );
@@ -199,6 +223,7 @@ const AccountSessions = () => {
                 user_agent={user_agent}
                 posthook={posthookDelete}
                 errhook={displayErrSnack}
+                parsePlatform={parsePlatform}
               />
             ))}
           </ListGroup>
@@ -218,7 +243,7 @@ const AccountSessions = () => {
   );
 };
 
-const AccountSecurity = ({pathConfirm}) => {
+const AccountSecurity = ({pathConfirm, parsePlatform}) => {
   const displaySnackbar = useSnackbarView(
     <SnackbarSurface>&#x2713; Password updated</SnackbarSurface>,
   );
@@ -357,7 +382,7 @@ const AccountSecurity = ({pathConfirm}) => {
         </Fragment>
       )}
       {account.err && <p>{account.err}</p>}
-      <AccountSessions />
+      <AccountSessions parsePlatform={parsePlatform} />
     </div>
   );
 };

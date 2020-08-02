@@ -21,7 +21,7 @@ import EmailConfirmContainer from './emailconfirm';
 //  lazy(() => import('@xorkevin/gov-ui/src/container/developer')),
 //);
 
-const Account = ({showProfile}) => {
+const Account = ({showProfile, parsePlatform}) => {
   const match = useRouteMatch();
 
   return (
@@ -70,6 +70,7 @@ const Account = ({showProfile}) => {
                 <Route path={`${match.path}/security`}>
                   <SecurityContainer
                     pathConfirm={`${match.path}/confirm/email`}
+                    parsePlatform={parsePlatform}
                   />
                 </Route>
                 <Route path={`${match.path}/confirm/email`}>

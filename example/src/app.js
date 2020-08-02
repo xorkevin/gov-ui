@@ -24,6 +24,7 @@ import {
   FaIcon,
 } from '@xorkevin/nuke';
 import AnchorSecondary from '@xorkevin/nuke/src/component/anchor/secondary';
+import platform from 'platform';
 
 const AdminContainer = Protected(lazy(() => import('admin')));
 const LoginContainer = AntiProtected(
@@ -57,6 +58,16 @@ const GovContextValue = Object.freeze({
   // eslint-disable-next-line no-undef
   courierPath: COURIERBASE_URL,
 });
+
+const mobileSet = new Set(['Android', 'iOS']);
+const parsePlatform = (user_agent) => {
+  const info = platform.parse(user_agent);
+  return {
+    name: info.name,
+    os: info.os.toString(),
+    mobile: mobileSet.has(info.os.family),
+  };
+};
 
 const App = () => {
   const dark = useDarkModeValue();
@@ -149,7 +160,7 @@ const App = () => {
             <LoginContainer userApprovals={GovContextValue.userApprovals} />
           </Route>
           <Route path="/a">
-            <AccountContainer showProfile />
+            <AccountContainer showProfile parsePlatform={parsePlatform} />
           </Route>
           {/* <Route path="/u">
               <UserContainer />
