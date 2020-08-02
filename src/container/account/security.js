@@ -142,22 +142,20 @@ const SessionRow = ({
             </Column>
             <Column>
               <h5>{platform.desc}</h5>
-              <p>{ip}</p>
+              <div>{ip}</div>
               {current ? (
-                <p>Your current session</p>
+                <div>Your current session</div>
               ) : (
-                <p>
+                <div>
                   Last accessed <Time value={time * 1000} />
-                </p>
+                </div>
               )}
             </Column>
           </Grid>
         </Column>
         <Column shrink="0">
           <ButtonTertiary onClick={execDelete} disabled={current}>
-            <h4>
-              <FaIcon icon="trash" />
-            </h4>
+            <FaIcon icon="trash fa-lg" />
           </ButtonTertiary>
         </Column>
       </Grid>
