@@ -1,0 +1,14 @@
+$color-success: #388e3c;
+$color-success-light: lighten($color-success, 12.5%);
+.session-indicator {
+  display: block;
+  width: 8px;
+  height: 8px;
+  margin: auto;
+  border-radius: 50%;
+
+  &.current {
+    background-color: $color-success-light;
+    box-shadow: 0 0 8px 0 rgba($color-success, 0.5);
+  }
+}

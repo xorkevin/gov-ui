@@ -98,11 +98,19 @@ const SessionRow = ({
     {posthook, errhook},
   );
 
+  const j = ['session-indicator'];
+  if (current) {
+    j.push('current');
+  }
+
   return (
     <ListItem>
       <Grid justify="space-between" align="center" nowrap>
         <Column>
           <Grid align="center" nowrap>
+            <Column shrink="0">
+              <span className={j.join(' ')}></span>
+            </Column>
             <Column shrink="0">
               <h3>
                 <FaIcon icon="desktop" />
@@ -123,7 +131,9 @@ const SessionRow = ({
         </Column>
         <Column shrink="0">
           <ButtonTertiary onClick={execDelete} disabled={current}>
-            <FaIcon icon="trash" />
+            <h4>
+              <FaIcon icon="trash" />
+            </h4>
           </ButtonTertiary>
         </Column>
       </Grid>
