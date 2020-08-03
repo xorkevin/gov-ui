@@ -33,9 +33,9 @@ const LoginContainer = AntiProtected(
 const AccountContainer = Protected(
   lazy(() => import('@xorkevin/gov-ui/src/container/account')),
 );
-//const UserContainer = Protected(
-//  lazy(() => import('@xorkevin/gov-ui/src/container/user')),
-//);
+const UserContainer = Protected(
+  lazy(() => import('@xorkevin/gov-ui/src/container/user')),
+);
 //const ManageContainer = lazy(() =>
 //  import('@xorkevin/gov-ui/src/container/manage'),
 //);
@@ -162,15 +162,15 @@ const App = () => {
           <Route path="/a">
             <AccountContainer showProfile parsePlatform={parsePlatform} />
           </Route>
-          {/* <Route path="/u">
-              <UserContainer />
-            </Route>
-            <Route path="/manage">
-              <ManageContainer />
-            </Route>
-            <Route path="/courier">
-              <CourierContainer courierPath={GovContextValue.courierPath} />
-            </Route>*/}
+          <Route path="/u">
+            <UserContainer />
+          </Route>
+          {/*<Route path="/manage">
+            <ManageContainer />
+          </Route>
+          <Route path="/courier">
+            <CourierContainer courierPath={GovContextValue.courierPath} />
+          </Route>*/}
           <Route path="/setup">
             <SetupContainer />
           </Route>

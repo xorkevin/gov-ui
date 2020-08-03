@@ -214,6 +214,14 @@ const CheckKey = () => {
   const displaySnackbar = useSnackbarView(
     <SnackbarSurface>&#x2713; Key OK</SnackbarSurface>,
   );
+  const snackbar = useSnackbar();
+  const displayErrSnack = useCallback(
+    (_status, err) => {
+      snackbar(<SnackbarSurface>{err}</SnackbarSurface>);
+    },
+    [snackbar],
+  );
+
   const form = useForm({
     keyid: '',
     key: '',
@@ -228,12 +236,13 @@ const CheckKey = () => {
       auth_tags: '',
     });
   }, [formAssign]);
-  const [checkKey, execCheckKey] = useAuthCall(
+  const [_checkKey, execCheckKey] = useAuthCall(
     selectAPICheckKey,
     [form.state.keyid, form.state.key, form.state.auth_tags],
     {},
-    {posthook: displaySnackbar},
+    {posthook: displaySnackbar, errhook: displayErrSnack},
   );
+
   return (
     <Fragment>
       <h3>Check key</h3>
@@ -258,7 +267,6 @@ const CheckKey = () => {
             <ButtonTertiary onClick={clearForm}>Clear</ButtonTertiary>
             <ButtonPrimary onClick={execCheckKey}>Check key</ButtonPrimary>
           </ButtonGroup>
-          {checkKey.err && <p>{checkKey.err}</p>}
         </Column>
       </Grid>
     </Fragment>
