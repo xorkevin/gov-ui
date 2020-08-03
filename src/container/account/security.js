@@ -164,7 +164,9 @@ const SessionRow = ({
 
 const AccountSessions = ({parsePlatform}) => {
   const displaySnackbar = useSnackbarView(
-    <SnackbarSurface>Session deleted</SnackbarSurface>,
+    <SnackbarSurface>
+      <FaIcon icon="trash" /> Session deleted
+    </SnackbarSurface>,
   );
 
   const snackbar = useSnackbar();

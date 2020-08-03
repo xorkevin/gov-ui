@@ -212,7 +212,7 @@ const ApikeyRow = ({
 
 const CheckKey = () => {
   const displaySnackbar = useSnackbarView(
-    <SnackbarSurface>Key OK</SnackbarSurface>,
+    <SnackbarSurface>&#x2713; Key OK</SnackbarSurface>,
   );
   const form = useForm({
     keyid: '',
@@ -267,10 +267,12 @@ const CheckKey = () => {
 
 const Apikeys = () => {
   const displaySnackbarDel = useSnackbarView(
-    <SnackbarSurface>API Key deleted</SnackbarSurface>,
+    <SnackbarSurface>
+      <FaIcon icon="trash" /> API key deleted
+    </SnackbarSurface>,
   );
   const displaySnackbarUpd = useSnackbarView(
-    <SnackbarSurface>API Key updated</SnackbarSurface>,
+    <SnackbarSurface>&#x2713; API key updated</SnackbarSurface>,
   );
   const snackbar = useSnackbar();
   const displayErrSnack = useCallback(
