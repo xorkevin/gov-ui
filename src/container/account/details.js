@@ -11,9 +11,9 @@ import {
   useForm,
   SnackbarSurface,
   useSnackbarView,
+  ButtonGroup,
   Chip,
   FaIcon,
-  ButtonGroup,
   Time,
 } from '@xorkevin/nuke';
 import Img from '@xorkevin/nuke/src/component/image/rounded';
@@ -81,11 +81,17 @@ const Profile = () => {
     {posthook: snackImageUpdate},
   );
 
+  const posthookCreate = useCallback(
+    (_status, _data, opts) => {
+      reexecute(opts);
+    },
+    [reexecute],
+  );
   const [create, execCreate] = useAuthCall(
     selectAPICreateProfile,
     [],
     {},
-    {posthook: reexecute},
+    {posthook: posthookCreate},
   );
 
   const canCreate = profile.status === 404;

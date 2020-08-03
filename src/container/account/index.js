@@ -17,9 +17,7 @@ import AccountDetailsContainer from './details';
 import SecurityContainer from './security';
 import EmailConfirmContainer from './emailconfirm';
 
-//const DeveloperContainer = Protected(
-//  lazy(() => import('@xorkevin/gov-ui/src/container/developer')),
-//);
+import DevApikeyContainer from './developer/apikey';
 
 const Account = ({showProfile, parsePlatform}) => {
   const match = useRouteMatch();
@@ -47,25 +45,20 @@ const Account = ({showProfile, parsePlatform}) => {
                   Security
                 </SidebarItem>
                 <SidebarDivider />
-                <SidebarHeader>Advanced</SidebarHeader>
+                <SidebarHeader>Developer</SidebarHeader>
                 <SidebarItem
-                  link={`${match.path}/dev`}
+                  link={`${match.path}/dev/apikey`}
                   local
                   icon={<FaIcon icon="code" />}
                 >
-                  Developer
+                  API Keys
                 </SidebarItem>
               </Sidebar>
             </Column>
             <Column md={18}>
               <Switch>
                 <Route path={`${match.path}/account`}>
-                  <AccountDetailsContainer
-                    showProfile={showProfile}
-                    pathEdit={`${match.path}/account/edit`}
-                    pathEmail={`${match.path}/account/email`}
-                    pathPass={`${match.path}/account/pass`}
-                  />
+                  <AccountDetailsContainer showProfile={showProfile} />
                 </Route>
                 <Route path={`${match.path}/security`}>
                   <SecurityContainer
@@ -78,9 +71,9 @@ const Account = ({showProfile, parsePlatform}) => {
                     pathSecurity={`${match.path}/security`}
                   />
                 </Route>
-                {/*<Route path="/dev">
-                  <DeveloperContainer />
-                </Route>*/}
+                <Route path={`${match.path}/dev/apikey`}>
+                  <DevApikeyContainer />
+                </Route>
                 <Redirect to={`${match.path}/account`} />
               </Switch>
             </Column>

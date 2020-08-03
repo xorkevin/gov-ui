@@ -84,7 +84,6 @@ const selectAPISessionDelete = (api) => api.u.user.sessions.del;
 
 const getPlatform = (parsePlatform, user_agent) => {
   const {name, os, mobile} = parsePlatform(user_agent);
-  console.log(name, os, mobile);
   if (name.length > 0) {
     if (os.length > 0) {
       return {
@@ -345,11 +344,12 @@ const AccountSecurity = ({pathConfirm, parsePlatform}) => {
                 errCheck={formErrCheckEmail}
                 validCheck={formValidCheckEmail}
               >
-                <Field name="email" label="New email" fullWidth />
+                <Field name="email" label="New email" nohint fullWidth />
                 <Field
                   name="password"
                   type="password"
                   label="Password"
+                  nohint
                   fullWidth
                 />
               </Form>
