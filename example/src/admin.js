@@ -34,7 +34,7 @@ const AdminContainer = () => {
         <Container padded>
           <h1>Governor Admin</h1>
           <Grid>
-            <Column md={8} sm={12}>
+            <Column fullWidth md={8} sm={12}>
               <Card
                 title={
                   <Container padded>

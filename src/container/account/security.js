@@ -208,7 +208,7 @@ const AccountSessions = ({parsePlatform}) => {
       <h3>Sessions</h3>
       <hr />
       <Grid>
-        <Column md={16}>
+        <Column fullWidth md={16}>
           <ListGroup>
             {sessions.data.map(({session_id, ip, time, user_agent}) => (
               <SessionRow
@@ -296,7 +296,7 @@ const AccountSecurity = ({pathConfirm, parsePlatform}) => {
           <h3>Change password</h3>
           <hr />
           <Grid>
-            <Column md={16}>
+            <Column fullWidth md={16}>
               <Form
                 formState={formPass.state}
                 onChange={formPass.update}
@@ -336,7 +336,7 @@ const AccountSecurity = ({pathConfirm, parsePlatform}) => {
           <h3>Change email</h3>
           <hr />
           <Grid>
-            <Column md={16}>
+            <Column fullWidth md={16}>
               <Form
                 formState={formEmail.state}
                 onChange={formEmail.update}
@@ -372,7 +372,7 @@ const AccountSecurity = ({pathConfirm, parsePlatform}) => {
                 </p>
               )}
             </Column>
-            <Column md={8}>
+            <Column fullWidth md={8}>
               <h5>Current email</h5>
               {account.data.email}
             </Column>

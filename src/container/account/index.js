@@ -27,13 +27,13 @@ const Account = ({showProfile, parsePlatform}) => {
       <Section>
         <Container padded narrow>
           <Grid>
-            <Column md={6}>
+            <Column fullWidth md={6}>
               <Sidebar>
                 <SidebarHeader>Settings</SidebarHeader>
                 <SidebarItem
                   link={`${match.path}/account`}
                   local
-                  icon={<FaIcon icon="address-card-o" />}
+                  icon={<FaIcon icon="id-card-o" />}
                 >
                   Account
                 </SidebarItem>
@@ -55,7 +55,7 @@ const Account = ({showProfile, parsePlatform}) => {
                 </SidebarItem>
               </Sidebar>
             </Column>
-            <Column md={18}>
+            <Column fullWidth md={18}>
               <Switch>
                 <Route path={`${match.path}/account`}>
                   <AccountDetailsContainer showProfile={showProfile} />

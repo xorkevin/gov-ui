@@ -92,7 +92,7 @@ const App = () => {
                     <MenuItem
                       local
                       link="/a"
-                      icon={<FaIcon icon="address-card-o" />}
+                      icon={<FaIcon icon="id-card-o" />}
                     >
                       Account
                     </MenuItem>
@@ -180,7 +180,7 @@ const App = () => {
 
       <Footer>
         <Grid className="dark" justify="center" align="center">
-          <Column sm={8}>
+          <Column fullWidth sm={8}>
             <div className="text-center">
               <h4>Gov UI</h4> a reactive frontend for governor
               <ul>

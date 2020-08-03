@@ -29,7 +29,7 @@ const AccountEmailConfirm = ({pathSecurity}) => {
       <h3>Confirm email</h3>
       <hr />
       <Grid>
-        <Column md={16}>
+        <Column fullWidth md={16}>
           <Form
             formState={form.state}
             onChange={form.update}

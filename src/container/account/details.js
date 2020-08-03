@@ -114,7 +114,7 @@ const Profile = () => {
       <hr />
       {profile.success && (
         <Grid>
-          <Column md={16}>
+          <Column fullWidth md={16}>
             <Form
               formState={form.state}
               onChange={form.update}
@@ -133,7 +133,7 @@ const Profile = () => {
             </ButtonGroup>
             {edit.err && <p>{edit.err}</p>}
           </Column>
-          <Column md={8}>
+          <Column fullWidth md={8}>
             <h4>Profile picture</h4>
             {profile.data.image && (
               <Img src={imageURL} preview={profile.data.image} ratio={1} />
@@ -212,7 +212,7 @@ const AccountDetails = ({showProfile}) => {
       <hr />
       {account.success && (
         <Grid>
-          <Column md={16}>
+          <Column fullWidth md={16}>
             <Form
               formState={form.state}
               onChange={form.update}
@@ -227,7 +227,7 @@ const AccountDetails = ({showProfile}) => {
             </ButtonGroup>
             {edit.err && <p>{edit.err}</p>}
           </Column>
-          <Column md={8}>
+          <Column fullWidth md={8}>
             <h5>Userid</h5>
             <code>{account.data.userid}</code>
             <h5>Roles</h5>

@@ -1,6 +1,7 @@
 import React, {Fragment, useState, useCallback, useMemo} from 'react';
 import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
+  Container,
   Grid,
   Column,
   ListGroup,
@@ -111,97 +112,99 @@ const ApikeyRow = ({
 
   return (
     <ListItem>
-      <Grid justify="space-between" align="center" nowrap>
-        <Column>
-          <h5>
-            {name}
-            {desc.length > 0 ? ' - ' : ''}
-            {desc}
-          </h5>
-          <div>
-            {auth_tags.split(',').map((tag) => (
-              <Chip key={tag}>{tag}</Chip>
-            ))}
-          </div>
-          <p>
-            ID: <code>{keyid}</code>
-          </p>
-          <p>
-            <FaIcon icon="key" />
-            <Tooltip tooltip="For security purposes, the key cannot be shown">
-              &bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;
-            </Tooltip>
-          </p>
-          <div>
-            Created <Time value={time * 1000} />
-          </div>
-        </Column>
-        <Column shrink="0">
-          <ButtonTertiary forwardedRef={menu.anchorRef} onClick={menu.toggle}>
-            <FaIcon icon="ellipsis-v" />
-          </ButtonTertiary>
-          {menu.show && (
-            <Menu size="md" anchor={menu.anchor} close={menu.close}>
-              <MenuItem onClick={beginEdit}>
-                <FaIcon icon="pencil" /> Edit
-              </MenuItem>
-              <MenuItem onClick={execRotate}>
-                <FaIcon icon="repeat" /> Rotate key
-              </MenuItem>
-              <MenuItem onClick={execDelete}>
-                <FaIcon icon="trash" /> Delete
-              </MenuItem>
-            </Menu>
-          )}
-        </Column>
-      </Grid>
-      {mode === MODE_EDIT && (
-        <Grid>
-          <Column>
-            <h4>Edit</h4>
-            <Form
-              formState={form.state}
-              onChange={form.update}
-              onSubmit={execUpdate}
-            >
-              <Field name="name" label="Name" nohint />
-              <Field name="desc" label="Description (optional)" nohint />
-              <FieldMultiSelect
-                name="auth_tags"
-                label="Permissions"
-                options={allPermissions}
-                nohint
-              />
-            </Form>
-            <ButtonGroup>
-              <ButtonTertiary onClick={cancelEdit}>Cancel</ButtonTertiary>
-              <ButtonPrimary onClick={execUpdate}>
-                <FaIcon icon="floppy-o" /> Update
-              </ButtonPrimary>
-            </ButtonGroup>
-          </Column>
-        </Grid>
-      )}
-      {mode === MODE_ROTATE && (
-        <Grid>
-          <Column>
-            {rotate.success && (
+      {mode === MODE_BASE && (
+        <Grid justify="space-between" align="center" nowrap>
+          <Column grow="1">
+            <Container padded>
+              <h5>
+                {name}
+                {desc.length > 0 ? ' - ' : ''}
+                {desc}
+              </h5>
               <div>
-                <h4>API Key Rotated</h4>
-                {API_KEY_MESSAGE}
-                <p>
-                  <h5>Key ID</h5>
-                  <code>{rotate.data.keyid}</code>
-                  <h5>Secret</h5>
-                  <code>{rotate.data.key}</code>
-                </p>
-                <ButtonGroup>
-                  <ButtonTertiary onClick={cancelEdit}>Close</ButtonTertiary>
-                </ButtonGroup>
+                {auth_tags.split(',').map((tag) => (
+                  <Chip key={tag}>{tag}</Chip>
+                ))}
               </div>
+              <p>
+                <div>
+                  ID: <code>{keyid}</code>
+                </div>
+                <div>
+                  <FaIcon icon="key" />
+                  <Tooltip tooltip="For security, the key cannot be shown">
+                    &bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;
+                  </Tooltip>
+                </div>
+              </p>
+              <p>
+                Created <Time value={time * 1000} />
+              </p>
+            </Container>
+          </Column>
+          <Column shrink="0">
+            <ButtonTertiary forwardedRef={menu.anchorRef} onClick={menu.toggle}>
+              <FaIcon icon="ellipsis-v" />
+            </ButtonTertiary>
+            {menu.show && (
+              <Menu size="md" anchor={menu.anchor} close={menu.close}>
+                <MenuItem onClick={beginEdit} icon={<FaIcon icon="pencil" />}>
+                  Edit
+                </MenuItem>
+                <MenuItem onClick={execRotate} icon={<FaIcon icon="repeat" />}>
+                  Rotate key
+                </MenuItem>
+                <MenuItem onClick={execDelete} icon={<FaIcon icon="trash" />}>
+                  Delete
+                </MenuItem>
+              </Menu>
             )}
           </Column>
         </Grid>
+      )}
+      {mode === MODE_EDIT && (
+        <Container padded>
+          <h4>Edit Key</h4>
+          <h5>Key ID</h5>
+          <code>{keyid}</code>
+          <Form
+            formState={form.state}
+            onChange={form.update}
+            onSubmit={execUpdate}
+          >
+            <Field name="name" label="Name" nohint />
+            <Field name="desc" label="Description (optional)" nohint />
+            <FieldMultiSelect
+              name="auth_tags"
+              label="Permissions"
+              options={allPermissions}
+              nohint
+            />
+          </Form>
+          <ButtonGroup>
+            <ButtonTertiary onClick={cancelEdit}>Cancel</ButtonTertiary>
+            <ButtonPrimary onClick={execUpdate}>Update</ButtonPrimary>
+          </ButtonGroup>
+        </Container>
+      )}
+      {mode === MODE_ROTATE && (
+        <Container padded>
+          {rotate.success && (
+            <div>
+              <h4>API Key Rotated</h4>
+              {API_KEY_MESSAGE}
+              <p>
+                <h5>Key ID</h5>
+                <code>{rotate.data.keyid}</code>
+                <h5>Secret</h5>
+                <code>{rotate.data.key}</code>
+              </p>
+              <ButtonGroup>
+                <ButtonTertiary onClick={cancelEdit}>Close</ButtonTertiary>
+              </ButtonGroup>
+            </div>
+          )}
+        </Container>
       )}
     </ListItem>
   );
@@ -236,7 +239,7 @@ const CheckKey = () => {
       <h3>Check key</h3>
       <hr />
       <Grid>
-        <Column md={16}>
+        <Column fullWidth md={16}>
           <h5>Warning</h5>
           <p>
             This should be used for <strong>debug</strong> purposes only. Rotate
@@ -342,10 +345,10 @@ const Apikeys = () => {
 
   return (
     <div>
-      <h3>API Keys</h3>
+      <h3>API keys</h3>
       <hr />
       <Grid>
-        <Column md={16}>
+        <Column fullWidth md={16}>
           <ListGroup>
             {apikeys.data.map(({name, desc, keyid, auth_tags, time}) => (
               <ApikeyRow
@@ -373,8 +376,8 @@ const Apikeys = () => {
           </ButtonGroup>
           {apikeys.err && <p>{apikeys.err}</p>}
         </Column>
-        <Column md={8}>
-          <h4>Create New API Key</h4>
+        <Column fullWidth md={8}>
+          <h4>Create new API key</h4>
           <Form
             formState={form.state}
             onChange={form.update}
