@@ -163,7 +163,7 @@ const Profile = () => {
               {locked ? (
                 <Fragment>
                   <FaIcon icon="lock" />
-                  <ButtonSecondary onClick={unlock}>Edit</ButtonSecondary>
+                  <ButtonTertiary onClick={unlock}>Edit</ButtonTertiary>
                 </Fragment>
               ) : (
                 <Fragment>
@@ -288,7 +288,7 @@ const AccountDetails = ({showProfile}) => {
             {locked ? (
               <Fragment>
                 <FaIcon icon="lock" />
-                <ButtonSecondary onClick={unlock}>Edit</ButtonSecondary>
+                <ButtonTertiary onClick={unlock}>Edit</ButtonTertiary>
               </Fragment>
             ) : (
               <Fragment>
