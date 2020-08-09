@@ -1,7 +1,9 @@
 import React, {Fragment, lazy, Suspense} from 'react';
 import {Switch, Route, Redirect} from 'react-router-dom';
+import {useURL} from '@xorkevin/substation';
 import {
   useAuthValue,
+  useAuthResource,
   useLogout,
   useRefreshAuth,
   Protected,
@@ -25,6 +27,7 @@ import {
   FaIcon,
 } from '@xorkevin/nuke';
 import AnchorSecondary from '@xorkevin/nuke/src/component/anchor/secondary';
+import Img from '@xorkevin/nuke/src/component/image/circle';
 import platform from 'platform';
 
 const AdminContainer = Protected(lazy(() => import('admin')));
@@ -70,13 +73,21 @@ const parsePlatform = (user_agent) => {
   };
 };
 
+const selectAPIProfile = (api) => api.profile.get;
+const selectAPIProfileImage = (api) => api.profile.id.image;
+
 const App = () => {
   const dark = useDarkModeValue();
   const toggleDark = useSetDarkMode();
   const menu = useMenu();
   const logout = useLogout();
-  const {loggedIn} = useAuthValue();
+  const {loggedIn, userid, username, first_name, last_name} = useAuthValue();
   useRefreshAuth();
+
+  const [profile] = useAuthResource(selectAPIProfile, [], {
+    image: '',
+  });
+  const imageURL = useURL(selectAPIProfileImage, [userid]);
 
   return (
     <div>
@@ -84,10 +95,30 @@ const App = () => {
         right={
           <Fragment>
             <NavItem forwardedRef={menu.anchorRef} onClick={menu.toggle}>
-              <FaIcon icon="cog" />
+              {profile.success && profile.data.image && (
+                <Img
+                  className="navbar-image"
+                  src={imageURL}
+                  preview={profile.data.image}
+                  ratio={1}
+                />
+              )}
+              <FaIcon icon="caret-down" />
             </NavItem>
             {menu.show && (
               <Menu size="md" anchor={menu.anchor} close={menu.close}>
+                {loggedIn && (
+                  <Fragment>
+                    <MenuHeader>Profile</MenuHeader>
+                    <MenuItem
+                      local
+                      link={`/u/${username}`}
+                      icon={<FaIcon icon="user" />}
+                    >
+                      {`${first_name} ${last_name}`}
+                    </MenuItem>
+                  </Fragment>
+                )}
                 <MenuHeader>Settings</MenuHeader>
                 {loggedIn && (
                   <Fragment>
