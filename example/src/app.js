@@ -3,6 +3,7 @@ import {Switch, Route, Redirect} from 'react-router-dom';
 import {
   useAuthValue,
   useLogout,
+  useRefreshAuth,
   Protected,
   AntiProtected,
 } from '@xorkevin/turbine';
@@ -75,6 +76,7 @@ const App = () => {
   const menu = useMenu();
   const logout = useLogout();
   const {loggedIn} = useAuthValue();
+  useRefreshAuth();
 
   return (
     <div>
