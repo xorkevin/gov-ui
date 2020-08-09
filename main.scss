@@ -1,5 +1,10 @@
 $color-success: #388e3c;
 $color-success-light: lighten($color-success, 12.5%);
+
+.account-field-disabled-solid.disabled {
+  opacity: 1;
+}
+
 .account-session-indicator {
   display: block;
   width: 8px;

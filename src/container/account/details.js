@@ -1,4 +1,4 @@
-import React, {Fragment, useCallback} from 'react';
+import React, {Fragment, useState, useCallback} from 'react';
 import {useURL} from '@xorkevin/substation';
 import {
   useAuthValue,
@@ -32,6 +32,17 @@ const selectAPICreateProfile = (api) => api.profile.create;
 const selectAPIEditProfile = (api) => api.profile.edit;
 const selectAPIEditImage = (api) => api.profile.edit.image;
 
+const useFormLock = () => {
+  const [locked, setLocked] = useState(true);
+  const lock = useCallback(() => {
+    setLocked(true);
+  }, [setLocked]);
+  const unlock = useCallback(() => {
+    setLocked(false);
+  }, [setLocked]);
+  return [locked, lock, unlock];
+};
+
 const Profile = () => {
   const snackProfileUpdate = useSnackbarView(
     <SnackbarSurface>&#x2713; Profile updated</SnackbarSurface>,
@@ -40,6 +51,8 @@ const Profile = () => {
   const snackImageUpdate = useSnackbarView(
     <SnackbarSurface>&#x2713; Image updated</SnackbarSurface>,
   );
+
+  const [locked, lock, unlock] = useFormLock();
 
   const form = useForm({
     contact_email: '',
@@ -68,11 +81,15 @@ const Profile = () => {
     {posthook},
   );
 
+  const posthookEdit = useCallback(() => {
+    lock();
+    snackProfileUpdate();
+  }, [snackProfileUpdate, lock]);
   const [edit, execEdit] = useAuthCall(
     selectAPIEditProfile,
     [form.state],
     {},
-    {posthook: snackProfileUpdate},
+    {posthook: posthookEdit},
   );
 
   const imageform = useForm({
@@ -126,15 +143,37 @@ const Profile = () => {
               onSubmit={execEdit}
             >
               <Field
+                className="account-field-disabled-solid"
                 name="contact_email"
                 label="Contact email"
                 nohint
+                disabled={locked}
                 fullWidth
               />
-              <FieldTextarea name="bio" label="Bio" nohint fullWidth />
+              <FieldTextarea
+                className="account-field-disabled-solid"
+                name="bio"
+                label="Bio"
+                nohint
+                disabled={locked}
+                fullWidth
+              />
             </Form>
             <ButtonGroup>
-              <ButtonPrimary onClick={execEdit}>Update Profile</ButtonPrimary>
+              {locked ? (
+                <Fragment>
+                  <FaIcon icon="lock" />
+                  <ButtonSecondary onClick={unlock}>Edit</ButtonSecondary>
+                </Fragment>
+              ) : (
+                <Fragment>
+                  <FaIcon icon="unlock-alt" />
+                  <ButtonTertiary onClick={lock}>Cancel</ButtonTertiary>
+                  <ButtonPrimary onClick={execEdit}>
+                    Update Profile
+                  </ButtonPrimary>
+                </Fragment>
+              )}
             </ButtonGroup>
             {edit.err && <p>{edit.err}</p>}
           </Column>
@@ -152,7 +191,10 @@ const Profile = () => {
             >
               <ButtonTertiary>Edit</ButtonTertiary>
             </FieldFile>
-            <ButtonSecondary onClick={execEditImage}>
+            <ButtonSecondary
+              onClick={execEditImage}
+              disabled={!imageform.state.image}
+            >
               <FaIcon icon="cloud-upload" /> Upload
             </ButtonSecondary>
             {editImage.err && <p>{editImage.err}</p>}
@@ -173,6 +215,8 @@ const AccountDetails = ({showProfile}) => {
 
   const [_user, refreshUser] = useRefreshUser();
 
+  const [locked, lock, unlock] = useFormLock();
+
   const {
     userid,
     username,
@@ -191,10 +235,11 @@ const AccountDetails = ({showProfile}) => {
 
   const posthook = useCallback(
     (_status, _data) => {
+      lock();
       refreshUser();
       displaySnackbar();
     },
-    [displaySnackbar, refreshUser],
+    [displaySnackbar, refreshUser, lock],
   );
   const [edit, execEdit] = useAuthCall(
     selectAPIEditAccount,
@@ -214,12 +259,44 @@ const AccountDetails = ({showProfile}) => {
             onChange={form.update}
             onSubmit={execEdit}
           >
-            <Field name="username" label="Username" nohint fullWidth />
-            <Field name="first_name" label="First name" nohint fullWidth />
-            <Field name="last_name" label="Last name" nohint fullWidth />
+            <Field
+              className="account-field-disabled-solid"
+              name="username"
+              label="Username"
+              nohint
+              disabled={locked}
+              fullWidth
+            />
+            <Field
+              className="account-field-disabled-solid"
+              name="first_name"
+              label="First name"
+              nohint
+              disabled={locked}
+              fullWidth
+            />
+            <Field
+              className="account-field-disabled-solid"
+              name="last_name"
+              label="Last name"
+              nohint
+              disabled={locked}
+              fullWidth
+            />
           </Form>
           <ButtonGroup>
-            <ButtonPrimary onClick={execEdit}>Update account</ButtonPrimary>
+            {locked ? (
+              <Fragment>
+                <FaIcon icon="lock" />
+                <ButtonSecondary onClick={unlock}>Edit</ButtonSecondary>
+              </Fragment>
+            ) : (
+              <Fragment>
+                <FaIcon icon="unlock-alt" />
+                <ButtonTertiary onClick={lock}>Cancel</ButtonTertiary>
+                <ButtonPrimary onClick={execEdit}>Update account</ButtonPrimary>
+              </Fragment>
+            )}
           </ButtonGroup>
           {edit.err && <p>{edit.err}</p>}
         </Column>
