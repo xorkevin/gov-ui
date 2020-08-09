@@ -1,6 +1,11 @@
 import React, {Fragment, useCallback} from 'react';
 import {useURL} from '@xorkevin/substation';
-import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
+import {
+  useAuthValue,
+  useAuthCall,
+  useAuthResource,
+  useRefreshUser,
+} from '@xorkevin/turbine';
 import {
   Grid,
   Column,
@@ -166,6 +171,8 @@ const AccountDetails = ({showProfile}) => {
     <SnackbarSurface>&#x2713; Account updated</SnackbarSurface>,
   );
 
+  const [_user, refreshUser] = useRefreshUser();
+
   const {
     userid,
     username,
@@ -182,11 +189,18 @@ const AccountDetails = ({showProfile}) => {
     last_name,
   });
 
+  const posthook = useCallback(
+    (_status, _data) => {
+      refreshUser();
+      displaySnackbar();
+    },
+    [displaySnackbar, refreshUser],
+  );
   const [edit, execEdit] = useAuthCall(
     selectAPIEditAccount,
     [form.state],
     {},
-    {posthook: displaySnackbar},
+    {posthook},
   );
 
   return (

@@ -1,7 +1,7 @@
 import React, {Fragment} from 'react';
 import {Link, useLocation} from 'react-router-dom';
 import {getSearchParams} from '../../utility';
-import {useAuthCall} from '@xorkevin/turbine';
+import {useAuthCall, useRefreshUser} from '@xorkevin/turbine';
 import {Grid, Column, Field, Form, useForm, ButtonGroup} from '@xorkevin/nuke';
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonSecondary from '@xorkevin/nuke/src/component/button/secondary';
@@ -10,6 +10,8 @@ import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 const selectAPIConfirm = (api) => api.u.user.email.edit.confirm;
 
 const AccountEmailConfirm = ({pathSecurity}) => {
+  const [_user, refreshUser] = useRefreshUser();
+
   const {search} = useLocation();
   const form = useForm({
     key: decodeURIComponent(getSearchParams(search).get('key') || ''),
@@ -18,11 +20,12 @@ const AccountEmailConfirm = ({pathSecurity}) => {
 
   const [userid, key] = form.state.key.split('.', 2);
 
-  const [confirmState, execConfirm] = useAuthCall(selectAPIConfirm, [
-    userid,
-    key,
-    form.state.password,
-  ]);
+  const [confirmState, execConfirm] = useAuthCall(
+    selectAPIConfirm,
+    [userid, key, form.state.password],
+    {},
+    {posthook: refreshUser},
+  );
 
   return (
     <div>
