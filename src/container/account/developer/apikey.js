@@ -1,4 +1,4 @@
-import React, {Fragment, useState, useCallback, useMemo} from 'react';
+import React, {Fragment, useState, useCallback} from 'react';
 import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
   Container,
@@ -348,10 +348,6 @@ const Apikeys = () => {
   );
 
   const {authTags} = useAuthValue();
-  const allPermissions = useMemo(
-    () => (authTags.length > 0 ? authTags.split(',') : []),
-    [authTags],
-  );
 
   return (
     <div>
@@ -371,7 +367,7 @@ const Apikeys = () => {
                 posthookDel={posthookDelete}
                 posthookUpd={posthookUpdate}
                 errhook={displayErrSnack}
-                allPermissions={allPermissions}
+                allPermissions={authTags}
               />
             ))}
           </ListGroup>
@@ -403,7 +399,7 @@ const Apikeys = () => {
             <FieldMultiSelect
               name="auth_tags"
               label="Permissions"
-              options={allPermissions}
+              options={authTags}
               nohint
               fullWidth
             />

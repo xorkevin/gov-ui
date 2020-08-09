@@ -56,7 +56,6 @@ const prehookValidatePass = ([_old_pass, new_password, password_confirm]) => {
 
 // Edit email
 
-const selectAPIAccount = (api) => api.u.user.get;
 const selectAPIEditEmail = (api) => api.u.user.email.edit;
 
 const formErrCheckEmail = ({email}) => {
@@ -247,6 +246,8 @@ const AccountSecurity = ({pathConfirm, parsePlatform}) => {
     <SnackbarSurface>&#x2713; Password updated</SnackbarSurface>,
   );
 
+  const {email} = useAuthValue();
+
   const formPass = useForm({
     old_password: '',
     new_password: '',
@@ -287,101 +288,94 @@ const AccountSecurity = ({pathConfirm, parsePlatform}) => {
     formEmail.state.password,
   ]);
 
-  const [account] = useAuthResource(selectAPIAccount, [], {
-    email: '',
-  });
-
   return (
     <div>
-      {account.success && (
-        <Fragment>
-          <h3>Change password</h3>
-          <hr />
-          <Grid>
-            <Column fullWidth md={16}>
-              <Form
-                formState={formPass.state}
-                onChange={formPass.update}
-                onSubmit={execEditPass}
-                errCheck={formErrCheckPass}
-                validCheck={formValidCheckPass}
-              >
-                <Field
-                  name="old_password"
-                  type="password"
-                  label="Old password"
-                  fullWidth
-                />
-                <Field
-                  name="new_password"
-                  type="password"
-                  label="New password"
-                  hint="Must be at least 10 characters"
-                  hintRight={`${formPass.state.new_password.length} chars`}
-                  fullWidth
-                />
-                <Field
-                  name="password_confirm"
-                  type="password"
-                  label="Confirm password"
-                  fullWidth
-                />
-              </Form>
-              <ButtonGroup>
-                <ButtonPrimary onClick={execEditPass}>
-                  Update Password
+      <Fragment>
+        <h3>Change password</h3>
+        <hr />
+        <Grid>
+          <Column fullWidth md={16}>
+            <Form
+              formState={formPass.state}
+              onChange={formPass.update}
+              onSubmit={execEditPass}
+              errCheck={formErrCheckPass}
+              validCheck={formValidCheckPass}
+            >
+              <Field
+                name="old_password"
+                type="password"
+                label="Old password"
+                fullWidth
+              />
+              <Field
+                name="new_password"
+                type="password"
+                label="New password"
+                hint="Must be at least 10 characters"
+                hintRight={`${formPass.state.new_password.length} chars`}
+                fullWidth
+              />
+              <Field
+                name="password_confirm"
+                type="password"
+                label="Confirm password"
+                fullWidth
+              />
+            </Form>
+            <ButtonGroup>
+              <ButtonPrimary onClick={execEditPass}>
+                Update Password
+              </ButtonPrimary>
+            </ButtonGroup>
+            {editPass.err && <p>{editPass.err}</p>}
+          </Column>
+        </Grid>
+        <h3>Change email</h3>
+        <hr />
+        <Grid>
+          <Column fullWidth md={16}>
+            <Form
+              formState={formEmail.state}
+              onChange={formEmail.update}
+              onSubmit={execEditEmail}
+              errCheck={formErrCheckEmail}
+              validCheck={formValidCheckEmail}
+            >
+              <Field name="email" label="New email" nohint fullWidth />
+              <Field
+                name="password"
+                type="password"
+                label="Password"
+                nohint
+                fullWidth
+              />
+            </Form>
+            <ButtonGroup>
+              {editEmail.success ? (
+                <Link to={pathConfirm}>
+                  <ButtonSecondary>Confirm</ButtonSecondary>
+                </Link>
+              ) : (
+                <ButtonPrimary onClick={execEditEmail}>
+                  Update Email
                 </ButtonPrimary>
-              </ButtonGroup>
-              {editPass.err && <p>{editPass.err}</p>}
-            </Column>
-          </Grid>
-          <h3>Change email</h3>
-          <hr />
-          <Grid>
-            <Column fullWidth md={16}>
-              <Form
-                formState={formEmail.state}
-                onChange={formEmail.update}
-                onSubmit={execEditEmail}
-                errCheck={formErrCheckEmail}
-                validCheck={formValidCheckEmail}
-              >
-                <Field name="email" label="New email" nohint fullWidth />
-                <Field
-                  name="password"
-                  type="password"
-                  label="Password"
-                  nohint
-                  fullWidth
-                />
-              </Form>
-              <ButtonGroup>
-                {editEmail.success ? (
-                  <Link to={pathConfirm}>
-                    <ButtonSecondary>Confirm</ButtonSecondary>
-                  </Link>
-                ) : (
-                  <ButtonPrimary onClick={execEditEmail}>
-                    Update Email
-                  </ButtonPrimary>
-                )}
-              </ButtonGroup>
-              {editEmail.err && <p>{editEmail.err}</p>}
-              {editEmail.success && (
-                <p>
-                  Confirm your email change with the code emailed to the address
-                  provided above.
-                </p>
               )}
-            </Column>
-            <Column fullWidth md={8}>
-              <h5>Current email</h5>
-              {account.data.email}
-            </Column>
-          </Grid>
-        </Fragment>
-      )}
-      {account.err && <p>{account.err}</p>}
+            </ButtonGroup>
+            {editEmail.err && <p>{editEmail.err}</p>}
+            {editEmail.success && (
+              <p>
+                Confirm your email change with the code emailed to the address
+                provided above.
+              </p>
+            )}
+          </Column>
+          <Column fullWidth md={8}>
+            <h5>Current email</h5>
+            {email}
+          </Column>
+        </Grid>
+      </Fragment>
       <AccountSessions parsePlatform={parsePlatform} />
     </div>
   );

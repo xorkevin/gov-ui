@@ -159,7 +159,6 @@ const Profile = () => {
   );
 };
 
-const selectAPIAccount = (api) => api.u.user.get;
 const selectAPIEditAccount = (api) => api.u.user.edit;
 
 const AccountDetails = ({showProfile}) => {
@@ -167,10 +166,20 @@ const AccountDetails = ({showProfile}) => {
     <SnackbarSurface>&#x2713; Account updated</SnackbarSurface>,
   );
 
+  const {
+    userid,
+    username,
+    first_name,
+    last_name,
+    email,
+    creation_time,
+    authTags,
+  } = useAuthValue();
+
   const form = useForm({
-    username: '',
-    first_name: '',
-    last_name: '',
+    username,
+    first_name,
+    last_name,
   });
 
   const [edit, execEdit] = useAuthCall(
@@ -180,68 +189,40 @@ const AccountDetails = ({showProfile}) => {
     {posthook: displaySnackbar},
   );
 
-  const formAssign = form.assign;
-  const posthook = useCallback(
-    (_status, {username, first_name, last_name}) => {
-      formAssign({
-        username,
-        first_name,
-        last_name,
-      });
-    },
-    [formAssign],
-  );
-
-  const [account] = useAuthResource(
-    selectAPIAccount,
-    [],
-    {
-      userid: '',
-      username: '',
-      auth_tags: '',
-      first_name: '',
-      last_name: '',
-      creation_time: 0,
-    },
-    {posthook},
-  );
-
   return (
     <div>
       <h3>Account</h3>
       <hr />
-      {account.success && (
-        <Grid>
-          <Column fullWidth md={16}>
-            <Form
-              formState={form.state}
-              onChange={form.update}
-              onSubmit={execEdit}
-            >
-              <Field name="username" label="Username" nohint fullWidth />
-              <Field name="first_name" label="First name" nohint fullWidth />
-              <Field name="last_name" label="Last name" nohint fullWidth />
-            </Form>
-            <ButtonGroup>
-              <ButtonPrimary onClick={execEdit}>Update account</ButtonPrimary>
-            </ButtonGroup>
-            {edit.err && <p>{edit.err}</p>}
-          </Column>
-          <Column fullWidth md={8}>
-            <h5>Userid</h5>
-            <code>{account.data.userid}</code>
-            <h5>Roles</h5>
-            {account.data.auth_tags &&
-              account.data.auth_tags
-                .split(',')
-                .map((tag) => <Chip key={tag}>{tag}</Chip>)}
-            <p>
-              Created <Time value={account.data.creation_time * 1000} />
-            </p>
-          </Column>
-        </Grid>
-      )}
-      {account.err && <p>{account.err}</p>}
+      <Grid>
+        <Column fullWidth md={16}>
+          <Form
+            formState={form.state}
+            onChange={form.update}
+            onSubmit={execEdit}
+          >
+            <Field name="username" label="Username" nohint fullWidth />
+            <Field name="first_name" label="First name" nohint fullWidth />
+            <Field name="last_name" label="Last name" nohint fullWidth />
+          </Form>
+          <ButtonGroup>
+            <ButtonPrimary onClick={execEdit}>Update account</ButtonPrimary>
+          </ButtonGroup>
+          {edit.err && <p>{edit.err}</p>}
+        </Column>
+        <Column fullWidth md={8}>
+          <h5>Userid</h5>
+          <code>{userid}</code>
+          <h5>Email</h5>
+          <span>{email}</span>
+          <h5>Roles</h5>
+          {authTags.map((tag) => (
+            <Chip key={tag}>{tag}</Chip>
+          ))}
+          <p>
+            Created <Time value={creation_time * 1000} />
+          </p>
+        </Column>
+      </Grid>
       {showProfile && <Profile />}
     </div>
   );
