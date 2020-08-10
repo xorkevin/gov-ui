@@ -1,6 +1,12 @@
-import {DefaultRoleIntersect} from '@xorkevin/turbine';
+const roleIntersect = Object.freeze([
+  'user',
+  'admin',
+  'usr_user',
+  'mod_user',
+  'usr_courier',
+  'mod_courier',
+]);
 
-const roleIntersect = DefaultRoleIntersect;
 const permissionedRoles = roleIntersect.filter((i) => i !== 'user');
 
 export {roleIntersect, permissionedRoles};

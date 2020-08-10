@@ -88,7 +88,7 @@ const UserDetails = ({user, reexecute, back}) => {
   const {authTags} = useAuthValue();
   const allPermissions = useMemo(() => {
     if (authTags.includes('admin')) {
-      return roleIntersect.sort();
+      return roleIntersect.slice().sort();
     }
     return authTags.filter((i) => i !== 'user');
   }, [roleIntersect, authTags]);
