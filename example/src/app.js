@@ -30,7 +30,7 @@ import AnchorSecondary from '@xorkevin/nuke/src/component/anchor/secondary';
 import Img from '@xorkevin/nuke/src/component/image/circle';
 import platform from 'platform';
 
-const AdminContainer = Protected(lazy(() => import('admin')));
+const DashContainer = Protected(lazy(() => import('dash')));
 const LoginContainer = AntiProtected(
   lazy(() => import('@xorkevin/gov-ui/src/container/login')),
 );
@@ -40,9 +40,9 @@ const AccountContainer = Protected(
 const UserContainer = Protected(
   lazy(() => import('@xorkevin/gov-ui/src/container/user')),
 );
-//const ManageContainer = lazy(() =>
-//  import('@xorkevin/gov-ui/src/container/manage'),
-//);
+const AdminContainer = lazy(() =>
+  import('@xorkevin/gov-ui/src/container/admin'),
+);
 //const CourierContainer = Protected(
 //  lazy(() => import('@xorkevin/gov-ui/src/container/courier')),
 //  ['admin', 'usr_courier'],
@@ -172,9 +172,9 @@ const App = () => {
         </NavItem>
         {loggedIn && (
           <Fragment>
-            <NavItem local link="/manage">
-              <FaIcon icon="building" />
-              <small>Manage</small>
+            <NavItem local link="/admin">
+              <FaIcon icon="building-o" />
+              <small>Admin</small>
             </NavItem>
             <NavItem local link="/courier">
               <FaIcon icon="paper-plane" />
@@ -187,7 +187,7 @@ const App = () => {
       <Suspense fallback={FallbackView}>
         <Switch>
           <Route exact path="/">
-            <AdminContainer />
+            <DashContainer />
           </Route>
           <Route path="/x">
             <LoginContainer userApprovals={GovContextValue.userApprovals} />
@@ -198,10 +198,10 @@ const App = () => {
           <Route path="/u">
             <UserContainer />
           </Route>
-          {/*<Route path="/manage">
-            <ManageContainer />
+          <Route path="/admin">
+            <AdminContainer />
           </Route>
-          <Route path="/courier">
+          {/*<Route path="/courier">
             <CourierContainer courierPath={GovContextValue.courierPath} />
           </Route>*/}
           <Route path="/setup">

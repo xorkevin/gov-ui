@@ -157,7 +157,11 @@ const CreateAccount = ({pathLogin, pathConfirm, userApprovals}) => {
                   type="password"
                   label="Password"
                   hint="Must be at least 10 characters"
-                  hintRight={`${form.state.password.length} chars`}
+                  hintRight={
+                    form.state.password.length > 0
+                      ? form.state.password.length
+                      : ''
+                  }
                   fullWidth
                 />
                 <Field

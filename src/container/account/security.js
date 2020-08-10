@@ -313,7 +313,11 @@ const AccountSecurity = ({pathConfirm, parsePlatform}) => {
                 type="password"
                 label="New password"
                 hint="Must be at least 10 characters"
-                hintRight={`${formPass.state.new_password.length} chars`}
+                hintRight={
+                  formPass.state.new_password.length > 0
+                    ? formPass.state.new_password.length
+                    : ''
+                }
                 fullWidth
               />
               <Field
