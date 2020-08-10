@@ -1,4 +1,4 @@
-const roleIntersect = Object.freeze([
+const allRoles = Object.freeze([
   'user',
   'admin',
   'usr_user',
@@ -7,6 +7,11 @@ const roleIntersect = Object.freeze([
   'mod_courier',
 ]);
 
-const permissionedRoles = roleIntersect.filter((i) => i !== 'user');
+const permissionedRoles = Object.freeze(allRoles.filter((i) => i !== 'user'));
 
-export {roleIntersect, permissionedRoles};
+const usrRegex = /^usr_/;
+const modRoles = Object.freeze(
+  permissionedRoles.filter((i) => !usrRegex.test(i)),
+);
+
+export {allRoles, permissionedRoles, modRoles};

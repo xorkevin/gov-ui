@@ -13,10 +13,7 @@ import {
 } from '@xorkevin/nuke';
 
 import UsersContainer from './users';
-//import ApprovalsContainer from './approvals';
-//<Route path={`${match.path}/approvals`}>
-//  <ApprovalsContainer />
-//</Route>
+import ApprovalsContainer from './approvals';
 
 const Admin = () => {
   const match = useRouteMatch();
@@ -49,6 +46,9 @@ const Admin = () => {
               <Switch>
                 <Route path={`${match.path}/users`}>
                   <UsersContainer />
+                </Route>
+                <Route path={`${match.path}/approvals`}>
+                  <ApprovalsContainer />
                 </Route>
                 <Redirect to={`${match.path}/users`} />
               </Switch>

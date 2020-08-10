@@ -1,19 +1,20 @@
-import React, {Fragment, useState, useCallback} from 'react';
+import React, {Fragment, useCallback} from 'react';
 import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
-  Section,
   Table,
+  useMenu,
   Menu,
-  Button,
-  Chip,
-  Time,
-  Tooltip,
-  FaIcon,
-  usePaginate,
+  MenuItem,
+  SnackbarSurface,
   useSnackbar,
+  usePaginate,
+  ButtonGroup,
+  FaIcon,
+  Time,
 } from '@xorkevin/nuke';
+import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 
-const LIMIT = 32;
+const APPROVALS_LIMIT = 32;
 
 const selectAPIApprovals = (api) => api.u.user.approvals.get;
 const selectAPIApprove = (api) => api.u.user.approvals.id.approve;
@@ -22,7 +23,6 @@ const selectAPIDelete = (api) => api.u.user.approvals.id.del;
 const ApprovalsRow = ({
   userid,
   username,
-  auth_tags,
   email,
   first_name,
   last_name,
@@ -43,43 +43,31 @@ const ApprovalsRow = ({
     {posthook, errhook},
   );
 
+  const menu = useMenu();
+
   return (
     <tr>
-      <td>
-        <Tooltip tooltip={userid}>{username}</Tooltip>
-      </td>
+      <td>{userid}</td>
+      <td>{username}</td>
+      <td>{`${first_name} ${last_name}`}</td>
       <td>{email}</td>
-      <td>
-        {auth_tags.split(',').map((tag) => (
-          <Chip key={tag}>{tag}</Chip>
-        ))}
-      </td>
-      <td>
-        {first_name} {last_name}
-      </td>
       <td>
         <Time value={creation_time * 1000} />
       </td>
-
       <td>
-        <Menu
-          icon={
-            <Button text>
-              <FaIcon icon="ellipsis-v" />
-            </Button>
-          }
-          size="md"
-          fixed
-          align="right"
-          position="bottom"
-        >
-          <span onClick={execApprove}>
-            <FaIcon icon="check" /> Approve
-          </span>
-          <span onClick={execDelete}>
-            <FaIcon icon="trash" /> Delete
-          </span>
-        </Menu>
+        <ButtonTertiary forwardedRef={menu.anchorRef} onClick={menu.toggle}>
+          <FaIcon icon="ellipsis-v" />
+        </ButtonTertiary>
+        {menu.show && (
+          <Menu size="md" anchor={menu.anchor} close={menu.close}>
+            <MenuItem onClick={execApprove} icon={<FaIcon icon="check" />}>
+              Approve
+            </MenuItem>
+            <MenuItem onClick={execDelete} icon={<FaIcon icon="trash" />}>
+              Reject
+            </MenuItem>
+          </Menu>
+        )}
       </td>
     </tr>
   );
@@ -89,78 +77,68 @@ const Approvals = () => {
   const snackbar = useSnackbar();
   const displayErrSnack = useCallback(
     (_status, err) => {
-      snackbar(
-        <Fragment>
-          <span>{err}</span>
-        </Fragment>,
-      );
+      snackbar(<SnackbarSurface>{err}</SnackbarSurface>);
     },
     [snackbar],
   );
 
-  const [endPage, setEndPage] = useState(true);
-  const page = usePaginate(LIMIT, endPage);
+  const paginate = usePaginate(APPROVALS_LIMIT);
 
+  const setAtEnd = paginate.setAtEnd;
   const posthook = useCallback(
     (_status, approvals) => {
-      setEndPage(approvals.length < LIMIT);
+      setAtEnd(approvals.length < APPROVALS_LIMIT);
     },
-    [setEndPage],
+    [setAtEnd],
   );
   const [approvals, reexecute] = useAuthResource(
     selectAPIApprovals,
-    [LIMIT, page.value],
+    [APPROVALS_LIMIT, paginate.index],
     [],
     {posthook},
   );
 
   return (
     <div>
-      {approvals.err && <span>{approvals.err}</span>}
-      <Section subsection sectionTitle="New User Requests">
-        <Table
-          fullWidth
-          head={
-            <Fragment>
-              <th>Username</th>
-              <th>Email</th>
-              <th>Permissions</th>
-              <th>Name</th>
-              <th>Creation time</th>
-            </Fragment>
-          }
-        >
-          {approvals.data.map(
-            ({
-              userid,
-              username,
-              auth_tags,
-              email,
-              first_name,
-              last_name,
-              creation_time,
-            }) => (
-              <ApprovalsRow
-                key={userid}
-                userid={userid}
-                username={username}
-                auth_tags={auth_tags}
-                email={email}
-                first_name={first_name}
-                last_name={last_name}
-                creation_time={creation_time}
-                posthook={reexecute}
-                errhook={displayErrSnack}
-              />
-            ),
-          )}
-        </Table>
-        <div>
-          <Button onClick={page.prev}>prev</Button>
-          {page.num}
-          <Button onClick={page.next}>next</Button>
-        </div>
-      </Section>
+      <h3>Approvals</h3>
+      {approvals.err && <p>{approvals.err}</p>}
+      <Table
+        head={
+          <Fragment>
+            <th>Userid</th>
+            <th>Username</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Creation time</th>
+            <th></th>
+          </Fragment>
+        }
+      >
+        {approvals.data.map(
+          ({userid, username, email, first_name, last_name, creation_time}) => (
+            <ApprovalsRow
+              key={userid}
+              userid={userid}
+              username={username}
+              email={email}
+              first_name={first_name}
+              last_name={last_name}
+              creation_time={creation_time}
+              posthook={reexecute}
+              errhook={displayErrSnack}
+            />
+          ),
+        )}
+      </Table>
+      <ButtonGroup>
+        <ButtonTertiary disabled={paginate.atFirst} onClick={paginate.prev}>
+          prev
+        </ButtonTertiary>
+        {paginate.page}
+        <ButtonTertiary disabled={paginate.atLast} onClick={paginate.next}>
+          next
+        </ButtonTertiary>
+      </ButtonGroup>
     </div>
   );
 };

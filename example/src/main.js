@@ -24,7 +24,7 @@ import {
   Container,
 } from '@xorkevin/nuke';
 
-import {roleIntersect} from 'roles';
+import {allRoles} from 'roles';
 import App from 'app';
 import {APIClient} from 'api';
 
@@ -40,7 +40,7 @@ const UnAuthFallback = (
 
 const authctx = Object.assign({}, TurbineDefaultOpts, {
   fallbackView: UnAuthFallback,
-  roleIntersect,
+  roleIntersect: allRoles,
 });
 const darkmodectx = Object.assign({}, DarkModeDefaultOpts);
 const snackbarctx = Object.assign({}, SnackbarDefaultOpts);

@@ -32,7 +32,7 @@ import AnchorSecondary from '@xorkevin/nuke/src/component/anchor/secondary';
 import Img from '@xorkevin/nuke/src/component/image/circle';
 import platform from 'platform';
 
-import {permissionedRoles} from 'roles';
+import {modRoles} from 'roles';
 
 const DashContainer = Protected(lazy(() => import('dash')));
 const LoginContainer = AntiProtected(
@@ -46,7 +46,7 @@ const UserContainer = Protected(
 );
 const AdminContainer = Protected(
   lazy(() => import('@xorkevin/gov-ui/src/container/admin')),
-  permissionedRoles,
+  modRoles.concat(['usr_user']),
 );
 //const CourierContainer = Protected(
 //  lazy(() => import('@xorkevin/gov-ui/src/container/courier')),
@@ -67,7 +67,7 @@ const FallbackView = (
 );
 
 const GovContextValue = Object.freeze({
-  userApprovals: false,
+  userApprovals: true,
   // eslint-disable-next-line no-undef
   courierPath: COURIERBASE_URL,
 });
