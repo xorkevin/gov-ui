@@ -40,8 +40,8 @@ const AccountContainer = Protected(
 const UserContainer = Protected(
   lazy(() => import('@xorkevin/gov-ui/src/container/user')),
 );
-const AdminContainer = lazy(() =>
-  import('@xorkevin/gov-ui/src/container/admin'),
+const AdminContainer = Protected(
+  lazy(() => import('@xorkevin/gov-ui/src/container/admin')),
 );
 //const CourierContainer = Protected(
 //  lazy(() => import('@xorkevin/gov-ui/src/container/courier')),

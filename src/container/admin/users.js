@@ -1,4 +1,10 @@
-import React, {Fragment, useState, useCallback, useContext} from 'react';
+import React, {
+  Fragment,
+  useState,
+  useCallback,
+  useMemo,
+  useContext,
+} from 'react';
 import {useResource, selectAPINull} from '@xorkevin/substation';
 import {AuthCtx, useAuthValue, useAuthCall} from '@xorkevin/turbine';
 import {
@@ -78,11 +84,14 @@ const UserDetails = ({user, reexecute, back}) => {
     {posthook},
   );
 
-  const authCtx = useContext(AuthCtx);
+  const {roleIntersect} = useContext(AuthCtx);
   const {authTags} = useAuthValue();
-  const allPermissions = authTags.includes('admin')
-    ? authCtx.roleIntersect.sort()
-    : authTags;
+  const allPermissions = useMemo(() => {
+    if (authTags.includes('admin')) {
+      return roleIntersect.sort();
+    }
+    return authTags.filter((i) => i !== 'user');
+  }, [roleIntersect, authTags]);
 
   return (
     <Fragment>
