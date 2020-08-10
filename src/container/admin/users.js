@@ -1,6 +1,6 @@
-import React, {Fragment, useState, useCallback} from 'react';
+import React, {Fragment, useState, useCallback, useContext} from 'react';
 import {useResource, selectAPINull} from '@xorkevin/substation';
-import {useAuthValue, useAuthCall} from '@xorkevin/turbine';
+import {AuthCtx, useAuthValue, useAuthCall} from '@xorkevin/turbine';
 import {
   Grid,
   Column,
@@ -78,7 +78,11 @@ const UserDetails = ({user, reexecute, back}) => {
     {posthook},
   );
 
+  const authCtx = useContext(AuthCtx);
   const {authTags} = useAuthValue();
+  const allPermissions = authTags.includes('admin')
+    ? authCtx.roleIntersect.sort()
+    : authTags;
 
   return (
     <Fragment>
@@ -98,14 +102,14 @@ const UserDetails = ({user, reexecute, back}) => {
             <FieldMultiSelect
               name="add"
               label="Add"
-              options={authTags}
+              options={allPermissions}
               nohint
               fullWidth
             />
             <FieldMultiSelect
               name="remove"
               label="Remove"
-              options={authTags}
+              options={allPermissions}
               nohint
               fullWidth
             />
