@@ -19,20 +19,28 @@ import {
   makeInitDarkModeState,
   SnackbarCtx,
   SnackbarDefaultOpts,
+  MainContent,
+  Section,
   Container,
 } from '@xorkevin/nuke';
 
+import {roleIntersect} from 'roles';
 import App from 'app';
 import {APIClient} from 'api';
 
 const UnAuthFallback = (
-  <Container padded narrow>
-    Unauthorized
-  </Container>
+  <MainContent>
+    <Section>
+      <Container padded narrow>
+        <h4>Unauthorized</h4>
+      </Container>
+    </Section>
+  </MainContent>
 );
 
 const authctx = Object.assign({}, TurbineDefaultOpts, {
   fallbackView: UnAuthFallback,
+  roleIntersect,
 });
 const darkmodectx = Object.assign({}, DarkModeDefaultOpts);
 const snackbarctx = Object.assign({}, SnackbarDefaultOpts);

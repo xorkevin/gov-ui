@@ -10,10 +10,12 @@ import {
   AntiProtected,
 } from '@xorkevin/turbine';
 import {
+  MainContent,
+  Section,
+  Container,
   useDarkModeValue,
   useSetDarkMode,
   SnackbarContainer,
-  Container,
   Navbar,
   NavItem,
   useMenu,
@@ -30,6 +32,8 @@ import AnchorSecondary from '@xorkevin/nuke/src/component/anchor/secondary';
 import Img from '@xorkevin/nuke/src/component/image/circle';
 import platform from 'platform';
 
+import {permissionedRoles} from 'roles';
+
 const DashContainer = Protected(lazy(() => import('dash')));
 const LoginContainer = AntiProtected(
   lazy(() => import('@xorkevin/gov-ui/src/container/login')),
@@ -42,6 +46,7 @@ const UserContainer = Protected(
 );
 const AdminContainer = Protected(
   lazy(() => import('@xorkevin/gov-ui/src/container/admin')),
+  permissionedRoles,
 );
 //const CourierContainer = Protected(
 //  lazy(() => import('@xorkevin/gov-ui/src/container/courier')),
@@ -52,9 +57,13 @@ const SetupContainer = lazy(() =>
 );
 
 const FallbackView = (
-  <Container padded narrow>
-    Loading
-  </Container>
+  <MainContent>
+    <Section>
+      <Container padded narrow>
+        <h4>Loading</h4>
+      </Container>
+    </Section>
+  </MainContent>
 );
 
 const GovContextValue = Object.freeze({
