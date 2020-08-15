@@ -17,3 +17,15 @@ $color-success-light: lighten($color-success, 12.5%);
     box-shadow: 0 0 8px 0 rgba($color-success, 0.5);
   }
 }
+
+.courier-link-item-name {
+  min-width: 0;
+}
+
+.courier-link-destination {
+  display: block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

@@ -48,10 +48,10 @@ const AdminContainer = Protected(
   lazy(() => import('@xorkevin/gov-ui/src/container/admin')),
   modRoles.concat(['usr_user']),
 );
-//const CourierContainer = Protected(
-//  lazy(() => import('@xorkevin/gov-ui/src/container/courier')),
-//  ['admin', 'usr_courier'],
-//);
+const CourierContainer = Protected(
+  lazy(() => import('@xorkevin/gov-ui/src/container/courier')),
+  ['admin', 'usr_courier'],
+);
 const SetupContainer = lazy(() =>
   import('@xorkevin/gov-ui/src/container/setup'),
 );
@@ -210,9 +210,9 @@ const App = () => {
           <Route path="/admin">
             <AdminContainer />
           </Route>
-          {/*<Route path="/courier">
+          <Route path="/courier">
             <CourierContainer courierPath={GovContextValue.courierPath} />
-          </Route>*/}
+          </Route>
           <Route path="/setup">
             <SetupContainer />
           </Route>

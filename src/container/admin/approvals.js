@@ -101,6 +101,7 @@ const Approvals = () => {
   return (
     <div>
       <h3>Approvals</h3>
+      <hr />
       {approvals.err && <p>{approvals.err}</p>}
       <Table
         head={

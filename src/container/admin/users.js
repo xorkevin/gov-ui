@@ -174,6 +174,7 @@ const Users = () => {
   return (
     <div>
       <h3>Manage Roles</h3>
+      <hr />
       {!displayUser && <UserSearch setUsername={setUsername} err={user.err} />}
       {displayUser && (
         <UserDetails user={user} reexecute={reexecute} back={back} />

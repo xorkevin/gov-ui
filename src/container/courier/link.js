@@ -1,20 +1,30 @@
-import React, {Fragment, useState, useCallback, useMemo} from 'react';
+import React, {useCallback, useMemo} from 'react';
 import {isValidURL} from '../../utility';
 import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
-  Section,
-  Table,
-  Button,
-  Time,
-  Anchor,
+  Grid,
+  Column,
+  ListGroup,
+  ListItem,
+  useMenu,
+  Menu,
+  MenuItem,
+  Field,
+  FieldSuggest,
   Form,
-  Input,
   useForm,
-  usePaginate,
+  SnackbarSurface,
   useSnackbar,
+  usePaginate,
+  ButtonGroup,
+  FaIcon,
+  Time,
 } from '@xorkevin/nuke';
+import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
+import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
+import Anchor from '@xorkevin/nuke/src/component/anchor/nocolor';
 
-const LIMIT = 32;
+const LINK_LIMIT = 32;
 const BRAND_LIMIT = 128;
 
 const selectAPILinks = (api) => api.courier.link.get;
@@ -50,42 +60,53 @@ const LinkRow = ({
   linkid,
   url,
   creation_time,
-  posthook,
+  posthookDelete,
   errhook,
 }) => {
   const [_deleteState, execDelete] = useAuthCall(
     selectAPIDelete,
     [linkid],
     {},
-    {posthook, errhook},
+    {posthook: posthookDelete, errhook},
   );
 
+  const menu = useMenu();
+
   return (
-    <tr>
-      <td>
-        <Anchor ext href={courierPath + '/' + linkid}>
-          {courierPath + '/' + linkid}
-        </Anchor>
-      </td>
-      <td>
-        <Anchor ext href={url}>
-          {url}
-        </Anchor>
-      </td>
-      <td>
-        <Anchor ext href={courierPath + '/' + linkid + '/image'}>
-          image
-        </Anchor>
-      </td>
-      <td>
-        <Time value={creation_time * 1000} />
-      </td>
-      <td>
-        <Button text onClick={execDelete}>
-          Delete
-        </Button>
-      </td>
-    </tr>
+    <ListItem>
+      <Grid justify="space-between" align="center" nowrap>
+        <Column className="courier-link-item-name">
+          <h5>
+            <Anchor className="courier-link-destination" ext href={url}>
+              {url}
+            </Anchor>
+          </h5>
+          <p>
+            <Anchor ext href={courierPath + '/' + linkid}>
+              {courierPath + '/' + linkid}
+            </Anchor>
+          </p>
+          <div>
+            <Anchor ext href={courierPath + '/' + linkid + '/image'}>
+              <FaIcon icon="qrcode fa-lg" />
+            </Anchor>{' '}
+            Created <Time value={creation_time * 1000} />
+          </div>
+        </Column>
+        <Column shrink="0">
+          <ButtonTertiary forwardedRef={menu.anchorRef} onClick={menu.toggle}>
+            <FaIcon icon="ellipsis-v" />
+          </ButtonTertiary>
+          {menu.show && (
+            <Menu size="md" anchor={menu.anchor} close={menu.close}>
+              <MenuItem onClick={execDelete} icon={<FaIcon icon="trash" />}>
+                Delete
+              </MenuItem>
+            </Menu>
+          )}
+        </Column>
+      </Grid>
+    </ListItem>
   );
 };
 
@@ -93,49 +114,48 @@ const CourierLink = ({courierPath}) => {
   const snackbar = useSnackbar();
   const displayErrSnack = useCallback(
     (_status, err) => {
-      snackbar(
-        <Fragment>
-          <span>{err}</span>
-        </Fragment>,
-      );
+      snackbar(<SnackbarSurface>{err}</SnackbarSurface>);
     },
     [snackbar],
   );
 
-  const [formState, updateForm] = useForm({
+  const form = useForm({
     linkid: '',
     url: '',
     brandid: '',
   });
 
-  const [endPage, setEndPage] = useState(true);
-  const page = usePaginate(LIMIT, endPage);
+  const paginate = usePaginate(LINK_LIMIT);
 
-  const posthook = useCallback(
+  const setAtEnd = paginate.setAtEnd;
+  const posthookLinks = useCallback(
     (_status, links) => {
-      setEndPage(links.length < LIMIT);
+      setAtEnd(links.length < LINK_LIMIT);
     },
-    [setEndPage],
+    [setAtEnd],
   );
   const [links, reexecute] = useAuthResource(
     selectAPILinks,
-    [LIMIT, page.value],
+    [LINK_LIMIT, paginate.index],
     [],
-    {posthook},
+    {posthook: posthookLinks},
   );
 
+  const formAssign = form.assign;
   const posthookRefresh = useCallback(
     (_status, _data, opts) => {
+      formAssign({
+        linkid: '',
+        url: '',
+        brandid: '',
+      });
       reexecute(opts);
-      updateForm('linkid', '');
-      updateForm('url', '');
-      updateForm('brandid', '');
     },
-    [reexecute, updateForm],
+    [reexecute, formAssign],
   );
   const [create, execCreate] = useAuthCall(
     selectAPICreate,
-    [formState],
+    [form.state],
     {},
     {prehook: prehookValidate, posthook: posthookRefresh},
   );
@@ -148,71 +168,70 @@ const CourierLink = ({courierPath}) => {
   );
 
   const [brands] = useAuthResource(selectAPIBrands, [BRAND_LIMIT, 0], []);
-  const brandOptions = useMemo(() => {
-    const k = brands.data.map(({brandid}) => ({text: brandid, value: brandid}));
-    k.unshift({text: 'None', value: ''});
-    return k;
-  }, [brands]);
+  const brandOptions = useMemo(() => brands.data.map(({brandid}) => brandid), [
+    brands,
+  ]);
 
   return (
     <div>
-      <Section subsection sectionTitle="Add Link">
-        <Form
-          formState={formState}
-          onChange={updateForm}
-          onEnter={execCreate}
-          errCheck={formErrCheck}
-          validCheck={formValidCheck}
-        >
-          <Input
-            label="link id"
-            info="usage: /link/:linkid; (optional)"
-            name="linkid"
-          />
-          <Input label="link url" info="destination url" name="url" />
-          <Input
-            label="qr brand"
-            info="(optional)"
-            dropdown={brandOptions}
-            name="brandid"
-          />
-        </Form>
-        <Button onClick={execCreate}>Add Link</Button>
-        {create.err && <span>{create.err}</span>}
-        {brands.err && <span>{brands.err}</span>}
-      </Section>
-      {links.err && <span>{links.err}</span>}
-      <Section subsection sectionTitle="Links">
-        <Table
-          fullWidth
-          head={
-            <Fragment>
-              <th>shortlink</th>
-              <th>url</th>
-              <th>qr code</th>
-              <th>creation time</th>
-              <th></th>
-            </Fragment>
-          }
-        >
-          {links.data.map(({linkid, url, creation_time}) => (
-            <LinkRow
-              key={linkid}
-              courierPath={courierPath}
-              linkid={linkid}
-              url={url}
-              creation_time={creation_time}
-              posthook={posthookDelete}
-              errhook={displayErrSnack}
+      <h3>Shortlinks</h3>
+      <hr />
+      <Grid>
+        <Column fullWidth md={16}>
+          {links.err && <span>{links.err}</span>}
+          <ListGroup>
+            {links.data.map(({linkid, url, creation_time}) => (
+              <LinkRow
+                key={linkid}
+                courierPath={courierPath}
+                linkid={linkid}
+                url={url}
+                creation_time={creation_time}
+                posthookDelete={posthookDelete}
+                errhook={displayErrSnack}
+              />
+            ))}
+          </ListGroup>
+          <ButtonGroup>
+            <ButtonTertiary disabled={paginate.atFirst} onClick={paginate.prev}>
+              prev
+            </ButtonTertiary>
+            {paginate.page}
+            <ButtonTertiary disabled={paginate.atLast} onClick={paginate.next}>
+              next
+            </ButtonTertiary>
+          </ButtonGroup>
+        </Column>
+        <Column fullWidth md={8}>
+          <h4>Create new shortlink</h4>
+          <Form
+            formState={form.state}
+            onChange={form.update}
+            onSubmit={execCreate}
+            errCheck={formErrCheck}
+            validCheck={formValidCheck}
+          >
+            <Field
+              name="linkid"
+              label="Link ID (optional)"
+              hint={`format: ${courierPath}/${
+                form.state.linkid.length > 0 ? form.state.linkid : ':linkid'
+              }`}
             />
-          ))}
-        </Table>
-        <div>
-          <Button onClick={page.prev}>prev</Button>
-          {page.num}
-          <Button onClick={page.next}>next</Button>
-        </div>
-      </Section>
+            <Field name="url" label="Link URL" hint="destination" />
+            <FieldSuggest
+              name="brandid"
+              options={brandOptions}
+              label="QR Brand (optional)"
+            />
+          </Form>
+          <ButtonGroup>
+            <ButtonPrimary onClick={execCreate}>Create Link</ButtonPrimary>
+          </ButtonGroup>
+          {create.err && <span>{create.err}</span>}
+          {brands.err && <span>{brands.err}</span>}
+        </Column>
+      </Grid>
     </div>
   );
 };
