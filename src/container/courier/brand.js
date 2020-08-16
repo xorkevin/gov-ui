@@ -1,102 +1,123 @@
-import React, {Fragment, useState, useCallback} from 'react';
+import React, {useCallback} from 'react';
 import {useURL} from '@xorkevin/substation';
 import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
-  Section,
-  Table,
-  Button,
-  Time,
+  Grid,
+  Column,
+  ListGroup,
+  ListItem,
+  useMenu,
+  Menu,
+  MenuItem,
+  Field,
+  FieldFile,
+  Form,
+  useForm,
+  SnackbarSurface,
+  useSnackbar,
+  usePaginate,
+  Img,
+  ButtonGroup,
   Anchor,
   FaIcon,
-  Img,
-  Form,
-  Input,
-  useForm,
-  usePaginate,
-  useSnackbar,
+  Time,
 } from '@xorkevin/nuke';
+import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
+import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 
-const LIMIT = 32;
+const BRAND_LIMIT = 32;
 
 const selectAPIBrands = (api) => api.courier.brand.get;
 const selectAPICreate = (api) => api.courier.brand.create;
 const selectAPIDelete = (api) => api.courier.brand.id.del;
 const selectAPIImage = (api) => api.courier.brand.id.image;
 
-const BrandRow = ({brandid, creation_time, posthook, errhook}) => {
+const BrandRow = ({brandid, creation_time, posthookDelete, errhook}) => {
   const [_deleteState, execDelete] = useAuthCall(
     selectAPIDelete,
     [brandid],
     {},
-    {posthook, errhook},
+    {posthook: posthookDelete, errhook},
   );
   const imageURL = useURL(selectAPIImage, [brandid]);
 
+  const menu = useMenu();
+
   return (
-    <tr>
-      <td>{brandid}</td>
-      <td>
-        <Anchor ext href={imageURL}>
-          <Img rounded imgWidth={256} imgHeight={256} src={imageURL} />
-        </Anchor>
-      </td>
-      <td>
-        <Time value={creation_time * 1000} />
-      </td>
-      <td>
-        <Button text onClick={execDelete}>
-          Delete
-        </Button>
-      </td>
-    </tr>
+    <ListItem>
+      <Grid justify="space-between" align="center" nowrap>
+        <Column>
+          <h5>{brandid}</h5>
+          <p>
+            <Anchor ext href={imageURL}>
+              <Img rounded imgWidth={256} imgHeight={256} src={imageURL} />
+            </Anchor>
+          </p>
+          <div>
+            Created <Time value={creation_time * 1000} />
+          </div>
+        </Column>
+        <Column shrink="0">
+          <ButtonTertiary forwardedRef={menu.anchorRef} onClick={menu.toggle}>
+            <FaIcon icon="ellipsis-v" />
+          </ButtonTertiary>
+          {menu.show && (
+            <Menu size="md" anchor={menu.anchor} close={menu.close}>
+              <MenuItem onClick={execDelete} icon={<FaIcon icon="trash" />}>
+                Delete
+              </MenuItem>
+            </Menu>
+          )}
+        </Column>
+      </Grid>
+    </ListItem>
   );
 };
 
 const CourierBrand = () => {
   const snackbar = useSnackbar();
   const displayErrSnack = useCallback(
-    (_stage, err) => {
-      snackbar(
-        <Fragment>
-          <span>Failed to delete brand: {err}</span>
-        </Fragment>,
-      );
+    (_deleteState, err) => {
+      snackbar(<SnackbarSurface>{err}</SnackbarSurface>);
     },
     [snackbar],
   );
 
-  const [formState, updateForm] = useForm({
+  const form = useForm({
     brandid: '',
     image: undefined,
   });
 
-  const [endPage, setEndPage] = useState(true);
-  const page = usePaginate(LIMIT, endPage);
+  const paginate = usePaginate(BRAND_LIMIT);
 
-  const posthook = useCallback(
+  const setAtEnd = paginate.setAtEnd;
+  const posthookBrands = useCallback(
     (_status, brands) => {
-      setEndPage(brands.length < LIMIT);
+      setAtEnd(brands.length < BRAND_LIMIT);
     },
-    [setEndPage],
+    [setAtEnd],
   );
   const [brands, reexecute] = useAuthResource(
     selectAPIBrands,
-    [LIMIT, page.value],
+    [BRAND_LIMIT, paginate.index],
     [],
-    {posthook},
+    {posthook: posthookBrands},
   );
 
+  const formAssign = form.assign;
   const posthookRefresh = useCallback(
     (_status, _data, opts) => {
+      formAssign({
+        brandid: '',
+        image: undefined,
+      });
       reexecute(opts);
-      updateForm('brandid', '');
-      updateForm('url', undefined);
     },
-    [reexecute, updateForm],
+    [reexecute, formAssign],
   );
   const [create, execCreate] = useAuthCall(
     selectAPICreate,
-    [formState],
+    [form.state],
     {},
     {posthook: posthookRefresh},
   );
@@ -110,54 +131,61 @@ const CourierBrand = () => {
 
   return (
     <div>
-      <Section subsection sectionTitle="Add Brand">
-        <Form formState={formState} onChange={updateForm} onEnter={execCreate}>
-          <Input label="brand id" name="brandid" />
-          <Input
-            type="file"
-            accept="image/*"
-            capture="environment"
-            label="brand image"
-            name="image"
-          />
-        </Form>
-        <Button onClick={execCreate}>Add Brand</Button>
-        {create.loading && (
-          <Fragment>
-            <FaIcon icon="cloud-upload" /> Uploading
-          </Fragment>
-        )}
-        {create.err && <span>{create.err}</span>}
-      </Section>
-      {brands.err && <span>{brands.err}</span>}
-      <Section subsection sectionTitle="Brands">
-        <Table
-          fullWidth
-          head={
-            <Fragment>
-              <th>brand id</th>
-              <th>image</th>
-              <th>creation time</th>
-              <th></th>
-            </Fragment>
-          }
-        >
-          {brands.data.map(({brandid, creation_time}) => (
-            <BrandRow
-              key={brandid}
-              brandid={brandid}
-              creation_time={creation_time}
-              posthook={posthookDelete}
-              errhook={displayErrSnack}
-            />
-          ))}
-        </Table>
-        <div>
-          <Button onClick={page.prev}>prev</Button>
-          {page.num}
-          <Button onClick={page.next}>next</Button>
-        </div>
-      </Section>
+      <h3>Brands</h3>
+      <hr />
+      <Grid>
+        <Column fullWidth md={16}>
+          <ListGroup>
+            {brands.data.map(({brandid, creation_time}) => (
+              <BrandRow
+                key={brandid}
+                brandid={brandid}
+                creation_time={creation_time}
+                posthookDelete={posthookDelete}
+                errhook={displayErrSnack}
+              />
+            ))}
+          </ListGroup>
+          <ButtonGroup>
+            <ButtonTertiary disabled={paginate.atFirst} onClick={paginate.prev}>
+              prev
+            </ButtonTertiary>
+            {paginate.page}
+            <ButtonTertiary disabled={paginate.atLast} onClick={paginate.next}>
+              next
+            </ButtonTertiary>
+          </ButtonGroup>
+          {brands.err && <p>{brands.err}</p>}
+        </Column>
+        <Column fullWidth md={8}>
+          <h4>Create new brand</h4>
+          <Form
+            formState={form.state}
+            onChange={form.update}
+            onSubmit={execCreate}
+          >
+            <Field name="brandid" label="Brand ID" nohint />
+            <FieldFile
+              name="image"
+              hint="Choose an image"
+              accept="image/jpeg, image/png"
+              onChange={form.update}
+              fullWidth
+            >
+              <ButtonTertiary>Choose</ButtonTertiary>
+            </FieldFile>
+          </Form>
+          <ButtonGroup>
+            <ButtonPrimary onClick={execCreate}>Add Brand</ButtonPrimary>
+          </ButtonGroup>
+          {create.loading && (
+            <p>
+              <FaIcon icon="cloud-upload" /> Uploading
+            </p>
+          )}
+          {create.err && <p>{create.err}</p>}
+        </Column>
+      </Grid>
     </div>
   );
 };

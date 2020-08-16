@@ -81,13 +81,12 @@ const LinkRow = ({
               {url}
             </Anchor>
           </h5>
-          <p>
-            <Anchor ext href={courierPath + '/' + linkid}>
-              {courierPath + '/' + linkid}
-            </Anchor>
-          </p>
+          <Field value={`${courierPath}/${linkid}`} nohint />
           <div>
-            <Anchor ext href={courierPath + '/' + linkid + '/image'}>
+            <Anchor ext href={`${courierPath}/${linkid}`}>
+              <FaIcon icon="link fa-lg" />
+            </Anchor>{' '}
+            <Anchor ext href={`${courierPath}/${linkid}/image`}>
               <FaIcon icon="qrcode fa-lg" />
             </Anchor>{' '}
             Created <Time value={creation_time * 1000} />
@@ -178,7 +177,6 @@ const CourierLink = ({courierPath}) => {
       <hr />
       <Grid>
         <Column fullWidth md={16}>
-          {links.err && <span>{links.err}</span>}
           <ListGroup>
             {links.data.map(({linkid, url, creation_time}) => (
               <LinkRow
@@ -201,6 +199,7 @@ const CourierLink = ({courierPath}) => {
               next
             </ButtonTertiary>
           </ButtonGroup>
+          {links.err && <p>{links.err}</p>}
         </Column>
         <Column fullWidth md={8}>
           <h4>Create new shortlink</h4>
@@ -228,8 +227,8 @@ const CourierLink = ({courierPath}) => {
           <ButtonGroup>
             <ButtonPrimary onClick={execCreate}>Create Link</ButtonPrimary>
           </ButtonGroup>
-          {create.err && <span>{create.err}</span>}
-          {brands.err && <span>{brands.err}</span>}
+          {create.err && <p>{create.err}</p>}
+          {brands.err && <p>{brands.err}</p>}
         </Column>
       </Grid>
     </div>
