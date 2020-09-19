@@ -67,7 +67,7 @@ const FallbackView = (
 );
 
 const GovContextValue = Object.freeze({
-  userApprovals: true,
+  userApprovals: false,
   // eslint-disable-next-line no-undef
   courierPath: COURIERBASE_URL,
 });
