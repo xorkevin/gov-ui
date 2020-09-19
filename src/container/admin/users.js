@@ -85,13 +85,13 @@ const UserDetails = ({user, reexecute, back}) => {
   );
 
   const {roleIntersect} = useContext(AuthCtx);
-  const {authTags} = useAuthValue();
+  const {roles} = useAuthValue();
   const allPermissions = useMemo(() => {
-    if (authTags.includes('admin')) {
+    if (roles.includes('admin')) {
       return roleIntersect.slice().sort();
     }
-    return authTags.filter((i) => i !== 'user');
-  }, [roleIntersect, authTags]);
+    return roles.filter((i) => i !== 'user');
+  }, [roleIntersect, roles]);
 
   return (
     <Fragment>
@@ -135,7 +135,7 @@ const UserDetails = ({user, reexecute, back}) => {
           <h5>Username</h5>
           <div>{user.data.username}</div>
           <h5>Current Roles</h5>
-          {user.data.auth_tags.map((tag) => (
+          {user.data.roles.map((tag) => (
             <Chip key={tag}>{tag}</Chip>
           ))}
           <p>
@@ -164,7 +164,7 @@ const Users = () => {
       username: '',
       first_name: '',
       last_name: '',
-      auth_tags: [],
+      roles: [],
       creation_time: 0,
     },
   );

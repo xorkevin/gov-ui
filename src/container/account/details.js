@@ -224,7 +224,7 @@ const AccountDetails = ({showProfile}) => {
     last_name,
     email,
     creation_time,
-    authTags,
+    roles,
   } = useAuthValue();
 
   const form = useForm({
@@ -306,8 +306,8 @@ const AccountDetails = ({showProfile}) => {
           <h5>Email</h5>
           <span>{email}</span>
           <h5>Roles</h5>
-          {authTags.map((tag) => (
-            <Chip key={tag}>{tag}</Chip>
+          {roles.map((role) => (
+            <Chip key={role}>{role}</Chip>
           ))}
           <p>
             Created <Time value={creation_time * 1000} />
