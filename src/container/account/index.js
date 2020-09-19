@@ -19,7 +19,13 @@ import EmailConfirmContainer from './emailconfirm';
 
 import DevApikeyContainer from './developer/apikey';
 
-const Account = ({showProfile, parsePlatform}) => {
+const Account = ({
+  showProfile,
+  parsePlatform,
+  allScopes,
+  allScopeDesc,
+  rolesToScopes,
+}) => {
   const match = useRouteMatch();
 
   return (
@@ -72,7 +78,11 @@ const Account = ({showProfile, parsePlatform}) => {
                   />
                 </Route>
                 <Route path={`${match.path}/dev/apikey`}>
-                  <DevApikeyContainer />
+                  <DevApikeyContainer
+                    allScopes={allScopes}
+                    allScopeDesc={allScopeDesc}
+                    rolesToScopes={rolesToScopes}
+                  />
                 </Route>
                 <Redirect to={`${match.path}/account`} />
               </Switch>

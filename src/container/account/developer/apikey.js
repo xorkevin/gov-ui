@@ -1,4 +1,4 @@
-import React, {Fragment, useState, useCallback} from 'react';
+import React, {Fragment, useState, useCallback, useMemo} from 'react';
 import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
   Container,
@@ -52,12 +52,13 @@ const ApikeyRow = ({
   name,
   desc,
   keyid,
-  auth_tags,
+  scope,
   time,
   posthookDel,
   posthookUpd,
   errhook,
-  allPermissions,
+  scopeOptions,
+  allScopeDesc,
 }) => {
   const [_deleteState, execDelete] = useAuthCall(
     selectAPIDelete,
@@ -69,7 +70,7 @@ const ApikeyRow = ({
   const form = useForm({
     name: '',
     desc: '',
-    auth_tags: [],
+    scope: [],
   });
   const [mode, setMode] = useState(MODE_BASE);
   const updateSuccess = useCallback(
@@ -81,7 +82,7 @@ const ApikeyRow = ({
   );
   const [_updateState, execUpdate] = useAuthCall(
     selectAPIUpdate,
-    [keyid, form.state.name, form.state.desc, form.state.auth_tags.join(',')],
+    [keyid, form.state.name, form.state.desc, form.state.scope.join(' ')],
     {},
     {posthook: updateSuccess, errhook},
   );
@@ -91,10 +92,10 @@ const ApikeyRow = ({
     formAssign({
       name,
       desc,
-      auth_tags: auth_tags.split(','),
+      scope: scope.split(' ').filter((s) => s.length > 0),
     });
     setMode(MODE_EDIT);
-  }, [name, desc, auth_tags, formAssign, setMode]);
+  }, [name, desc, scope, formAssign, setMode]);
 
   const cancelEdit = useCallback(() => setMode(MODE_BASE), [setMode]);
 
@@ -122,11 +123,6 @@ const ApikeyRow = ({
                 {desc}
               </h5>
               <div>
-                {auth_tags.split(',').map((tag) => (
-                  <Chip key={tag}>{tag}</Chip>
-                ))}
-              </div>
-              <p>
                 <div>
                   ID: <code>{keyid}</code>
                 </div>
@@ -136,7 +132,17 @@ const ApikeyRow = ({
                     &bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;
                   </Tooltip>
                 </div>
-              </p>
+              </div>
+              <div>
+                {scope
+                  .split(' ')
+                  .filter((s) => s.length > 0)
+                  .map((s) => (
+                    <Chip key={s}>
+                      <Tooltip tooltip={allScopeDesc[s]}>{s}</Tooltip>
+                    </Chip>
+                  ))}
+              </div>
               <p>
                 Created <Time value={time * 1000} />
               </p>
@@ -175,9 +181,9 @@ const ApikeyRow = ({
             <Field name="name" label="Name" nohint />
             <Field name="desc" label="Description (optional)" nohint />
             <FieldMultiSelect
-              name="auth_tags"
+              name="scope"
               label="Permissions"
-              options={allPermissions}
+              options={scopeOptions}
               nohint
             />
           </Form>
@@ -225,7 +231,7 @@ const CheckKey = () => {
   const form = useForm({
     keyid: '',
     key: '',
-    auth_tags: '',
+    scope: '',
   });
 
   const formAssign = form.assign;
@@ -233,12 +239,12 @@ const CheckKey = () => {
     formAssign({
       keyid: '',
       key: '',
-      auth_tags: '',
+      scope: '',
     });
   }, [formAssign]);
   const [_checkKey, execCheckKey] = useAuthCall(
     selectAPICheckKey,
-    [form.state.keyid, form.state.key, form.state.auth_tags],
+    [form.state.keyid, form.state.key, form.state.scope],
     {},
     {posthook: displaySnackbar, errhook: displayErrSnack},
   );
@@ -261,7 +267,7 @@ const CheckKey = () => {
           >
             <Field name="keyid" label="Key ID" nohint fullWidth />
             <Field name="key" label="Key" nohint fullWidth />
-            <Field name="auth_tags" label="Roles" nohint fullWidth />
+            <Field name="scope" label="Scopes" nohint fullWidth />
           </Form>
           <ButtonGroup>
             <ButtonTertiary onClick={clearForm}>Clear</ButtonTertiary>
@@ -273,7 +279,7 @@ const CheckKey = () => {
   );
 };
 
-const Apikeys = () => {
+const Apikeys = ({allScopes, allScopeDesc, rolesToScopes}) => {
   const displaySnackbarDel = useSnackbarView(
     <SnackbarSurface>
       <FaIcon icon="trash" /> API key deleted
@@ -309,7 +315,7 @@ const Apikeys = () => {
   const form = useForm({
     name: '',
     desc: '',
-    auth_tags: [],
+    scope: [],
   });
 
   const formAssign = form.assign;
@@ -318,7 +324,7 @@ const Apikeys = () => {
       formAssign({
         name: '',
         desc: '',
-        auth_tags: [],
+        scope: [],
       });
       reexecute(opts);
     },
@@ -326,7 +332,7 @@ const Apikeys = () => {
   );
   const [create, execCreate] = useAuthCall(
     selectAPICreate,
-    [form.state.name, form.state.desc, form.state.auth_tags.join(',')],
+    [form.state.name, form.state.desc, form.state.scope.join(' ')],
     {},
     {posthook: posthookCreate},
   );
@@ -347,7 +353,11 @@ const Apikeys = () => {
     [reexecute, displaySnackbarUpd],
   );
 
-  const {authTags} = useAuthValue();
+  const {roles} = useAuthValue();
+  const scopeOptions = useMemo(() => {
+    const scopeSet = new Set(roles.flatMap((role) => rolesToScopes[role]));
+    return allScopes.filter((i) => scopeSet.has(i));
+  }, [allScopes, rolesToScopes, roles]);
 
   return (
     <div>
@@ -356,18 +366,19 @@ const Apikeys = () => {
       <Grid>
         <Column fullWidth md={16}>
           <ListGroup>
-            {apikeys.data.map(({name, desc, keyid, auth_tags, time}) => (
+            {apikeys.data.map(({name, desc, keyid, scope, time}) => (
               <ApikeyRow
                 key={keyid}
                 keyid={keyid}
                 name={name}
                 desc={desc}
-                auth_tags={auth_tags}
+                scope={scope}
                 time={time}
                 posthookDel={posthookDelete}
                 posthookUpd={posthookUpdate}
                 errhook={displayErrSnack}
-                allPermissions={authTags}
+                scopeOptions={scopeOptions}
+                allScopeDesc={allScopeDesc}
               />
             ))}
           </ListGroup>
@@ -397,9 +408,9 @@ const Apikeys = () => {
               fullWidth
             />
             <FieldMultiSelect
-              name="auth_tags"
-              label="Permissions"
-              options={authTags}
+              name="scope"
+              label="Scopes"
+              options={scopeOptions}
               nohint
               fullWidth
             />
@@ -412,12 +423,12 @@ const Apikeys = () => {
             <div>
               <h4>Success! API Key Created</h4>
               {API_KEY_MESSAGE}
-              <p>
+              <div>
                 <h5>Key ID</h5>
                 <code>{create.data.keyid}</code>
                 <h5>Secret</h5>
                 <code>{create.data.key}</code>
-              </p>
+              </div>
             </div>
           )}
         </Column>

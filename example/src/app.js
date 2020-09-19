@@ -32,7 +32,7 @@ import AnchorSecondary from '@xorkevin/nuke/src/component/anchor/secondary';
 import Img from '@xorkevin/nuke/src/component/image/circle';
 import platform from 'platform';
 
-import {modRoles} from 'roles';
+import {modRoles, allScopes, allScopeDesc, rolesToScopes} from 'roles';
 
 const DashContainer = Protected(lazy(() => import('dash')));
 const LoginContainer = AntiProtected(
@@ -202,7 +202,13 @@ const App = () => {
             <LoginContainer userApprovals={GovContextValue.userApprovals} />
           </Route>
           <Route path="/a">
-            <AccountContainer showProfile parsePlatform={parsePlatform} />
+            <AccountContainer
+              showProfile
+              parsePlatform={parsePlatform}
+              allScopes={allScopes}
+              allScopeDesc={allScopeDesc}
+              rolesToScopes={rolesToScopes}
+            />
           </Route>
           <Route path="/u">
             <UserContainer />
