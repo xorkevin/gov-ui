@@ -18,6 +18,11 @@ $color-success-light: lighten($color-success, 12.5%);
   }
 }
 
+.oauth-app-logo {
+  max-width: 128px;
+  margin: auto;
+}
+
 .courier-link-item-name {
   min-width: 0;
 }

@@ -12,6 +12,7 @@ import {
   FaIcon,
 } from '@xorkevin/nuke';
 
+import OAuthAppContainer from './oauth';
 import UsersContainer from './users';
 import ApprovalsContainer from './approvals';
 
@@ -40,6 +41,14 @@ const Admin = () => {
                 >
                   Approvals
                 </SidebarItem>
+                <SidebarHeader>Integrations</SidebarHeader>
+                <SidebarItem
+                  link={`${match.path}/oauth`}
+                  local
+                  icon={<FaIcon icon="openid" />}
+                >
+                  OAuth
+                </SidebarItem>
               </Sidebar>
             </Column>
             <Column fullWidth md={18}>
@@ -49,6 +58,9 @@ const Admin = () => {
                 </Route>
                 <Route path={`${match.path}/approvals`}>
                   <ApprovalsContainer />
+                </Route>
+                <Route path={`${match.path}/oauth`}>
+                  <OAuthAppContainer />
                 </Route>
                 <Redirect to={`${match.path}/users`} />
               </Switch>

@@ -16,7 +16,6 @@ import {
   SnackbarSurface,
   useSnackbar,
   usePaginate,
-  Img,
   ButtonGroup,
   Anchor,
   FaIcon,
@@ -24,6 +23,7 @@ import {
 } from '@xorkevin/nuke';
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
+import Img from '@xorkevin/nuke/src/component/image/rounded';
 
 const BRAND_LIMIT = 32;
 
@@ -50,7 +50,7 @@ const BrandRow = ({brandid, creation_time, posthookDelete, errhook}) => {
           <h5>{brandid}</h5>
           <p>
             <Anchor ext href={imageURL}>
-              <Img rounded imgWidth={256} imgHeight={256} src={imageURL} />
+              <Img src={imageURL} ratio={1} />
             </Anchor>
           </p>
           <div>
