@@ -103,43 +103,54 @@ const Approvals = () => {
       <h3>Approvals</h3>
       <hr />
       {approvals.err && <p>{approvals.err}</p>}
-      <Table
-        head={
-          <Fragment>
-            <th>Userid</th>
-            <th>Username</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Creation time</th>
-            <th></th>
-          </Fragment>
-        }
-      >
-        {approvals.data.map(
-          ({userid, username, email, first_name, last_name, creation_time}) => (
-            <ApprovalsRow
-              key={userid}
-              userid={userid}
-              username={username}
-              email={email}
-              first_name={first_name}
-              last_name={last_name}
-              creation_time={creation_time}
-              posthook={reexecute}
-              errhook={displayErrSnack}
-            />
-          ),
-        )}
-      </Table>
-      <ButtonGroup>
-        <ButtonTertiary disabled={paginate.atFirst} onClick={paginate.prev}>
-          prev
-        </ButtonTertiary>
-        {paginate.page}
-        <ButtonTertiary disabled={paginate.atLast} onClick={paginate.next}>
-          next
-        </ButtonTertiary>
-      </ButtonGroup>
+      {approvals.success && (
+        <Fragment>
+          <Table
+            head={
+              <Fragment>
+                <th>Userid</th>
+                <th>Username</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Creation time</th>
+                <th></th>
+              </Fragment>
+            }
+          >
+            {approvals.data.map(
+              ({
+                userid,
+                username,
+                email,
+                first_name,
+                last_name,
+                creation_time,
+              }) => (
+                <ApprovalsRow
+                  key={userid}
+                  userid={userid}
+                  username={username}
+                  email={email}
+                  first_name={first_name}
+                  last_name={last_name}
+                  creation_time={creation_time}
+                  posthook={reexecute}
+                  errhook={displayErrSnack}
+                />
+              ),
+            )}
+          </Table>
+          <ButtonGroup>
+            <ButtonTertiary disabled={paginate.atFirst} onClick={paginate.prev}>
+              prev
+            </ButtonTertiary>
+            {paginate.page}
+            <ButtonTertiary disabled={paginate.atLast} onClick={paginate.next}>
+              next
+            </ButtonTertiary>
+          </ButtonGroup>
+        </Fragment>
+      )}
     </div>
   );
 };
