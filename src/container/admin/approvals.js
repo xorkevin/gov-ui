@@ -27,6 +27,8 @@ const ApprovalsRow = ({
   first_name,
   last_name,
   creation_time,
+  approved,
+  code_time,
   posthook,
   errhook,
 }) => {
@@ -53,6 +55,15 @@ const ApprovalsRow = ({
       <td>{email}</td>
       <td>
         <Time value={creation_time * 1000} />
+      </td>
+      <td>
+        {approved ? (
+          <Fragment>
+            Yes, <Time value={code_time * 1000} />
+          </Fragment>
+        ) : (
+          'No'
+        )}
       </td>
       <td>
         <ButtonTertiary forwardedRef={menu.anchorRef} onClick={menu.toggle}>
@@ -113,6 +124,7 @@ const Approvals = () => {
                 <th>Name</th>
                 <th>Email</th>
                 <th>Creation time</th>
+                <th>Approved</th>
                 <th></th>
               </Fragment>
             }
@@ -125,6 +137,8 @@ const Approvals = () => {
                 first_name,
                 last_name,
                 creation_time,
+                approved,
+                code_time,
               }) => (
                 <ApprovalsRow
                   key={userid}
@@ -134,6 +148,8 @@ const Approvals = () => {
                   first_name={first_name}
                   last_name={last_name}
                   creation_time={creation_time}
+                  approved={approved}
+                  code_time={code_time}
                   posthook={reexecute}
                   errhook={displayErrSnack}
                 />
