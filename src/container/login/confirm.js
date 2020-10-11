@@ -21,12 +21,12 @@ const selectAPIConfirmAccount = (api) => api.u.user.create.confirm;
 const ConfirmAccount = ({pathLogin}) => {
   const {search} = useLocation();
   const form = useForm({
-    email: decodeURIComponent(getSearchParams(search).get('email') || ''),
+    userid: decodeURIComponent(getSearchParams(search).get('userid') || ''),
     key: decodeURIComponent(getSearchParams(search).get('key') || ''),
   });
 
   const [confirmAcct, execConfirm] = useAPICall(selectAPIConfirmAccount, [
-    form.state.email,
+    form.state.userid,
     form.state.key,
   ]);
 
@@ -65,7 +65,7 @@ const ConfirmAccount = ({pathLogin}) => {
                 onChange={form.update}
                 onEnter={execConfirm}
               >
-                <Field name="email" label="Email" fullWidth />
+                <Field name="userid" label="Userid" fullWidth />
                 <Field name="key" label="Code" fullWidth />
               </Form>
               {confirmAcct.err && <span>{confirmAcct.err}</span>}

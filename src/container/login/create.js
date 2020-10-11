@@ -118,8 +118,8 @@ const CreateAccount = ({pathLogin, pathConfirm, userApprovals}) => {
                     </Link>
                   ) : (
                     <Link
-                      to={`${pathConfirm}?email=${encodeURIComponent(
-                        form.state.email,
+                      to={`${pathConfirm}?userid=${encodeURIComponent(
+                        create.data.userid,
                       )}`}
                     >
                       <ButtonSecondary>Confirm</ButtonSecondary>
