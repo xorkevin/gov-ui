@@ -72,37 +72,21 @@ const createConfig = (env, argv) => {
         },
         {
           test: /\.(ttf|otf|woff|woff2|svg|eot)/,
-          use: {
-            loader: 'file-loader',
-            options: {
-              name: '[name].[contenthash].[ext]',
-              outputPath: 'static/fonts/',
-            },
+          type: 'asset/resource',
+          generator: {
+            filename: 'static/fonts/[name].[contenthash][ext]',
           },
         },
       ],
     },
 
     optimization: {
-      moduleIds: 'hashed',
+      moduleIds: 'deterministic',
       runtimeChunk: 'single',
       splitChunks: {
         chunks: 'all',
-        cacheGroups: {
-          vendor: {
-            test: /node_modules/,
-            name: 'vendors',
-            chunks: 'all',
-          },
-        },
       },
-      minimizer: [
-        new TerserPlugin({
-          cache: true,
-          parallel: true,
-          sourceMap: false,
-        }),
-      ],
+      minimizer: [new TerserPlugin()],
     },
 
     plugins: [
