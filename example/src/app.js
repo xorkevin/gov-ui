@@ -46,11 +46,10 @@ const UserContainer = Protected(
 );
 const AdminContainer = Protected(
   lazy(() => import('@xorkevin/gov-ui/src/container/admin')),
-  modRoles.concat(['usr_user']),
+  modRoles.concat(['usr.gov.user']),
 );
 const CourierContainer = Protected(
   lazy(() => import('@xorkevin/gov-ui/src/container/courier')),
-  ['admin', 'usr_courier'],
 );
 const SetupContainer = lazy(() =>
   import('@xorkevin/gov-ui/src/container/setup'),

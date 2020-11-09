@@ -1,17 +1,15 @@
 const allRoles = Object.freeze([
   'user',
   'admin',
-  'usr_user',
-  'mod_user',
-  'usr_oauth',
-  'mod_oauth',
-  'usr_courier',
-  'mod_courier',
+  'usr.gov.user',
+  'mod.gov.user',
+  'usr.gov.oauth',
+  'mod.gov.oauth',
 ]);
 
 const permissionedRoles = Object.freeze(allRoles.filter((i) => i !== 'user'));
 
-const usrRegex = /^usr_/;
+const usrRegex = /^usr\./;
 const modRoles = Object.freeze(
   permissionedRoles.filter((i) => !usrRegex.test(i)),
 );
@@ -59,7 +57,7 @@ const allScopeDesc = Object.freeze({
   'gov.user.apikey:write': 'Edit api keys',
   // user.admin
   'gov.user.admin:read': 'Read all users',
-  'gov.user.admin:write': 'Edit user roles',
+  'gov.user.admin:write': 'Edit orgs and user roles',
   // user.approval
   'gov.user.approval:read': 'Read new user requests',
   'gov.user.approval:write': 'Delete new user requests',
@@ -88,39 +86,27 @@ const rolesToScopes = Object.freeze({
     // user.apikey
     'gov.user.apikey:read',
     'gov.user.apikey:write',
+    // user.admin
+    'gov.user.admin:write',
     // profile
     'gov.profile:read',
     'gov.profile:write',
-  ]),
-  admin: allScopes,
-  usr_user: Object.freeze([
-    // user.approval
-    'gov.user.approval:read',
-    'gov.user.approval:write',
-  ]),
-  mod_user: Object.freeze([
-    // user.admin
-    'gov.user.admin:write',
-  ]),
-  usr_oauth: Object.freeze([
-    // user.oauth
-    'gov.user.oauth.app:read',
-    'gov.user.oauth.app:write',
-  ]),
-  mod_oauth: Object.freeze([
-    // user.admin
-    'gov.user.admin:write',
-  ]),
-  usr_courier: Object.freeze([
     // courier
     'gov.courier.link:read',
     'gov.courier.link:write',
     'gov.courier.brand:read',
     'gov.courier.brand:write',
   ]),
-  mod_courier: Object.freeze([
-    // user.admin
-    'gov.user.admin:write',
+  admin: allScopes,
+  'usr.gov.user': Object.freeze([
+    // user.approval
+    'gov.user.approval:read',
+    'gov.user.approval:write',
+  ]),
+  'usr.gov.oauth': Object.freeze([
+    // user.oauth
+    'gov.user.oauth.app:read',
+    'gov.user.oauth.app:write',
   ]),
 });
 
