@@ -14,12 +14,12 @@ export default {
         err: 'Unable to get links',
       },
       id: {
-        url: '/id/{0}',
+        url: '/c/{0}/id/{1}',
         children: {
           del: {
             url: '',
             method: 'DELETE',
-            transformer: (linkid) => [[linkid], null],
+            transformer: (creatorid, linkid) => [[creatorid, linkid], null],
             expectdata: false,
             err: 'Unable to delete link',
           },

@@ -57,6 +57,7 @@ const prehookValidate = ([form]) => {
 
 const LinkRow = ({
   courierPath,
+  creatorid,
   linkid,
   url,
   creation_time,
@@ -65,7 +66,7 @@ const LinkRow = ({
 }) => {
   const [_deleteState, execDelete] = useAuthCall(
     selectAPIDelete,
-    [linkid],
+    [creatorid, linkid],
     {},
     {posthook: posthookDelete, errhook},
   );
@@ -188,6 +189,7 @@ const CourierLink = ({courierPath}) => {
               <LinkRow
                 key={linkid}
                 courierPath={courierPath}
+                creatorid={userid}
                 linkid={linkid}
                 url={url}
                 creation_time={creation_time}
