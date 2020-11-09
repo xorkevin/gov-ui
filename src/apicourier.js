@@ -3,15 +3,18 @@ export default {
     url: '/link',
     children: {
       get: {
-        url: '?amount={0}&offset={1}',
+        url: '/c/{0}?amount={1}&offset={2}',
         method: 'GET',
-        transformer: (amount, offset) => [[amount, offset], null],
+        transformer: (creatorid, amount, offset) => [
+          [creatorid, amount, offset],
+          null,
+        ],
         expectdata: true,
         selector: (_status, data) => data.links,
         err: 'Unable to get links',
       },
       id: {
-        url: '/{0}',
+        url: '/id/{0}',
         children: {
           del: {
             url: '',
@@ -23,7 +26,8 @@ export default {
         },
       },
       create: {
-        url: '',
+        url: '/c/{0}',
+        transformer: (creatorid, link) => [[creatorid], link],
         method: 'POST',
         expectdata: false,
         err: 'Unable to create link',
@@ -34,15 +38,18 @@ export default {
     url: '/brand',
     children: {
       get: {
-        url: '?amount={0}&offset={1}',
+        url: '/c/{0}?amount={1}&offset={2}',
         method: 'GET',
-        transformer: (amount, offset) => [[amount, offset], null],
+        transformer: (creatorid, amount, offset) => [
+          [creatorid, amount, offset],
+          null,
+        ],
         expectdata: true,
         selector: (_status, data) => data.brands,
         err: 'Unable to get brands',
       },
       id: {
-        url: '/{0}',
+        url: '/c/{0}/id/{1}',
         children: {
           image: {
             url: '/image',
@@ -50,20 +57,20 @@ export default {
           del: {
             url: '',
             method: 'DELETE',
-            transformer: (brandid) => [[brandid], null],
+            transformer: (creatorid, brandid) => [[creatorid, brandid], null],
             expectdata: false,
             err: 'Unable to delete brand',
           },
         },
       },
       create: {
-        url: '',
+        url: '/c/{0}',
         method: 'POST',
-        transformer: ({brandid, image}) => {
+        transformer: (creatorid, {brandid, image}) => {
           const formData = new FormData();
           formData.set('brandid', brandid);
           formData.set('image', image);
-          return [null, formData];
+          return [[creatorid], formData];
         },
         expectdata: false,
         err: 'Unable to create brand',

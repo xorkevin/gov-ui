@@ -1,6 +1,6 @@
 import React, {useCallback, useMemo} from 'react';
 import {isValidURL} from '../../utility';
-import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
+import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
   Grid,
   Column,
@@ -118,6 +118,8 @@ const CourierLink = ({courierPath}) => {
     [snackbar],
   );
 
+  const {userid} = useAuthValue();
+
   const form = useForm({
     linkid: '',
     url: '',
@@ -135,7 +137,7 @@ const CourierLink = ({courierPath}) => {
   );
   const [links, reexecute] = useAuthResource(
     selectAPILinks,
-    [LINK_LIMIT, paginate.index],
+    [userid, LINK_LIMIT, paginate.index],
     [],
     {posthook: posthookLinks},
   );
@@ -154,7 +156,7 @@ const CourierLink = ({courierPath}) => {
   );
   const [create, execCreate] = useAuthCall(
     selectAPICreate,
-    [form.state],
+    [userid, form.state],
     {},
     {prehook: prehookValidate, posthook: posthookRefresh},
   );
@@ -166,7 +168,11 @@ const CourierLink = ({courierPath}) => {
     [reexecute],
   );
 
-  const [brands] = useAuthResource(selectAPIBrands, [BRAND_LIMIT, 0], []);
+  const [brands] = useAuthResource(
+    selectAPIBrands,
+    [userid, BRAND_LIMIT, 0],
+    [],
+  );
   const brandOptions = useMemo(() => brands.data.map(({brandid}) => brandid), [
     brands,
   ]);

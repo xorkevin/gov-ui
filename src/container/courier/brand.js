@@ -1,6 +1,6 @@
 import React, {useCallback} from 'react';
 import {useURL} from '@xorkevin/substation';
-import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
+import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
   Grid,
   Column,
@@ -32,14 +32,20 @@ const selectAPICreate = (api) => api.courier.brand.create;
 const selectAPIDelete = (api) => api.courier.brand.id.del;
 const selectAPIImage = (api) => api.courier.brand.id.image;
 
-const BrandRow = ({brandid, creation_time, posthookDelete, errhook}) => {
+const BrandRow = ({
+  creatorid,
+  brandid,
+  creation_time,
+  posthookDelete,
+  errhook,
+}) => {
   const [_deleteState, execDelete] = useAuthCall(
     selectAPIDelete,
-    [brandid],
+    [creatorid, brandid],
     {},
     {posthook: posthookDelete, errhook},
   );
-  const imageURL = useURL(selectAPIImage, [brandid]);
+  const imageURL = useURL(selectAPIImage, [creatorid, brandid]);
 
   const menu = useMenu();
 
@@ -83,6 +89,8 @@ const CourierBrand = () => {
     [snackbar],
   );
 
+  const {userid} = useAuthValue();
+
   const form = useForm({
     brandid: '',
     image: undefined,
@@ -99,7 +107,7 @@ const CourierBrand = () => {
   );
   const [brands, reexecute] = useAuthResource(
     selectAPIBrands,
-    [BRAND_LIMIT, paginate.index],
+    [userid, BRAND_LIMIT, paginate.index],
     [],
     {posthook: posthookBrands},
   );
@@ -117,7 +125,7 @@ const CourierBrand = () => {
   );
   const [create, execCreate] = useAuthCall(
     selectAPICreate,
-    [form.state],
+    [userid, form.state],
     {},
     {posthook: posthookRefresh},
   );
@@ -139,6 +147,7 @@ const CourierBrand = () => {
             {brands.data.map(({brandid, creation_time}) => (
               <BrandRow
                 key={brandid}
+                creatorid={userid}
                 brandid={brandid}
                 creation_time={creation_time}
                 posthookDelete={posthookDelete}
