@@ -33,8 +33,6 @@ const esModules = [
   '@xorkevin/nuke',
 ];
 
-const temp = new Set();
-
 const createConfig = (env, argv) => {
   const config = {
     target: 'web',
