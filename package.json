@@ -6,13 +6,6 @@
     "registry": "https://npm.pkg.github.com/"
   },
   "main": "index.js",
-  "files": [
-    "README.md",
-    "LICENSE",
-    "index.js",
-    "main.scss",
-    "src/**"
-  ],
   "sideEfects": false,
   "scripts": {
     "lint": "eslint .",
@@ -35,7 +28,6 @@
     "@babel/preset-react": "^7.12.7",
     "eslint": "^7.14.0",
     "eslint-config-prettier": "^6.15.0",
-    "eslint-loader": "^4.0.2",
     "eslint-plugin-babel": "^5.3.1",
     "eslint-plugin-react": "^7.21.5",
     "eslint-plugin-react-hooks": "^4.2.0",
@@ -43,10 +35,10 @@
   },
   "peerDependencies": {
     "fork-awesome": "^1.1.7",
-    "react": "^16.9.0",
-    "react-router": "^5.1.0",
-    "react-router-dom": "^5.1.0",
-    "recoil": "0.0.10",
+    "react": "^17.0.1",
+    "react-router": "^5.2.0",
+    "react-router-dom": "^5.2.0",
+    "recoil": "^0.1.2",
     "@xorkevin/nuke": "^0.1.13",
     "@xorkevin/substation": "^0.1.5",
     "@xorkevin/turbine": "^0.1.12"
