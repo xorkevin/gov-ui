@@ -24,7 +24,7 @@ import {
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 
-const modRegex = /^mod_.+/;
+const modRegex = /^mod\..+/;
 
 const selectAPIUser = (api) => api.u.user.name;
 const selectAPIEditRank = (api) => api.u.user.id.edit.rank;
@@ -90,14 +90,15 @@ const UserDetails = ({user, reexecute, back}) => {
   const {roles} = useAuthValue();
   const allPermissions = useMemo(() => {
     if (roles.includes('admin')) {
-      return roleIntersect;
+      return roleIntersect.map((i) => ({display: i, value: i}));
     }
     return roles
       .filter((i) => modRegex.test(i))
       .flatMap((i) => {
         const name = i.substring(4);
-        return ['usr_' + name, 'mod_' + name];
-      });
+        return ['usr.' + name, 'mod.' + name];
+      })
+      .map((i) => ({display: i, value: i}));
   }, [roleIntersect, roles]);
 
   return (

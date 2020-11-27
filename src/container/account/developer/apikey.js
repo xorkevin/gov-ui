@@ -356,7 +356,9 @@ const Apikeys = ({allScopes, allScopeDesc, rolesToScopes}) => {
   const {roles} = useAuthValue();
   const scopeOptions = useMemo(() => {
     const scopeSet = new Set(roles.flatMap((role) => rolesToScopes[role]));
-    return allScopes.filter((i) => scopeSet.has(i));
+    return allScopes
+      .filter((i) => scopeSet.has(i))
+      .map((i) => ({display: i, value: i}));
   }, [allScopes, rolesToScopes, roles]);
 
   return (
