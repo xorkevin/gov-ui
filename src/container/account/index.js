@@ -23,6 +23,7 @@ import DevApikeyContainer from './developer/apikey';
 const Account = ({
   showProfile,
   showOrgs,
+  orgRoleRegex,
   parsePlatform,
   allScopes,
   allScopeDesc,
@@ -88,7 +89,7 @@ const Account = ({
                 </Route>
                 {showOrgs && (
                   <Route path={`${match.path}/orgs`}>
-                    <OrgsContainer />
+                    <OrgsContainer orgRoleRegex={orgRoleRegex} />
                   </Route>
                 )}
                 <Route path={`${match.path}/dev/apikey`}>

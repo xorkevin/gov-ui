@@ -15,4 +15,47 @@ export default {
     selector: (_status, data) => data.orgs,
     err: 'Unable to get orgs',
   },
+  id: {
+    url: '/id/{0}',
+    children: {
+      get: {
+        url: '',
+        method: 'GET',
+        transformer: (id) => [[id], null],
+        expectdata: true,
+        err: 'Unable to get org',
+      },
+      edit: {
+        url: '',
+        method: 'PUT',
+        transformer: (id, name, display_name, desc) => [
+          [id],
+          {name, display_name, desc},
+        ],
+        expectdata: false,
+        err: 'Unable to edit org',
+      },
+      del: {
+        url: '',
+        method: 'PUT',
+        transformer: (id) => [[id], null],
+        expectdata: false,
+        err: 'Unable to delete org',
+      },
+    },
+  },
+  name: {
+    url: '/name/{0}',
+    method: 'GET',
+    transformer: (name) => [[name], null],
+    expectdata: true,
+    err: 'Unable to get org',
+  },
+  create: {
+    url: '',
+    method: 'POST',
+    transformer: (display_name, desc) => [[], {display_name, desc}],
+    expectdata: true,
+    err: 'Unable to create org',
+  },
 };

@@ -10,6 +10,7 @@ const allRoles = Object.freeze([
 const permissionedRoles = Object.freeze(allRoles.filter((i) => i !== 'user'));
 
 const usrRegex = /^usr\./;
+const orgRoleRegex = /^usr\.org\.|^mod\.org\./;
 const modRoles = Object.freeze(
   permissionedRoles.filter((i) => !usrRegex.test(i)),
 );
@@ -114,6 +115,7 @@ export {
   allRoles,
   permissionedRoles,
   modRoles,
+  orgRoleRegex,
   allScopes,
   allScopeDesc,
   rolesToScopes,

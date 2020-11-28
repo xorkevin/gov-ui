@@ -27,8 +27,8 @@ export default {
       },
       create: {
         url: '/c/{0}',
-        transformer: (creatorid, link) => [[creatorid], link],
         method: 'POST',
+        transformer: (creatorid, link) => [[creatorid], link],
         expectdata: false,
         err: 'Unable to create link',
       },

@@ -32,7 +32,13 @@ import AnchorSecondary from '@xorkevin/nuke/src/component/anchor/secondary';
 import Img from '@xorkevin/nuke/src/component/image/circle';
 import platform from 'platform';
 
-import {modRoles, allScopes, allScopeDesc, rolesToScopes} from 'roles';
+import {
+  modRoles,
+  orgRoleRegex,
+  allScopes,
+  allScopeDesc,
+  rolesToScopes,
+} from 'roles';
 
 const DashContainer = Protected(lazy(() => import('dash')));
 const LoginContainer = AntiProtected(
@@ -46,7 +52,7 @@ const UserContainer = Protected(
 );
 const AdminContainer = Protected(
   lazy(() => import('@xorkevin/gov-ui/src/container/admin')),
-  modRoles.concat(['usr.gov.user']),
+  modRoles.concat(['usr.gov.user', 'usr.gov.oauth']),
 );
 const CourierContainer = Protected(
   lazy(() => import('@xorkevin/gov-ui/src/container/courier')),
@@ -204,6 +210,7 @@ const App = () => {
             <AccountContainer
               showProfile
               showOrgs
+              orgRoleRegex={orgRoleRegex}
               parsePlatform={parsePlatform}
               allScopes={allScopes}
               allScopeDesc={allScopeDesc}
