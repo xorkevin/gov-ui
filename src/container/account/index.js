@@ -16,11 +16,13 @@ import {
 import AccountDetailsContainer from './details';
 import SecurityContainer from './security';
 import EmailConfirmContainer from './emailconfirm';
+import OrgsContainer from './orgs';
 
 import DevApikeyContainer from './developer/apikey';
 
 const Account = ({
   showProfile,
+  showOrgs,
   parsePlatform,
   allScopes,
   allScopeDesc,
@@ -50,6 +52,13 @@ const Account = ({
                 >
                   Security
                 </SidebarItem>
+                <SidebarItem
+                  link={`${match.path}/orgs`}
+                  local
+                  icon={<FaIcon icon="sitemap" />}
+                >
+                  Organaizations
+                </SidebarItem>
                 <SidebarDivider />
                 <SidebarHeader>Developer</SidebarHeader>
                 <SidebarItem
@@ -77,6 +86,11 @@ const Account = ({
                     pathSecurity={`${match.path}/security`}
                   />
                 </Route>
+                {showOrgs && (
+                  <Route path={`${match.path}/orgs`}>
+                    <OrgsContainer />
+                  </Route>
+                )}
                 <Route path={`${match.path}/dev/apikey`}>
                   <DevApikeyContainer
                     allScopes={allScopes}

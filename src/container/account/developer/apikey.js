@@ -239,12 +239,13 @@ const CheckKey = () => {
     formAssign({
       keyid: '',
       key: '',
+      roles: '',
       scope: '',
     });
   }, [formAssign]);
   const [_checkKey, execCheckKey] = useAuthCall(
     selectAPICheckKey,
-    [form.state.keyid, form.state.key, form.state.scope],
+    [form.state.keyid, form.state.key, form.state.roles, form.state.scope],
     {},
     {posthook: displaySnackbar, errhook: displayErrSnack},
   );
@@ -267,6 +268,7 @@ const CheckKey = () => {
           >
             <Field name="keyid" label="Key ID" nohint fullWidth />
             <Field name="key" label="Key" nohint fullWidth />
+            <Field name="roles" label="Roles" nohint fullWidth />
             <Field name="scope" label="Scopes" nohint fullWidth />
           </Form>
           <ButtonGroup>

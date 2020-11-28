@@ -1,15 +1,21 @@
+import profileAPI from './apiprofile';
+import orgsAPI from './apiorgs';
 import oauthAPI from './apioauth';
 import courierAPI from './apicourier';
-import profileAPI from './apiprofile';
-
-const oauth = (url = '/oauth') => ({
-  url,
-  children: oauthAPI,
-});
 
 const profile = (url = '/profile') => ({
   url,
   children: profileAPI,
+});
+
+const orgs = (url = '/org') => ({
+  url,
+  children: orgsAPI,
+});
+
+const oauth = (url = '/oauth') => ({
+  url,
+  children: oauthAPI,
 });
 
 const courier = (url = '/courier') => ({
@@ -18,8 +24,9 @@ const courier = (url = '/courier') => ({
 });
 
 const GovAPI = Object.freeze({
-  oauth,
   profile,
+  orgs,
+  oauth,
   courier,
 });
 

@@ -1,4 +1,4 @@
-import React, {Fragment, useCallback} from 'react';
+import React, {Fragment, useCallback, useMemo} from 'react';
 import {Link} from 'react-router-dom';
 import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
@@ -111,9 +111,10 @@ const SessionRow = ({
   errhook,
   parsePlatform,
 }) => {
+  const ids = useMemo(() => [session_id], [session_id]);
   const [_delete, execDelete] = useAuthCall(
     selectAPISessionDelete,
-    [session_id],
+    [ids],
     {},
     {posthook, errhook},
   );

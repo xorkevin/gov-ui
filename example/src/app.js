@@ -203,6 +203,7 @@ const App = () => {
           <Route path="/a">
             <AccountContainer
               showProfile
+              showOrgs
               parsePlatform={parsePlatform}
               allScopes={allScopes}
               allScopeDesc={allScopeDesc}
