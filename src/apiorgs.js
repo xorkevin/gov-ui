@@ -54,7 +54,7 @@ export default {
   create: {
     url: '',
     method: 'POST',
-    transformer: (display_name, desc) => [[], {display_name, desc}],
+    transformer: (body) => [[], body],
     expectdata: true,
     err: 'Unable to create org',
   },

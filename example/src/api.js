@@ -6,8 +6,9 @@ const API = {
   setupz: GovAuthAPI.setupz(),
   healthz: GovAuthAPI.healthz(),
   u: GovAuthAPI.user('/u'),
-  oauth: GovAPI.oauth('/oauth'),
   profile: GovAPI.profile('/profile'),
+  orgs: GovAPI.orgs('/org'),
+  oauth: GovAPI.oauth('/oauth'),
   courier: GovAPI.courier('/courier'),
 };
 

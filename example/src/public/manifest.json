@@ -1,11 +1,11 @@
 {
-  "name": "Nuke",
-  "short_name": "Nuke",
+  "name": "Gov UI",
+  "short_name": "Gov UI",
   "lang": "en-US",
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#224A7F",
-  "background_color": "#FCFCFC",
+  "theme_color": "#0d47a1",
+  "background_color": "#fdfdfd",
   "description": "governor frontend",
   "icons": [
     {
