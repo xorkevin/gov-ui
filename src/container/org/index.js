@@ -8,7 +8,7 @@ const Org = ({pathHome}) => {
   return (
     <Switch>
       <Route path={`${match.path}/:name`}>
-        <OrgDetailsContainer />
+        <OrgDetailsContainer pathOrg={`${match.path}/{0}`} />
       </Route>
       <Redirect to={pathHome} />
     </Switch>

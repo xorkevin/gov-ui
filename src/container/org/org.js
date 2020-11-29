@@ -23,7 +23,7 @@ const OrgSettings = lazy(() => import('./settings'));
 
 const selectAPIOrg = (api) => api.orgs.name;
 
-const OrgDetails = () => {
+const OrgDetails = ({pathOrg}) => {
   const match = useRouteMatch();
   const {name} = useParams();
 
@@ -66,7 +66,10 @@ const OrgDetails = () => {
                     <OrgMembers name={name} />
                   </Route>
                   <Route path={`${match.path}/settings`}>
-                    <OrgSettings name={name} />
+                    <OrgSettings
+                      name={name}
+                      pathOrgSettings={`${pathOrg}/settings`}
+                    />
                   </Route>
                   <Redirect to={`${match.path}/members`} />
                 </Switch>

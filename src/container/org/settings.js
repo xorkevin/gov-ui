@@ -1,4 +1,5 @@
-import {Fragment, useState, useCallback} from 'react';
+import {Fragment, useState, useCallback, useRef} from 'react';
+import {useHistory} from 'react-router-dom';
 import {useResource} from '@xorkevin/substation';
 import {useAuthCall} from '@xorkevin/turbine';
 import {
@@ -15,6 +16,7 @@ import {
 } from '@xorkevin/nuke';
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
+import {formatStr} from '../../utility';
 
 const selectAPIOrg = (api) => api.orgs.name;
 const selectAPIEdit = (api) => api.orgs.id.edit;
@@ -30,7 +32,8 @@ const useFormLock = () => {
   return [locked, lock, unlock];
 };
 
-const OrgSettings = ({name}) => {
+const OrgSettings = ({name, pathOrgSettings}) => {
+  const history = useHistory();
   const snackUpdate = useSnackbarView(
     <SnackbarSurface>&#x2713; Org updated</SnackbarSurface>,
   );
@@ -67,10 +70,16 @@ const OrgSettings = ({name}) => {
     {posthook: posthookOrg},
   );
 
+  const formNameRef = useRef('');
+  formNameRef.current = form.state.name;
+
   const posthookEdit = useCallback(() => {
     lock();
     snackUpdate();
-  }, [snackUpdate, lock]);
+    if (formNameRef.current !== name) {
+      history.push(formatStr(pathOrgSettings, formNameRef.current));
+    }
+  }, [history, pathOrgSettings, name, formNameRef, snackUpdate, lock]);
   const [edit, execEdit] = useAuthCall(
     selectAPIEdit,
     [org.data.orgid, form.state],
