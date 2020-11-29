@@ -27,7 +27,7 @@ const OrgDetails = ({pathOrg}) => {
   const match = useRouteMatch();
   const {name} = useParams();
 
-  const [org] = useResource(selectAPIOrg, [name], {
+  const [org, reexecute] = useResource(selectAPIOrg, [name], {
     orgid: '',
     name: '',
     display_name: '',
@@ -69,6 +69,7 @@ const OrgDetails = ({pathOrg}) => {
                     <OrgSettings
                       name={name}
                       pathOrgSettings={`${pathOrg}/settings`}
+                      refresh={reexecute}
                     />
                   </Route>
                   <Redirect to={`${match.path}/members`} />

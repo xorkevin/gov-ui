@@ -32,7 +32,7 @@ const useFormLock = () => {
   return [locked, lock, unlock];
 };
 
-const OrgSettings = ({name, pathOrgSettings}) => {
+const OrgSettings = ({name, pathOrgSettings, refresh}) => {
   const history = useHistory();
   const snackUpdate = useSnackbarView(
     <SnackbarSurface>&#x2713; Org updated</SnackbarSurface>,
@@ -78,8 +78,10 @@ const OrgSettings = ({name, pathOrgSettings}) => {
     snackUpdate();
     if (formNameRef.current !== name) {
       history.push(formatStr(pathOrgSettings, formNameRef.current));
+    } else {
+      refresh();
     }
-  }, [history, pathOrgSettings, name, formNameRef, snackUpdate, lock]);
+  }, [history, pathOrgSettings, name, formNameRef, refresh, snackUpdate, lock]);
   const [edit, execEdit] = useAuthCall(
     selectAPIEdit,
     [org.data.orgid, form.state],
