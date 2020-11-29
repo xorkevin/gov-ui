@@ -1,4 +1,4 @@
-import React from 'react';
+import {lazy} from 'react';
 import {Switch, Route, Redirect, useRouteMatch} from 'react-router-dom';
 import {
   MainContent,
@@ -12,9 +12,9 @@ import {
   FaIcon,
 } from '@xorkevin/nuke';
 
-import OAuthAppContainer from './oauth';
-import UsersContainer from './users';
-import ApprovalsContainer from './approvals';
+const OAuthAppContainer = lazy(() => import('./oauth'));
+const UsersContainer = lazy(() => import('./users'));
+const ApprovalsContainer = lazy(() => import('./approvals'));
 
 const Admin = () => {
   const match = useRouteMatch();

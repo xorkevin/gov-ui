@@ -1,11 +1,11 @@
-import React from 'react';
+import {lazy} from 'react';
 import {Switch, Route, Redirect, useRouteMatch} from 'react-router-dom';
 
-import SigninContainer from './signin';
-import CreateContainer from './create';
-import CreateConfirmContainer from './confirm';
-import ForgotPassContainer from './forgotpassword';
-import ResetPassContainer from './resetpassword';
+const SigninContainer = lazy(() => import('./signin'));
+const CreateContainer = lazy(() => import('./create'));
+const CreateConfirmContainer = lazy(() => import('./confirm'));
+const ForgotPassContainer = lazy(() => import('./forgotpassword'));
+const ResetPassContainer = lazy(() => import('./resetpassword'));
 
 const Login = ({userApprovals}) => {
   const match = useRouteMatch();

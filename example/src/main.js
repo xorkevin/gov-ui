@@ -3,7 +3,6 @@ import 'inter-ui/inter.css';
 import 'typeface-merriweather/index.css';
 import 'main.scss';
 
-import React from 'react';
 import ReactDOM from 'react-dom';
 import {BrowserRouter} from 'react-router-dom';
 import {RecoilRoot} from 'recoil';

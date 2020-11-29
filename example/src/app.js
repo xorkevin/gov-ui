@@ -1,4 +1,4 @@
-import React, {Fragment, lazy, Suspense} from 'react';
+import {Fragment, lazy, Suspense} from 'react';
 import {Switch, Route, Redirect} from 'react-router-dom';
 import {useURL} from '@xorkevin/substation';
 import {

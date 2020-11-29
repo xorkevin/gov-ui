@@ -1,4 +1,4 @@
-import React, {Fragment} from 'react';
+import {Fragment} from 'react';
 import {Link} from 'react-router-dom';
 import {useAPICall} from '@xorkevin/substation';
 import {
@@ -65,15 +65,13 @@ const ForgotPassContainer = ({pathLogin, pathResetPass}) => {
               >
                 <Field name="username" label="Username / Email" fullWidth />
               </Form>
-              {forgot.err && <span>{forgot.err}</span>}
+              {forgot.err && <p>{forgot.err}</p>}
               {forgot.success && (
-                <span>
-                  <span>
-                    If the username or email is valid, an email with the code to
-                    reset your password has been has been sent to the
-                    corresponding email address.
-                  </span>
-                </span>
+                <p>
+                  If the username or email is valid, an email with the code to
+                  reset your password has been has been sent to the
+                  corresponding email address.
+                </p>
               )}
             </Container>
           </Card>

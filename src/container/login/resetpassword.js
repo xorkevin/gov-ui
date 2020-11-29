@@ -1,4 +1,4 @@
-import React, {Fragment} from 'react';
+import {Fragment} from 'react';
 import {Link, useLocation} from 'react-router-dom';
 import {getSearchParams} from '../../utility';
 import {useAPICall} from '@xorkevin/substation';
@@ -118,8 +118,8 @@ const ResetPass = ({pathLogin}) => {
                   fullWidth
                 />
               </Form>
-              {reset.err && <span>{reset.err}</span>}
-              {reset.success && <span>Password updated.</span>}
+              {reset.err && <p>{reset.err}</p>}
+              {reset.success && <p>Password updated.</p>}
             </Container>
           </Card>
         </Container>

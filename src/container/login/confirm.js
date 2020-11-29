@@ -1,4 +1,4 @@
-import React, {Fragment} from 'react';
+import {Fragment} from 'react';
 import {Link, useLocation} from 'react-router-dom';
 import {getSearchParams} from '../../utility';
 import {useAPICall} from '@xorkevin/substation';
@@ -68,12 +68,8 @@ const ConfirmAccount = ({pathLogin}) => {
                 <Field name="userid" label="Userid" fullWidth />
                 <Field name="key" label="Code" fullWidth />
               </Form>
-              {confirmAcct.err && <span>{confirmAcct.err}</span>}
-              {confirmAcct.success && (
-                <span>
-                  <span>Your account has been created.</span>
-                </span>
-              )}
+              {confirmAcct.err && <p>{confirmAcct.err}</p>}
+              {confirmAcct.success && <p>Your account has been created.</p>}
             </Container>
           </Card>
         </Container>

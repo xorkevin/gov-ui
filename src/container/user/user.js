@@ -1,4 +1,3 @@
-import React from 'react';
 import {useParams} from 'react-router-dom';
 import {useURL, useResource, selectAPINull} from '@xorkevin/substation';
 import {
@@ -65,7 +64,7 @@ const UserDetails = () => {
                 </Card>
               )}
               {(account.err || profile.err) && (
-                <span>{account.err || profile.err}</span>
+                <p>{account.err || profile.err}</p>
               )}
             </Column>
             <Column fullWidth sm={16} grow="1"></Column>

@@ -1,4 +1,4 @@
-import React from 'react';
+import {lazy} from 'react';
 import {Switch, Route, Redirect, useRouteMatch} from 'react-router-dom';
 import {
   MainContent,
@@ -12,8 +12,8 @@ import {
   FaIcon,
 } from '@xorkevin/nuke';
 
-import CourierLink from './link';
-import CourierBrand from './brand';
+const CourierLink = lazy(() => import('./link'));
+const CourierBrand = lazy(() => import('./brand'));
 
 const Courier = ({courierPath}) => {
   const match = useRouteMatch();

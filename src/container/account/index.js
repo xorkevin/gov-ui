@@ -1,4 +1,4 @@
-import React from 'react';
+import {lazy} from 'react';
 import {Switch, Route, Redirect, useRouteMatch} from 'react-router-dom';
 import {
   MainContent,
@@ -13,12 +13,12 @@ import {
   FaIcon,
 } from '@xorkevin/nuke';
 
-import AccountDetailsContainer from './details';
-import SecurityContainer from './security';
-import EmailConfirmContainer from './emailconfirm';
-import OrgsContainer from './orgs';
+const AccountDetailsContainer = lazy(() => import('./details'));
+const SecurityContainer = lazy(() => import('./security'));
+const EmailConfirmContainer = lazy(() => import('./emailconfirm'));
+const OrgsContainer = lazy(() => import('./orgs'));
 
-import DevApikeyContainer from './developer/apikey';
+const DevApikeyContainer = lazy(() => import('./developer/apikey'));
 
 const Account = ({
   showProfile,

@@ -1,7 +1,7 @@
-import React from 'react';
+import {lazy} from 'react';
 import {Switch, Route, Redirect, useRouteMatch} from 'react-router-dom';
 
-import OrgDetailsContainer from './org';
+const OrgDetailsContainer = lazy(() => import('./org'));
 
 const Org = ({pathHome}) => {
   const match = useRouteMatch();

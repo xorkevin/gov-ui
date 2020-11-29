@@ -1,4 +1,4 @@
-import React, {Fragment} from 'react';
+import {Fragment} from 'react';
 import {Link} from 'react-router-dom';
 import {emailRegex} from '../../utility';
 import {useAPICall} from '@xorkevin/substation';
@@ -173,19 +173,19 @@ const CreateAccount = ({pathLogin, pathConfirm, userApprovals}) => {
                 <Field name="email" label="Email" fullWidth />
                 <Field name="email_confirm" label="Confirm email" fullWidth />
               </Form>
-              {create.err && <span>{create.err}</span>}
+              {create.err && <p>{create.err}</p>}
               {create.success &&
                 (userApprovals ? (
-                  <span>
+                  <p>
                     A new user request has been sent to an administrator. A
                     confirmation email will be emailed to the address you
                     provided above when the request is approved.
-                  </span>
+                  </p>
                 ) : (
-                  <span>
+                  <p>
                     Confirm your account with a code emailed to the address you
                     provided above.
-                  </span>
+                  </p>
                 ))}
             </Container>
           </Card>

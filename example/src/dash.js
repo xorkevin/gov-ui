@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect} from 'react';
+import {Fragment, useEffect} from 'react';
 import {useResource} from '@xorkevin/substation';
 import {
   MainContent,
@@ -15,7 +15,7 @@ const REFRESH_TIME = 15;
 
 const selectAPIHealth = (api) => api.healthz.ready;
 
-const AdminContainer = () => {
+const DashContainer = () => {
   const [health, execHealth] = useResource(selectAPIHealth, [], {
     time: 0,
     errs: [],
@@ -68,7 +68,7 @@ const AdminContainer = () => {
                       </div>
                     </Fragment>
                   )}
-                  {health.err && <span>{health.err}</span>}
+                  {health.err && <p>{health.err}</p>}
                 </Container>
               </Card>
             </Column>
@@ -79,4 +79,4 @@ const AdminContainer = () => {
   );
 };
 
-export default AdminContainer;
+export default DashContainer;

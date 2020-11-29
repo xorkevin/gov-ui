@@ -1,4 +1,4 @@
-import React, {Fragment, useContext} from 'react';
+import {Fragment, useContext} from 'react';
 import {Link} from 'react-router-dom';
 import {emailRegex} from '../utility';
 import {useAPICall} from '@xorkevin/substation';
@@ -165,12 +165,8 @@ const Setup = () => {
                 <Field name="email" label="email" fullWidth />
                 <Field name="email_confirm" label="confirm email" fullWidth />
               </Form>
-              {setup.err && <span>{setup.err}</span>}
-              {setup.success && (
-                <span>
-                  <span>Server successfully setup</span>
-                </span>
-              )}
+              {setup.err && <p>{setup.err}</p>}
+              {setup.success && <p>Server successfully setup</p>}
             </Container>
           </Card>
         </Container>

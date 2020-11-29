@@ -1,7 +1,7 @@
-import React from 'react';
+import {lazy} from 'react';
 import {Switch, Route, Redirect, useRouteMatch} from 'react-router-dom';
 
-import UserDetailsContainer from './user';
+const UserDetailsContainer = lazy(() => import('./user'));
 
 const User = ({pathHome}) => {
   const match = useRouteMatch();
