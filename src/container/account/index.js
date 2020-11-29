@@ -25,6 +25,8 @@ const Account = ({
   showOrgs,
   orgUsrPrefix,
   orgModPrefix,
+  pathOrg,
+  pathOrgSettings,
   parsePlatform,
   allScopes,
   allScopeDesc,
@@ -93,6 +95,8 @@ const Account = ({
                     <OrgsContainer
                       orgUsrPrefix={orgUsrPrefix}
                       orgModPrefix={orgModPrefix}
+                      pathOrg={pathOrg}
+                      pathOrgSettings={pathOrgSettings}
                     />
                   </Route>
                 )}

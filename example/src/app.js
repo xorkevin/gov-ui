@@ -213,6 +213,8 @@ const App = () => {
               showOrgs
               orgUsrPrefix={orgUsrPrefix}
               orgModPrefix={orgModPrefix}
+              pathOrg="/org/{0}"
+              pathOrgSettings="/org/{0}/settings"
               parsePlatform={parsePlatform}
               allScopes={allScopes}
               allScopeDesc={allScopeDesc}

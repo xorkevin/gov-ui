@@ -24,6 +24,7 @@ import {
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
+import {formatStr} from '../../utility';
 
 const ORG_LIMIT = 32;
 
@@ -46,19 +47,19 @@ const prehookValidate = ([form]) => {
   }
 };
 
-const OrgRow = ({isMod, name}) => {
+const OrgRow = ({isMod, pathOrg, pathOrgSettings, name}) => {
   const menu = useMenu();
   return (
     <ListItem>
       <Grid justify="space-between" align="center" nowrap>
         <Column className="account-org-item-name">
           <h5 className="account-org-item-heading">
-            <AnchorText local href={`/org/${name}`}>
+            <AnchorText local href={formatStr(pathOrg, name)}>
               {name}
             </AnchorText>
           </h5>
           <small>
-            <Chip>{isMod ? 'Mod' : 'Member'}</Chip>
+            <Chip>{isMod ? 'Moderator' : 'Member'}</Chip>
           </small>
         </Column>
         <Column shrink="0">
@@ -71,7 +72,7 @@ const OrgRow = ({isMod, name}) => {
                 View
               </MenuItem>
               {isMod && (
-                <MenuItem local link={`/org/${name}/settings`}>
+                <MenuItem local link={formatStr(pathOrgSettings, name)}>
                   Settings
                 </MenuItem>
               )}
@@ -83,7 +84,7 @@ const OrgRow = ({isMod, name}) => {
   );
 };
 
-const Orgs = ({orgUsrPrefix, orgModPrefix}) => {
+const Orgs = ({orgUsrPrefix, orgModPrefix, pathOrg, pathOrgSettings}) => {
   const displaySnackbarCreate = useSnackbarView(
     <SnackbarSurface>&#x2713; Org created</SnackbarSurface>,
   );
@@ -167,6 +168,8 @@ const Orgs = ({orgUsrPrefix, orgModPrefix}) => {
                 <OrgRow
                   key={i.orgid}
                   isMod={isViewMod}
+                  pathOrg={pathOrg}
+                  pathOrgSettings={pathOrgSettings}
                   orgid={i.orgid}
                   name={i.name}
                   display_name={i.display_name}
