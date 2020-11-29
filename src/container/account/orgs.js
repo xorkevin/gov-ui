@@ -1,8 +1,16 @@
-import React, {useCallback} from 'react';
+import React, {useState, useCallback, useMemo} from 'react';
+import {selectAPINull} from '@xorkevin/substation';
 import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
   Grid,
   Column,
+  ListGroup,
+  ListItem,
+  Tabbar,
+  TabItem,
+  useMenu,
+  Menu,
+  MenuItem,
   Field,
   Form,
   useForm,
@@ -10,13 +18,17 @@ import {
   useSnackbarView,
   usePaginate,
   ButtonGroup,
+  FaIcon,
+  Chip,
 } from '@xorkevin/nuke';
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
+import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
 
 const ORG_LIMIT = 32;
 
 const selectAPIRoles = (api) => api.u.user.get.roles;
+const selectAPIOrgs = (api) => api.orgs.get;
 const selectAPICreate = (api) => api.orgs.create;
 
 const formValidCheck = ({display_name}) => {
@@ -34,10 +46,55 @@ const prehookValidate = ([form]) => {
   }
 };
 
-const Orgs = ({orgRoleRegex}) => {
+const OrgRow = ({isMod, name}) => {
+  const menu = useMenu();
+  return (
+    <ListItem>
+      <Grid justify="space-between" align="center" nowrap>
+        <Column className="account-org-item-name">
+          <h5 className="account-org-item-heading">
+            <AnchorText local href={`/org/${name}`}>
+              {name}
+            </AnchorText>
+          </h5>
+          <small>
+            <Chip>{isMod ? 'Mod' : 'Member'}</Chip>
+          </small>
+        </Column>
+        <Column shrink="0">
+          <ButtonTertiary forwardedRef={menu.anchorRef} onClick={menu.toggle}>
+            <FaIcon icon="ellipsis-v" />
+          </ButtonTertiary>
+          {menu.show && (
+            <Menu size="md" anchor={menu.anchor} close={menu.close}>
+              <MenuItem local link={`/org/${name}`}>
+                View
+              </MenuItem>
+              {isMod && (
+                <MenuItem local link={`/org/${name}/settings`}>
+                  Settings
+                </MenuItem>
+              )}
+            </Menu>
+          )}
+        </Column>
+      </Grid>
+    </ListItem>
+  );
+};
+
+const Orgs = ({orgUsrPrefix, orgModPrefix}) => {
   const displaySnackbarCreate = useSnackbarView(
     <SnackbarSurface>&#x2713; Org created</SnackbarSurface>,
   );
+
+  const [isViewMod, setViewMod] = useState(false);
+  const viewUsr = useCallback(() => {
+    setViewMod(false);
+  }, [setViewMod]);
+  const viewMod = useCallback(() => {
+    setViewMod(true);
+  }, [setViewMod]);
 
   const form = useForm({
     display_name: '',
@@ -55,9 +112,20 @@ const Orgs = ({orgRoleRegex}) => {
   );
   const [roles, reexecute] = useAuthResource(
     selectAPIRoles,
-    [ORG_LIMIT, paginate.index],
+    [isViewMod ? orgModPrefix : orgUsrPrefix, ORG_LIMIT, paginate.index],
     [],
     {posthook: posthookRoles},
+  );
+
+  const prefixLen = isViewMod ? orgModPrefix.length : orgUsrPrefix.length;
+  const orgids = useMemo(() => roles.data.map((i) => i.slice(prefixLen)), [
+    prefixLen,
+    roles,
+  ]);
+  const [orgs, _reexecute] = useAuthResource(
+    orgids.length > 0 ? selectAPIOrgs : selectAPINull,
+    [orgids],
+    [],
   );
 
   const formAssign = form.assign;
@@ -85,11 +153,28 @@ const Orgs = ({orgRoleRegex}) => {
       <hr />
       <Grid>
         <Column fullWidth md={16}>
-          {roles.data
-            .filter((i) => orgRoleRegex.test(i))
-            .map((i) => (
-              <div key={i}>{i}</div>
-            ))}
+          <Tabbar>
+            <TabItem className={!isViewMod ? 'active' : ''} onClick={viewUsr}>
+              Member
+            </TabItem>
+            <TabItem className={isViewMod ? 'active' : ''} onClick={viewMod}>
+              Moderator
+            </TabItem>
+          </Tabbar>
+          <ListGroup>
+            {orgids.length > 0 &&
+              orgs.data.map((i) => (
+                <OrgRow
+                  key={i.orgid}
+                  isMod={isViewMod}
+                  orgid={i.orgid}
+                  name={i.name}
+                  display_name={i.display_name}
+                  desc={i.desc}
+                  creation_time={i.creation_time}
+                />
+              ))}
+          </ListGroup>
           <ButtonGroup>
             <ButtonTertiary disabled={paginate.atFirst} onClick={paginate.prev}>
               prev
@@ -100,6 +185,7 @@ const Orgs = ({orgRoleRegex}) => {
             </ButtonTertiary>
           </ButtonGroup>
           {roles.err && <p>{roles.err}</p>}
+          {orgs.err && <p>{orgs.err}</p>}
         </Column>
         <Column fullWidth md={8}>
           <h4>Create new org</h4>

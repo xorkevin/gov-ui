@@ -34,3 +34,11 @@ $color-success-light: lighten($color-success, 12.5%);
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.account-org-item-name {
+  min-width: 0;
+}
+
+.account-org-item-heading {
+  display: inline;
+}

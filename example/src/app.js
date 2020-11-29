@@ -34,7 +34,8 @@ import platform from 'platform';
 
 import {
   modRoles,
-  orgRoleRegex,
+  orgUsrPrefix,
+  orgModPrefix,
   allScopes,
   allScopeDesc,
   rolesToScopes,
@@ -210,7 +211,8 @@ const App = () => {
             <AccountContainer
               showProfile
               showOrgs
-              orgRoleRegex={orgRoleRegex}
+              orgUsrPrefix={orgUsrPrefix}
+              orgModPrefix={orgModPrefix}
               parsePlatform={parsePlatform}
               allScopes={allScopes}
               allScopeDesc={allScopeDesc}
