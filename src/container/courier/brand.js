@@ -54,11 +54,9 @@ const BrandRow = ({
       <Grid justify="space-between" align="center" nowrap>
         <Column>
           <h5>{brandid}</h5>
-          <p>
-            <Anchor ext href={imageURL}>
-              <Img src={imageURL} ratio={1} />
-            </Anchor>
-          </p>
+          <Anchor ext href={imageURL}>
+            <Img src={imageURL} ratio={1} />
+          </Anchor>
           <div>
             Created <Time value={creation_time * 1000} />
           </div>
