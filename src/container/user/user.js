@@ -19,17 +19,13 @@ const selectAPIImage = (api) => api.profile.id.image;
 const UserDetails = () => {
   const {username} = useParams();
 
-  const [account] = useResource(
-    username && username.length > 0 ? selectAPIUser : selectAPINull,
-    [username],
-    {
-      userid: '',
-      first_name: '',
-      last_name: '',
-      username: '',
-      creation_time: '',
-    },
-  );
+  const [account] = useResource(selectAPIUser, [username], {
+    userid: '',
+    first_name: '',
+    last_name: '',
+    username: '',
+    creation_time: '',
+  });
   const imageURL = useURL(selectAPIImage, [account.data.userid]);
 
   const [profile] = useResource(

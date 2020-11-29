@@ -28,10 +28,7 @@ export default {
       edit: {
         url: '',
         method: 'PUT',
-        transformer: (id, name, display_name, desc) => [
-          [id],
-          {name, display_name, desc},
-        ],
+        transformer: (id, body) => [[id], body],
         expectdata: false,
         err: 'Unable to edit org',
       },

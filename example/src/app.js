@@ -51,6 +51,9 @@ const AccountContainer = Protected(
 const UserContainer = Protected(
   lazy(() => import('@xorkevin/gov-ui/src/container/user')),
 );
+const OrgContainer = Protected(
+  lazy(() => import('@xorkevin/gov-ui/src/container/org')),
+);
 const AdminContainer = Protected(
   lazy(() => import('@xorkevin/gov-ui/src/container/admin')),
   modRoles.concat(['usr.gov.user', 'usr.gov.oauth']),
@@ -222,7 +225,10 @@ const App = () => {
             />
           </Route>
           <Route path="/u">
-            <UserContainer />
+            <UserContainer pathHome="/" />
+          </Route>
+          <Route path="/org">
+            <OrgContainer pathHome="/" />
           </Route>
           <Route path="/admin">
             <AdminContainer />

@@ -123,7 +123,7 @@ const Orgs = ({orgUsrPrefix, orgModPrefix, pathOrg, pathOrgSettings}) => {
     prefixLen,
     roles,
   ]);
-  const [orgs, _reexecute] = useAuthResource(
+  const [orgs] = useAuthResource(
     orgids.length > 0 ? selectAPIOrgs : selectAPINull,
     [orgids],
     [],

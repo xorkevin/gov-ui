@@ -18,6 +18,18 @@ $color-success-light: lighten($color-success, 12.5%);
   }
 }
 
+.account-org-item-name {
+  min-width: 0;
+}
+
+.account-org-item-heading {
+  display: inline;
+}
+
+.org-field-disabled-solid.disabled {
+  opacity: 1;
+}
+
 .oauth-app-logo {
   max-width: 128px;
   margin: auto;
@@ -33,12 +45,4 @@ $color-success-light: lighten($color-success, 12.5%);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.account-org-item-name {
-  min-width: 0;
-}
-
-.account-org-item-heading {
-  display: inline;
 }
