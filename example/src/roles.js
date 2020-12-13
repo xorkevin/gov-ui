@@ -1,5 +1,4 @@
-const allRoles = Object.freeze([
-  'user',
+const permissionedRoles = Object.freeze([
   'admin',
   'usr.gov.user',
   'mod.gov.user',
@@ -7,12 +6,7 @@ const allRoles = Object.freeze([
   'mod.gov.oauth',
 ]);
 
-const permissionedRoles = Object.freeze(allRoles.filter((i) => i !== 'user'));
-
-const usrRegex = /^usr\./;
-const modRoles = Object.freeze(
-  permissionedRoles.filter((i) => !usrRegex.test(i)),
-);
+const allRoles = Object.freeze(['user'].concat(permissionedRoles));
 
 const orgUsrPrefix = 'usr.org.';
 const orgModPrefix = 'mod.org.';
@@ -116,7 +110,6 @@ const rolesToScopes = Object.freeze({
 export {
   allRoles,
   permissionedRoles,
-  modRoles,
   orgUsrPrefix,
   orgModPrefix,
   allScopes,

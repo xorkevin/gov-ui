@@ -30,16 +30,8 @@ import {
 } from '@xorkevin/nuke';
 import AnchorSecondary from '@xorkevin/nuke/src/component/anchor/secondary';
 import Img from '@xorkevin/nuke/src/component/image/circle';
-import platform from 'platform';
 
-import {
-  modRoles,
-  orgUsrPrefix,
-  orgModPrefix,
-  allScopes,
-  allScopeDesc,
-  rolesToScopes,
-} from 'roles';
+import {permissionedRoles} from 'roles';
 
 const DashContainer = Protected(lazy(() => import('dash')));
 const LoginContainer = AntiProtected(
@@ -56,7 +48,7 @@ const OrgContainer = Protected(
 );
 const AdminContainer = Protected(
   lazy(() => import('@xorkevin/gov-ui/src/container/admin')),
-  modRoles.concat(['usr.gov.user', 'usr.gov.oauth']),
+  permissionedRoles,
 );
 const CourierContainer = Protected(
   lazy(() => import('@xorkevin/gov-ui/src/container/courier')),
@@ -64,32 +56,6 @@ const CourierContainer = Protected(
 const SetupContainer = lazy(() =>
   import('@xorkevin/gov-ui/src/container/setup'),
 );
-
-const FallbackView = (
-  <MainContent>
-    <Section>
-      <Container padded narrow>
-        <h4>Loading</h4>
-      </Container>
-    </Section>
-  </MainContent>
-);
-
-const GovContextValue = Object.freeze({
-  userApprovals: false,
-  // eslint-disable-next-line no-undef
-  courierPath: COURIERBASE_URL,
-});
-
-const mobileSet = new Set(['Android', 'iOS']);
-const parsePlatform = (user_agent) => {
-  const info = platform.parse(user_agent);
-  return {
-    name: info.name,
-    os: info.os.toString(),
-    mobile: mobileSet.has(info.os.family),
-  };
-};
 
 const selectAPIProfile = (api) => api.profile.get;
 const selectAPIProfileImage = (api) => api.profile.id.image;
@@ -208,33 +174,22 @@ const App = () => {
             <DashContainer />
           </Route>
           <Route path="/x">
-            <LoginContainer userApprovals={GovContextValue.userApprovals} />
+            <LoginContainer />
           </Route>
           <Route path="/a">
-            <AccountContainer
-              showProfile
-              showOrgs
-              orgUsrPrefix={orgUsrPrefix}
-              orgModPrefix={orgModPrefix}
-              pathOrg="/org/{0}"
-              pathOrgSettings="/org/{0}/settings"
-              parsePlatform={parsePlatform}
-              allScopes={allScopes}
-              allScopeDesc={allScopeDesc}
-              rolesToScopes={rolesToScopes}
-            />
+            <AccountContainer />
           </Route>
           <Route path="/u">
-            <UserContainer pathHome="/" />
+            <UserContainer />
           </Route>
           <Route path="/org">
-            <OrgContainer pathHome="/" />
+            <OrgContainer />
           </Route>
           <Route path="/admin">
             <AdminContainer />
           </Route>
           <Route path="/courier">
-            <CourierContainer courierPath={GovContextValue.courierPath} />
+            <CourierContainer />
           </Route>
           <Route path="/setup">
             <SetupContainer />

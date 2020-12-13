@@ -16,6 +16,7 @@ import {
   Section,
   Container,
 } from '@xorkevin/nuke';
+import platform from 'platform';
 
 import {allRoles} from 'roles';
 import App from 'app';
@@ -30,6 +31,30 @@ const UnAuthFallback = (
     </Section>
   </MainContent>
 );
+
+const FallbackView = (
+  <MainContent>
+    <Section>
+      <Container padded narrow>
+        <h4>Loading</h4>
+      </Container>
+    </Section>
+  </MainContent>
+);
+
+const mobileSet = new Set(['Android', 'iOS']);
+const parsePlatform = (user_agent) => {
+  const info = platform.parse(user_agent);
+  return {
+    name: info.name,
+    os: info.os.toString(),
+    mobile: mobileSet.has(info.os.family),
+  };
+};
+
+const GovContextValue = Object.freeze({
+  courierPath: COURIERBASE_URL,
+});
 
 const Middleware = ComposeMiddleware(
   APIMiddleware(APIClient),
