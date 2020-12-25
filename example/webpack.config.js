@@ -124,7 +124,7 @@ const createConfig = (env, argv) => {
       hot: false,
       proxy: {
         '/api': {
-          target: 'http://governor.dev.home:8080',
+          target: 'http://governor.dev.localhost:8080',
           changeOrigin: true,
         },
       },
@@ -135,14 +135,18 @@ const createConfig = (env, argv) => {
     config.plugins.push(
       new webpack.DefinePlugin({
         APIBASE_URL: JSON.stringify('/api'),
-        COURIERBASE_URL: JSON.stringify('http://go.governor.dev.home:8080'),
+        COURIERBASE_URL: JSON.stringify(
+          'http://go.governor.dev.localhost:8080',
+        ),
       }),
     );
   } else {
     config.plugins.push(
       new webpack.DefinePlugin({
         APIBASE_URL: JSON.stringify('/api'),
-        COURIERBASE_URL: JSON.stringify('http://go.governor.dev.home:8080'),
+        COURIERBASE_URL: JSON.stringify(
+          'http://go.governor.dev.localhost:8080',
+        ),
       }),
     );
   }
