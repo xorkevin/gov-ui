@@ -18,7 +18,6 @@ const ApprovalsContainer = lazy(() => import('./approvals'));
 
 const Admin = () => {
   const match = useRouteMatch();
-
   return (
     <MainContent>
       <Section>

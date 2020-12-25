@@ -9,7 +9,6 @@ const ResetPassContainer = lazy(() => import('./resetpassword'));
 
 const Login = () => {
   const match = useRouteMatch();
-
   return (
     <Switch>
       <Route path={`${match.path}/login`}>

@@ -18,32 +18,18 @@ import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 
 const selectAPISetup = (api) => api.setupz;
 
-const formErrCheck = ({password, email, password_confirm, email_confirm}) => {
+const formErrCheck = ({password, email}) => {
   const err = {};
   if (password.length > 0 && password.length < 10) {
     err.password = true;
   }
-  if (password_confirm.length > 0 && password_confirm !== password) {
-    err.password_confirm = 'Must match password';
-  }
   if (email.length > 0 && !emailRegex.test(email)) {
     err.email = true;
-  }
-  if (email_confirm.length > 0 && email_confirm !== email) {
-    err.email_confirm = 'Must match email';
   }
   return err;
 };
 
-const formValidCheck = ({
-  username,
-  password,
-  email,
-  first_name,
-  last_name,
-  password_confirm,
-  email_confirm,
-}) => {
+const formValidCheck = ({username, password, email, first_name, last_name}) => {
   const valid = {};
   if (username.length > 2) {
     valid.username = true;
@@ -60,23 +46,7 @@ const formValidCheck = ({
   if (last_name.length > 0) {
     valid.last_name = true;
   }
-  if (password.length > 0 && password_confirm === password) {
-    valid.password_confirm = true;
-  }
-  if (email_confirm.length > 0 && email_confirm === email) {
-    valid.email_confirm = true;
-  }
   return valid;
-};
-
-const prehookValidate = ([form]) => {
-  const {password, email, password_confirm, email_confirm} = form;
-  if (password !== password_confirm) {
-    return 'Passwords do not match';
-  }
-  if (email !== email_confirm) {
-    return 'Emails do not match';
-  }
 };
 
 const Setup = () => {
@@ -87,16 +57,9 @@ const Setup = () => {
     email: '',
     first_name: '',
     last_name: '',
-    password_confirm: '',
-    email_confirm: '',
   });
 
-  const [setup, execSetup] = useAPICall(
-    selectAPISetup,
-    [form.state],
-    {},
-    {prehook: prehookValidate},
-  );
+  const [setup, execSetup] = useAPICall(selectAPISetup, [form.state], {});
 
   return (
     <MainContent>
@@ -136,13 +99,25 @@ const Setup = () => {
                 errCheck={formErrCheck}
                 validCheck={formValidCheck}
               >
-                <Field name="first_name" label="first name" fullWidth />
-                <Field name="last_name" label="last name" fullWidth />
+                <Field
+                  name="first_name"
+                  label="first name"
+                  fullWidth
+                  autoComplete="given-name"
+                  autoFocus
+                />
+                <Field
+                  name="last_name"
+                  label="last name"
+                  fullWidth
+                  autoComplete="family-name"
+                />
                 <Field
                   name="username"
                   label="username"
                   hint="Must be at least 3 characters"
                   fullWidth
+                  autoComplete="username"
                 />
                 <Field
                   name="password"
@@ -155,15 +130,15 @@ const Setup = () => {
                       : ''
                   }
                   fullWidth
+                  autoComplete="new-password"
                 />
                 <Field
-                  name="password_confirm"
-                  type="password"
-                  label="confirm password"
+                  name="email"
+                  type="email"
+                  label="email"
                   fullWidth
+                  autoComplete="email"
                 />
-                <Field name="email" label="email" fullWidth />
-                <Field name="email_confirm" label="confirm email" fullWidth />
               </Form>
               {setup.err && <p>{setup.err}</p>}
               {setup.success && <p>Server successfully setup</p>}

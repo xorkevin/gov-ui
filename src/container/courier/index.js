@@ -1,4 +1,4 @@
-import {lazy} from 'react';
+import {lazy, useContext} from 'react';
 import {Switch, Route, Redirect, useRouteMatch} from 'react-router-dom';
 import {
   MainContent,
@@ -12,12 +12,14 @@ import {
   FaIcon,
 } from '@xorkevin/nuke';
 
+import {GovUICtx} from '../../middleware';
+
 const CourierLink = lazy(() => import('./link'));
 const CourierBrand = lazy(() => import('./brand'));
 
-const Courier = ({courierPath}) => {
+const Courier = () => {
+  const ctx = useContext(GovUICtx);
   const match = useRouteMatch();
-
   return (
     <MainContent>
       <Section>
@@ -45,7 +47,7 @@ const Courier = ({courierPath}) => {
             <Column fullWidth md={18}>
               <Switch>
                 <Route path={`${match.path}/link`}>
-                  <CourierLink courierPath={courierPath} />
+                  <CourierLink courierPath={ctx.courierLinkPath} />
                 </Route>
                 <Route path={`${match.path}/brand`}>
                   <CourierBrand />

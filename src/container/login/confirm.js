@@ -66,7 +66,12 @@ const ConfirmAccount = ({pathLogin}) => {
                 onEnter={execConfirm}
               >
                 <Field name="userid" label="Userid" fullWidth />
-                <Field name="key" label="Code" fullWidth />
+                <Field
+                  name="key"
+                  label="Code"
+                  fullWidth
+                  autoComplete="one-time-code"
+                />
               </Form>
               {confirmAcct.err && <p>{confirmAcct.err}</p>}
               {confirmAcct.success && <p>Your account has been created.</p>}

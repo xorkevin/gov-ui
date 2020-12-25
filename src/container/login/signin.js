@@ -77,12 +77,19 @@ const SigninContainer = () => {
                 onChange={form.update}
                 onSubmit={execLogin}
               >
-                <Field name="username" label="Username / Email" fullWidth />
+                <Field
+                  name="username"
+                  label="Username / Email"
+                  fullWidth
+                  autoComplete="username"
+                  autoFocus
+                />
                 <Field
                   name="password"
                   type="password"
                   label="Password"
                   fullWidth
+                  autoComplete="current-password"
                 />
               </Form>
               {login.err && <p>{login.err}</p>}

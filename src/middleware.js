@@ -9,7 +9,7 @@ const permissionedRoles = Object.freeze([
   'mod.gov.oauth',
 ]);
 
-const _allRoles = Object.freeze(['user'].concat(permissionedRoles));
+const allRoles = Object.freeze(['user'].concat(permissionedRoles));
 
 const orgUsrPrefix = 'usr.org.';
 const orgModPrefix = 'mod.org.';
@@ -130,6 +130,7 @@ const GovUIDefaultOpts = Object.freeze({
   fallbackView: 'Loading',
   pathHome: '/',
   permissionedRoles,
+  allRoles,
   // user accounts
   userSessionParsePlatform: (user_agent) => ({
     name: matchBrowser(user_agent),

@@ -28,32 +28,20 @@ import {emailRegex} from '../../utility';
 
 const selectAPIEditPass = (api) => api.u.user.pass.edit;
 
-const formErrCheckPass = ({new_password, password_confirm}) => {
+const formErrCheckPass = ({new_password}) => {
   const err = {};
   if (new_password.length > 0 && new_password.length < 10) {
     err.new_password = true;
   }
-  if (password_confirm.length > 0 && password_confirm !== new_password) {
-    err.password_confirm = 'Must match password';
-  }
   return err;
 };
 
-const formValidCheckPass = ({new_password, password_confirm}) => {
+const formValidCheckPass = ({new_password}) => {
   const valid = {};
   if (new_password.length > 9) {
     valid.new_password = true;
   }
-  if (password_confirm.length > 0 && password_confirm === new_password) {
-    valid.password_confirm = true;
-  }
   return valid;
-};
-
-const prehookValidatePass = ([_old_pass, new_password, password_confirm]) => {
-  if (new_password !== password_confirm) {
-    return 'Passwords do not match';
-  }
 };
 
 // Edit email
@@ -255,7 +243,6 @@ const AccountSecurity = ({pathConfirm, parsePlatform}) => {
   const formPass = useForm({
     old_password: '',
     new_password: '',
-    password_confirm: '',
   });
 
   const formPassAssign = formPass.assign;
@@ -264,7 +251,6 @@ const AccountSecurity = ({pathConfirm, parsePlatform}) => {
       formPassAssign({
         old_password: '',
         new_password: '',
-        password_confirm: '',
       });
       displaySnackbar();
     },
@@ -273,13 +259,9 @@ const AccountSecurity = ({pathConfirm, parsePlatform}) => {
 
   const [editPass, execEditPass] = useAuthCall(
     selectAPIEditPass,
-    [
-      formPass.state.old_password,
-      formPass.state.new_password,
-      formPass.state.password_confirm,
-    ],
+    [formPass.state.old_password, formPass.state.new_password],
     {},
-    {prehook: prehookValidatePass, posthook: posthookPass},
+    {posthook: posthookPass},
   );
 
   const formEmail = useForm({
@@ -311,6 +293,7 @@ const AccountSecurity = ({pathConfirm, parsePlatform}) => {
                 type="password"
                 label="Old password"
                 fullWidth
+                autoComplete="current-password"
               />
               <Field
                 name="new_password"
@@ -323,12 +306,7 @@ const AccountSecurity = ({pathConfirm, parsePlatform}) => {
                     : ''
                 }
                 fullWidth
-              />
-              <Field
-                name="password_confirm"
-                type="password"
-                label="Confirm password"
-                fullWidth
+                autoComplete="new-password"
               />
             </Form>
             <ButtonGroup>
@@ -350,13 +328,20 @@ const AccountSecurity = ({pathConfirm, parsePlatform}) => {
               errCheck={formErrCheckEmail}
               validCheck={formValidCheckEmail}
             >
-              <Field name="email" label="New email" nohint fullWidth />
+              <Field
+                name="email"
+                label="New email"
+                nohint
+                fullWidth
+                autoComplete="email"
+              />
               <Field
                 name="password"
                 type="password"
                 label="Password"
                 nohint
                 fullWidth
+                autoComplete="current-password"
               />
             </Form>
             <ButtonGroup>

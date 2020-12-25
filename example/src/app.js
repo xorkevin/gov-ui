@@ -40,7 +40,7 @@ import {
 
 import {permissionedRoles} from 'roles';
 
-const DashContainer = Protected(lazy(() => import('dash')));
+const DashC = Protected(lazy(() => import('dash')));
 const LoginC = AntiProtected(LoginContainer);
 const AccountC = Protected(AccountContainer);
 const UserC = Protected(UserContainer);
@@ -163,7 +163,7 @@ const App = () => {
       <Suspense fallback={ctx.mainFallbackView}>
         <Switch>
           <Route exact path="/">
-            <DashContainer />
+            <DashC />
           </Route>
           <Route path="/x">
             <LoginC />

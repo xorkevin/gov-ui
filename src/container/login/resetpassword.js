@@ -18,32 +18,20 @@ import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 
 const selectAPIResetPass = (api) => api.u.user.pass.forgot.confirm;
 
-const formErrCheck = ({new_password, password_confirm}) => {
+const formErrCheck = ({new_password}) => {
   const err = {};
   if (new_password.length > 0 && new_password.length < 10) {
     err.new_password = true;
   }
-  if (password_confirm.length > 0 && password_confirm !== new_password) {
-    err.password_confirm = 'Must match password';
-  }
   return err;
 };
 
-const formValidCheck = ({new_password, password_confirm}) => {
+const formValidCheck = ({new_password}) => {
   const valid = {};
   if (new_password.length > 9) {
     valid.new_password = true;
   }
-  if (password_confirm.length > 0 && password_confirm === new_password) {
-    valid.password_confirm = true;
-  }
   return valid;
-};
-
-const prehookValidate = ([_userid, _key, new_password, password_confirm]) => {
-  if (new_password !== password_confirm) {
-    return 'Passwords do not match';
-  }
 };
 
 const ResetPass = ({pathLogin}) => {
@@ -51,16 +39,14 @@ const ResetPass = ({pathLogin}) => {
   const form = useForm({
     key: decodeURIComponent(getSearchParams(search).get('key') || ''),
     new_password: '',
-    password_confirm: '',
   });
 
   const [userid, key] = form.state.key.split('.', 2);
 
   const [reset, execReset] = useAPICall(
     selectAPIResetPass,
-    [userid, key, form.state.new_password, form.state.password_confirm],
+    [userid, key, form.state.new_password],
     {},
-    {prehook: prehookValidate},
   );
 
   return (
@@ -102,7 +88,12 @@ const ResetPass = ({pathLogin}) => {
                 errCheck={formErrCheck}
                 validCheck={formValidCheck}
               >
-                <Field name="key" label="Code" fullWidth />
+                <Field
+                  name="key"
+                  label="Code"
+                  fullWidth
+                  autoComplete="one-time-code"
+                />
                 <Field
                   name="new_password"
                   type="password"
@@ -110,12 +101,8 @@ const ResetPass = ({pathLogin}) => {
                   hint="Must be at least 10 characters"
                   hintRight={`${form.state.new_password.length} chars`}
                   fullWidth
-                />
-                <Field
-                  name="password_confirm"
-                  type="password"
-                  label="Confirm password"
-                  fullWidth
+                  autoComplete="new-password"
+                  autoFocus
                 />
               </Form>
               {reset.err && <p>{reset.err}</p>}

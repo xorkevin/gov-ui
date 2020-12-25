@@ -151,6 +151,7 @@ const Profile = () => {
                 nohint
                 disabled={locked}
                 fullWidth
+                autoComplete="email"
               />
               <FieldTextarea
                 className="account-field-disabled-solid"
@@ -269,6 +270,7 @@ const AccountDetails = () => {
               nohint
               disabled={locked}
               fullWidth
+              autoComplete="username"
             />
             <Field
               className="account-field-disabled-solid"
@@ -277,6 +279,7 @@ const AccountDetails = () => {
               nohint
               disabled={locked}
               fullWidth
+              autoComplete="given-name"
             />
             <Field
               className="account-field-disabled-solid"
@@ -285,6 +288,7 @@ const AccountDetails = () => {
               nohint
               disabled={locked}
               fullWidth
+              autoComplete="family-name"
             />
           </Form>
           <ButtonGroup>

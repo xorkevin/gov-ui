@@ -38,8 +38,20 @@ const AccountEmailConfirm = ({pathSecurity}) => {
             onChange={form.update}
             onSubmit={execConfirm}
           >
-            <Field name="key" label="Code" fullWidth />
-            <Field name="password" type="password" label="Password" fullWidth />
+            <Field
+              name="key"
+              label="Code"
+              fullWidth
+              autoComplete="one-time-code"
+            />
+            <Field
+              name="password"
+              type="password"
+              label="Password"
+              fullWidth
+              autoComplete="current-password"
+              autoFocus
+            />
           </Form>
           <ButtonGroup>
             {confirmState.success ? (
