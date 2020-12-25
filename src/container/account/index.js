@@ -1,4 +1,4 @@
-import {lazy, useContext} from 'react';
+import {lazy, Suspense, useContext} from 'react';
 import {Switch, Route, Redirect, useRouteMatch} from 'react-router-dom';
 import {
   MainContent,
@@ -66,30 +66,32 @@ const Account = () => {
               </Sidebar>
             </Column>
             <Column fullWidth md={18}>
-              <Switch>
-                <Route path={`${match.path}/account`}>
-                  <AccountDetailsContainer />
-                </Route>
-                <Route path={`${match.path}/security`}>
-                  <SecurityContainer
-                    pathConfirm={`${match.path}/confirm/email`}
-                  />
-                </Route>
-                <Route path={`${match.path}/confirm/email`}>
-                  <EmailConfirmContainer
-                    pathSecurity={`${match.path}/security`}
-                  />
-                </Route>
-                {ctx.enableUserOrgs && (
-                  <Route path={`${match.path}/orgs`}>
-                    <OrgsContainer />
+              <Suspense fallback={ctx.fallbackView}>
+                <Switch>
+                  <Route path={`${match.path}/account`}>
+                    <AccountDetailsContainer />
                   </Route>
-                )}
-                <Route path={`${match.path}/dev/apikey`}>
-                  <DevApikeyContainer />
-                </Route>
-                <Redirect to={`${match.path}/account`} />
-              </Switch>
+                  <Route path={`${match.path}/security`}>
+                    <SecurityContainer
+                      pathConfirm={`${match.path}/confirm/email`}
+                    />
+                  </Route>
+                  <Route path={`${match.path}/confirm/email`}>
+                    <EmailConfirmContainer
+                      pathSecurity={`${match.path}/security`}
+                    />
+                  </Route>
+                  {ctx.enableUserOrgs && (
+                    <Route path={`${match.path}/orgs`}>
+                      <OrgsContainer />
+                    </Route>
+                  )}
+                  <Route path={`${match.path}/dev/apikey`}>
+                    <DevApikeyContainer />
+                  </Route>
+                  <Redirect to={`${match.path}/account`} />
+                </Switch>
+              </Suspense>
             </Column>
           </Grid>
         </Container>

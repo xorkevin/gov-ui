@@ -1,4 +1,4 @@
-import {lazy} from 'react';
+import {lazy, Suspense, useContext} from 'react';
 import {
   Switch,
   Route,
@@ -18,12 +18,15 @@ import {
   FaIcon,
 } from '@xorkevin/nuke';
 
+import {GovUICtx} from '../../middleware';
+
 const OrgMembers = lazy(() => import('./members'));
 const OrgSettings = lazy(() => import('./settings'));
 
 const selectAPIOrg = (api) => api.orgs.name;
 
 const OrgDetails = ({pathOrg}) => {
+  const ctx = useContext(GovUICtx);
   const match = useRouteMatch();
   const {name} = useParams();
 
@@ -60,20 +63,22 @@ const OrgDetails = ({pathOrg}) => {
                   </SidebarItem>
                 </Sidebar>
               </Column>
-              <Column fullWidth sm={16} grow="1">
-                <Switch>
-                  <Route path={`${match.path}/members`}>
-                    <OrgMembers name={name} />
-                  </Route>
-                  <Route path={`${match.path}/settings`}>
-                    <OrgSettings
-                      name={name}
-                      pathOrgSettings={`${pathOrg}/settings`}
-                      refresh={reexecute}
-                    />
-                  </Route>
-                  <Redirect to={`${match.path}/members`} />
-                </Switch>
+              <Column fullWidth sm={16}>
+                <Suspense fallback={ctx.fallbackView}>
+                  <Switch>
+                    <Route path={`${match.path}/members`}>
+                      <OrgMembers name={name} />
+                    </Route>
+                    <Route path={`${match.path}/settings`}>
+                      <OrgSettings
+                        name={name}
+                        pathOrgSettings={`${pathOrg}/settings`}
+                        refresh={reexecute}
+                      />
+                    </Route>
+                    <Redirect to={`${match.path}/members`} />
+                  </Switch>
+                </Suspense>
               </Column>
             </Grid>
           )}

@@ -1,4 +1,4 @@
-import {lazy} from 'react';
+import {lazy, Suspense, useContext} from 'react';
 import {Switch, Route, Redirect, useRouteMatch} from 'react-router-dom';
 import {
   MainContent,
@@ -12,11 +12,14 @@ import {
   FaIcon,
 } from '@xorkevin/nuke';
 
+import {GovUICtx} from '../../middleware';
+
 const OAuthAppContainer = lazy(() => import('./oauth'));
 const UsersContainer = lazy(() => import('./users'));
 const ApprovalsContainer = lazy(() => import('./approvals'));
 
 const Admin = () => {
+  const ctx = useContext(GovUICtx);
   const match = useRouteMatch();
   return (
     <MainContent>
@@ -51,18 +54,20 @@ const Admin = () => {
               </Sidebar>
             </Column>
             <Column fullWidth md={18}>
-              <Switch>
-                <Route path={`${match.path}/users`}>
-                  <UsersContainer />
-                </Route>
-                <Route path={`${match.path}/approvals`}>
-                  <ApprovalsContainer />
-                </Route>
-                <Route path={`${match.path}/oauth`}>
-                  <OAuthAppContainer />
-                </Route>
-                <Redirect to={`${match.path}/users`} />
-              </Switch>
+              <Suspense fallback={ctx.fallbackView}>
+                <Switch>
+                  <Route path={`${match.path}/users`}>
+                    <UsersContainer />
+                  </Route>
+                  <Route path={`${match.path}/approvals`}>
+                    <ApprovalsContainer />
+                  </Route>
+                  <Route path={`${match.path}/oauth`}>
+                    <OAuthAppContainer />
+                  </Route>
+                  <Redirect to={`${match.path}/users`} />
+                </Switch>
+              </Suspense>
             </Column>
           </Grid>
         </Container>

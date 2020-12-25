@@ -1,4 +1,4 @@
-import {lazy, useContext} from 'react';
+import {lazy, Suspense, useContext} from 'react';
 import {Switch, Route, Redirect, useRouteMatch} from 'react-router-dom';
 import {
   MainContent,
@@ -45,15 +45,17 @@ const Courier = () => {
               </Sidebar>
             </Column>
             <Column fullWidth md={18}>
-              <Switch>
-                <Route path={`${match.path}/link`}>
-                  <CourierLink courierPath={ctx.courierLinkPath} />
-                </Route>
-                <Route path={`${match.path}/brand`}>
-                  <CourierBrand />
-                </Route>
-                <Redirect to={`${match.path}/link`} />
-              </Switch>
+              <Suspense fallback={ctx.fallbackView}>
+                <Switch>
+                  <Route path={`${match.path}/link`}>
+                    <CourierLink courierPath={ctx.courierLinkPath} />
+                  </Route>
+                  <Route path={`${match.path}/brand`}>
+                    <CourierBrand />
+                  </Route>
+                  <Redirect to={`${match.path}/link`} />
+                </Switch>
+              </Suspense>
             </Column>
           </Grid>
         </Container>
