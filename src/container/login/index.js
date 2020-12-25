@@ -7,7 +7,7 @@ const CreateConfirmContainer = lazy(() => import('./confirm'));
 const ForgotPassContainer = lazy(() => import('./forgotpassword'));
 const ResetPassContainer = lazy(() => import('./resetpassword'));
 
-const Login = ({userApprovals}) => {
+const Login = () => {
   const match = useRouteMatch();
 
   return (
@@ -19,7 +19,6 @@ const Login = ({userApprovals}) => {
         <CreateContainer
           pathLogin={`${match.path}/login`}
           pathConfirm={`${match.path}/confirm`}
-          userApprovals={userApprovals}
         />
       </Route>
       <Route path={`${match.path}/confirm`}>

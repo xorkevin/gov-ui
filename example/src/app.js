@@ -1,4 +1,4 @@
-import {Fragment, lazy, Suspense} from 'react';
+import {Fragment, lazy, Suspense, useContext} from 'react';
 import {Switch, Route, Redirect} from 'react-router-dom';
 import {useURL} from '@xorkevin/substation';
 import {
@@ -10,9 +10,6 @@ import {
   AntiProtected,
 } from '@xorkevin/turbine';
 import {
-  MainContent,
-  Section,
-  Container,
   useDarkModeValue,
   useSetDarkMode,
   SnackbarContainer,
@@ -30,37 +27,32 @@ import {
 } from '@xorkevin/nuke';
 import AnchorSecondary from '@xorkevin/nuke/src/component/anchor/secondary';
 import Img from '@xorkevin/nuke/src/component/image/circle';
+import {
+  GovUICtx,
+  LoginContainer,
+  AccountContainer,
+  UserContainer,
+  OrgContainer,
+  AdminContainer,
+  CourierContainer,
+  SetupContainer,
+} from '@xorkevin/gov-ui';
 
 import {permissionedRoles} from 'roles';
 
 const DashContainer = Protected(lazy(() => import('dash')));
-const LoginContainer = AntiProtected(
-  lazy(() => import('@xorkevin/gov-ui/src/container/login')),
-);
-const AccountContainer = Protected(
-  lazy(() => import('@xorkevin/gov-ui/src/container/account')),
-);
-const UserContainer = Protected(
-  lazy(() => import('@xorkevin/gov-ui/src/container/user')),
-);
-const OrgContainer = Protected(
-  lazy(() => import('@xorkevin/gov-ui/src/container/org')),
-);
-const AdminContainer = Protected(
-  lazy(() => import('@xorkevin/gov-ui/src/container/admin')),
-  permissionedRoles,
-);
-const CourierContainer = Protected(
-  lazy(() => import('@xorkevin/gov-ui/src/container/courier')),
-);
-const SetupContainer = lazy(() =>
-  import('@xorkevin/gov-ui/src/container/setup'),
-);
+const LoginC = AntiProtected(LoginContainer);
+const AccountC = Protected(AccountContainer);
+const UserC = Protected(UserContainer);
+const OrgC = Protected(OrgContainer);
+const AdminC = Protected(AdminContainer, permissionedRoles);
+const CourierC = Protected(CourierContainer);
 
 const selectAPIProfile = (api) => api.profile.get;
 const selectAPIProfileImage = (api) => api.profile.id.image;
 
 const App = () => {
+  const ctx = useContext(GovUICtx);
   const dark = useDarkModeValue();
   const toggleDark = useSetDarkMode();
   const menu = useMenu();
@@ -168,28 +160,28 @@ const App = () => {
         )}
       </Navbar>
 
-      <Suspense fallback={FallbackView}>
+      <Suspense fallback={ctx.mainFallbackView}>
         <Switch>
           <Route exact path="/">
             <DashContainer />
           </Route>
           <Route path="/x">
-            <LoginContainer />
+            <LoginC />
           </Route>
           <Route path="/a">
-            <AccountContainer />
+            <AccountC />
           </Route>
           <Route path="/u">
-            <UserContainer />
+            <UserC />
           </Route>
           <Route path="/org">
-            <OrgContainer />
+            <OrgC />
           </Route>
           <Route path="/admin">
-            <AdminContainer />
+            <AdminC />
           </Route>
           <Route path="/courier">
-            <CourierContainer />
+            <CourierC />
           </Route>
           <Route path="/setup">
             <SetupContainer />

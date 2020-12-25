@@ -1,4 +1,4 @@
-import {Fragment, useState, useCallback} from 'react';
+import {Fragment, useState, useCallback, useContext} from 'react';
 import {useURL} from '@xorkevin/substation';
 import {
   useAuthValue,
@@ -25,6 +25,8 @@ import Img from '@xorkevin/nuke/src/component/image/rounded';
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonSecondary from '@xorkevin/nuke/src/component/button/secondary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
+
+import {GovUICtx} from '../../middleware';
 
 const selectAPIProfile = (api) => api.profile.get;
 const selectAPIProfileImage = (api) => api.profile.id.image;
@@ -208,7 +210,8 @@ const Profile = () => {
 
 const selectAPIEditAccount = (api) => api.u.user.edit;
 
-const AccountDetails = ({showProfile}) => {
+const AccountDetails = () => {
+  const ctx = useContext(GovUICtx);
   const displaySnackbar = useSnackbarView(
     <SnackbarSurface>&#x2713; Account updated</SnackbarSurface>,
   );
@@ -314,7 +317,7 @@ const AccountDetails = ({showProfile}) => {
           </p>
         </Column>
       </Grid>
-      {showProfile && <Profile />}
+      {ctx.enableUserProfile && <Profile />}
     </div>
   );
 };

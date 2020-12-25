@@ -1,4 +1,4 @@
-import {Fragment, useCallback, useMemo} from 'react';
+import {Fragment, useCallback, useMemo, useContext} from 'react';
 import {Link} from 'react-router-dom';
 import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
@@ -20,6 +20,8 @@ import {
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonSecondary from '@xorkevin/nuke/src/component/button/secondary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
+
+import {GovUICtx} from '../../middleware';
 import {emailRegex} from '../../utility';
 
 // Edit pass
@@ -162,7 +164,8 @@ const SessionRow = ({
   );
 };
 
-const AccountSessions = ({parsePlatform}) => {
+const AccountSessions = () => {
+  const ctx = useContext(GovUICtx);
   const displaySnackbar = useSnackbarView(
     <SnackbarSurface>
       <FaIcon icon="trash" /> Session deleted
@@ -222,7 +225,7 @@ const AccountSessions = ({parsePlatform}) => {
                 user_agent={user_agent}
                 posthook={posthookDelete}
                 errhook={displayErrSnack}
-                parsePlatform={parsePlatform}
+                parsePlatform={ctx.userSessionParsePlatform}
               />
             ))}
           </ListGroup>

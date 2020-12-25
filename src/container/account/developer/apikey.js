@@ -1,4 +1,4 @@
-import {Fragment, useState, useCallback, useMemo} from 'react';
+import {Fragment, useState, useCallback, useMemo, useContext} from 'react';
 import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
   Container,
@@ -25,6 +25,8 @@ import {
 } from '@xorkevin/nuke';
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
+
+import {GovUICtx} from '../../../middleware';
 
 const APIKEY_LIMIT = 32;
 
@@ -281,7 +283,8 @@ const CheckKey = () => {
   );
 };
 
-const Apikeys = ({allScopes, allScopeDesc, rolesToScopes}) => {
+const Apikeys = () => {
+  const ctx = useContext(GovUICtx);
   const displaySnackbarDel = useSnackbarView(
     <SnackbarSurface>
       <FaIcon icon="trash" /> API key deleted
@@ -357,11 +360,13 @@ const Apikeys = ({allScopes, allScopeDesc, rolesToScopes}) => {
 
   const {roles} = useAuthValue();
   const scopeOptions = useMemo(() => {
-    const scopeSet = new Set(roles.flatMap((role) => rolesToScopes[role]));
-    return allScopes
+    const scopeSet = new Set(
+      roles.flatMap((role) => ctx.apiRolesToScopes[role]),
+    );
+    return ctx.apiAllScopes
       .filter((i) => scopeSet.has(i))
       .map((i) => ({display: i, value: i}));
-  }, [allScopes, rolesToScopes, roles]);
+  }, [ctx, roles]);
 
   return (
     <div>
@@ -382,7 +387,7 @@ const Apikeys = ({allScopes, allScopeDesc, rolesToScopes}) => {
                 posthookUpd={posthookUpdate}
                 errhook={displayErrSnack}
                 scopeOptions={scopeOptions}
-                allScopeDesc={allScopeDesc}
+                allScopeDesc={ctx.apiAllScopeDesc}
               />
             ))}
           </ListGroup>

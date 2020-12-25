@@ -30,4 +30,4 @@ const GovAPI = Object.freeze({
   courier,
 });
 
-export {GovAPI as default, GovAPI};
+export default GovAPI;

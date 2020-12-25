@@ -16,6 +16,7 @@ import {
   Section,
   Container,
 } from '@xorkevin/nuke';
+import {GovUIMiddleware} from '@xorkevin/gov-ui';
 import platform from 'platform';
 
 import {allRoles} from 'roles';
@@ -32,7 +33,7 @@ const UnAuthFallback = (
   </MainContent>
 );
 
-const FallbackView = (
+const MainFallbackView = (
   <MainContent>
     <Section>
       <Container padded narrow>
@@ -40,6 +41,12 @@ const FallbackView = (
       </Container>
     </Section>
   </MainContent>
+);
+
+const FallbackView = (
+  <Container padded narrow>
+    <h4>Loading</h4>
+  </Container>
 );
 
 const mobileSet = new Set(['Android', 'iOS']);
@@ -52,15 +59,18 @@ const parsePlatform = (user_agent) => {
   };
 };
 
-const GovContextValue = Object.freeze({
-  courierPath: COURIERBASE_URL,
-});
-
 const Middleware = ComposeMiddleware(
   APIMiddleware(APIClient),
   AuthMiddleware({fallbackView: UnAuthFallback, roleIntersect: allRoles}),
   DarkModeMiddleware(),
   SnackbarMiddleware(),
+  GovUIMiddleware({
+    mainFallbackView: MainFallbackView,
+    fallbackView: FallbackView,
+    userSessionParsePlatform: parsePlatform,
+    // eslint-disable-next-line no-undef
+    courierLinkPath: COURIERBASE_URL,
+  }),
 );
 
 ReactDOM.render(

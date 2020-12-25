@@ -129,11 +129,12 @@ const GovUIDefaultOpts = Object.freeze({
   mainFallbackView: 'Loading',
   fallbackView: 'Loading',
   pathHome: '/',
+  permissionedRoles,
   // user accounts
   userSessionParsePlatform: (user_agent) => ({
     name: matchBrowser(user_agent),
     os: '',
-    mobile: matchBrowser(user_agent),
+    mobile: matchMobile(user_agent),
   }),
   enableUserProfile: true,
   // user api keys
@@ -152,7 +153,7 @@ const GovUIDefaultOpts = Object.freeze({
   courierLinkPath: '/api/courier/link/id',
 });
 
-const GovUICtx = createContext(Object.assign({}, GovUIDefaultOpts));
+const GovUICtx = createContext(GovUIDefaultOpts);
 
 const GovUIMiddleware = (value) => {
   const v = Object.assign({}, GovUIDefaultOpts, value);
@@ -162,3 +163,5 @@ const GovUIMiddleware = (value) => {
     ),
   };
 };
+
+export {GovUIDefaultOpts, GovUICtx, GovUIMiddleware};

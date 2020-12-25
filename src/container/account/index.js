@@ -1,4 +1,4 @@
-import {lazy} from 'react';
+import {lazy, useContext} from 'react';
 import {Switch, Route, Redirect, useRouteMatch} from 'react-router-dom';
 import {
   MainContent,
@@ -13,6 +13,8 @@ import {
   FaIcon,
 } from '@xorkevin/nuke';
 
+import {GovUICtx} from '../../middleware';
+
 const AccountDetailsContainer = lazy(() => import('./details'));
 const SecurityContainer = lazy(() => import('./security'));
 const EmailConfirmContainer = lazy(() => import('./emailconfirm'));
@@ -20,18 +22,8 @@ const OrgsContainer = lazy(() => import('./orgs'));
 
 const DevApikeyContainer = lazy(() => import('./developer/apikey'));
 
-const Account = ({
-  showProfile,
-  showOrgs,
-  orgUsrPrefix,
-  orgModPrefix,
-  pathOrg,
-  pathOrgSettings,
-  parsePlatform,
-  allScopes,
-  allScopeDesc,
-  rolesToScopes,
-}) => {
+const Account = () => {
+  const ctx = useContext(GovUICtx);
   const match = useRouteMatch();
 
   return (
@@ -77,12 +69,11 @@ const Account = ({
             <Column fullWidth md={18}>
               <Switch>
                 <Route path={`${match.path}/account`}>
-                  <AccountDetailsContainer showProfile={showProfile} />
+                  <AccountDetailsContainer />
                 </Route>
                 <Route path={`${match.path}/security`}>
                   <SecurityContainer
                     pathConfirm={`${match.path}/confirm/email`}
-                    parsePlatform={parsePlatform}
                   />
                 </Route>
                 <Route path={`${match.path}/confirm/email`}>
@@ -90,22 +81,13 @@ const Account = ({
                     pathSecurity={`${match.path}/security`}
                   />
                 </Route>
-                {showOrgs && (
+                {ctx.enableUserOrgs && (
                   <Route path={`${match.path}/orgs`}>
-                    <OrgsContainer
-                      orgUsrPrefix={orgUsrPrefix}
-                      orgModPrefix={orgModPrefix}
-                      pathOrg={pathOrg}
-                      pathOrgSettings={pathOrgSettings}
-                    />
+                    <OrgsContainer />
                   </Route>
                 )}
                 <Route path={`${match.path}/dev/apikey`}>
-                  <DevApikeyContainer
-                    allScopes={allScopes}
-                    allScopeDesc={allScopeDesc}
-                    rolesToScopes={rolesToScopes}
-                  />
+                  <DevApikeyContainer />
                 </Route>
                 <Redirect to={`${match.path}/account`} />
               </Switch>
@@ -117,4 +99,4 @@ const Account = ({
   );
 };
 
-export {Account as default, Account};
+export default Account;

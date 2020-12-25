@@ -1,4 +1,4 @@
-import {useState, useCallback, useMemo} from 'react';
+import {useState, useCallback, useMemo, useContext} from 'react';
 import {selectAPINull} from '@xorkevin/substation';
 import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
@@ -24,6 +24,8 @@ import {
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
+
+import {GovUICtx} from '../../middleware';
 import {formatStr} from '../../utility';
 
 const ORG_LIMIT = 32;
@@ -84,7 +86,8 @@ const OrgRow = ({isMod, pathOrg, pathOrgSettings, name}) => {
   );
 };
 
-const Orgs = ({orgUsrPrefix, orgModPrefix, pathOrg, pathOrgSettings}) => {
+const Orgs = () => {
+  const ctx = useContext(GovUICtx);
   const displaySnackbarCreate = useSnackbarView(
     <SnackbarSurface>&#x2713; Org created</SnackbarSurface>,
   );
@@ -113,12 +116,18 @@ const Orgs = ({orgUsrPrefix, orgModPrefix, pathOrg, pathOrgSettings}) => {
   );
   const [roles, reexecute] = useAuthResource(
     selectAPIRoles,
-    [isViewMod ? orgModPrefix : orgUsrPrefix, ORG_LIMIT, paginate.index],
+    [
+      isViewMod ? ctx.orgModPrefix : ctx.orgUsrPrefix,
+      ORG_LIMIT,
+      paginate.index,
+    ],
     [],
     {posthook: posthookRoles},
   );
 
-  const prefixLen = isViewMod ? orgModPrefix.length : orgUsrPrefix.length;
+  const prefixLen = isViewMod
+    ? ctx.orgModPrefix.length
+    : ctx.orgUsrPrefix.length;
   const orgids = useMemo(() => roles.data.map((i) => i.slice(prefixLen)), [
     prefixLen,
     roles,
@@ -168,8 +177,8 @@ const Orgs = ({orgUsrPrefix, orgModPrefix, pathOrg, pathOrgSettings}) => {
                 <OrgRow
                   key={i.orgid}
                   isMod={isViewMod}
-                  pathOrg={pathOrg}
-                  pathOrgSettings={pathOrgSettings}
+                  pathOrg={ctx.pathOrg}
+                  pathOrgSettings={ctx.pathOrgSettings}
                   orgid={i.orgid}
                   name={i.name}
                   display_name={i.display_name}

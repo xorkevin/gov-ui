@@ -1,6 +1,5 @@
-import {Fragment} from 'react';
+import {Fragment, useContext} from 'react';
 import {Link} from 'react-router-dom';
-import {emailRegex} from '../../utility';
 import {useAPICall} from '@xorkevin/substation';
 import {
   MainContent,
@@ -15,6 +14,9 @@ import {
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonSecondary from '@xorkevin/nuke/src/component/button/secondary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
+
+import {GovUICtx} from '../../middleware';
+import {emailRegex} from '../../utility';
 
 const selectAPICreateAccount = (api) => api.u.user.create;
 
@@ -79,7 +81,8 @@ const prehookValidate = ([form]) => {
   }
 };
 
-const CreateAccount = ({pathLogin, pathConfirm, userApprovals}) => {
+const CreateAccount = ({pathLogin, pathConfirm}) => {
+  const ctx = useContext(GovUICtx);
   const form = useForm({
     username: '',
     password: '',
@@ -112,7 +115,7 @@ const CreateAccount = ({pathLogin, pathConfirm, userApprovals}) => {
             bar={
               <ButtonGroup>
                 {create.success ? (
-                  userApprovals ? (
+                  ctx.enableUserApprovals ? (
                     <Link to={pathLogin}>
                       <ButtonSecondary>Finish</ButtonSecondary>
                     </Link>
@@ -175,7 +178,7 @@ const CreateAccount = ({pathLogin, pathConfirm, userApprovals}) => {
               </Form>
               {create.err && <p>{create.err}</p>}
               {create.success &&
-                (userApprovals ? (
+                (ctx.enableUserApprovals ? (
                   <p>
                     A new user request has been sent to an administrator. A
                     confirmation email will be emailed to the address you

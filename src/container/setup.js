@@ -175,4 +175,4 @@ const Setup = () => {
   );
 };
 
-export {Setup as default, Setup};
+export default Setup;

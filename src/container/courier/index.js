@@ -60,4 +60,4 @@ const Courier = ({courierPath}) => {
   );
 };
 
-export {Courier as default, Courier};
+export default Courier;

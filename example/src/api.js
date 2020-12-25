@@ -1,6 +1,6 @@
 import {makeAPIClient} from '@xorkevin/substation';
 import {GovAuthAPI} from '@xorkevin/turbine';
-import {GovAPI} from '@xorkevin/gov-ui/src/apiconfig';
+import {GovAPI} from '@xorkevin/gov-ui';
 
 const API = {
   setupz: GovAuthAPI.setupz(),
