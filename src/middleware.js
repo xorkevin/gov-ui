@@ -14,6 +14,9 @@ const allRoles = Object.freeze(['user'].concat(permissionedRoles));
 const orgUsrPrefix = 'usr.org.';
 const orgModPrefix = 'mod.org.';
 
+const orgUsrRole = (orgid) => orgUsrPrefix + orgid;
+const orgModRole = (orgid) => orgModPrefix + orgid;
+
 // Scopes
 const allScopes = Object.freeze([
   // user.account
@@ -146,6 +149,8 @@ const GovUIDefaultOpts = Object.freeze({
   enableUserOrgs: true,
   orgUsrPrefix,
   orgModPrefix,
+  orgUsrRole,
+  orgModRole,
   pathOrg: '/org/{0}',
   pathOrgSettings: '/org/{0}/settings',
   // user approvals

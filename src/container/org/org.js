@@ -1,4 +1,4 @@
-import {lazy, Suspense, useContext} from 'react';
+import {lazy, Suspense, useMemo, useContext} from 'react';
 import {
   Switch,
   Route,
@@ -7,6 +7,7 @@ import {
   useParams,
 } from 'react-router-dom';
 import {useResource} from '@xorkevin/substation';
+import {useIntersectRoles} from '@xorkevin/turbine';
 import {
   MainContent,
   Section,
@@ -38,11 +39,31 @@ const OrgDetails = ({pathOrg}) => {
     creation_time: 0,
   });
 
+  const orgid = org.data.orgid;
+  const usrRole = ctx.orgUsrRole(orgid);
+  const modRole = ctx.orgModRole(orgid);
+  const orgRoles = useMemo(() => {
+    if (!orgid || orgid === '') {
+      return [];
+    }
+    return [usrRole, modRole];
+  }, [orgid, usrRole, modRole]);
+
+  const [roles] = useIntersectRoles(orgRoles);
+  const roleSet = useMemo(() => {
+    if (!roles.success) {
+      return new Set();
+    }
+    return new Set(roles.data);
+  }, [roles]);
+
+  const isMod = roleSet.has(modRole);
+
   return (
     <MainContent>
       <Section>
         <Container padded narrow>
-          {org.success && (
+          {org.success && roles.success && (
             <Grid>
               <Column fullWidth md={6}>
                 <h4>{org.data.display_name}</h4>
@@ -54,13 +75,15 @@ const OrgDetails = ({pathOrg}) => {
                   >
                     Members
                   </SidebarItem>
-                  <SidebarItem
-                    local
-                    link={`${match.url}/settings`}
-                    icon={<FaIcon icon="cog" />}
-                  >
-                    Settings
-                  </SidebarItem>
+                  {isMod && (
+                    <SidebarItem
+                      local
+                      link={`${match.url}/settings`}
+                      icon={<FaIcon icon="cog" />}
+                    >
+                      Settings
+                    </SidebarItem>
+                  )}
                 </Sidebar>
               </Column>
               <Column fullWidth sm={16}>
@@ -69,13 +92,15 @@ const OrgDetails = ({pathOrg}) => {
                     <Route path={`${match.path}/members`}>
                       <OrgMembers name={name} />
                     </Route>
-                    <Route path={`${match.path}/settings`}>
-                      <OrgSettings
-                        name={name}
-                        pathOrgSettings={`${pathOrg}/settings`}
-                        refresh={reexecute}
-                      />
-                    </Route>
+                    {isMod && (
+                      <Route path={`${match.path}/settings`}>
+                        <OrgSettings
+                          name={name}
+                          pathOrgSettings={`${pathOrg}/settings`}
+                          refresh={reexecute}
+                        />
+                      </Route>
+                    )}
                     <Redirect to={`${match.path}/members`} />
                   </Switch>
                 </Suspense>
