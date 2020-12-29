@@ -141,6 +141,7 @@ const GovUIDefaultOpts = Object.freeze({
     mobile: matchMobile(user_agent),
   }),
   enableUserProfile: true,
+  pathUserProfile: '/u/{0}',
   // user api keys
   apiAllScopes: allScopes,
   apiAllScopeDesc: allScopeDesc,

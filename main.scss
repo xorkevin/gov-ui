@@ -30,6 +30,14 @@ $color-success-light: lighten($color-success, 12.5%);
   opacity: 1;
 }
 
+.org-member-item-name {
+  min-width: 0;
+}
+
+.org-member-item-heading {
+  display: inline;
+}
+
 .oauth-app-logo {
   max-width: 128px;
   margin: auto;

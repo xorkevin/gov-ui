@@ -70,7 +70,7 @@ const OrgRow = ({isMod, pathOrg, pathOrgSettings, name}) => {
           </ButtonTertiary>
           {menu.show && (
             <Menu size="md" anchor={menu.anchor} close={menu.close}>
-              <MenuItem local link={`/org/${name}`}>
+              <MenuItem local link={formatStr(pathOrg, name)}>
                 View
               </MenuItem>
               {isMod && (
