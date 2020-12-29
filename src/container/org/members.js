@@ -72,14 +72,18 @@ const OrgMembers = ({org}) => {
   const ctx = useContext(GovUICtx);
 
   const [isViewMod, setViewMod] = useState(false);
-  const viewUsr = useCallback(() => {
-    setViewMod(false);
-  }, [setViewMod]);
-  const viewMod = useCallback(() => {
-    setViewMod(true);
-  }, [setViewMod]);
 
   const paginate = usePaginate(MEMBER_LIMIT);
+
+  const setFirst = paginate.first;
+  const viewUsr = useCallback(() => {
+    setViewMod(false);
+    setFirst();
+  }, [setViewMod, setFirst]);
+  const viewMod = useCallback(() => {
+    setViewMod(true);
+    setFirst();
+  }, [setViewMod, setFirst]);
 
   const usrRole = ctx.orgUsrRole(org.orgid);
   const modRole = ctx.orgModRole(org.orgid);

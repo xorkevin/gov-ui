@@ -93,19 +93,23 @@ const Orgs = () => {
   );
 
   const [isViewMod, setViewMod] = useState(false);
+
+  const paginate = usePaginate(ORG_LIMIT);
+
+  const setFirst = paginate.first;
   const viewUsr = useCallback(() => {
     setViewMod(false);
-  }, [setViewMod]);
+    setFirst();
+  }, [setViewMod, setFirst]);
   const viewMod = useCallback(() => {
     setViewMod(true);
-  }, [setViewMod]);
+    setFirst();
+  }, [setViewMod, setFirst]);
 
   const form = useForm({
     display_name: '',
     desc: '',
   });
-
-  const paginate = usePaginate(ORG_LIMIT);
 
   const setAtEnd = paginate.setAtEnd;
   const posthookRoles = useCallback(
