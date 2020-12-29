@@ -1,6 +1,5 @@
 import {Fragment, useState, useCallback, useRef} from 'react';
 import {useHistory} from 'react-router-dom';
-import {useResource} from '@xorkevin/substation';
 import {useAuthCall} from '@xorkevin/turbine';
 import {
   Grid,
@@ -19,7 +18,6 @@ import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 import ButtonDanger from '@xorkevin/nuke/src/component/button/danger';
 import {formatStr} from '../../utility';
 
-const selectAPIOrg = (api) => api.orgs.name;
 const selectAPIEdit = (api) => api.orgs.id.edit;
 const selectAPIDel = (api) => api.orgs.id.del;
 
@@ -34,7 +32,7 @@ const useFormLock = () => {
   return [locked, lock, unlock];
 };
 
-const OrgSettings = ({name, pathOrgSettings, refresh, pathHome}) => {
+const OrgSettings = ({org, pathOrgSettings, refresh, pathHome}) => {
   const history = useHistory();
   const snackUpdate = useSnackbarView(
     <SnackbarSurface>&#x2713; Org updated</SnackbarSurface>,
@@ -47,34 +45,10 @@ const OrgSettings = ({name, pathOrgSettings, refresh, pathHome}) => {
   const [dangerLocked, dangerLock, dangerUnlock] = useFormLock();
 
   const form = useForm({
-    name: '',
-    display_name: '',
-    desc: '',
+    name: org.name,
+    display_name: org.display_name,
+    desc: org.desc,
   });
-
-  const formAssign = form.assign;
-  const posthookOrg = useCallback(
-    (_status, org) => {
-      formAssign({
-        name: org.name,
-        display_name: org.display_name,
-        desc: org.desc,
-      });
-    },
-    [formAssign],
-  );
-  const [org] = useResource(
-    selectAPIOrg,
-    [name],
-    {
-      orgid: '',
-      name: '',
-      display_name: '',
-      desc: '',
-      creation_time: 0,
-    },
-    {posthook: posthookOrg},
-  );
 
   const formNameRef = useRef('');
   formNameRef.current = form.state.name;
@@ -82,15 +56,15 @@ const OrgSettings = ({name, pathOrgSettings, refresh, pathHome}) => {
   const posthookEdit = useCallback(() => {
     lock();
     snackUpdate();
-    if (formNameRef.current !== name) {
+    if (formNameRef.current !== org.name) {
       history.push(formatStr(pathOrgSettings, formNameRef.current));
     } else {
       refresh();
     }
-  }, [history, pathOrgSettings, name, formNameRef, refresh, snackUpdate, lock]);
+  }, [history, pathOrgSettings, org, formNameRef, refresh, snackUpdate, lock]);
   const [edit, execEdit] = useAuthCall(
     selectAPIEdit,
-    [org.data.orgid, form.state],
+    [org.orgid, form.state],
     {},
     {posthook: posthookEdit},
   );
@@ -101,7 +75,7 @@ const OrgSettings = ({name, pathOrgSettings, refresh, pathHome}) => {
   }, [history, pathHome, snackDel]);
   const [delOrg, execDel] = useAuthCall(
     selectAPIDel,
-    [org.data.orgid],
+    [org.orgid],
     {},
     {posthook: posthookDel},
   );
@@ -110,103 +84,96 @@ const OrgSettings = ({name, pathOrgSettings, refresh, pathHome}) => {
     <div>
       <h3>Organization Settings</h3>
       <hr />
-      {org.success && (
-        <Fragment>
-          <Grid>
-            <Column fullWidth md={16}>
-              <Form
-                formState={form.state}
-                onChange={form.update}
-                onSubmit={execEdit}
-              >
-                <Field
-                  className="org-field-disabled-solid"
-                  name="name"
-                  label="Name"
-                  hint="vanity url"
-                  disabled={locked}
-                  fullWidth
-                />
-                <Field
-                  className="org-field-disabled-solid"
-                  name="display_name"
-                  label="Display name"
-                  nohint
-                  disabled={locked}
-                  fullWidth
-                />
-                <Field
-                  className="org-field-disabled-solid"
-                  name="desc"
-                  label="Description"
-                  nohint
-                  disabled={locked}
-                  fullWidth
-                />
-              </Form>
-              <ButtonGroup>
-                {locked ? (
-                  <Fragment>
-                    <FaIcon icon="lock" />
-                    <ButtonTertiary onClick={unlock}>Edit</ButtonTertiary>
-                  </Fragment>
-                ) : (
-                  <Fragment>
-                    <FaIcon icon="unlock-alt" />
-                    <ButtonTertiary onClick={lock}>Cancel</ButtonTertiary>
-                    <ButtonPrimary onClick={execEdit}>Update Org</ButtonPrimary>
-                  </Fragment>
-                )}
-              </ButtonGroup>
-              {edit.err && <p>{edit.err}</p>}
-            </Column>
-            <Column fullWidth md={8}>
-              <h5>Org ID</h5>
-              <code>{org.data.orgid}</code>
+      <Grid>
+        <Column fullWidth md={16}>
+          <Form
+            formState={form.state}
+            onChange={form.update}
+            onSubmit={execEdit}
+          >
+            <Field
+              className="org-field-disabled-solid"
+              name="name"
+              label="Name"
+              hint="vanity url"
+              disabled={locked}
+              fullWidth
+            />
+            <Field
+              className="org-field-disabled-solid"
+              name="display_name"
+              label="Display name"
+              nohint
+              disabled={locked}
+              fullWidth
+            />
+            <Field
+              className="org-field-disabled-solid"
+              name="desc"
+              label="Description"
+              nohint
+              disabled={locked}
+              fullWidth
+            />
+          </Form>
+          <ButtonGroup>
+            {locked ? (
+              <Fragment>
+                <FaIcon icon="lock" />
+                <ButtonTertiary onClick={unlock}>Edit</ButtonTertiary>
+              </Fragment>
+            ) : (
+              <Fragment>
+                <FaIcon icon="unlock-alt" />
+                <ButtonTertiary onClick={lock}>Cancel</ButtonTertiary>
+                <ButtonPrimary onClick={execEdit}>Update Org</ButtonPrimary>
+              </Fragment>
+            )}
+          </ButtonGroup>
+          {edit.err && <p>{edit.err}</p>}
+        </Column>
+        <Column fullWidth md={8}>
+          <h5>Org ID</h5>
+          <code>{org.orgid}</code>
+          <p>
+            Created <Time value={org.creation_time * 1000} />
+          </p>
+        </Column>
+      </Grid>
+      <h3>Danger Zone</h3>
+      <hr />
+      <Grid>
+        <Column fullWidth>
+          <Grid justify="space-between" align="center" nowrap>
+            <Column>
+              <h5>Delete this organization</h5>
               <p>
-                Created <Time value={org.data.creation_time * 1000} />
+                This will delete this organization and remove all its moderator
+                and member associations. This cannot be undone.
               </p>
             </Column>
-          </Grid>
-          <h3>Danger Zone</h3>
-          <hr />
-          <Grid>
-            <Column fullWidth>
-              <Grid justify="space-between" align="center" nowrap>
-                <Column>
-                  <h5>Delete this organization</h5>
-                  <p>
-                    This will delete this organization and remove all its
-                    moderator and member associations. This cannot be undone.
-                  </p>
-                </Column>
-                <Column shrink="0">
-                  <ButtonDanger onClick={execDel} disabled={dangerLocked}>
-                    Delete this organization
-                  </ButtonDanger>
-                </Column>
-              </Grid>
-              <ButtonGroup>
-                {dangerLocked ? (
-                  <Fragment>
-                    <FaIcon icon="lock" />
-                    <ButtonTertiary onClick={dangerUnlock}>
-                      Unlock
-                    </ButtonTertiary>
-                  </Fragment>
-                ) : (
-                  <Fragment>
-                    <FaIcon icon="unlock-alt" />
-                    <ButtonTertiary onClick={dangerLock}>Cancel</ButtonTertiary>
-                  </Fragment>
-                )}
-              </ButtonGroup>
-              {delOrg.err && <p>{delOrg.err}</p>}
+            <Column shrink="0">
+              <ButtonDanger onClick={execDel} disabled={dangerLocked}>
+                Delete this organization
+              </ButtonDanger>
             </Column>
           </Grid>
-        </Fragment>
-      )}
-      {org.err && <p>{org.err}</p>}
+          <ButtonGroup>
+            {dangerLocked ? (
+              <Fragment>
+                <FaIcon icon="lock" />
+                <ButtonTertiary onClick={dangerUnlock}>Unlock</ButtonTertiary>
+              </Fragment>
+            ) : (
+              <Fragment>
+                <FaIcon icon="unlock-alt" />
+                <ButtonTertiary onClick={dangerLock}>Cancel</ButtonTertiary>
+              </Fragment>
+            )}
+          </ButtonGroup>
+          {delOrg.err && <p>{delOrg.err}</p>}
+        </Column>
+      </Grid>
     </div>
   );
 };
