@@ -34,7 +34,7 @@ export default {
       },
       del: {
         url: '',
-        method: 'PUT',
+        method: 'DELETE',
         transformer: (id) => [[id], null],
         expectdata: false,
         err: 'Unable to delete org',

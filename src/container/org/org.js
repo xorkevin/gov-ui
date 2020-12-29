@@ -98,6 +98,7 @@ const OrgDetails = ({pathOrg}) => {
                           name={name}
                           pathOrgSettings={`${pathOrg}/settings`}
                           refresh={reexecute}
+                          pathHome={ctx.pathHome}
                         />
                       </Route>
                     )}

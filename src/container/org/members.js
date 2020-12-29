@@ -1,7 +1,5 @@
-import {Fragment} from 'react';
-
 const OrgMembers = ({name}) => {
-  return <Fragment>{name} members here</Fragment>;
+  return <div>{name} members here</div>;
 };
 
 export default OrgMembers;
