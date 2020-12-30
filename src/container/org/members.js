@@ -1,6 +1,6 @@
 import {Fragment, useState, useCallback, useMemo, useContext} from 'react';
 import {useAPICall, useResource, selectAPINull} from '@xorkevin/substation';
-import {useAuthCall} from '@xorkevin/turbine';
+import {useAuthValue, useAuthCall} from '@xorkevin/turbine';
 import {
   Grid,
   Column,
@@ -38,6 +38,7 @@ const selectAPIUser = (api) => api.u.user.name;
 const selectAPIEditRank = (api) => api.u.user.id.edit.rank;
 
 const EditMembers = ({refresh, pathUserProfile, usrRole, modRole}) => {
+  const auth = useAuthValue();
   const snackMemberAdded = useSnackbarView(
     <SnackbarSurface>&#x2713; Member added</SnackbarSurface>,
   );
@@ -76,6 +77,8 @@ const EditMembers = ({refresh, pathUserProfile, usrRole, modRole}) => {
     {posthook: posthookSearch},
   );
   const userid = user.data.userid;
+
+  const isSelf = auth.userid === userid;
 
   const memberRole = useMemo(
     () => ({
@@ -155,9 +158,13 @@ const EditMembers = ({refresh, pathUserProfile, usrRole, modRole}) => {
             <small>{user.data.username}</small>
           </h5>
           <ButtonGroup>
-            <ButtonPrimary onClick={execAddMember}>Add as Member</ButtonPrimary>
-            <ButtonPrimary onClick={execAddMod}>Add as Moderator</ButtonPrimary>
-            <ButtonDangerSecondary onClick={execRmMember}>
+            <ButtonPrimary onClick={execAddMember} disabled={isSelf}>
+              Add as Member
+            </ButtonPrimary>
+            <ButtonPrimary onClick={execAddMod} disabled={isSelf}>
+              Add as Moderator
+            </ButtonPrimary>
+            <ButtonDangerSecondary onClick={execRmMember} disabled={isSelf}>
               Remove Member
             </ButtonDangerSecondary>
           </ButtonGroup>
