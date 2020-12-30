@@ -24,6 +24,7 @@ import {
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonSecondary from '@xorkevin/nuke/src/component/button/secondary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
+import ButtonDangerSecondary from '@xorkevin/nuke/src/component/button/dangersecondary';
 import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
 
 import {GovUICtx} from '../../middleware';
@@ -36,9 +37,12 @@ const selectAPIUsers = (api) => api.u.user.ids;
 const selectAPIUser = (api) => api.u.user.name;
 const selectAPIEditRank = (api) => api.u.user.id.edit.rank;
 
-const AddMember = ({refresh, pathUserProfile, usrRole, modRole}) => {
+const EditMembers = ({refresh, pathUserProfile, usrRole, modRole}) => {
   const snackMemberAdded = useSnackbarView(
     <SnackbarSurface>&#x2713; Member added</SnackbarSurface>,
+  );
+  const snackMemberRemoved = useSnackbarView(
+    <SnackbarSurface>&#x2713; Member removed</SnackbarSurface>,
   );
 
   const [hidden, setHidden] = useState(false);
@@ -46,15 +50,32 @@ const AddMember = ({refresh, pathUserProfile, usrRole, modRole}) => {
   const form = useForm({
     username: '',
   });
+
+  const formAssign = form.assign;
+  const hide = useCallback(() => {
+    setHidden(true);
+    formAssign({
+      username: '',
+    });
+  }, [formAssign, setHidden]);
+
   const posthookSearch = useCallback(() => {
     setHidden(false);
   }, [setHidden]);
   const [user, execSearchUser] = useAPICall(
     selectAPIUser,
     [form.state.username],
-    {},
+    {
+      userid: '',
+      username: '',
+      first_name: '',
+      last_name: '',
+      roles: [],
+      creation_time: 0,
+    },
     {posthook: posthookSearch},
   );
+  const userid = user.data.userid;
 
   const memberRole = useMemo(
     () => ({
@@ -72,34 +93,45 @@ const AddMember = ({refresh, pathUserProfile, usrRole, modRole}) => {
     [usrRole, modRole],
   );
 
-  const formAssign = form.assign;
-  const posthookRefresh = useCallback(
+  const posthookAdd = useCallback(
     (_status, _data, opts) => {
-      setHidden(true);
-      formAssign({
-        username: '',
-      });
+      hide();
       snackMemberAdded();
       refresh(opts);
     },
-    [refresh, snackMemberAdded, formAssign, setHidden],
+    [refresh, snackMemberAdded, hide],
   );
   const [addMember, execAddMember] = useAuthCall(
     selectAPIEditRank,
-    [user.data.userid, memberRole.add, memberRole.remove],
+    [userid, memberRole.add, memberRole.remove],
     {},
-    {posthook: posthookRefresh},
+    {posthook: posthookAdd},
   );
   const [addMod, execAddMod] = useAuthCall(
     selectAPIEditRank,
-    [user.data.userid, moderatorRole.add, moderatorRole.remove],
+    [userid, moderatorRole.add, moderatorRole.remove],
     {},
-    {posthook: posthookRefresh},
+    {posthook: posthookAdd},
+  );
+
+  const posthookRemove = useCallback(
+    (_status, _data, opts) => {
+      hide();
+      snackMemberRemoved();
+      refresh(opts);
+    },
+    [refresh, snackMemberRemoved, hide],
+  );
+  const [rmMember, execRmMember] = useAuthCall(
+    selectAPIEditRank,
+    [userid, moderatorRole.remove, moderatorRole.add],
+    {},
+    {posthook: posthookRemove},
   );
 
   return (
     <Fragment>
-      <h4>Add Member</h4>
+      <h4>Edit Member</h4>
       <Form
         formState={form.state}
         onChange={form.update}
@@ -108,6 +140,7 @@ const AddMember = ({refresh, pathUserProfile, usrRole, modRole}) => {
         <Field name="username" label="username" nohint fullWidth />
       </Form>
       <ButtonGroup>
+        <ButtonTertiary onClick={hide}>Clear</ButtonTertiary>
         <ButtonSecondary onClick={execSearchUser}>Search</ButtonSecondary>
       </ButtonGroup>
       {!hidden && user.success && (
@@ -124,12 +157,16 @@ const AddMember = ({refresh, pathUserProfile, usrRole, modRole}) => {
           <ButtonGroup>
             <ButtonPrimary onClick={execAddMember}>Add as Member</ButtonPrimary>
             <ButtonPrimary onClick={execAddMod}>Add as Moderator</ButtonPrimary>
+            <ButtonDangerSecondary onClick={execRmMember}>
+              Remove Member
+            </ButtonDangerSecondary>
           </ButtonGroup>
         </div>
       )}
       {user.err && <p>{user.err}</p>}
       {addMember.err && <p>{addMember.err}</p>}
       {addMod.err && <p>{addMod.err}</p>}
+      {rmMember.err && <p>{rmMember.err}</p>}
     </Fragment>
   );
 };
@@ -257,7 +294,7 @@ const OrgMembers = ({org, isMod}) => {
         </Column>
         <Column fullWidth md={8}>
           {isMod && (
-            <AddMember
+            <EditMembers
               refresh={reexecute}
               pathUserProfile={ctx.pathUserProfile}
               usrRole={usrRole}
