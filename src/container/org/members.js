@@ -1,5 +1,6 @@
-import {useState, useCallback, useContext} from 'react';
-import {useResource, selectAPINull} from '@xorkevin/substation';
+import {Fragment, useState, useCallback, useMemo, useContext} from 'react';
+import {useAPICall, useResource, selectAPINull} from '@xorkevin/substation';
+import {useAuthCall} from '@xorkevin/turbine';
 import {
   Grid,
   Column,
@@ -10,11 +11,18 @@ import {
   useMenu,
   Menu,
   MenuItem,
+  Field,
+  Form,
+  useForm,
+  SnackbarSurface,
+  useSnackbarView,
   usePaginate,
   ButtonGroup,
   FaIcon,
   Chip,
 } from '@xorkevin/nuke';
+import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
+import ButtonSecondary from '@xorkevin/nuke/src/component/button/secondary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
 
@@ -25,6 +33,90 @@ const MEMBER_LIMIT = 32;
 
 const selectAPIRoles = (api) => api.u.user.role;
 const selectAPIUsers = (api) => api.u.user.ids;
+const selectAPIUser = (api) => api.u.user.name;
+const selectAPIEditRank = (api) => api.u.user.id.edit.rank;
+
+const AddMember = ({refresh, pathUserProfile, usrRole}) => {
+  const snackMemberAdded = useSnackbarView(
+    <SnackbarSurface>&#x2713; Member added</SnackbarSurface>,
+  );
+
+  const [hidden, setHidden] = useState(false);
+
+  const form = useForm({
+    username: '',
+  });
+  const posthookSearch = useCallback(() => {
+    setHidden(false);
+  }, [setHidden]);
+  const [user, execSearchUser] = useAPICall(
+    selectAPIUser,
+    [form.state.username],
+    {},
+    {posthook: posthookSearch},
+  );
+
+  const memberRole = useMemo(
+    () => ({
+      add: [usrRole],
+      remove: [],
+    }),
+    [usrRole],
+  );
+
+  const formAssign = form.assign;
+  const posthookRefresh = useCallback(
+    (_status, _data, opts) => {
+      setHidden(true);
+      formAssign({
+        username: '',
+      });
+      snackMemberAdded();
+      refresh(opts);
+    },
+    [refresh, snackMemberAdded, formAssign, setHidden],
+  );
+  const [addMember, execAddMember] = useAuthCall(
+    selectAPIEditRank,
+    [user.data.userid, memberRole.add, memberRole.remove],
+    {},
+    {posthook: posthookRefresh},
+  );
+
+  return (
+    <Fragment>
+      <h4>Add Member</h4>
+      <Form
+        formState={form.state}
+        onChange={form.update}
+        onSubmit={execSearchUser}
+      >
+        <Field name="username" label="username" nohint fullWidth />
+      </Form>
+      <ButtonGroup>
+        <ButtonSecondary onClick={execSearchUser}>Search</ButtonSecondary>
+      </ButtonGroup>
+      {!hidden && user.success && (
+        <div>
+          <h5>
+            <AnchorText
+              local
+              href={formatStr(pathUserProfile, user.data.username)}
+            >
+              {user.data.first_name} {user.data.last_name}
+            </AnchorText>{' '}
+            <small>{user.data.username}</small>
+          </h5>
+          <ButtonGroup>
+            <ButtonPrimary onClick={execAddMember}>Add</ButtonPrimary>
+          </ButtonGroup>
+        </div>
+      )}
+      {user.err && <p>{user.err}</p>}
+      {addMember.err && <p>{addMember.err}</p>}
+    </Fragment>
+  );
+};
 
 const MemberRow = ({
   isMod,
@@ -95,7 +187,7 @@ const OrgMembers = ({org}) => {
     },
     [setAtEnd],
   );
-  const [userids, _reexecute] = useResource(
+  const [userids, reexecute] = useResource(
     selectAPIRoles,
     [isViewMod ? modRole : usrRole, MEMBER_LIMIT, paginate.index],
     [],
@@ -147,7 +239,13 @@ const OrgMembers = ({org}) => {
           {userids.err && <p>{userids.err}</p>}
           {users.err && <p>{users.err}</p>}
         </Column>
-        <Column fullWidth md={8}></Column>
+        <Column fullWidth md={8}>
+          <AddMember
+            refresh={reexecute}
+            pathUserProfile={ctx.pathUserProfile}
+            usrRole={usrRole}
+          />
+        </Column>
       </Grid>
     </div>
   );
