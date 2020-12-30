@@ -66,7 +66,7 @@ const OrgDetails = ({pathOrg}) => {
           {org.success && roles.success && (
             <Grid>
               <Column fullWidth md={6}>
-                <h4>{org.data.display_name}</h4>
+                <h4>{org.data.name}</h4>
                 <Sidebar>
                   <SidebarItem
                     local
@@ -87,6 +87,8 @@ const OrgDetails = ({pathOrg}) => {
                 </Sidebar>
               </Column>
               <Column fullWidth sm={16}>
+                <h2>{org.data.display_name}</h2>
+                <p>{org.data.desc}</p>
                 <Suspense fallback={ctx.fallbackView}>
                   <Switch>
                     <Route path={`${match.path}/members`}>
