@@ -36,7 +36,7 @@ const selectAPIUsers = (api) => api.u.user.ids;
 const selectAPIUser = (api) => api.u.user.name;
 const selectAPIEditRank = (api) => api.u.user.id.edit.rank;
 
-const AddMember = ({refresh, pathUserProfile, usrRole}) => {
+const AddMember = ({refresh, pathUserProfile, usrRole, modRole}) => {
   const snackMemberAdded = useSnackbarView(
     <SnackbarSurface>&#x2713; Member added</SnackbarSurface>,
   );
@@ -64,6 +64,14 @@ const AddMember = ({refresh, pathUserProfile, usrRole}) => {
     [usrRole],
   );
 
+  const moderatorRole = useMemo(
+    () => ({
+      add: [usrRole, modRole],
+      remove: [],
+    }),
+    [usrRole, modRole],
+  );
+
   const formAssign = form.assign;
   const posthookRefresh = useCallback(
     (_status, _data, opts) => {
@@ -79,6 +87,12 @@ const AddMember = ({refresh, pathUserProfile, usrRole}) => {
   const [addMember, execAddMember] = useAuthCall(
     selectAPIEditRank,
     [user.data.userid, memberRole.add, memberRole.remove],
+    {},
+    {posthook: posthookRefresh},
+  );
+  const [addMod, execAddMod] = useAuthCall(
+    selectAPIEditRank,
+    [user.data.userid, moderatorRole.add, moderatorRole.remove],
     {},
     {posthook: posthookRefresh},
   );
@@ -108,18 +122,20 @@ const AddMember = ({refresh, pathUserProfile, usrRole}) => {
             <small>{user.data.username}</small>
           </h5>
           <ButtonGroup>
-            <ButtonPrimary onClick={execAddMember}>Add</ButtonPrimary>
+            <ButtonPrimary onClick={execAddMember}>Add as Member</ButtonPrimary>
+            <ButtonPrimary onClick={execAddMod}>Add as Moderator</ButtonPrimary>
           </ButtonGroup>
         </div>
       )}
       {user.err && <p>{user.err}</p>}
       {addMember.err && <p>{addMember.err}</p>}
+      {addMod.err && <p>{addMod.err}</p>}
     </Fragment>
   );
 };
 
 const MemberRow = ({
-  isMod,
+  isViewMod,
   pathUserProfile,
   username,
   first_name,
@@ -136,7 +152,7 @@ const MemberRow = ({
             </AnchorText>{' '}
             <small>{username}</small>
           </h5>
-          {isMod && (
+          {isViewMod && (
             <small>
               <Chip>Moderator</Chip>
             </small>
@@ -151,7 +167,7 @@ const MemberRow = ({
               <MenuItem local link={formatStr(pathUserProfile, username)}>
                 Profile
               </MenuItem>
-              {isMod && <MenuItem>Remove mod</MenuItem>}
+              {isViewMod && <MenuItem>Remove mod</MenuItem>}
             </Menu>
           )}
         </Column>
@@ -160,7 +176,7 @@ const MemberRow = ({
   );
 };
 
-const OrgMembers = ({org}) => {
+const OrgMembers = ({org, isMod}) => {
   const ctx = useContext(GovUICtx);
 
   const [isViewMod, setViewMod] = useState(false);
@@ -218,7 +234,7 @@ const OrgMembers = ({org}) => {
               users.data.map((i) => (
                 <MemberRow
                   key={i.userid}
-                  isMod={isViewMod}
+                  isViewMod={isViewMod}
                   pathUserProfile={ctx.pathUserProfile}
                   userid={i.userid}
                   username={i.username}
@@ -240,11 +256,14 @@ const OrgMembers = ({org}) => {
           {users.err && <p>{users.err}</p>}
         </Column>
         <Column fullWidth md={8}>
-          <AddMember
-            refresh={reexecute}
-            pathUserProfile={ctx.pathUserProfile}
-            usrRole={usrRole}
-          />
+          {isMod && (
+            <AddMember
+              refresh={reexecute}
+              pathUserProfile={ctx.pathUserProfile}
+              usrRole={usrRole}
+              modRole={modRole}
+            />
+          )}
         </Column>
       </Grid>
     </div>

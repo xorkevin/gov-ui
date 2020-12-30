@@ -90,7 +90,7 @@ const OrgDetails = ({pathOrg}) => {
                 <Suspense fallback={ctx.fallbackView}>
                   <Switch>
                     <Route path={`${match.path}/members`}>
-                      <OrgMembers org={org.data} />
+                      <OrgMembers org={org.data} isMod={isMod} />
                     </Route>
                     {isMod && (
                       <Route path={`${match.path}/settings`}>
