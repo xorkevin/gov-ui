@@ -39,6 +39,7 @@ const selectAPIEditRank = (api) => api.u.user.id.edit.rank;
 
 const EditMembers = ({refresh, pathUserProfile, usrRole, modRole}) => {
   const auth = useAuthValue();
+
   const snackMemberAdded = useSnackbarView(
     <SnackbarSurface>&#x2713; Member added</SnackbarSurface>,
   );
@@ -158,9 +159,7 @@ const EditMembers = ({refresh, pathUserProfile, usrRole, modRole}) => {
             <small>{user.data.username}</small>
           </h5>
           <ButtonGroup>
-            <ButtonPrimary onClick={execAddMember} disabled={isSelf}>
-              Add as Member
-            </ButtonPrimary>
+            <ButtonPrimary onClick={execAddMember}>Add as Member</ButtonPrimary>
             <ButtonPrimary onClick={execAddMod} disabled={isSelf}>
               Add as Moderator
             </ButtonPrimary>
@@ -211,7 +210,6 @@ const MemberRow = ({
               <MenuItem local link={formatStr(pathUserProfile, username)}>
                 Profile
               </MenuItem>
-              {isViewMod && <MenuItem>Remove mod</MenuItem>}
             </Menu>
           )}
         </Column>

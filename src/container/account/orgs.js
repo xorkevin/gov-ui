@@ -1,6 +1,6 @@
 import {useState, useCallback, useMemo, useContext} from 'react';
 import {selectAPINull} from '@xorkevin/substation';
-import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
+import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
   Grid,
   Column,
@@ -15,6 +15,7 @@ import {
   Form,
   useForm,
   SnackbarSurface,
+  useSnackbar,
   useSnackbarView,
   usePaginate,
   ButtonGroup,
@@ -33,6 +34,7 @@ const ORG_LIMIT = 32;
 const selectAPIRoles = (api) => api.u.user.get.roles;
 const selectAPIOrgs = (api) => api.orgs.get;
 const selectAPICreate = (api) => api.orgs.create;
+const selectAPIEditRank = (api) => api.u.user.id.edit.rank;
 
 const formValidCheck = ({display_name}) => {
   const valid = {};
@@ -49,8 +51,48 @@ const prehookValidate = ([form]) => {
   }
 };
 
-const OrgRow = ({isMod, pathOrg, pathOrgSettings, name}) => {
+const OrgRow = ({isMod, pathOrg, pathOrgSettings, orgid, name, refresh}) => {
+  const auth = useAuthValue();
+  const ctx = useContext(GovUICtx);
+
+  const snackbar = useSnackbar();
+  const displayErrSnack = useCallback(
+    (_deleteState, err) => {
+      snackbar(<SnackbarSurface>{err}</SnackbarSurface>);
+    },
+    [snackbar],
+  );
+
+  const snackLeftOrg = useSnackbarView(
+    <SnackbarSurface>&#x2713; Left organization</SnackbarSurface>,
+  );
+
+  const usrRole = ctx.orgUsrRole(orgid);
+
+  const memberRole = useMemo(
+    () => ({
+      add: [],
+      remove: [usrRole],
+    }),
+    [usrRole],
+  );
+
+  const posthookLeave = useCallback(
+    (_status, _data, opts) => {
+      snackLeftOrg();
+      refresh(opts);
+    },
+    [refresh, snackLeftOrg],
+  );
+  const [_leaveOrg, execLeaveOrg] = useAuthCall(
+    selectAPIEditRank,
+    [auth.userid, memberRole.add, memberRole.remove],
+    {},
+    {posthook: posthookLeave, errhook: displayErrSnack},
+  );
+
   const menu = useMenu();
+
   return (
     <ListItem>
       <Grid justify="space-between" align="center" nowrap>
@@ -78,6 +120,7 @@ const OrgRow = ({isMod, pathOrg, pathOrgSettings, name}) => {
                   Settings
                 </MenuItem>
               )}
+              {!isMod && <MenuItem onClick={execLeaveOrg}>Leave</MenuItem>}
             </Menu>
           )}
         </Column>
@@ -188,6 +231,7 @@ const Orgs = () => {
                   display_name={i.display_name}
                   desc={i.desc}
                   creation_time={i.creation_time}
+                  refresh={reexecute}
                 />
               ))}
           </ListGroup>
