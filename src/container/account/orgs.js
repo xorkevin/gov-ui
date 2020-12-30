@@ -51,7 +51,15 @@ const prehookValidate = ([form]) => {
   }
 };
 
-const OrgRow = ({isMod, pathOrg, pathOrgSettings, orgid, name, refresh}) => {
+const OrgRow = ({
+  isMod,
+  pathOrg,
+  pathOrgSettings,
+  orgid,
+  name,
+  display_name,
+  refresh,
+}) => {
   const auth = useAuthValue();
   const ctx = useContext(GovUICtx);
 
@@ -99,8 +107,9 @@ const OrgRow = ({isMod, pathOrg, pathOrgSettings, orgid, name, refresh}) => {
         <Column className="account-org-item-name">
           <h5 className="account-org-item-heading">
             <AnchorText local href={formatStr(pathOrg, name)}>
-              {name}
-            </AnchorText>
+              {display_name}
+            </AnchorText>{' '}
+            <small>{name}</small>
           </h5>
           <small>
             <Chip>{isMod ? 'Moderator' : 'Member'}</Chip>
