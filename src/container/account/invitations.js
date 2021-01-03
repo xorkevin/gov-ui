@@ -1,6 +1,6 @@
 import {useCallback, useMemo, useContext} from 'react';
 import {useResource, selectAPINull} from '@xorkevin/substation';
-import {useAuthResource} from '@xorkevin/turbine';
+import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
   Grid,
   Column,
@@ -9,6 +9,8 @@ import {
   useMenu,
   Menu,
   MenuItem,
+  SnackbarSurface,
+  useSnackbar,
   usePaginate,
   ButtonGroup,
   FaIcon,
@@ -24,15 +26,53 @@ import {formatStr} from '../../utility';
 const INVITATION_LIMIT = 32;
 
 const selectAPIInvitations = (api) => api.u.user.roles.invitation.get;
+const selectAPIAccept = (api) => api.u.user.roles.invitation.accept;
+const selectAPIDecline = (api) => api.u.user.roles.invitation.del;
 const selectAPIUsers = (api) => api.u.user.ids;
 const selectAPIOrgs = (api) => api.orgs.get;
 
-const InvitationRow = ({role, invitedBy, creationTime, userMap, orgMap}) => {
+const InvitationRow = ({
+  role,
+  invitedBy,
+  creationTime,
+  refresh,
+  userMap,
+  orgMap,
+}) => {
   const ctx = useContext(GovUICtx);
-  const menu = useMenu();
+
+  const snackbar = useSnackbar();
+  const displayErrSnack = useCallback(
+    (_deleteState, err) => {
+      snackbar(<SnackbarSurface>{err}</SnackbarSurface>);
+    },
+    [snackbar],
+  );
+
   const inviter = userMap[invitedBy];
   const isOrg = ctx.isOrgRole(role);
   const org = isOrg ? orgMap[ctx.roleToOrgID(role)] : null;
+
+  const posthookRefresh = useCallback(
+    (_status, _data, opts) => {
+      refresh(opts);
+    },
+    [refresh],
+  );
+  const [_acceptInv, execAcceptInv] = useAuthCall(
+    selectAPIAccept,
+    [role],
+    {},
+    {posthook: posthookRefresh, errhook: displayErrSnack},
+  );
+  const [_declineInv, execDeclineInv] = useAuthCall(
+    selectAPIDecline,
+    [role],
+    {},
+    {posthook: posthookRefresh, errhook: displayErrSnack},
+  );
+
+  const menu = useMenu();
 
   return (
     <ListItem>
@@ -68,8 +108,12 @@ const InvitationRow = ({role, invitedBy, creationTime, userMap, orgMap}) => {
           </ButtonTertiary>
           {menu.show && (
             <Menu size="md" anchor={menu.anchor} close={menu.close}>
-              <MenuItem icon={<FaIcon icon="check" />}>Accept</MenuItem>
-              <MenuItem icon={<FaIcon icon="times" />}>Decline</MenuItem>
+              <MenuItem onClick={execAcceptInv} icon={<FaIcon icon="check" />}>
+                Accept
+              </MenuItem>
+              <MenuItem onClick={execDeclineInv} icon={<FaIcon icon="times" />}>
+                Decline
+              </MenuItem>
             </Menu>
           )}
         </Column>
@@ -89,7 +133,7 @@ const RoleInvitations = () => {
     },
     [setAtEnd],
   );
-  const [invitations, _reexecute] = useAuthResource(
+  const [invitations, reexecute] = useAuthResource(
     selectAPIInvitations,
     [INVITATION_LIMIT, paginate.index],
     [],
@@ -143,6 +187,7 @@ const RoleInvitations = () => {
                 role={i.role}
                 invitedBy={i.invited_by}
                 creationTime={i.creation_time}
+                refresh={reexecute}
                 userMap={userMap}
                 orgMap={orgMap}
               />
