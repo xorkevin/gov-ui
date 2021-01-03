@@ -3,9 +3,10 @@ import {GovAuthAPI} from '@xorkevin/turbine';
 import {GovAPI} from '@xorkevin/gov-ui';
 
 const API = {
-  setupz: GovAuthAPI.setupz(),
-  healthz: GovAuthAPI.healthz(),
-  u: GovAuthAPI.user('/u'),
+  setupz: GovAPI.setupz(),
+  healthz: GovAPI.healthz(),
+  turbine: GovAuthAPI.turbine('/u'),
+  u: GovAPI.user('/u'),
   profile: GovAPI.profile('/profile'),
   orgs: GovAPI.orgs('/org'),
   oauth: GovAPI.oauth('/oauth'),
