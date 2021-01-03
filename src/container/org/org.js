@@ -22,6 +22,7 @@ import {
 import {GovUICtx} from '../../middleware';
 
 const OrgMembers = lazy(() => import('./members'));
+const OrgInvitations = lazy(() => import('./invitations'));
 const OrgSettings = lazy(() => import('./settings'));
 
 const selectAPIOrg = (api) => api.orgs.name;
@@ -78,6 +79,15 @@ const OrgDetails = ({pathOrg}) => {
                   {isMod && (
                     <SidebarItem
                       local
+                      link={`${match.url}/invitations`}
+                      icon={<FaIcon icon="envelope-o" />}
+                    >
+                      Invitations
+                    </SidebarItem>
+                  )}
+                  {isMod && (
+                    <SidebarItem
+                      local
                       link={`${match.url}/settings`}
                       icon={<FaIcon icon="cog" />}
                     >
@@ -92,8 +102,13 @@ const OrgDetails = ({pathOrg}) => {
                 <Suspense fallback={ctx.fallbackView}>
                   <Switch>
                     <Route path={`${match.path}/members`}>
-                      <OrgMembers org={org.data} isMod={isMod} />
+                      <OrgMembers org={org.data} />
                     </Route>
+                    {isMod && (
+                      <Route path={`${match.path}/invitations`}>
+                        <OrgInvitations org={org.data} />
+                      </Route>
+                    )}
                     {isMod && (
                       <Route path={`${match.path}/settings`}>
                         <OrgSettings

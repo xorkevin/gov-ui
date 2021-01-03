@@ -140,9 +140,10 @@ const RoleInvitations = () => {
     {posthook: posthookInvitations},
   );
 
-  const userids = useMemo(() => invitations.data.map((i) => i.invited_by), [
-    invitations,
-  ]);
+  const userids = useMemo(
+    () => Array.from(new Set(invitations.data.map((i) => i.invited_by))),
+    [invitations],
+  );
   const [users] = useResource(
     userids.length > 0 ? selectAPIUsers : selectAPINull,
     [userids],
@@ -179,7 +180,7 @@ const RoleInvitations = () => {
       <h3>Invitations</h3>
       <hr />
       <Grid>
-        <Column fullWidth md={16}>
+        <Column fullWidth md={24}>
           <ListGroup>
             {invitations.data.map((i) => (
               <InvitationRow
@@ -204,7 +205,6 @@ const RoleInvitations = () => {
           </ButtonGroup>
           {invitations.err && <p>{invitations.err}</p>}
         </Column>
-        <Column fullWidth md={8}></Column>
       </Grid>
     </div>
   );
