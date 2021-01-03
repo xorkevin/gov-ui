@@ -32,7 +32,7 @@ import {formatStr} from '../../utility';
 
 const MEMBER_LIMIT = 32;
 
-const selectAPIRoles = (api) => api.u.user.role;
+const selectAPIRoles = (api) => api.u.user.role.get;
 const selectAPIUsers = (api) => api.u.user.ids;
 const selectAPIUser = (api) => api.u.user.name;
 const selectAPIEditRank = (api) => api.u.user.id.edit.rank;

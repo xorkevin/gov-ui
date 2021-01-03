@@ -31,7 +31,7 @@ import {formatStr} from '../../utility';
 
 const ORG_LIMIT = 32;
 
-const selectAPIRoles = (api) => api.u.user.get.roles;
+const selectAPIRoles = (api) => api.u.user.roles.get;
 const selectAPIOrgs = (api) => api.orgs.get;
 const selectAPICreate = (api) => api.orgs.create;
 const selectAPIEditRank = (api) => api.u.user.id.edit.rank;
