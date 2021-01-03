@@ -23,10 +23,25 @@ const isUsrRole = (role) => usrRoleRegex.test(role);
 const modRoleRegex = /^mod\./;
 const isModRole = (role) => modRoleRegex.test(role);
 
-const orgRoleRegex = /^org\./;
-const isOrgRole = (role) => orgRoleRegex.test(role);
-
 const splitRoleTag = (role) => role.split('.', 2);
+
+const orgRoleRegex = /^(usr|mod)\.org\./;
+const orgUsrRoleRegex = /^usr\.org\./;
+const orgModRoleRegex = /^mod\.org\./;
+
+const isOrgRole = (role) => orgRoleRegex.test(role);
+const isOrgUsrRole = (role) => orgUsrRoleRegex.test(role);
+const isOrgModRole = (role) => orgModRoleRegex.test(role);
+
+const roleToOrgID = (role) => {
+  if (isOrgUsrRole(role)) {
+    return role.slice(orgUsrPrefix.length);
+  }
+  if (isOrgModRole(role)) {
+    return role.slice(orgModPrefix.length);
+  }
+  return '';
+};
 
 // Scopes
 const allScopes = Object.freeze([
@@ -147,7 +162,6 @@ const GovUIDefaultOpts = Object.freeze({
   allRoles,
   isUsrRole,
   isModRole,
-  isOrgRole,
   splitRoleTag,
   // user accounts
   userSessionParsePlatform: (user_agent) => ({
@@ -167,6 +181,10 @@ const GovUIDefaultOpts = Object.freeze({
   orgModPrefix,
   orgUsrRole,
   orgModRole,
+  isOrgRole,
+  isOrgUsrRole,
+  isOrgModRole,
+  roleToOrgID,
   pathOrg: '/org/{0}',
   pathOrgSettings: '/org/{0}/settings',
   // user approvals

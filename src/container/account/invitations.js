@@ -25,11 +25,14 @@ const INVITATION_LIMIT = 32;
 
 const selectAPIInvitations = (api) => api.u.user.roles.invitation.get;
 const selectAPIUsers = (api) => api.u.user.ids;
+const selectAPIOrgs = (api) => api.orgs.get;
 
-const InvitationRow = ({role, invitedBy, creationTime, userMap}) => {
+const InvitationRow = ({role, invitedBy, creationTime, userMap, orgMap}) => {
   const ctx = useContext(GovUICtx);
   const menu = useMenu();
   const inviter = userMap[invitedBy];
+  const isOrg = ctx.isOrgRole(role);
+  const org = isOrg ? orgMap[ctx.roleToOrgID(role)] : null;
 
   return (
     <ListItem>
@@ -44,10 +47,19 @@ const InvitationRow = ({role, invitedBy, creationTime, userMap}) => {
                 {inviter.first_name} {inviter.last_name}
               </AnchorText>
             )}{' '}
-            has invited you to
+            has invited you to{' '}
+            {isOrg
+              ? org && (
+                  <AnchorText local href={formatStr(ctx.pathOrg, org.name)}>
+                    {org.display_name}
+                  </AnchorText>
+                )
+              : role}
+            <small>
+              {ctx.isUsrRole(role) && <Chip>Member</Chip>}
+              {ctx.isModRole(role) && <Chip>Moderator</Chip>}
+            </small>
           </h5>
-          {ctx.isUsrRole(role) && <Chip>Member</Chip>}
-          {ctx.isModRole(role) && <Chip>Moderator</Chip>}
           <Time value={creationTime * 1000} />
         </Column>
         <Column shrink="0">
@@ -67,6 +79,7 @@ const InvitationRow = ({role, invitedBy, creationTime, userMap}) => {
 };
 
 const RoleInvitations = () => {
+  const ctx = useContext(GovUICtx);
   const paginate = usePaginate(INVITATION_LIMIT);
 
   const setAtEnd = paginate.setAtEnd;
@@ -96,6 +109,27 @@ const RoleInvitations = () => {
     [users],
   );
 
+  const orgids = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          invitations.data
+            .filter((i) => ctx.isOrgRole(i.role))
+            .map((i) => ctx.roleToOrgID(i.role)),
+        ),
+      ),
+    [ctx, invitations],
+  );
+  const [orgs] = useResource(
+    orgids.length > 0 ? selectAPIOrgs : selectAPINull,
+    [orgids],
+    [],
+  );
+  const orgMap = useMemo(
+    () => Object.fromEntries(orgs.data.map((i) => [i.orgid, i])),
+    [orgs],
+  );
+
   return (
     <div>
       <h3>Invitations</h3>
@@ -110,6 +144,7 @@ const RoleInvitations = () => {
                 invitedBy={i.invited_by}
                 creationTime={i.creation_time}
                 userMap={userMap}
+                orgMap={orgMap}
               />
             ))}
           </ListGroup>
