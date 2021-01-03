@@ -16,6 +16,7 @@ import {GovUICtx} from '../../middleware';
 
 const OAuthAppContainer = lazy(() => import('./oauth'));
 const UsersContainer = lazy(() => import('./users'));
+const InvitationsContainer = lazy(() => import('./invitations'));
 const ApprovalsContainer = lazy(() => import('./approvals'));
 
 const Admin = () => {
@@ -35,6 +36,13 @@ const Admin = () => {
                   icon={<FaIcon icon="users" />}
                 >
                   Users
+                </SidebarItem>
+                <SidebarItem
+                  link={`${match.path}/invitations`}
+                  local
+                  icon={<FaIcon icon="envelope-o" />}
+                >
+                  Invitations
                 </SidebarItem>
                 <SidebarItem
                   link={`${match.path}/approvals`}
@@ -58,6 +66,9 @@ const Admin = () => {
                 <Switch>
                   <Route path={`${match.path}/users`}>
                     <UsersContainer />
+                  </Route>
+                  <Route path={`${match.path}/invitations`}>
+                    <InvitationsContainer />
                   </Route>
                   <Route path={`${match.path}/approvals`}>
                     <ApprovalsContainer />
