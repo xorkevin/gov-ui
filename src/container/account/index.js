@@ -19,6 +19,7 @@ const AccountDetailsContainer = lazy(() => import('./details'));
 const SecurityContainer = lazy(() => import('./security'));
 const EmailConfirmContainer = lazy(() => import('./emailconfirm'));
 const OrgsContainer = lazy(() => import('./orgs'));
+const InvitationsContainer = lazy(() => import('./invitations'));
 
 const DevApikeyContainer = lazy(() => import('./developer/apikey'));
 
@@ -54,6 +55,13 @@ const Account = () => {
                 >
                   Organaizations
                 </SidebarItem>
+                <SidebarItem
+                  link={`${match.path}/invitations`}
+                  local
+                  icon={<FaIcon icon="envelope-o" />}
+                >
+                  Invitations
+                </SidebarItem>
                 <SidebarDivider />
                 <SidebarHeader>Developer</SidebarHeader>
                 <SidebarItem
@@ -80,6 +88,9 @@ const Account = () => {
                     <EmailConfirmContainer
                       pathSecurity={`${match.path}/security`}
                     />
+                  </Route>
+                  <Route path={`${match.path}/invitations`}>
+                    <InvitationsContainer />
                   </Route>
                   {ctx.enableUserOrgs && (
                     <Route path={`${match.path}/orgs`}>

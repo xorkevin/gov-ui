@@ -17,6 +17,17 @@ const orgModPrefix = 'mod.org.';
 const orgUsrRole = (orgid) => orgUsrPrefix + orgid;
 const orgModRole = (orgid) => orgModPrefix + orgid;
 
+const usrRoleRegex = /^usr\./;
+const isUsrRole = (role) => usrRoleRegex.test(role);
+
+const modRoleRegex = /^mod\./;
+const isModRole = (role) => modRoleRegex.test(role);
+
+const orgRoleRegex = /^org\./;
+const isOrgRole = (role) => orgRoleRegex.test(role);
+
+const splitRoleTag = (role) => role.split('.', 2);
+
 // Scopes
 const allScopes = Object.freeze([
   // user.account
@@ -134,6 +145,10 @@ const GovUIDefaultOpts = Object.freeze({
   pathHome: '/',
   permissionedRoles,
   allRoles,
+  isUsrRole,
+  isModRole,
+  isOrgRole,
+  splitRoleTag,
   // user accounts
   userSessionParsePlatform: (user_agent) => ({
     name: matchBrowser(user_agent),

@@ -41,7 +41,7 @@ const EditMembers = ({refresh, pathUserProfile, usrRole, modRole}) => {
   const auth = useAuthValue();
 
   const snackMemberAdded = useSnackbarView(
-    <SnackbarSurface>&#x2713; Member added</SnackbarSurface>,
+    <SnackbarSurface>&#x2713; Member invited</SnackbarSurface>,
   );
   const snackMemberRemoved = useSnackbarView(
     <SnackbarSurface>&#x2713; Member removed</SnackbarSurface>,
