@@ -16,7 +16,7 @@ import ButtonSecondary from '@xorkevin/nuke/src/component/button/secondary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 
 import {GovUICtx} from '../../middleware';
-import {emailRegex} from '../../utility';
+import {formatURL, emailRegex} from '../../utility';
 
 const selectAPICreateAccount = (api) => api.u.user.create;
 
@@ -67,6 +67,8 @@ const CreateAccount = ({pathLogin, pathConfirm}) => {
     {},
   );
 
+  const pathConfirmTpl = `${pathConfirm}?userid={0}`;
+
   return (
     <MainContent>
       <Section>
@@ -87,11 +89,7 @@ const CreateAccount = ({pathLogin, pathConfirm}) => {
                       <ButtonSecondary>Finish</ButtonSecondary>
                     </Link>
                   ) : (
-                    <Link
-                      to={`${pathConfirm}?userid=${encodeURIComponent(
-                        create.data.userid,
-                      )}`}
-                    >
+                    <Link to={formatURL(pathConfirmTpl, create.data.userid)}>
                       <ButtonSecondary>Confirm</ButtonSecondary>
                     </Link>
                   )

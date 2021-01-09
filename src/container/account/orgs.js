@@ -27,7 +27,7 @@ import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
 
 import {GovUICtx} from '../../middleware';
-import {formatStr} from '../../utility';
+import {formatURL} from '../../utility';
 
 const ORG_LIMIT = 32;
 
@@ -106,7 +106,7 @@ const OrgRow = ({
       <Grid justify="space-between" align="center" nowrap>
         <Column className="account-org-item-name">
           <h5 className="account-org-item-heading">
-            <AnchorText local href={formatStr(pathOrg, name)}>
+            <AnchorText local href={formatURL(pathOrg, name)}>
               {display_name}
             </AnchorText>{' '}
             <small>{name}</small>
@@ -121,11 +121,11 @@ const OrgRow = ({
           </ButtonTertiary>
           {menu.show && (
             <Menu size="md" anchor={menu.anchor} close={menu.close}>
-              <MenuItem local link={formatStr(pathOrg, name)}>
+              <MenuItem local link={formatURL(pathOrg, name)}>
                 View
               </MenuItem>
               {isMod && (
-                <MenuItem local link={formatStr(pathOrgSettings, name)}>
+                <MenuItem local link={formatURL(pathOrgSettings, name)}>
                   Settings
                 </MenuItem>
               )}

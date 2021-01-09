@@ -19,7 +19,7 @@ import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
 
 import {GovUICtx} from '../../middleware';
-import {formatStr} from '../../utility';
+import {formatURL} from '../../utility';
 
 const MEMBER_LIMIT = 32;
 
@@ -39,7 +39,7 @@ const MemberRow = ({
       <Grid justify="space-between" align="center" nowrap>
         <Column className="org-member-item-name">
           <h5 className="org-member-item-heading">
-            <AnchorText local href={formatStr(pathUserProfile, username)}>
+            <AnchorText local href={formatURL(pathUserProfile, username)}>
               {first_name} {last_name}
             </AnchorText>{' '}
             <small>{username}</small>
@@ -56,7 +56,7 @@ const MemberRow = ({
           </ButtonTertiary>
           {menu.show && (
             <Menu size="md" anchor={menu.anchor} close={menu.close}>
-              <MenuItem local link={formatStr(pathUserProfile, username)}>
+              <MenuItem local link={formatURL(pathUserProfile, username)}>
                 Profile
               </MenuItem>
             </Menu>

@@ -16,7 +16,7 @@ import {
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 import ButtonDanger from '@xorkevin/nuke/src/component/button/danger';
-import {formatStr} from '../../utility';
+import {formatURL} from '../../utility';
 
 const selectAPIEdit = (api) => api.orgs.id.edit;
 const selectAPIDel = (api) => api.orgs.id.del;
@@ -57,7 +57,7 @@ const OrgSettings = ({org, pathOrgSettings, refresh, pathHome}) => {
     lock();
     snackUpdate();
     if (formNameRef.current !== org.name) {
-      history.push(formatStr(pathOrgSettings, formNameRef.current));
+      history.push(formatURL(pathOrgSettings, formNameRef.current));
     } else {
       refresh();
     }

@@ -23,7 +23,7 @@ import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
 
 import {GovUICtx} from '../../middleware';
-import {formatStr} from '../../utility';
+import {formatURL} from '../../utility';
 
 const INVITATION_LIMIT = 32;
 
@@ -75,7 +75,7 @@ const InvitationRow = ({
             {inviter && (
               <AnchorText
                 local
-                href={formatStr(ctx.pathUserProfile, inviter.username)}
+                href={formatURL(ctx.pathUserProfile, inviter.username)}
               >
                 {inviter.first_name} {inviter.last_name}
               </AnchorText>
@@ -84,7 +84,7 @@ const InvitationRow = ({
             {subject && (
               <AnchorText
                 local
-                href={formatStr(ctx.pathUserProfile, subject.username)}
+                href={formatURL(ctx.pathUserProfile, subject.username)}
               >
                 {subject.first_name} {subject.last_name}
               </AnchorText>
