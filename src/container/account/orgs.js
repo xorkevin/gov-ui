@@ -60,7 +60,7 @@ const OrgRow = ({
   display_name,
   refresh,
 }) => {
-  const auth = useAuthValue();
+  const {userid: auth_userid} = useAuthValue();
   const ctx = useContext(GovUICtx);
 
   const snackbar = useSnackbar();
@@ -94,7 +94,7 @@ const OrgRow = ({
   );
   const [_leaveOrg, execLeaveOrg] = useAuthCall(
     selectAPIEditRank,
-    [auth.userid, memberRole.add, memberRole.remove],
+    [auth_userid, memberRole.add, memberRole.remove],
     {},
     {posthook: posthookLeave, errhook: displayErrSnack},
   );

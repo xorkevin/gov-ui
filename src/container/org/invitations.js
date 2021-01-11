@@ -41,7 +41,7 @@ const selectAPIUser = (api) => api.u.user.name;
 const selectAPIEditRank = (api) => api.u.user.id.edit.rank;
 
 const EditMembers = ({refresh, pathUserProfile, usrRole, modRole}) => {
-  const auth = useAuthValue();
+  const {userid: auth_userid} = useAuthValue();
 
   const snackMemberAdded = useSnackbarView(
     <SnackbarSurface>&#x2713; Member invited</SnackbarSurface>,
@@ -82,7 +82,7 @@ const EditMembers = ({refresh, pathUserProfile, usrRole, modRole}) => {
   );
   const userid = user.data.userid;
 
-  const isSelf = auth.userid === userid;
+  const isSelf = auth_userid === userid;
 
   const memberRole = useMemo(
     () => ({
