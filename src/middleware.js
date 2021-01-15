@@ -155,6 +155,7 @@ const matchMobile = (user_agent) => simpleMobileRegex.test(user_agent);
 
 const GovUIDefaultOpts = Object.freeze({
   // main
+  siteName: 'Governor',
   mainFallbackView: 'Loading',
   fallbackView: 'Loading',
   pathHome: '/',

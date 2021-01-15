@@ -10,12 +10,14 @@ const ResetPassContainer = lazy(() => import('./resetpassword'));
 const Login = () => {
   const match = useRouteMatch();
   const pathLogin = `${match.url}/login`;
+  const pathCreate = `${match.url}/create`;
   const pathConfirm = `${match.url}/confirm`;
+  const pathForgot = `${match.url}/forgot`;
   const pathResetPass = `${match.url}/resetpass`;
   return (
     <Switch>
       <Route path={`${match.path}/login`}>
-        <SigninContainer />
+        <SigninContainer pathCreate={pathCreate} pathForgot={pathForgot} />
       </Route>
       <Route path={`${match.path}/create`}>
         <CreateContainer pathLogin={pathLogin} pathConfirm={pathConfirm} />

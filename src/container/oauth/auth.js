@@ -1,12 +1,9 @@
-import {Fragment} from 'react';
+import {Fragment, useContext} from 'react';
 import {useLogin} from '@xorkevin/turbine';
 import {
   MainContent,
   Section,
   Container,
-  useMenu,
-  Menu,
-  MenuItem,
   FaIcon,
   Card,
   Field,
@@ -17,8 +14,10 @@ import {
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 
-const SigninContainer = ({pathCreate, pathForgot}) => {
-  const menu = useMenu();
+import {GovUICtx} from '../../middleware';
+
+const AuthContainer = () => {
+  const ctx = useContext(GovUICtx);
 
   const form = useForm({
     username: '',
@@ -36,38 +35,17 @@ const SigninContainer = ({pathCreate, pathForgot}) => {
             width="md"
             title={
               <Container padded>
-                <h3>Sign in</h3>
+                <h4>Sign in with {ctx.siteName}</h4>
               </Container>
             }
             bar={
               <Fragment>
                 <ButtonGroup>
-                  <ButtonTertiary
-                    forwardedRef={menu.anchorRef}
-                    onClick={menu.toggle}
-                  >
+                  <ButtonTertiary>
                     <FaIcon icon="ellipsis-v" />
                   </ButtonTertiary>
                   <ButtonPrimary onClick={execLogin}>Login</ButtonPrimary>
                 </ButtonGroup>
-                {menu.show && (
-                  <Menu size="md" anchor={menu.anchor} close={menu.close}>
-                    <MenuItem
-                      local
-                      link={pathCreate}
-                      icon={<FaIcon icon="user-plus" />}
-                    >
-                      Create Account
-                    </MenuItem>
-                    <MenuItem
-                      local
-                      link={pathForgot}
-                      icon={<FaIcon icon="unlock-alt" />}
-                    >
-                      Forgot Password
-                    </MenuItem>
-                  </Menu>
-                )}
               </Fragment>
             }
           >
@@ -101,4 +79,4 @@ const SigninContainer = ({pathCreate, pathForgot}) => {
   );
 };
 
-export default SigninContainer;
+export default AuthContainer;
