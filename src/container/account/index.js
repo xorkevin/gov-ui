@@ -26,6 +26,8 @@ const DevApikeyContainer = lazy(() => import('./developer/apikey'));
 const Account = () => {
   const ctx = useContext(GovUICtx);
   const match = useRouteMatch();
+  const pathConfirmEmail = `${match.url}/confirm/email`;
+  const pathSecurity = `${match.url}/security`;
   return (
     <MainContent>
       <Section>
@@ -35,28 +37,28 @@ const Account = () => {
               <Sidebar>
                 <SidebarHeader>Settings</SidebarHeader>
                 <SidebarItem
-                  link={`${match.path}/account`}
+                  link={`${match.url}/account`}
                   local
                   icon={<FaIcon icon="id-card-o" />}
                 >
                   Account
                 </SidebarItem>
                 <SidebarItem
-                  link={`${match.path}/security`}
+                  link={`${match.url}/security`}
                   local
                   icon={<FaIcon icon="lock" />}
                 >
                   Security
                 </SidebarItem>
                 <SidebarItem
-                  link={`${match.path}/orgs`}
+                  link={`${match.url}/orgs`}
                   local
                   icon={<FaIcon icon="sitemap" />}
                 >
                   Organaizations
                 </SidebarItem>
                 <SidebarItem
-                  link={`${match.path}/invitations`}
+                  link={`${match.url}/invitations`}
                   local
                   icon={<FaIcon icon="envelope-o" />}
                 >
@@ -65,7 +67,7 @@ const Account = () => {
                 <SidebarDivider />
                 <SidebarHeader>Developer</SidebarHeader>
                 <SidebarItem
-                  link={`${match.path}/dev/apikey`}
+                  link={`${match.url}/dev/apikey`}
                   local
                   icon={<FaIcon icon="code" />}
                 >
@@ -80,14 +82,10 @@ const Account = () => {
                     <AccountDetailsContainer />
                   </Route>
                   <Route path={`${match.path}/security`}>
-                    <SecurityContainer
-                      pathConfirm={`${match.path}/confirm/email`}
-                    />
+                    <SecurityContainer pathConfirm={pathConfirmEmail} />
                   </Route>
                   <Route path={`${match.path}/confirm/email`}>
-                    <EmailConfirmContainer
-                      pathSecurity={`${match.path}/security`}
-                    />
+                    <EmailConfirmContainer pathSecurity={pathSecurity} />
                   </Route>
                   <Route path={`${match.path}/invitations`}>
                     <InvitationsContainer />
@@ -100,7 +98,7 @@ const Account = () => {
                   <Route path={`${match.path}/dev/apikey`}>
                     <DevApikeyContainer />
                   </Route>
-                  <Redirect to={`${match.path}/account`} />
+                  <Redirect to={`${match.url}/account`} />
                 </Switch>
               </Suspense>
             </Column>

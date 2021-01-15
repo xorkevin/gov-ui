@@ -29,14 +29,14 @@ const Courier = () => {
               <Sidebar>
                 <SidebarHeader>Courier</SidebarHeader>
                 <SidebarItem
-                  link={`${match.path}/link`}
+                  link={`${match.url}/link`}
                   local
                   icon={<FaIcon icon="link" />}
                 >
                   Links
                 </SidebarItem>
                 <SidebarItem
-                  link={`${match.path}/brand`}
+                  link={`${match.url}/brand`}
                   local
                   icon={<FaIcon icon="shield" />}
                 >
@@ -53,7 +53,7 @@ const Courier = () => {
                   <Route path={`${match.path}/brand`}>
                     <CourierBrand />
                   </Route>
-                  <Redirect to={`${match.path}/link`} />
+                  <Redirect to={`${match.url}/link`} />
                 </Switch>
               </Suspense>
             </Column>

@@ -31,21 +31,21 @@ const Admin = () => {
               <Sidebar>
                 <SidebarHeader>Users</SidebarHeader>
                 <SidebarItem
-                  link={`${match.path}/users`}
+                  link={`${match.url}/users`}
                   local
                   icon={<FaIcon icon="users" />}
                 >
                   Users
                 </SidebarItem>
                 <SidebarItem
-                  link={`${match.path}/invitations`}
+                  link={`${match.url}/invitations`}
                   local
                   icon={<FaIcon icon="envelope-o" />}
                 >
                   Invitations
                 </SidebarItem>
                 <SidebarItem
-                  link={`${match.path}/approvals`}
+                  link={`${match.url}/approvals`}
                   local
                   icon={<FaIcon icon="inbox" />}
                 >
@@ -53,7 +53,7 @@ const Admin = () => {
                 </SidebarItem>
                 <SidebarHeader>Integrations</SidebarHeader>
                 <SidebarItem
-                  link={`${match.path}/oauth`}
+                  link={`${match.url}/oauth`}
                   local
                   icon={<FaIcon icon="openid" />}
                 >
@@ -76,7 +76,7 @@ const Admin = () => {
                   <Route path={`${match.path}/oauth`}>
                     <OAuthAppContainer />
                   </Route>
-                  <Redirect to={`${match.path}/users`} />
+                  <Redirect to={`${match.url}/users`} />
                 </Switch>
               </Suspense>
             </Column>

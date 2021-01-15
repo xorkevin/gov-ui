@@ -9,30 +9,30 @@ const ResetPassContainer = lazy(() => import('./resetpassword'));
 
 const Login = () => {
   const match = useRouteMatch();
+  const pathLogin = `${match.url}/login`;
+  const pathConfirm = `${match.url}/confirm`;
+  const pathResetPass = `${match.url}/resetpass`;
   return (
     <Switch>
       <Route path={`${match.path}/login`}>
         <SigninContainer />
       </Route>
       <Route path={`${match.path}/create`}>
-        <CreateContainer
-          pathLogin={`${match.path}/login`}
-          pathConfirm={`${match.path}/confirm`}
-        />
+        <CreateContainer pathLogin={pathLogin} pathConfirm={pathConfirm} />
       </Route>
       <Route path={`${match.path}/confirm`}>
-        <CreateConfirmContainer pathLogin={`${match.path}/login`} />
+        <CreateConfirmContainer pathLogin={pathLogin} />
       </Route>
       <Route path={`${match.path}/forgot`}>
         <ForgotPassContainer
-          pathLogin={`${match.path}/login`}
-          pathResetPass={`${match.path}/resetpass`}
+          pathLogin={pathLogin}
+          pathResetPass={pathResetPass}
         />
       </Route>
       <Route path={`${match.path}/resetpass`}>
-        <ResetPassContainer pathLogin={`${match.path}/login`} />
+        <ResetPassContainer pathLogin={pathLogin} />
       </Route>
-      <Redirect to={`${match.path}/login`} />
+      <Redirect to={pathLogin} />
     </Switch>
   );
 };
