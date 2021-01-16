@@ -21,8 +21,8 @@ const selectAPIConfirmAccount = (api) => api.u.user.create.confirm;
 const ConfirmAccount = ({pathLogin}) => {
   const {search} = useLocation();
   const form = useForm({
-    userid: decodeURIComponent(getSearchParams(search).get('userid') || ''),
-    key: decodeURIComponent(getSearchParams(search).get('key') || ''),
+    userid: getSearchParams(search).get('userid') || '',
+    key: getSearchParams(search).get('key') || '',
   });
 
   const [confirmAcct, execConfirm] = useAPICall(selectAPIConfirmAccount, [

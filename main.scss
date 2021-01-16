@@ -26,6 +26,11 @@ $color-success-light: lighten($color-success, 12.5%);
   display: inline;
 }
 
+.oauth-auth-app-logo {
+  max-width: 64px;
+  margin: auto;
+}
+
 .org-field-disabled-solid.disabled {
   opacity: 1;
 }
@@ -39,7 +44,7 @@ $color-success-light: lighten($color-success, 12.5%);
 }
 
 .oauth-app-logo {
-  max-width: 128px;
+  max-width: 64px;
   margin: auto;
 }
 

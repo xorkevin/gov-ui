@@ -14,7 +14,7 @@ const AccountEmailConfirm = ({pathSecurity}) => {
 
   const {search} = useLocation();
   const form = useForm({
-    key: decodeURIComponent(getSearchParams(search).get('key') || ''),
+    key: getSearchParams(search).get('key') || '',
     password: '',
   });
 
