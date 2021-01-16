@@ -24,9 +24,16 @@ import {getSearchParams} from '../../utility';
 const selectAPIApp = (api) => api.oauth.app.id;
 const selectAPIImage = (api) => api.oauth.app.id.image;
 
-const Login = ({app, loginPosthook, usernameHint}) => {
+const CardHeader = () => {
   const ctx = useContext(GovUICtx);
+  return (
+    <Container padded>
+      <h5>Sign in with {ctx.siteName}</h5>
+    </Container>
+  );
+};
 
+const Login = ({app, loginPosthook, usernameHint}) => {
   const form = useForm({
     username: usernameHint,
     password: '',
@@ -44,11 +51,7 @@ const Login = ({app, loginPosthook, usernameHint}) => {
     <Card
       center
       width="md"
-      title={
-        <Container padded>
-          <h5>Sign in with {ctx.siteName}</h5>
-        </Container>
-      }
+      title={<CardHeader />}
       bar={
         <Fragment>
           <ButtonGroup>
@@ -102,36 +105,12 @@ const Login = ({app, loginPosthook, usernameHint}) => {
 };
 
 const ErrCard = ({children}) => {
-  const ctx = useContext(GovUICtx);
   return (
-    <Card
-      center
-      width="md"
-      title={
-        <Container padded>
-          <h4>Sign in with {ctx.siteName}</h4>
-        </Container>
-      }
-    >
+    <Card center width="md" title={<CardHeader />}>
       <Container padded>{children}</Container>
     </Card>
   );
 };
-
-// ResponseType        string `json:"response_type"`
-// ResponseMode        string `json:"response_mode"`
-// ClientID            string `json:"client_id"`
-// Scope               string `json:"scope"`
-// RedirectURI         string `json:"redirect_uri"`
-// State               string `json:"state"`
-// Nonce               string `json:"nonce"`
-// CodeChallenge       string `json:"code_challenge"`
-// CodeChallengeMethod string `json:"code_challenge_method"`
-// Display             string `json:"display"`
-// Prompt              string `json:"prompt"`
-// MaxAge              int    `json:"max_age"`
-// IDTokenHint         string `json:"id_token_hint"`
-// LoginHint           string `json:"login_hint"`
 
 const AuthContainer = () => {
   const [performedRelogin, setRelogin] = useState(false);
@@ -146,8 +125,31 @@ const AuthContainer = () => {
   const {username} = useAuthValue();
 
   const {search} = useLocation();
-  const query = getSearchParams(search);
-  const clientid = query.get('client_id') || '';
+  const [clientid, params, _reqParams] = useMemo(() => {
+    const query = getSearchParams(search);
+    const clientid = query.get('client_id') || '';
+    return [
+      clientid,
+      {
+        redirectURI: query.get('redirect_uri'),
+        state: query.get('state'),
+        codeChallenge: query.get('code_challenge'),
+        codeChallengeMethod: query.get('code_challenge_method'),
+        display: query.get('display'),
+        prompt: query.get('prompt'),
+        maxage: query.get('max_age'),
+        idtokenHint: query.get('id_token_hint'),
+        loginHint: query.get('login_hint'),
+      },
+      {
+        clientid,
+        responseType: query.get('response_type'),
+        responseMode: query.get('response_mode'),
+        scope: query.get('scope'),
+        nonce: query.get('nonce'),
+      },
+    ];
+  }, [search]);
 
   const [app] = useResource(
     clientid.length > 0 ? selectAPIApp : selectAPINull,
@@ -163,7 +165,7 @@ const AuthContainer = () => {
             <Login
               app={app.data}
               loginPosthook={reloginPosthook}
-              usernameHint={username}
+              usernameHint={params.loginHint || username}
             />
           )}
           {clientid.length === 0 && (
