@@ -1,4 +1,4 @@
-import {Fragment, useState, useMemo, useContext} from 'react';
+import {Fragment, useState, useCallback, useMemo, useContext} from 'react';
 import {useLocation} from 'react-router-dom';
 import {useResource, useURL, selectAPINull} from '@xorkevin/substation';
 import {useAuthValue, useAuthResource, useLogin} from '@xorkevin/turbine';
@@ -179,6 +179,16 @@ const CheckConsent = ({app, profile, scopes}) => {
   );
 };
 
+const OID_ERR_INVALID_REQ = 'invalid_request';
+const OID_ERR_UNSUPPORTED_RESTYPE = 'unsupported_response_type';
+
+const OID_RESTYPE_CODE = 'code';
+
+const OID_RESMODE_QUERY = 'query';
+const OID_RESMODE_FRAGMENT = 'fragment';
+
+const OID_RESMODE_SET = new Set([OID_RESMODE_QUERY, OID_RESMODE_FRAGMENT]);
+
 const OID_PROMPT_NONE = 'none';
 const OID_PROMPT_LOGIN = 'login';
 const OID_PROMPT_CONSENT = 'consent';
@@ -256,15 +266,24 @@ const ErrCard = ({children}) => {
 
 const AuthContainer = () => {
   const {search} = useLocation();
-  const [clientid, params, reqParams] = useMemo(() => {
+  const [
+    clientid,
+    redirectURI,
+    responseType,
+    responseMode,
+    state,
+    params,
+    reqParams,
+  ] = useMemo(() => {
     const query = getSearchParams(search);
     const clientid = query.get('client_id') || '';
     return [
       clientid,
+      query.get('redirect_uri'),
+      query.get('response_type'),
+      query.get('response_mode') || OID_RESMODE_QUERY,
+      query.get('state'),
       {
-        responseMode: query.get('response_mode'),
-        redirectURI: query.get('redirect_uri'),
-        state: query.get('state'),
         codeChallenge: query.get('code_challenge'),
         codeChallengeMethod: query.get('code_challenge_method'),
         display: query.get('display'),
@@ -275,7 +294,6 @@ const AuthContainer = () => {
       },
       {
         client_id: clientid,
-        responseType: query.get('response_type'),
         scope: query.get('scope') || '',
         nonce: query.get('nonce'),
       },
@@ -288,7 +306,44 @@ const AuthContainer = () => {
     {},
   );
 
-  const redirectValid = params.redirectURI === app.data.redirect_uri;
+  const redirectValid = redirectURI === app.data.redirect_uri;
+  const responseTypeValid = responseType === OID_RESTYPE_CODE;
+  const responseModeValid = OID_RESMODE_SET.has(responseMode);
+
+  const redirErr = useCallback(
+    (errcode, msg) => {
+      if (!redirectURI) {
+        return;
+      }
+      const modeFrag =
+        responseModeValid && responseMode === OID_RESMODE_FRAGMENT;
+      try {
+        const url = new URL(redirectURI);
+        const q = modeFrag ? new URLSearchParams() : url.searchParams;
+        q.set('error', errcode);
+        if (msg) {
+          q.set('error_description', msg);
+        }
+        if (state) {
+          q.Add('state', state);
+        }
+        if (modeFrag) {
+          url.hash = '#' + q.toString();
+        }
+        window.location.replace(url.toString());
+      } catch (_e) {}
+    },
+    [redirectURI, responseMode, responseModeValid, state],
+  );
+
+  if (redirectValid) {
+    if (!responseTypeValid) {
+      redirErr(OID_ERR_UNSUPPORTED_RESTYPE, 'Invalid response type');
+    }
+    if (!responseModeValid) {
+      redirErr(OID_ERR_INVALID_REQ, 'Invalid response mode');
+    }
+  }
 
   return (
     <MainContent>
@@ -296,9 +351,18 @@ const AuthContainer = () => {
         <Container padded narrow>
           {app.success &&
             (redirectValid ? (
-              <AuthFlow app={app.data} params={params} reqParams={reqParams} />
+              <AuthFlow
+                redirErr={redirErr}
+                app={app.data}
+                params={params}
+                reqParams={reqParams}
+              />
             ) : (
               <ErrCard>
+                <CardLogo app={app.data} />
+                <h3 className="text-center">
+                  Error logging in to <CardLink app={app.data} />
+                </h3>
                 <p>Invalid OAuth redirect url</p>
               </ErrCard>
             ))}
