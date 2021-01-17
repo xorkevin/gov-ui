@@ -284,8 +284,6 @@ const AuthContainer = () => {
       query.get('response_mode') || OID_RESMODE_QUERY,
       query.get('state'),
       {
-        codeChallenge: query.get('code_challenge'),
-        codeChallengeMethod: query.get('code_challenge_method'),
         display: query.get('display'),
         prompt: query.get('prompt') || '',
         maxage: query.get('max_age') || '',
@@ -296,6 +294,8 @@ const AuthContainer = () => {
         client_id: clientid,
         scope: query.get('scope') || '',
         nonce: query.get('nonce'),
+        codeChallenge: query.get('code_challenge'),
+        codeChallengeMethod: query.get('code_challenge_method'),
       },
     ];
   }, [search]);
