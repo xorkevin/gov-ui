@@ -6,17 +6,19 @@ import {
   MainContent,
   Section,
   Container,
-  FaIcon,
+  Grid,
   Card,
   Field,
   Form,
   useForm,
   ButtonGroup,
+  FaIcon,
 } from '@xorkevin/nuke';
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
 import Img from '@xorkevin/nuke/src/component/image/rounded';
+import ImgCircle from '@xorkevin/nuke/src/component/image/circle';
 
 import {GovUICtx} from '../../middleware';
 import {getSearchParams} from '../../utility';
@@ -58,22 +60,21 @@ const CardLink = ({app}) => {
   );
 };
 
-const ProfileImg = () => {
-  const {userid} = useAuthValue();
+const CardAccount = ({profile}) => {
+  const {userid, username} = useAuthValue();
   const imageURL = useURL(selectAPIProfileImage, [userid]);
-  const [profile] = useAuthResource(selectAPIProfile, [], {
-    image: '',
-  });
-  if (!profile.success || !profile.data.image) {
-    return null;
-  }
   return (
-    <Img
-      className="oauth-auth-profile-image"
-      src={imageURL}
-      preview={profile.data.image}
-      ratio={1}
-    />
+    <Grid justify="center" align="center">
+      {profile.image && (
+        <ImgCircle
+          className="oauth-auth-profile-image"
+          src={imageURL}
+          preview={profile.image}
+          ratio={1}
+        />
+      )}
+      <h5 className="oauth-auth-account-name">{username}</h5>
+    </Grid>
   );
 };
 
@@ -106,7 +107,7 @@ const Login = ({app, loginPosthook, usernameHint}) => {
     >
       <Container padded>
         <CardLogo app={app} />
-        <h3>
+        <h3 className="text-center">
           Log in to continue to <CardLink app={app} />
         </h3>
         <Form
@@ -135,10 +136,8 @@ const Login = ({app, loginPosthook, usernameHint}) => {
   );
 };
 
-const CheckConsent = ({app}) => {
+const CheckConsent = ({app, profile, scopes}) => {
   const ctx = useContext(GovUICtx);
-  const {username} = useAuthValue();
-
   return (
     <Card
       center
@@ -158,19 +157,23 @@ const CheckConsent = ({app}) => {
     >
       <Container padded>
         <CardLogo app={app} />
-        <h3>
+        <h3 className="text-center">
           <CardLink app={app} /> wants to access your {ctx.siteName} account
         </h3>
-        <h5>
-          <ProfileImg /> {username}
-        </h5>
+        <CardAccount profile={profile} />
         <h5>
           This will allow <CardLink app={app} /> to:
         </h5>
-        <ul>
-          <li>permission one</li>
-          <li>permission two</li>
-        </ul>
+        {scopes
+          .filter((i) => ctx.openidAllScopeDesc[i])
+          .map((i) => (
+            <Grid key={i} align="center">
+              <span className="oauth-auth-scope-indicator"></span>{' '}
+              <span className="oauth-auth-scope-desc">
+                {ctx.openidAllScopeDesc[i]}
+              </span>
+            </Grid>
+          ))}
       </Container>
     </Card>
   );
@@ -184,7 +187,10 @@ const ErrCard = ({children}) => {
   );
 };
 
-const AuthContainer = () => {
+const AuthFlow = ({app, params, reqParams}) => {
+  const ctx = useContext(GovUICtx);
+  const {loggedIn, username} = useAuthValue();
+
   const [performedRelogin, setRelogin] = useState(false);
   const reloginPosthook = useMemo(() => {
     if (performedRelogin) {
@@ -194,10 +200,44 @@ const AuthContainer = () => {
       setRelogin(true);
     };
   }, [performedRelogin, setRelogin]);
-  const {loggedIn, username} = useAuthValue();
 
+  const [profile] = useAuthResource(
+    loggedIn ? selectAPIProfile : selectAPINull,
+    [],
+    {
+      image: '',
+    },
+  );
+
+  const openidAllScopeSet = useMemo(() => new Set(ctx.openidAllScopes), [ctx]);
+
+  const [scopes, scopeSet] = useMemo(() => {
+    const scopes = reqParams.scope
+      .split(' ')
+      .filter((i) => openidAllScopeSet.has(i));
+    return [scopes, new Set(scopes)];
+  }, [reqParams, openidAllScopeSet]);
+
+  if (!scopeSet.has('openid')) {
+    console.log('missing openid scope');
+  }
+
+  if (!loggedIn) {
+    return (
+      <Login
+        app={app}
+        loginPosthook={reloginPosthook}
+        usernameHint={params.loginHint || (loggedIn && username)}
+      />
+    );
+  }
+
+  return <CheckConsent app={app} profile={profile.data} scopes={scopes} />;
+};
+
+const AuthContainer = () => {
   const {search} = useLocation();
-  const [clientid, params, _reqParams] = useMemo(() => {
+  const [clientid, params, reqParams] = useMemo(() => {
     const query = getSearchParams(search);
     const clientid = query.get('client_id') || '';
     return [
@@ -217,7 +257,7 @@ const AuthContainer = () => {
         clientid,
         responseType: query.get('response_type'),
         responseMode: query.get('response_mode'),
-        scope: query.get('scope'),
+        scope: query.get('scope') || '',
         nonce: query.get('nonce'),
       },
     ];
@@ -237,15 +277,7 @@ const AuthContainer = () => {
         <Container padded narrow>
           {app.success &&
             (redirectValid ? (
-              loggedIn ? (
-                <CheckConsent app={app.data} />
-              ) : (
-                <Login
-                  app={app.data}
-                  loginPosthook={reloginPosthook}
-                  usernameHint={params.loginHint || (loggedIn && username)}
-                />
-              )
+              <AuthFlow app={app.data} params={params} reqParams={reqParams} />
             ) : (
               <ErrCard>
                 <p>Invalid OAuth redirect url</p>

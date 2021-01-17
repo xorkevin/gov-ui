@@ -1,3 +1,8 @@
+$color-primary: #0d47a1 !default;
+$color-primary-1: lighten($color-primary, 25%) !default;
+$color-primary-2: lighten($color-primary, 12.5%) !default;
+$color-primary-3: $color-primary !default;
+
 $color-success: #388e3c;
 $color-success-light: lighten($color-success, 12.5%);
 
@@ -32,9 +37,24 @@ $color-success-light: lighten($color-success, 12.5%);
 }
 
 .oauth-auth-profile-image {
-  display: inline-block;
-  width: 32px;
-  margin: auto;
+  width: 24px;
+}
+
+.oauth-auth-account-name {
+  padding: 4px;
+}
+
+.oauth-auth-scope-indicator {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: $color-primary-2;
+  box-shadow: 0 0 8px 0 rgba($color-primary-2, 0.5);
+}
+
+.oauth-auth-scope-desc {
+  padding: 4px 4px 4px 8px;
 }
 
 .org-field-disabled-solid.disabled {

@@ -153,6 +153,19 @@ const matchBrowser = (user_agent) => {
 
 const matchMobile = (user_agent) => simpleMobileRegex.test(user_agent);
 
+const openidAllScopes = Object.freeze([
+  'openid',
+  'profile',
+  'email',
+  'offline_access',
+]);
+
+const openidAllScopeDesc = Object.freeze({
+  profile: 'View your public profile',
+  email: 'View your email address',
+  offline_access: 'Have offline access',
+});
+
 const GovUIDefaultOpts = Object.freeze({
   // main
   siteName: 'Governor',
@@ -172,6 +185,9 @@ const GovUIDefaultOpts = Object.freeze({
   }),
   enableUserProfile: true,
   pathUserProfile: '/u/{0}',
+  // openid
+  openidAllScopes,
+  openidAllScopeDesc,
   // user api keys
   apiAllScopes: allScopes,
   apiAllScopeDesc: allScopeDesc,
