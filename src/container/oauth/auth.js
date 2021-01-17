@@ -1,7 +1,7 @@
 import {Fragment, useState, useMemo, useContext} from 'react';
 import {useLocation} from 'react-router-dom';
 import {useResource, useURL, selectAPINull} from '@xorkevin/substation';
-import {useAuthValue, useLogin} from '@xorkevin/turbine';
+import {useAuthValue, useAuthResource, useLogin} from '@xorkevin/turbine';
 import {
   MainContent,
   Section,
@@ -23,6 +23,8 @@ import {getSearchParams} from '../../utility';
 
 const selectAPIApp = (api) => api.oauth.app.id;
 const selectAPIImage = (api) => api.oauth.app.id.image;
+const selectAPIProfile = (api) => api.profile.get;
+const selectAPIProfileImage = (api) => api.profile.id.image;
 
 const CardHeader = () => {
   const ctx = useContext(GovUICtx);
@@ -33,19 +35,58 @@ const CardHeader = () => {
   );
 };
 
+const CardLogo = ({app}) => {
+  const imageURL = useURL(selectAPIImage, [app.client_id]);
+  if (!app.logo) {
+    return null;
+  }
+  return (
+    <Img
+      className="oauth-auth-app-logo"
+      src={imageURL}
+      preview={app.logo}
+      ratio={1}
+    />
+  );
+};
+
+const CardLink = ({app}) => {
+  return (
+    <AnchorText ext href={app.url}>
+      {app.name}
+    </AnchorText>
+  );
+};
+
+const ProfileImg = () => {
+  const {userid} = useAuthValue();
+  const imageURL = useURL(selectAPIProfileImage, [userid]);
+  const [profile] = useAuthResource(selectAPIProfile, [], {
+    image: '',
+  });
+  if (!profile.success || !profile.data.image) {
+    return null;
+  }
+  return (
+    <Img
+      className="oauth-auth-profile-image"
+      src={imageURL}
+      preview={profile.data.image}
+      ratio={1}
+    />
+  );
+};
+
 const Login = ({app, loginPosthook, usernameHint}) => {
   const form = useForm({
-    username: usernameHint,
+    username: usernameHint || '',
     password: '',
   });
 
   const [login, execLogin] = useLogin(form.state.username, form.state.password);
-
   if (login.success) {
     loginPosthook();
   }
-
-  const imageURL = useURL(selectAPIImage, [app.client_id]);
 
   return (
     <Card
@@ -64,19 +105,9 @@ const Login = ({app, loginPosthook, usernameHint}) => {
       }
     >
       <Container padded>
-        {app.logo && (
-          <Img
-            className="oauth-auth-app-logo"
-            src={imageURL}
-            preview={app.logo}
-            ratio={1}
-          />
-        )}
+        <CardLogo app={app} />
         <h3>
-          Log in to continue to{' '}
-          <AnchorText ext href={app.url}>
-            {app.name}
-          </AnchorText>
+          Log in to continue to <CardLink app={app} />
         </h3>
         <Form
           formState={form.state}
@@ -104,6 +135,47 @@ const Login = ({app, loginPosthook, usernameHint}) => {
   );
 };
 
+const CheckConsent = ({app}) => {
+  const ctx = useContext(GovUICtx);
+  const {username} = useAuthValue();
+
+  return (
+    <Card
+      center
+      width="md"
+      title={<CardHeader />}
+      bar={
+        <Fragment>
+          <ButtonGroup>
+            <ButtonTertiary>
+              <FaIcon icon="ellipsis-v" />
+            </ButtonTertiary>
+            <ButtonTertiary>Cancel</ButtonTertiary>
+            <ButtonPrimary>Allow</ButtonPrimary>
+          </ButtonGroup>
+        </Fragment>
+      }
+    >
+      <Container padded>
+        <CardLogo app={app} />
+        <h3>
+          <CardLink app={app} /> wants to access your {ctx.siteName} account
+        </h3>
+        <h5>
+          <ProfileImg /> {username}
+        </h5>
+        <h5>
+          This will allow <CardLink app={app} /> to:
+        </h5>
+        <ul>
+          <li>permission one</li>
+          <li>permission two</li>
+        </ul>
+      </Container>
+    </Card>
+  );
+};
+
 const ErrCard = ({children}) => {
   return (
     <Card center width="md" title={<CardHeader />}>
@@ -122,7 +194,7 @@ const AuthContainer = () => {
       setRelogin(true);
     };
   }, [performedRelogin, setRelogin]);
-  const {username} = useAuthValue();
+  const {loggedIn, username} = useAuthValue();
 
   const {search} = useLocation();
   const [clientid, params, _reqParams] = useMemo(() => {
@@ -157,17 +229,28 @@ const AuthContainer = () => {
     {},
   );
 
+  const redirectValid = params.redirectURI === app.data.redirect_uri;
+
   return (
     <MainContent>
       <Section>
         <Container padded narrow>
-          {app.success && (
-            <Login
-              app={app.data}
-              loginPosthook={reloginPosthook}
-              usernameHint={params.loginHint || username}
-            />
-          )}
+          {app.success &&
+            (redirectValid ? (
+              loggedIn ? (
+                <CheckConsent app={app.data} />
+              ) : (
+                <Login
+                  app={app.data}
+                  loginPosthook={reloginPosthook}
+                  usernameHint={params.loginHint || (loggedIn && username)}
+                />
+              )
+            ) : (
+              <ErrCard>
+                <p>Invalid OAuth redirect url</p>
+              </ErrCard>
+            ))}
           {clientid.length === 0 && (
             <ErrCard>
               <p>Invalid OAuth client</p>

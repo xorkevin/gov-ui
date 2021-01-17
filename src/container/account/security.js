@@ -96,6 +96,7 @@ const SessionRow = ({
   current,
   ip,
   time,
+  auth_time,
   user_agent,
   posthook,
   errhook,
@@ -139,6 +140,9 @@ const SessionRow = ({
                   Last accessed <Time value={time * 1000} />
                 </div>
               )}
+              <div>
+                Last logged in <Time value={auth_time * 1000} />
+              </div>
             </Column>
           </Grid>
         </Column>
@@ -203,19 +207,22 @@ const AccountSessions = () => {
       <Grid>
         <Column fullWidth md={16}>
           <ListGroup>
-            {sessions.data.map(({session_id, ip, time, user_agent}) => (
-              <SessionRow
-                key={session_id}
-                session_id={session_id}
-                current={session_id === sessionid}
-                ip={ip}
-                time={time}
-                user_agent={user_agent}
-                posthook={posthookDelete}
-                errhook={displayErrSnack}
-                parsePlatform={ctx.userSessionParsePlatform}
-              />
-            ))}
+            {sessions.data.map(
+              ({session_id, ip, time, auth_time, user_agent}) => (
+                <SessionRow
+                  key={session_id}
+                  session_id={session_id}
+                  current={session_id === sessionid}
+                  ip={ip}
+                  time={time}
+                  auth_time={auth_time}
+                  user_agent={user_agent}
+                  posthook={posthookDelete}
+                  errhook={displayErrSnack}
+                  parsePlatform={ctx.userSessionParsePlatform}
+                />
+              ),
+            )}
           </ListGroup>
           <ButtonGroup>
             <ButtonTertiary disabled={paginate.atFirst} onClick={paginate.prev}>

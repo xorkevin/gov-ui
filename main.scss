@@ -31,6 +31,12 @@ $color-success-light: lighten($color-success, 12.5%);
   margin: auto;
 }
 
+.oauth-auth-profile-image {
+  display: inline-block;
+  width: 32px;
+  margin: auto;
+}
+
 .org-field-disabled-solid.disabled {
   opacity: 1;
 }
