@@ -179,17 +179,16 @@ const CheckConsent = ({app, profile, scopes}) => {
   );
 };
 
-const ErrCard = ({children}) => {
-  return (
-    <Card center width="md" title={<CardHeader />}>
-      <Container padded>{children}</Container>
-    </Card>
-  );
-};
+const OID_PROMPT_NONE = 'none';
+const OID_PROMPT_LOGIN = 'login';
+const OID_PROMPT_CONSENT = 'consent';
+const OID_PROMPT_SELECT = 'select_account';
+
+const intRegex = /^\d+$/;
 
 const AuthFlow = ({app, params, reqParams}) => {
   const ctx = useContext(GovUICtx);
-  const {loggedIn, username} = useAuthValue();
+  const {loggedIn, username, timeAuth} = useAuthValue();
 
   const [performedRelogin, setRelogin] = useState(false);
   const reloginPosthook = useMemo(() => {
@@ -209,30 +208,50 @@ const AuthFlow = ({app, params, reqParams}) => {
     },
   );
 
+  const maxAgeValid = intRegex.test(params.maxage);
+  const maxAge = maxAgeValid ? parseInt(params.maxage, 10) : -1;
+
   const openidAllScopeSet = useMemo(() => new Set(ctx.openidAllScopes), [ctx]);
+  const scopes = useMemo(
+    () => reqParams.scope.split(' ').filter((i) => openidAllScopeSet.has(i)),
+    [reqParams, openidAllScopeSet],
+  );
+  const prompts = useMemo(() => new Set(params.prompt.split(' ')), [params]);
 
-  const [scopes, scopeSet] = useMemo(() => {
-    const scopes = reqParams.scope
-      .split(' ')
-      .filter((i) => openidAllScopeSet.has(i));
-    return [scopes, new Set(scopes)];
-  }, [reqParams, openidAllScopeSet]);
-
-  if (!scopeSet.has('openid')) {
-    console.log('missing openid scope');
+  const showNone = prompts.has(OID_PROMPT_NONE);
+  if (showNone) {
+    return null;
   }
-
-  if (!loggedIn) {
+  const showLogin =
+    !loggedIn ||
+    (params.loginHint !== '' && params.loginHint !== username) ||
+    prompts.has(OID_PROMPT_LOGIN) ||
+    (maxAgeValid && Date.now() / 1000 - timeAuth > maxAge);
+  if (showLogin) {
     return (
       <Login
         app={app}
         loginPosthook={reloginPosthook}
-        usernameHint={params.loginHint || (loggedIn && username)}
+        usernameHint={
+          params.loginHint !== '' ? params.loginHint : loggedIn && username
+        }
       />
     );
   }
-
+  const showConsent = prompts.has(OID_PROMPT_CONSENT);
+  if (showConsent) {
+    return <CheckConsent app={app} profile={profile.data} scopes={scopes} />;
+  }
+  const _showSelect = prompts.has(OID_PROMPT_SELECT);
   return <CheckConsent app={app} profile={profile.data} scopes={scopes} />;
+};
+
+const ErrCard = ({children}) => {
+  return (
+    <Card center width="md" title={<CardHeader />}>
+      <Container padded>{children}</Container>
+    </Card>
+  );
 };
 
 const AuthContainer = () => {
@@ -243,20 +262,20 @@ const AuthContainer = () => {
     return [
       clientid,
       {
+        responseMode: query.get('response_mode'),
         redirectURI: query.get('redirect_uri'),
         state: query.get('state'),
         codeChallenge: query.get('code_challenge'),
         codeChallengeMethod: query.get('code_challenge_method'),
         display: query.get('display'),
-        prompt: query.get('prompt'),
-        maxage: query.get('max_age'),
+        prompt: query.get('prompt') || '',
+        maxage: query.get('max_age') || '',
         idtokenHint: query.get('id_token_hint'),
-        loginHint: query.get('login_hint'),
+        loginHint: query.get('login_hint') || '',
       },
       {
-        clientid,
+        client_id: clientid,
         responseType: query.get('response_type'),
-        responseMode: query.get('response_mode'),
         scope: query.get('scope') || '',
         nonce: query.get('nonce'),
       },
