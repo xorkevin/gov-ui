@@ -62,4 +62,16 @@ export default {
       },
     },
   },
+  auth: {
+    url: '/auth',
+    children: {
+      code: {
+        url: '/code',
+        method: 'POST',
+        transformer: (body) => [null, body],
+        expectdata: true,
+        err: 'Could not obtain authorization',
+      },
+    },
+  },
 };

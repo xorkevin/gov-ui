@@ -1,7 +1,12 @@
 import {Fragment, useState, useCallback, useMemo, useContext} from 'react';
 import {useLocation} from 'react-router-dom';
 import {useResource, useURL, selectAPINull} from '@xorkevin/substation';
-import {useAuthValue, useAuthResource, useLogin} from '@xorkevin/turbine';
+import {
+  useAuthValue,
+  useAuthCall,
+  useAuthResource,
+  useLogin,
+} from '@xorkevin/turbine';
 import {
   MainContent,
   Section,
@@ -23,6 +28,7 @@ import ImgCircle from '@xorkevin/nuke/src/component/image/circle';
 import {GovUICtx} from '../../middleware';
 import {getSearchParams} from '../../utility';
 
+const selectAPIAuth = (api) => api.oauth.auth.code;
 const selectAPIApp = (api) => api.oauth.app.id;
 const selectAPIImage = (api) => api.oauth.app.id.image;
 const selectAPIProfile = (api) => api.profile.get;
@@ -78,7 +84,7 @@ const CardAccount = ({profile}) => {
   );
 };
 
-const Login = ({app, loginPosthook, usernameHint}) => {
+const Login = ({denyAuth, app, loginPosthook, usernameHint}) => {
   const form = useForm({
     username: usernameHint || '',
     password: '',
@@ -100,6 +106,7 @@ const Login = ({app, loginPosthook, usernameHint}) => {
             <ButtonTertiary>
               <FaIcon icon="ellipsis-v" />
             </ButtonTertiary>
+            <ButtonTertiary onClick={denyAuth}>Cancel</ButtonTertiary>
             <ButtonPrimary onClick={execLogin}>Login</ButtonPrimary>
           </ButtonGroup>
         </Fragment>
@@ -136,7 +143,7 @@ const Login = ({app, loginPosthook, usernameHint}) => {
   );
 };
 
-const CheckConsent = ({app, profile, scopes}) => {
+const CheckConsent = ({allowAuth, denyAuth, app, profile, scopeSet}) => {
   const ctx = useContext(GovUICtx);
   return (
     <Card
@@ -149,8 +156,8 @@ const CheckConsent = ({app, profile, scopes}) => {
             <ButtonTertiary>
               <FaIcon icon="ellipsis-v" />
             </ButtonTertiary>
-            <ButtonTertiary>Cancel</ButtonTertiary>
-            <ButtonPrimary>Allow</ButtonPrimary>
+            <ButtonTertiary onClick={denyAuth}>Cancel</ButtonTertiary>
+            <ButtonPrimary onClick={allowAuth}>Allow</ButtonPrimary>
           </ButtonGroup>
         </Fragment>
       }
@@ -164,8 +171,8 @@ const CheckConsent = ({app, profile, scopes}) => {
         <h5>
           This will allow <CardLink app={app} /> to:
         </h5>
-        {scopes
-          .filter((i) => ctx.openidAllScopeDesc[i])
+        {ctx.openidAllScopes
+          .filter((i) => scopeSet.has(i) && ctx.openidAllScopeDesc[i])
           .map((i) => (
             <Grid key={i} align="center">
               <span className="oauth-auth-scope-indicator"></span>{' '}
@@ -181,6 +188,8 @@ const CheckConsent = ({app, profile, scopes}) => {
 
 const OID_ERR_INVALID_REQ = 'invalid_request';
 const OID_ERR_UNSUPPORTED_RESTYPE = 'unsupported_response_type';
+const OID_ERR_ACCESS_DENIED = 'access_denied';
+const OID_ERR_SERVER = 'server_error';
 
 const OID_RESTYPE_CODE = 'code';
 
@@ -196,7 +205,7 @@ const OID_PROMPT_SELECT = 'select_account';
 
 const intRegex = /^\d+$/;
 
-const AuthFlow = ({app, params, reqParams}) => {
+const AuthFlow = ({redirSuccess, redirErr, app, params, reqParams}) => {
   const ctx = useContext(GovUICtx);
   const {loggedIn, username, timeAuth} = useAuthValue();
 
@@ -222,11 +231,35 @@ const AuthFlow = ({app, params, reqParams}) => {
   const maxAge = maxAgeValid ? parseInt(params.maxage, 10) : -1;
 
   const openidAllScopeSet = useMemo(() => new Set(ctx.openidAllScopes), [ctx]);
-  const scopes = useMemo(
-    () => reqParams.scope.split(' ').filter((i) => openidAllScopeSet.has(i)),
-    [reqParams, openidAllScopeSet],
-  );
+  const [scopeSet, _scopestr] = useMemo(() => {
+    const scopes = reqParams.scope
+      .split(' ')
+      .filter((i) => openidAllScopeSet.has(i))
+      .sort();
+    return [new Set(scopes), scopes.join(' ')];
+  }, [reqParams, openidAllScopeSet]);
   const prompts = useMemo(() => new Set(params.prompt.split(' ')), [params]);
+
+  const [_authState, execAuth] = useAuthCall(selectAPIAuth, [reqParams], {
+    code: '',
+  });
+  const allowAuth = useCallback(async () => {
+    const [data, status, err] = await execAuth();
+    if (err) {
+      if (status >= 500) {
+        redirErr(OID_ERR_SERVER, err);
+      } else {
+        redirErr(err.code || OID_ERR_INVALID_REQ, err);
+      }
+      return;
+    }
+    const {code} = data;
+    redirSuccess(code);
+  }, [execAuth, redirSuccess, redirErr]);
+
+  const denyAuth = useCallback(() => {
+    redirErr(OID_ERR_ACCESS_DENIED, 'Access denied');
+  }, [redirErr]);
 
   const showNone = prompts.has(OID_PROMPT_NONE);
   if (showNone) {
@@ -240,6 +273,7 @@ const AuthFlow = ({app, params, reqParams}) => {
   if (showLogin) {
     return (
       <Login
+        denyAuth={denyAuth}
         app={app}
         loginPosthook={reloginPosthook}
         usernameHint={
@@ -250,10 +284,26 @@ const AuthFlow = ({app, params, reqParams}) => {
   }
   const showConsent = prompts.has(OID_PROMPT_CONSENT);
   if (showConsent) {
-    return <CheckConsent app={app} profile={profile.data} scopes={scopes} />;
+    return (
+      <CheckConsent
+        allowAuth={allowAuth}
+        denyAuth={denyAuth}
+        app={app}
+        profile={profile.data}
+        scopeSet={scopeSet}
+      />
+    );
   }
   const _showSelect = prompts.has(OID_PROMPT_SELECT);
-  return <CheckConsent app={app} profile={profile.data} scopes={scopes} />;
+  return (
+    <CheckConsent
+      allowAuth={allowAuth}
+      denyAuth={denyAuth}
+      app={app}
+      profile={profile.data}
+      scopeSet={scopeSet}
+    />
+  );
 };
 
 const ErrCard = ({children}) => {
@@ -294,8 +344,8 @@ const AuthContainer = () => {
         client_id: clientid,
         scope: query.get('scope') || '',
         nonce: query.get('nonce'),
-        codeChallenge: query.get('code_challenge'),
-        codeChallengeMethod: query.get('code_challenge_method'),
+        code_challenge: query.get('code_challenge'),
+        code_challenge_method: query.get('code_challenge_method'),
       },
     ];
   }, [search]);
@@ -310,6 +360,28 @@ const AuthContainer = () => {
   const responseTypeValid = responseType === OID_RESTYPE_CODE;
   const responseModeValid = OID_RESMODE_SET.has(responseMode);
 
+  const redirSuccess = useCallback(
+    (code) => {
+      if (!redirectURI) {
+        return;
+      }
+      const modeFrag =
+        responseModeValid && responseMode === OID_RESMODE_FRAGMENT;
+      try {
+        const url = new URL(redirectURI);
+        const q = modeFrag ? new URLSearchParams() : url.searchParams;
+        q.set('code', code);
+        if (state) {
+          q.Add('state', state);
+        }
+        if (modeFrag) {
+          url.hash = '#' + q.toString();
+        }
+        window.location.replace(url.toString());
+      } catch (_e) {}
+    },
+    [redirectURI, responseMode, responseModeValid, state],
+  );
   const redirErr = useCallback(
     (errcode, msg) => {
       if (!redirectURI) {
@@ -352,6 +424,7 @@ const AuthContainer = () => {
           {app.success &&
             (redirectValid ? (
               <AuthFlow
+                redirSuccess={redirSuccess}
                 redirErr={redirErr}
                 app={app.data}
                 params={params}
