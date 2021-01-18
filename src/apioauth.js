@@ -74,4 +74,29 @@ export default {
       },
     },
   },
+  connections: {
+    url: '/connection',
+    children: {
+      get: {
+        url: '?amount={0}&offset={1}',
+        method: 'GET',
+        transformer: (amount, offset) => [[amount, offset], null],
+        expectdata: true,
+        selector: (_status, data) => data.connections,
+        err: 'Unable to get OAuth connections',
+      },
+      id: {
+        url: '/id/{0}',
+        children: {
+          get: {
+            url: '',
+            method: 'GET',
+            transformer: (id) => [[id], null],
+            expectdata: true,
+            err: 'Unable to get OAuth connection',
+          },
+        },
+      },
+    },
+  },
 };

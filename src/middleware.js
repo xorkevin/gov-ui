@@ -64,6 +64,8 @@ const allScopes = Object.freeze([
   // user.oauth
   'gov.user.oauth.app:read',
   'gov.user.oauth.app:write',
+  'gov.user.oauth.connections:read',
+  'gov.user.oauth.connections:write',
   // profile
   'gov.profile:read',
   'gov.profile:write',

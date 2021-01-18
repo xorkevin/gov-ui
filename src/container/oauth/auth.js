@@ -29,6 +29,7 @@ import {GovUICtx} from '../../middleware';
 import {getSearchParams} from '../../utility';
 
 const selectAPIAuth = (api) => api.oauth.auth.code;
+const selectAPIConn = (api) => api.oauth.connections.id.get;
 const selectAPIApp = (api) => api.oauth.app.id;
 const selectAPIImage = (api) => api.oauth.app.id.image;
 const selectAPIProfile = (api) => api.profile.get;
@@ -186,6 +187,36 @@ const CheckConsent = ({allowAuth, denyAuth, app, profile, scopeSet}) => {
   );
 };
 
+const ReaffirmAuth = ({allowAuth, denyAuth, app, profile}) => {
+  const ctx = useContext(GovUICtx);
+  return (
+    <Card
+      center
+      width="md"
+      title={<CardHeader />}
+      bar={
+        <Fragment>
+          <ButtonGroup>
+            <ButtonTertiary>
+              <FaIcon icon="ellipsis-v" />
+            </ButtonTertiary>
+            <ButtonTertiary onClick={denyAuth}>Cancel</ButtonTertiary>
+            <ButtonPrimary onClick={allowAuth}>Continue</ButtonPrimary>
+          </ButtonGroup>
+        </Fragment>
+      }
+    >
+      <Container padded>
+        <CardLogo app={app} />
+        <h3 className="text-center">
+          Continue to <CardLink app={app} /> with your {ctx.siteName} account
+        </h3>
+        <CardAccount profile={profile} />
+      </Container>
+    </Card>
+  );
+};
+
 const OID_ERR_INVALID_REQ = 'invalid_request';
 const OID_ERR_UNSUPPORTED_RESTYPE = 'unsupported_response_type';
 const OID_ERR_ACCESS_DENIED = 'access_denied';
@@ -205,7 +236,7 @@ const OID_PROMPT_SELECT = 'select_account';
 
 const intRegex = /^\d+$/;
 
-const AuthFlow = ({redirSuccess, redirErr, app, params, reqParams}) => {
+const AuthFlow = ({redirSuccess, redirErr, app, conn, params, reqParams}) => {
   const ctx = useContext(GovUICtx);
   const {loggedIn, username, timeAuth} = useAuthValue();
 
@@ -231,7 +262,7 @@ const AuthFlow = ({redirSuccess, redirErr, app, params, reqParams}) => {
   const maxAge = maxAgeValid ? parseInt(params.maxage, 10) : -1;
 
   const openidAllScopeSet = useMemo(() => new Set(ctx.openidAllScopes), [ctx]);
-  const [scopeSet, _scopestr] = useMemo(() => {
+  const [scopeSet, scopestr] = useMemo(() => {
     const scopes = reqParams.scope
       .split(' ')
       .filter((i) => openidAllScopeSet.has(i))
@@ -265,6 +296,7 @@ const AuthFlow = ({redirSuccess, redirErr, app, params, reqParams}) => {
   if (showNone) {
     return null;
   }
+  const _showSelect = prompts.has(OID_PROMPT_SELECT);
   const showLogin =
     !loggedIn ||
     (params.loginHint !== '' && params.loginHint !== username) ||
@@ -282,7 +314,10 @@ const AuthFlow = ({redirSuccess, redirErr, app, params, reqParams}) => {
       />
     );
   }
-  const showConsent = prompts.has(OID_PROMPT_CONSENT);
+  const showConsent =
+    prompts.has(OID_PROMPT_CONSENT) ||
+    !conn.success ||
+    scopestr !== conn.data.scope;
   if (showConsent) {
     return (
       <CheckConsent
@@ -294,14 +329,12 @@ const AuthFlow = ({redirSuccess, redirErr, app, params, reqParams}) => {
       />
     );
   }
-  const _showSelect = prompts.has(OID_PROMPT_SELECT);
   return (
-    <CheckConsent
+    <ReaffirmAuth
       allowAuth={allowAuth}
       denyAuth={denyAuth}
       app={app}
       profile={profile.data}
-      scopeSet={scopeSet}
     />
   );
 };
@@ -353,7 +386,20 @@ const AuthContainer = () => {
   const [app] = useResource(
     clientid.length > 0 ? selectAPIApp : selectAPINull,
     [clientid],
-    {},
+    {
+      client_id: '',
+      name: '',
+      url: '',
+      redirect_uri: '',
+      logo: '',
+      time: 0,
+      creation_time: 0,
+    },
+  );
+  const [conn] = useResource(
+    clientid.length > 0 ? selectAPIConn : selectAPINull,
+    [clientid],
+    {client_id: '', scope: '', time: 0, creation_time: 0},
   );
 
   const redirectValid = redirectURI === app.data.redirect_uri;
@@ -427,6 +473,7 @@ const AuthContainer = () => {
                 redirSuccess={redirSuccess}
                 redirErr={redirErr}
                 app={app.data}
+                conn={conn}
                 params={params}
                 reqParams={reqParams}
               />
