@@ -24,13 +24,13 @@ const selectAPIApps = (api) => api.oauth.app.ids;
 
 const AppRow = ({time, creation_time, app}) => {
   const menu = useMenu();
-  const {name, url} = app || {};
+  const {name, url} = app;
   return (
     <ListItem>
       <Grid justify="space-between" align="center" nowrap>
         <Column className="account-oauth-app-item-name">
           <h5 className="account-oauth-app-item-heading">
-            <AnchorText local href={url || ''}>
+            <AnchorText local href={url}>
               {name}
             </AnchorText>
           </h5>
@@ -91,17 +91,19 @@ const Apps = () => {
       <Grid>
         <Column fullWidth md={24}>
           <ListGroup>
-            {conns.data.map((i) => (
-              <AppRow
-                key={i.client_id}
-                clientid={i.client_id}
-                scope={i.scope}
-                time={i.time}
-                creation_time={i.creation_time}
-                app={appMap[i.client_id]}
-                refresh={reexecute}
-              />
-            ))}
+            {conns.data
+              .filter((i) => appMap[i.client_id])
+              .map((i) => (
+                <AppRow
+                  key={i.client_id}
+                  clientid={i.client_id}
+                  scope={i.scope}
+                  time={i.time}
+                  creation_time={i.creation_time}
+                  app={appMap[i.client_id]}
+                  refresh={reexecute}
+                />
+              ))}
           </ListGroup>
           <ButtonGroup>
             <ButtonTertiary disabled={paginate.atFirst} onClick={paginate.prev}>
