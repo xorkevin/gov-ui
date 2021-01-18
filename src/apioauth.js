@@ -10,8 +10,16 @@ export default {
         selector: (_status, data) => data.apps,
         err: 'Unable to get apps',
       },
+      ids: {
+        url: '/ids?ids={0}',
+        method: 'GET',
+        transformer: (ids) => [[ids.join(',')], null],
+        expectdata: true,
+        selector: (_status, data) => data.apps,
+        err: 'Unable to get apps',
+      },
       id: {
-        url: '/{0}',
+        url: '/id/{0}',
         method: 'GET',
         transformer: (clientid) => [[clientid], null],
         expectdata: true,

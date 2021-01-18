@@ -1,4 +1,5 @@
-import {useCallback} from 'react';
+import {useCallback, useMemo} from 'react';
+import {useResource, selectAPINull} from '@xorkevin/substation';
 import {useAuthResource} from '@xorkevin/turbine';
 import {
   Grid,
@@ -19,16 +20,18 @@ import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
 const APP_LIMIT = 32;
 
 const selectAPIConns = (api) => api.oauth.connections.get;
+const selectAPIApps = (api) => api.oauth.app.ids;
 
-const AppRow = ({clientid, time, creation_time}) => {
+const AppRow = ({time, creation_time, app}) => {
   const menu = useMenu();
+  const {name, url} = app || {};
   return (
     <ListItem>
       <Grid justify="space-between" align="center" nowrap>
         <Column className="account-oauth-app-item-name">
           <h5 className="account-oauth-app-item-heading">
-            <AnchorText local href="#">
-              {clientid}
+            <AnchorText local href={url || ''}>
+              {name}
             </AnchorText>
           </h5>
           <div>
@@ -70,6 +73,17 @@ const Apps = () => {
     {posthook: posthookConns},
   );
 
+  const clientids = useMemo(() => conns.data.map((i) => i.client_id), [conns]);
+  const [apps] = useResource(
+    clientids.length > 0 ? selectAPIApps : selectAPINull,
+    [clientids],
+    [],
+  );
+  const appMap = useMemo(
+    () => Object.fromEntries(apps.data.map((i) => [i.client_id, i])),
+    [apps],
+  );
+
   return (
     <div>
       <h3>Connected Apps</h3>
@@ -84,6 +98,7 @@ const Apps = () => {
                 scope={i.scope}
                 time={i.time}
                 creation_time={i.creation_time}
+                app={appMap[i.client_id]}
                 refresh={reexecute}
               />
             ))}
@@ -98,6 +113,7 @@ const Apps = () => {
             </ButtonTertiary>
           </ButtonGroup>
           {conns.err && <p>{conns.err.message}</p>}
+          {apps.err && <p>{apps.err.message}</p>}
         </Column>
       </Grid>
     </div>
