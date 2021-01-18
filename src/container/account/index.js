@@ -18,6 +18,7 @@ import {GovUICtx} from '../../middleware';
 const AccountDetailsContainer = lazy(() => import('./details'));
 const SecurityContainer = lazy(() => import('./security'));
 const EmailConfirmContainer = lazy(() => import('./emailconfirm'));
+const OAuthContainer = lazy(() => import('./oauth'));
 const OrgsContainer = lazy(() => import('./orgs'));
 const InvitationsContainer = lazy(() => import('./invitations'));
 
@@ -49,6 +50,13 @@ const Account = () => {
                   icon={<FaIcon icon="lock" />}
                 >
                   Security
+                </SidebarItem>
+                <SidebarItem
+                  link={`${match.url}/oauth`}
+                  local
+                  icon={<FaIcon icon="openid" />}
+                >
+                  Connected Apps
                 </SidebarItem>
                 <SidebarItem
                   link={`${match.url}/orgs`}
@@ -86,6 +94,9 @@ const Account = () => {
                   </Route>
                   <Route path={`${match.path}/confirm/email`}>
                     <EmailConfirmContainer pathSecurity={pathSecurity} />
+                  </Route>
+                  <Route path={`${match.path}/oauth`}>
+                    <OAuthContainer />
                   </Route>
                   <Route path={`${match.path}/invitations`}>
                     <InvitationsContainer />
