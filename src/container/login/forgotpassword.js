@@ -71,7 +71,7 @@ const ForgotPassContainer = ({pathLogin, pathResetPass}) => {
                   autoFocus
                 />
               </Form>
-              {forgot.err && <p>{forgot.err}</p>}
+              {forgot.err && <p>{forgot.err.message}</p>}
               {forgot.success && (
                 <p>
                   If the username or email is valid, an email with the code to

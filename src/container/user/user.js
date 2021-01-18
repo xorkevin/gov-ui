@@ -64,7 +64,7 @@ const UserDetails = () => {
                 </Card>
               )}
               {(account.err || profile.err) && (
-                <p>{account.err || profile.err}</p>
+                <p>{account.err.message || profile.err.message}</p>
               )}
             </Column>
             <Column fullWidth sm={16} grow="1"></Column>

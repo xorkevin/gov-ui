@@ -177,10 +177,10 @@ const EditMembers = ({refresh, pathUserProfile, usrRole, modRole}) => {
               </ButtonGroup>
             </div>
           )}
-          {user.err && <p>{user.err}</p>}
-          {addMember.err && <p>{addMember.err}</p>}
-          {addMod.err && <p>{addMod.err}</p>}
-          {rmMember.err && <p>{rmMember.err}</p>}
+          {user.err && <p>{user.err.message}</p>}
+          {addMember.err && <p>{addMember.err.message}</p>}
+          {addMod.err && <p>{addMod.err.message}</p>}
+          {rmMember.err && <p>{rmMember.err.message}</p>}
         </Column>
       </Grid>
     </Fragment>
@@ -201,7 +201,7 @@ const InvitationRow = ({
   const snackbar = useSnackbar();
   const displayErrSnack = useCallback(
     (_deleteState, err) => {
-      snackbar(<SnackbarSurface>{err}</SnackbarSurface>);
+      snackbar(<SnackbarSurface>{err.message}</SnackbarSurface>);
     },
     [snackbar],
   );
@@ -360,7 +360,7 @@ const Invitations = ({org}) => {
               next
             </ButtonTertiary>
           </ButtonGroup>
-          {invitations.err && <p>{invitations.err}</p>}
+          {invitations.err && <p>{invitations.err.message}</p>}
         </Column>
       </Grid>
       <EditMembers

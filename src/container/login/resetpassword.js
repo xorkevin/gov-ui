@@ -105,7 +105,7 @@ const ResetPass = ({pathLogin}) => {
                   autoFocus
                 />
               </Form>
-              {reset.err && <p>{reset.err}</p>}
+              {reset.err && <p>{reset.err.message}</p>}
               {reset.success && <p>Password updated.</p>}
             </Container>
           </Card>

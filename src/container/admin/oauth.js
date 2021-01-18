@@ -299,7 +299,7 @@ const OAuthApps = () => {
   const snackbar = useSnackbar();
   const displayErrSnack = useCallback(
     (_status, err) => {
-      snackbar(<SnackbarSurface>{err}</SnackbarSurface>);
+      snackbar(<SnackbarSurface>{err.message}</SnackbarSurface>);
     },
     [snackbar],
   );
@@ -365,7 +365,7 @@ const OAuthApps = () => {
     <div>
       <h3>OAuth apps</h3>
       <hr />
-      {apps.err && <p>{apps.err}</p>}
+      {apps.err && <p>{apps.err.message}</p>}
       {apps.success && (
         <Fragment>
           <Grid>
@@ -433,7 +433,7 @@ const OAuthApps = () => {
               <ButtonGroup>
                 <ButtonPrimary onClick={execCreate}>Create</ButtonPrimary>
               </ButtonGroup>
-              {create.err && <p>{create.err}</p>}
+              {create.err && <p>{create.err.message}</p>}
               {create.success && (
                 <div>
                   <h4>Success! OAuth App Registered</h4>

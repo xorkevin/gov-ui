@@ -66,7 +66,7 @@ const OrgRow = ({
   const snackbar = useSnackbar();
   const displayErrSnack = useCallback(
     (_deleteState, err) => {
-      snackbar(<SnackbarSurface>{err}</SnackbarSurface>);
+      snackbar(<SnackbarSurface>{err.message}</SnackbarSurface>);
     },
     [snackbar],
   );
@@ -253,8 +253,8 @@ const Orgs = () => {
               next
             </ButtonTertiary>
           </ButtonGroup>
-          {roles.err && <p>{roles.err}</p>}
-          {orgs.err && <p>{orgs.err}</p>}
+          {roles.err && <p>{roles.err.message}</p>}
+          {orgs.err && <p>{orgs.err.message}</p>}
         </Column>
         <Column fullWidth md={8}>
           <h4>Create new org</h4>
@@ -270,7 +270,7 @@ const Orgs = () => {
           <ButtonGroup>
             <ButtonPrimary onClick={execCreate}>Create Org</ButtonPrimary>
           </ButtonGroup>
-          {create.err && <p>{create.err}</p>}
+          {create.err && <p>{create.err.message}</p>}
         </Column>
       </Grid>
     </div>

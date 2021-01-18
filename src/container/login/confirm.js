@@ -73,7 +73,7 @@ const ConfirmAccount = ({pathLogin}) => {
                   autoComplete="one-time-code"
                 />
               </Form>
-              {confirmAcct.err && <p>{confirmAcct.err}</p>}
+              {confirmAcct.err && <p>{confirmAcct.err.message}</p>}
               {confirmAcct.success && <p>Your account has been created.</p>}
             </Container>
           </Card>

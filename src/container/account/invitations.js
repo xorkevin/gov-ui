@@ -44,7 +44,7 @@ const InvitationRow = ({
   const snackbar = useSnackbar();
   const displayErrSnack = useCallback(
     (_deleteState, err) => {
-      snackbar(<SnackbarSurface>{err}</SnackbarSurface>);
+      snackbar(<SnackbarSurface>{err.message}</SnackbarSurface>);
     },
     [snackbar],
   );
@@ -203,7 +203,7 @@ const RoleInvitations = () => {
               next
             </ButtonTertiary>
           </ButtonGroup>
-          {invitations.err && <p>{invitations.err}</p>}
+          {invitations.err && <p>{invitations.err.message}</p>}
         </Column>
       </Grid>
     </div>

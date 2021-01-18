@@ -225,7 +225,7 @@ const CheckKey = () => {
   const snackbar = useSnackbar();
   const displayErrSnack = useCallback(
     (_status, err) => {
-      snackbar(<SnackbarSurface>{err}</SnackbarSurface>);
+      snackbar(<SnackbarSurface>{err.message}</SnackbarSurface>);
     },
     [snackbar],
   );
@@ -233,6 +233,7 @@ const CheckKey = () => {
   const form = useForm({
     keyid: '',
     key: '',
+    roles: '',
     scope: '',
   });
 
@@ -296,7 +297,7 @@ const Apikeys = () => {
   const snackbar = useSnackbar();
   const displayErrSnack = useCallback(
     (_status, err) => {
-      snackbar(<SnackbarSurface>{err}</SnackbarSurface>);
+      snackbar(<SnackbarSurface>{err.message}</SnackbarSurface>);
     },
     [snackbar],
   );
@@ -400,7 +401,7 @@ const Apikeys = () => {
               next
             </ButtonTertiary>
           </ButtonGroup>
-          {apikeys.err && <p>{apikeys.err}</p>}
+          {apikeys.err && <p>{apikeys.err.message}</p>}
         </Column>
         <Column fullWidth md={8}>
           <h4>Create new API key</h4>
@@ -427,7 +428,7 @@ const Apikeys = () => {
           <ButtonGroup>
             <ButtonPrimary onClick={execCreate}>Create</ButtonPrimary>
           </ButtonGroup>
-          {create.err && <p>{create.err}</p>}
+          {create.err && <p>{create.err.message}</p>}
           {create.success && (
             <div>
               <h4>Success! API Key Created</h4>

@@ -143,8 +143,8 @@ const OrgMembers = ({org}) => {
               next
             </ButtonTertiary>
           </ButtonGroup>
-          {userids.err && <p>{userids.err}</p>}
-          {users.err && <p>{users.err}</p>}
+          {userids.err && <p>{userids.err.message}</p>}
+          {users.err && <p>{users.err.message}</p>}
         </Column>
       </Grid>
     </div>

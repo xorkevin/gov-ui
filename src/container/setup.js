@@ -140,7 +140,7 @@ const Setup = () => {
                   autoComplete="email"
                 />
               </Form>
-              {setup.err && <p>{setup.err}</p>}
+              {setup.err && <p>{setup.err.message}</p>}
               {setup.success && <p>Server successfully setup</p>}
             </Container>
           </Card>

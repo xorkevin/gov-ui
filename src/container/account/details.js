@@ -127,7 +127,7 @@ const Profile = () => {
     return (
       <div>
         <ButtonPrimary onClick={execCreate}>Create Profile</ButtonPrimary>
-        {create.err && <p>{create.err}</p>}
+        {create.err && <p>{create.err.message}</p>}
       </div>
     );
   }
@@ -178,7 +178,7 @@ const Profile = () => {
                 </Fragment>
               )}
             </ButtonGroup>
-            {edit.err && <p>{edit.err}</p>}
+            {edit.err && <p>{edit.err.message}</p>}
           </Column>
           <Column fullWidth md={8}>
             <h4>Profile picture</h4>
@@ -200,11 +200,11 @@ const Profile = () => {
             >
               <FaIcon icon="cloud-upload" /> Upload
             </ButtonSecondary>
-            {editImage.err && <p>{editImage.err}</p>}
+            {editImage.err && <p>{editImage.err.message}</p>}
           </Column>
         </Grid>
       )}
-      {profile.err && <p>{profile.err}</p>}
+      {profile.err && <p>{profile.err.message}</p>}
     </Fragment>
   );
 };
@@ -305,7 +305,7 @@ const AccountDetails = () => {
               </Fragment>
             )}
           </ButtonGroup>
-          {edit.err && <p>{edit.err}</p>}
+          {edit.err && <p>{edit.err.message}</p>}
         </Column>
         <Column fullWidth md={8}>
           <h5>Userid</h5>

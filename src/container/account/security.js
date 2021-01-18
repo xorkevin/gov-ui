@@ -167,9 +167,7 @@ const AccountSessions = () => {
   const snackbar = useSnackbar();
   const displayErrSnack = useCallback(
     (_stage, err) => {
-      snackbar(
-        <SnackbarSurface>Failed to delete session: {err}</SnackbarSurface>,
-      );
+      snackbar(<SnackbarSurface>{err.message}</SnackbarSurface>);
     },
     [snackbar],
   );
@@ -233,7 +231,7 @@ const AccountSessions = () => {
               next
             </ButtonTertiary>
           </ButtonGroup>
-          {sessions.err && <p>{sessions.err}</p>}
+          {sessions.err && <p>{sessions.err.message}</p>}
         </Column>
       </Grid>
     </Fragment>
@@ -321,7 +319,7 @@ const AccountSecurity = ({pathConfirm, parsePlatform}) => {
                 Update Password
               </ButtonPrimary>
             </ButtonGroup>
-            {editPass.err && <p>{editPass.err}</p>}
+            {editPass.err && <p>{editPass.err.message}</p>}
           </Column>
         </Grid>
         <h3>Change email</h3>
@@ -362,7 +360,7 @@ const AccountSecurity = ({pathConfirm, parsePlatform}) => {
                 </ButtonPrimary>
               )}
             </ButtonGroup>
-            {editEmail.err && <p>{editEmail.err}</p>}
+            {editEmail.err && <p>{editEmail.err.message}</p>}
             {editEmail.success && (
               <p>
                 Confirm your email change with the code emailed to the address

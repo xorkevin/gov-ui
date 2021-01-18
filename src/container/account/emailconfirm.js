@@ -69,7 +69,7 @@ const AccountEmailConfirm = ({pathSecurity}) => {
               </Fragment>
             )}
           </ButtonGroup>
-          {confirmState.err && <p>{confirmState.err}</p>}
+          {confirmState.err && <p>{confirmState.err.message}</p>}
           {confirmState.success && <p>Email updated</p>}
         </Column>
       </Grid>

@@ -137,7 +137,7 @@ const Login = ({denyAuth, app, loginPosthook, usernameHint}) => {
             autoComplete="current-password"
           />
         </Form>
-        {login.err && <p>{login.err}</p>}
+        {login.err && <p>{login.err.message}</p>}
       </Container>
     </Card>
   );
@@ -247,9 +247,9 @@ const AuthFlow = ({redirSuccess, redirErr, app, params, reqParams}) => {
     const [data, status, err] = await execAuth();
     if (err) {
       if (status >= 500) {
-        redirErr(OID_ERR_SERVER, err);
+        redirErr(OID_ERR_SERVER, err.message);
       } else {
-        redirErr(err.code || OID_ERR_INVALID_REQ, err);
+        redirErr(err.code || OID_ERR_INVALID_REQ, err.message);
       }
       return;
     }
@@ -446,7 +446,7 @@ const AuthContainer = () => {
           )}
           {app.err && (
             <ErrCard>
-              <p>{app.err}</p>
+              <p>{app.err.message}</p>
             </ErrCard>
           )}
         </Container>

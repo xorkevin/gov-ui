@@ -88,7 +88,7 @@ const Approvals = () => {
   const snackbar = useSnackbar();
   const displayErrSnack = useCallback(
     (_status, err) => {
-      snackbar(<SnackbarSurface>{err}</SnackbarSurface>);
+      snackbar(<SnackbarSurface>{err.message}</SnackbarSurface>);
     },
     [snackbar],
   );
@@ -113,7 +113,7 @@ const Approvals = () => {
     <div>
       <h3>Approvals</h3>
       <hr />
-      {approvals.err && <p>{approvals.err}</p>}
+      {approvals.err && <p>{approvals.err.message}</p>}
       {approvals.success && (
         <Fragment>
           <Table

@@ -153,7 +153,7 @@ const CreateAccount = ({pathLogin, pathConfirm}) => {
                   autoComplete="email"
                 />
               </Form>
-              {create.err && <p>{create.err}</p>}
+              {create.err && <p>{create.err.message}</p>}
               {create.success &&
                 (ctx.enableUserApprovals ? (
                   <p>

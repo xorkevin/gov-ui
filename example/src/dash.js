@@ -68,7 +68,7 @@ const DashContainer = () => {
                       </div>
                     </Fragment>
                   )}
-                  {health.err && <p>{health.err}</p>}
+                  {health.err && <p>{health.err.message}</p>}
                 </Container>
               </Card>
             </Column>

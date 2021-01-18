@@ -42,7 +42,7 @@ const UserSearch = ({setUsername, err}) => {
         <ButtonGroup>
           <ButtonPrimary onClick={search}>Search</ButtonPrimary>
         </ButtonGroup>
-        {err && <p>{err}</p>}
+        {err && <p>{err.message}</p>}
       </Column>
     </Grid>
   );
@@ -129,7 +129,7 @@ const UserDetails = ({user, reexecute, back}) => {
             <ButtonTertiary onClick={clearForm}>Clear</ButtonTertiary>
             <ButtonPrimary onClick={execEdit}>Update Roles</ButtonPrimary>
           </ButtonGroup>
-          {edit.err && <p>{edit.err}</p>}
+          {edit.err && <p>{edit.err.message}</p>}
         </Column>
         <Column fullWidth md={8}>
           <h5>Userid</h5>

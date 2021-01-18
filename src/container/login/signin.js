@@ -92,7 +92,7 @@ const SigninContainer = ({pathCreate, pathForgot}) => {
                   autoComplete="current-password"
                 />
               </Form>
-              {login.err && <p>{login.err}</p>}
+              {login.err && <p>{login.err.message}</p>}
             </Container>
           </Card>
         </Container>

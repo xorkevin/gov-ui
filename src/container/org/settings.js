@@ -130,7 +130,7 @@ const OrgSettings = ({org, pathOrgSettings, refresh, pathHome}) => {
               </Fragment>
             )}
           </ButtonGroup>
-          {edit.err && <p>{edit.err}</p>}
+          {edit.err && <p>{edit.err.message}</p>}
         </Column>
         <Column fullWidth md={8}>
           <h5>Org ID</h5>
@@ -171,7 +171,7 @@ const OrgSettings = ({org, pathOrgSettings, refresh, pathHome}) => {
               </Fragment>
             )}
           </ButtonGroup>
-          {delOrg.err && <p>{delOrg.err}</p>}
+          {delOrg.err && <p>{delOrg.err.message}</p>}
         </Column>
       </Grid>
     </div>

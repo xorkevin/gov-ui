@@ -114,7 +114,7 @@ const CourierLink = ({courierPath}) => {
   const snackbar = useSnackbar();
   const displayErrSnack = useCallback(
     (_status, err) => {
-      snackbar(<SnackbarSurface>{err}</SnackbarSurface>);
+      snackbar(<SnackbarSurface>{err.message}</SnackbarSurface>);
     },
     [snackbar],
   );
@@ -207,7 +207,7 @@ const CourierLink = ({courierPath}) => {
               next
             </ButtonTertiary>
           </ButtonGroup>
-          {links.err && <p>{links.err}</p>}
+          {links.err && <p>{links.err.message}</p>}
         </Column>
         <Column fullWidth md={8}>
           <h4>Create new shortlink</h4>
@@ -235,8 +235,8 @@ const CourierLink = ({courierPath}) => {
           <ButtonGroup>
             <ButtonPrimary onClick={execCreate}>Create Link</ButtonPrimary>
           </ButtonGroup>
-          {create.err && <p>{create.err}</p>}
-          {brands.err && <p>{brands.err}</p>}
+          {create.err && <p>{create.err.message}</p>}
+          {brands.err && <p>{brands.err.message}</p>}
         </Column>
       </Grid>
     </div>

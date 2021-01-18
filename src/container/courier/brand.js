@@ -82,7 +82,7 @@ const CourierBrand = () => {
   const snackbar = useSnackbar();
   const displayErrSnack = useCallback(
     (_deleteState, err) => {
-      snackbar(<SnackbarSurface>{err}</SnackbarSurface>);
+      snackbar(<SnackbarSurface>{err.message}</SnackbarSurface>);
     },
     [snackbar],
   );
@@ -162,7 +162,7 @@ const CourierBrand = () => {
               next
             </ButtonTertiary>
           </ButtonGroup>
-          {brands.err && <p>{brands.err}</p>}
+          {brands.err && <p>{brands.err.message}</p>}
         </Column>
         <Column fullWidth md={8}>
           <h4>Create new brand</h4>
@@ -190,7 +190,7 @@ const CourierBrand = () => {
               <FaIcon icon="cloud-upload" /> Uploading
             </p>
           )}
-          {create.err && <p>{create.err}</p>}
+          {create.err && <p>{create.err.message}</p>}
         </Column>
       </Grid>
     </div>
