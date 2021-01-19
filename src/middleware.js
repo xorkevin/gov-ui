@@ -120,6 +120,9 @@ const rolesToScopes = Object.freeze({
     'gov.user.apikey:write',
     // user.admin
     'gov.user.admin:write',
+    // user.oauth
+    'gov.user.oauth.connections:read',
+    'gov.user.oauth.connections:write',
     // profile
     'gov.profile:read',
     'gov.profile:write',
