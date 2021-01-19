@@ -91,11 +91,14 @@ const AppRow = ({clientid, scope, creation_time, app, refresh}) => {
                 <h5>Permissions</h5>
                 {ctx.openidAllScopes
                   .filter((i) => scopeSet.has(i) && ctx.openidAllScopeDesc[i])
-                  .map((i) => (
-                    <Tooltip key={i} tooltip={ctx.openidAllScopeDesc[i]}>
-                      <Chip>{i}</Chip>
-                    </Tooltip>
-                  ))}
+                  .map((i) => {
+                    const k = ctx.openidAllScopeDesc[i];
+                    return (
+                      <Tooltip key={i} tooltip={k.desc}>
+                        <Chip>{k.display}</Chip>
+                      </Tooltip>
+                    );
+                  })}
               </div>
               <div>
                 Access granted on <Time value={creation_time * 1000} />

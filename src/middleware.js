@@ -163,9 +163,18 @@ const openidAllScopes = Object.freeze([
 ]);
 
 const openidAllScopeDesc = Object.freeze({
-  profile: 'View your public profile',
-  email: 'View your email address',
-  offline_access: 'Have offline access',
+  profile: {
+    display: 'profile',
+    desc: 'View your public profile',
+  },
+  email: {
+    display: 'email',
+    desc: 'View your email address',
+  },
+  offline_access: {
+    display: 'offline access',
+    desc: 'Have offline access',
+  },
 });
 
 const GovUIDefaultOpts = Object.freeze({

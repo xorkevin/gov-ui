@@ -178,7 +178,7 @@ const CheckConsent = ({allowAuth, denyAuth, app, profile, scopeSet}) => {
             <Grid key={i} align="center">
               <span className="oauth-auth-scope-indicator"></span>{' '}
               <span className="oauth-auth-scope-desc">
-                {ctx.openidAllScopeDesc[i]}
+                {ctx.openidAllScopeDesc[i].desc}
               </span>
             </Grid>
           ))}
