@@ -64,8 +64,8 @@ const allScopes = Object.freeze([
   // user.oauth
   'gov.user.oauth.app:read',
   'gov.user.oauth.app:write',
-  'gov.user.oauth.connections:read',
-  'gov.user.oauth.connections:write',
+  'gov.user.oauth.connection:read',
+  'gov.user.oauth.connection:write',
   // profile
   'gov.profile:read',
   'gov.profile:write',
@@ -96,6 +96,8 @@ const allScopeDesc = Object.freeze({
   // user.oauth
   'gov.user.oauth.app:read': 'Read all oauth apps',
   'gov.user.oauth.app:write': 'Edit oauth apps',
+  'gov.user.oauth.connection:read': 'Read user oauth app connections',
+  'gov.user.oauth.connection:write': 'Edit user oauth app connections',
   // profile
   'gov.profile:read': 'Read user profile',
   'gov.profile:write': 'Edit user profile',
@@ -121,8 +123,8 @@ const rolesToScopes = Object.freeze({
     // user.admin
     'gov.user.admin:write',
     // user.oauth
-    'gov.user.oauth.connections:read',
-    'gov.user.oauth.connections:write',
+    'gov.user.oauth.connection:read',
+    'gov.user.oauth.connection:write',
     // profile
     'gov.profile:read',
     'gov.profile:write',
