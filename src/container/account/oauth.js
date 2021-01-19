@@ -1,5 +1,5 @@
-import {useCallback, useMemo} from 'react';
-import {useResource, selectAPINull} from '@xorkevin/substation';
+import {useCallback, useMemo, useContext} from 'react';
+import {useResource, useURL, selectAPINull} from '@xorkevin/substation';
 import {useAuthResource} from '@xorkevin/turbine';
 import {
   Grid,
@@ -12,34 +12,65 @@ import {
   usePaginate,
   ButtonGroup,
   FaIcon,
+  Chip,
+  Tooltip,
   Time,
 } from '@xorkevin/nuke';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
+import Img from '@xorkevin/nuke/src/component/image/rounded';
+
+import {GovUICtx} from '../../middleware';
 
 const APP_LIMIT = 32;
 
 const selectAPIConns = (api) => api.oauth.connections.get;
 const selectAPIApps = (api) => api.oauth.app.ids;
+const selectAPIImage = (api) => api.oauth.app.id.image;
 
-const AppRow = ({time, creation_time, app}) => {
+const AppRow = ({clientid, scope, creation_time, app}) => {
+  const ctx = useContext(GovUICtx);
   const menu = useMenu();
-  const {name, url} = app;
+  const {name, url, logo} = app;
+  const scopeSet = useMemo(() => new Set(scope.split(' ')), [scope]);
+  const imageURL = useURL(selectAPIImage, [clientid]);
+
   return (
     <ListItem>
       <Grid justify="space-between" align="center" nowrap>
-        <Column className="account-oauth-app-item-name">
-          <h5 className="account-oauth-app-item-heading">
-            <AnchorText local href={url}>
-              {name}
-            </AnchorText>
-          </h5>
-          <div>
-            Last accessed <Time value={time * 1000} />
-          </div>
-          <div>
-            Added <Time value={creation_time * 1000} />
-          </div>
+        <Column grow="1">
+          <Grid justify="center" align="center">
+            <Column fullWidth sm={6}>
+              {logo && (
+                <Img
+                  className="oauth-app-logo"
+                  src={imageURL}
+                  preview={logo}
+                  ratio={1}
+                />
+              )}
+              <h5 className="text-center">
+                <AnchorText ext href={url}>
+                  {name}
+                </AnchorText>
+              </h5>
+            </Column>
+            <Column fullWidth sm={18}>
+              <div>
+                <h5>Permissions</h5>
+                {ctx.openidAllScopes
+                  .filter((i) => scopeSet.has(i) && ctx.openidAllScopeDesc[i])
+                  .map((i) => (
+                    <Tooltip key={i} tooltip={ctx.openidAllScopeDesc[i]}>
+                      <Chip>{i}</Chip>
+                    </Tooltip>
+                  ))}
+              </div>
+              <div>
+                Access granted on <Time value={creation_time * 1000} />
+              </div>
+            </Column>
+          </Grid>
         </Column>
         <Column shrink="0">
           <ButtonTertiary forwardedRef={menu.anchorRef} onClick={menu.toggle}>
