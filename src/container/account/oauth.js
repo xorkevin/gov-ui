@@ -1,6 +1,6 @@
 import {useCallback, useMemo, useContext} from 'react';
 import {useResource, useURL, selectAPINull} from '@xorkevin/substation';
-import {useAuthResource} from '@xorkevin/turbine';
+import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
   Grid,
   Column,
@@ -9,6 +9,9 @@ import {
   useMenu,
   Menu,
   MenuItem,
+  SnackbarSurface,
+  useSnackbar,
+  useSnackbarView,
   usePaginate,
   ButtonGroup,
   FaIcon,
@@ -25,15 +28,43 @@ import {GovUICtx} from '../../middleware';
 const APP_LIMIT = 32;
 
 const selectAPIConns = (api) => api.oauth.connections.get;
+const selectAPIDel = (api) => api.oauth.connections.id.del;
 const selectAPIApps = (api) => api.oauth.app.ids;
 const selectAPIImage = (api) => api.oauth.app.id.image;
 
-const AppRow = ({clientid, scope, creation_time, app}) => {
+const AppRow = ({clientid, scope, creation_time, app, refresh}) => {
   const ctx = useContext(GovUICtx);
+
+  const snackbar = useSnackbar();
+  const displayErrSnack = useCallback(
+    (_deleteState, err) => {
+      snackbar(<SnackbarSurface>{err.message}</SnackbarSurface>);
+    },
+    [snackbar],
+  );
+
+  const snackRemovedConn = useSnackbarView(
+    <SnackbarSurface>&#x2713; Removed connected app</SnackbarSurface>,
+  );
+
   const menu = useMenu();
   const {name, url, logo} = app;
   const scopeSet = useMemo(() => new Set(scope.split(' ')), [scope]);
   const imageURL = useURL(selectAPIImage, [clientid]);
+
+  const posthookRemove = useCallback(
+    (_status, _data, opts) => {
+      snackRemovedConn();
+      refresh(opts);
+    },
+    [refresh, snackRemovedConn],
+  );
+  const [_removeApp, execRemove] = useAuthCall(
+    selectAPIDel,
+    [clientid],
+    {},
+    {posthook: posthookRemove, errhook: displayErrSnack},
+  );
 
   return (
     <ListItem>
@@ -78,7 +109,7 @@ const AppRow = ({clientid, scope, creation_time, app}) => {
           </ButtonTertiary>
           {menu.show && (
             <Menu size="md" anchor={menu.anchor} close={menu.close}>
-              <MenuItem>Remove</MenuItem>
+              <MenuItem onClick={execRemove}>Remove</MenuItem>
             </Menu>
           )}
         </Column>

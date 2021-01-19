@@ -103,6 +103,13 @@ export default {
             expectdata: true,
             err: 'Unable to get OAuth connection',
           },
+          del: {
+            url: '',
+            method: 'DELETE',
+            transformer: (id) => [[id], null],
+            expectdata: false,
+            err: 'Unable to remove OAuth connection',
+          },
         },
       },
     },
