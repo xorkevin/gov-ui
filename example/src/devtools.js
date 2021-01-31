@@ -33,6 +33,14 @@ const OAuthTool = () => {
   );
 };
 
+const OAuthCBTool = () => {
+  return (
+    <div>
+      <h3>OAuth Callback Tester</h3>
+    </div>
+  );
+};
+
 const DevToolsContainer = () => {
   const match = useRouteMatch();
   return (
@@ -50,8 +58,11 @@ const DevToolsContainer = () => {
             </Column>
             <Column fullWidth md={18}>
               <Switch>
-                <Route path={`${match.path}/oauth`}>
+                <Route exact path={`${match.path}/oauth`}>
                   <OAuthTool />
+                </Route>
+                <Route exact path={`${match.path}/oauth/cb`}>
+                  <OAuthCBTool />
                 </Route>
                 <Redirect to={`${match.url}/oauth`} />
               </Switch>
