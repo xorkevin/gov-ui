@@ -127,6 +127,10 @@ const createConfig = (env, argv) => {
           target: 'http://governor.dev.localhost:8080',
           changeOrigin: true,
         },
+        '/.well-known': {
+          target: 'http://governor.dev.localhost:8080',
+          changeOrigin: true,
+        },
       },
     },
   };

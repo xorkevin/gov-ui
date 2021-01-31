@@ -5,6 +5,7 @@ import {GovAPI} from '@xorkevin/gov-ui';
 const API = {
   setupz: GovAPI.setupz(),
   healthz: GovAPI.healthz(),
+  wellknown: GovAPI.wellknown(),
   turbine: GovAuthAPI.turbine('/u'),
   u: GovAPI.user('/u'),
   profile: GovAPI.profile('/profile'),

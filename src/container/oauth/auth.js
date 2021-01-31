@@ -176,7 +176,7 @@ const CheckConsent = ({allowAuth, denyAuth, app, profile, scopeSet}) => {
           .filter((i) => scopeSet.has(i) && ctx.openidAllScopeDesc[i])
           .map((i) => (
             <Grid key={i} align="center">
-              <span className="oauth-auth-scope-indicator"></span>{' '}
+              <span className="oauth-auth-scope-indicator"></span>
               <span className="oauth-auth-scope-desc">
                 {ctx.openidAllScopeDesc[i].desc}
               </span>

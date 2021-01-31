@@ -3,8 +3,10 @@ $color-primary-1: lighten($color-primary, 25%) !default;
 $color-primary-2: lighten($color-primary, 12.5%) !default;
 $color-primary-3: $color-primary !default;
 
-$color-success: #388e3c;
-$color-success-light: lighten($color-success, 12.5%);
+$color-success: #388e3c !default;
+$color-success-light: lighten($color-success, 12.5%) !default;
+$color-danger: #c62828 !default;
+$color-danger-light: lighten($color-danger, 12.5%) !default;
 
 .account-field-disabled-solid.disabled {
   opacity: 1;
@@ -84,4 +86,22 @@ $color-success-light: lighten($color-success, 12.5%);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.devtools-dash-health-indicator {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: $color-success-light;
+  box-shadow: 0 0 8px 0 rgba($color-success, 0.5);
+
+  &.error {
+    background-color: $color-danger-light;
+    box-shadow: 0 0 8px 0 rgba($color-danger, 0.5);
+  }
+}
+
+.devtools-dash-health-status {
+  padding: 4px 4px 4px 8px;
 }

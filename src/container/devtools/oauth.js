@@ -1,22 +1,15 @@
 import {useCallback, useMemo, useContext} from 'react';
 import {Switch, Route, Redirect, useRouteMatch} from 'react-router-dom';
 import {
-  MainContent,
-  Section,
-  Container,
-  Grid,
-  Column,
-  Sidebar,
-  SidebarItem,
-  SidebarHeader,
   Field,
   FieldSelect,
   FieldMultiSelect,
   Form,
   useForm,
 } from '@xorkevin/nuke';
-import {GovUICtx} from '@xorkevin/gov-ui';
-import {randomID} from '@xorkevin/gov-ui/src/utility';
+
+import {GovUICtx} from '../../middleware';
+import {randomID} from '../../utility';
 
 const responseTypeOpts = [{display: 'code', value: 'code'}];
 const responseModeOpts = [
@@ -108,7 +101,7 @@ const OAuthTool = ({pathCallback}) => {
   );
 };
 
-const OAuthCBTool = () => {
+const OAuthCB = () => {
   return (
     <div>
       <h3>OAuth Callback Tester</h3>
@@ -116,37 +109,19 @@ const OAuthCBTool = () => {
   );
 };
 
-const DevToolsContainer = () => {
+const OAuth = () => {
   const match = useRouteMatch();
   return (
-    <MainContent>
-      <Section>
-        <Container padded>
-          <Grid>
-            <Column fullWidth md={6}>
-              <Sidebar>
-                <SidebarHeader>Devtools</SidebarHeader>
-                <SidebarItem local link={`${match.url}/oauth`}>
-                  OAuth
-                </SidebarItem>
-              </Sidebar>
-            </Column>
-            <Column fullWidth md={18}>
-              <Switch>
-                <Route exact path={`${match.path}/oauth`}>
-                  <OAuthTool pathCallback={`${match.url}/oauth/cb`} />
-                </Route>
-                <Route exact path={`${match.path}/oauth/cb`}>
-                  <OAuthCBTool />
-                </Route>
-                <Redirect to={`${match.url}/oauth`} />
-              </Switch>
-            </Column>
-          </Grid>
-        </Container>
-      </Section>
-    </MainContent>
+    <Switch>
+      <Route exact path={`${match.path}`}>
+        <OAuthTool pathCallback={`${match.url}/cb`} />
+      </Route>
+      <Route path={`${match.path}/cb`}>
+        <OAuthCB />
+      </Route>
+      <Redirect to={`${match.url}`} />
+    </Switch>
   );
 };
 
-export default DevToolsContainer;
+export default OAuth;

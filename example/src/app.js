@@ -1,4 +1,4 @@
-import {Fragment, lazy, Suspense, useContext} from 'react';
+import {Fragment, Suspense, useContext} from 'react';
 import {Switch, Route, Redirect, useLocation} from 'react-router-dom';
 import {useURL} from '@xorkevin/substation';
 import {
@@ -12,6 +12,9 @@ import {
 import {
   useDarkModeValue,
   useSetDarkMode,
+  MainContent,
+  Section,
+  Container,
   SnackbarContainer,
   Navbar,
   NavItem,
@@ -29,6 +32,7 @@ import AnchorSecondary from '@xorkevin/nuke/src/component/anchor/secondary';
 import Img from '@xorkevin/nuke/src/component/image/circle';
 import {
   GovUICtx,
+  DevtoolsContainer,
   LoginContainer,
   OAuthContainer,
   AccountContainer,
@@ -41,8 +45,6 @@ import {
 
 import {permissionedRoles} from 'roles';
 
-const DashC = Protected(lazy(() => import('./dash')));
-const DevToolsC = Protected(lazy(() => import('./devtools')));
 const LoginC = AntiProtected(LoginContainer);
 const AccountC = Protected(AccountContainer);
 const UserC = Protected(UserContainer);
@@ -211,6 +213,18 @@ const Foot = () => {
   );
 };
 
+const Home = () => {
+  return (
+    <MainContent>
+      <Section>
+        <Container padded>
+          <h1>Home</h1>
+        </Container>
+      </Section>
+    </MainContent>
+  );
+};
+
 const App = () => {
   const ctx = useContext(GovUICtx);
   useRefreshAuth();
@@ -222,10 +236,10 @@ const App = () => {
       <Suspense fallback={ctx.mainFallbackView}>
         <Switch>
           <Route exact path="/">
-            <DashC />
+            <Home />
           </Route>
           <Route path="/devtools">
-            <DevToolsC />
+            <DevtoolsContainer />
           </Route>
           <Route path="/x">
             <LoginC />

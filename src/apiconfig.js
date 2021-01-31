@@ -64,9 +64,22 @@ const healthz = () => ({
   },
 });
 
+const wellknown = () => ({
+  url: '/.well-known',
+  children: {
+    openidconfig: {
+      url: '/openid-configuration',
+      method: 'GET',
+      expectdata: true,
+      err: 'Could not get openid configuration',
+    },
+  },
+});
+
 const GovAPI = Object.freeze({
   setupz,
   healthz,
+  wellknown,
   user,
   profile,
   orgs,
