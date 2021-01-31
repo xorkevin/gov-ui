@@ -41,7 +41,8 @@ import {
 
 import {permissionedRoles} from 'roles';
 
-const DashC = Protected(lazy(() => import('dash')));
+const DashC = Protected(lazy(() => import('./dash')));
+const DevToolsC = Protected(lazy(() => import('./devtools')));
 const LoginC = AntiProtected(LoginContainer);
 const AccountC = Protected(AccountContainer);
 const UserC = Protected(UserContainer);
@@ -140,6 +141,10 @@ const Nav = () => {
               >
                 xorkevin
               </MenuItem>
+              <MenuDivider />
+              <MenuItem local link="/devtools">
+                Devtools
+              </MenuItem>
             </Menu>
           )}
         </Fragment>
@@ -218,6 +223,9 @@ const App = () => {
         <Switch>
           <Route exact path="/">
             <DashC />
+          </Route>
+          <Route path="/devtools">
+            <DevToolsC />
           </Route>
           <Route path="/x">
             <LoginC />
