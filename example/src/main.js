@@ -65,6 +65,8 @@ const Middleware = ComposeMiddleware(
   DarkModeMiddleware(),
   SnackbarMiddleware(),
   GovUIMiddleware({
+    // eslint-disable-next-line no-undef
+    siteURL: SITE_URL,
     mainFallbackView: MainFallbackView,
     fallbackView: FallbackView,
     userSessionParsePlatform: parsePlatform,

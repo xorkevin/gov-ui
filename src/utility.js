@@ -64,6 +64,17 @@ const isValidURL = (url) => {
   }
 };
 
+const ALPHABET =
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-';
+
+const randomID = (len = 8) => {
+  const idarr = [];
+  for (let i = 0; i < len; i++) {
+    idarr.push(ALPHABET[Math.floor(ALPHABET.length * Math.random())]);
+  }
+  return idarr.join('');
+};
+
 export {
   formatURL,
   formatURLArgs,
@@ -74,4 +85,5 @@ export {
   searchParamsToString,
   emailRegex,
   isValidURL,
+  randomID,
 };
