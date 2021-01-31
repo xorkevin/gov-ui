@@ -79,13 +79,13 @@ const LinkRow = ({
   return (
     <ListItem>
       <Grid justify="space-between" align="center" nowrap>
-        <Column className="courier-link-item-name">
+        <Column className="courier-link-item-name" grow="1">
           <h5>
             <Anchor className="courier-link-destination" ext href={url}>
               {url}
             </Anchor>
           </h5>
-          <Field value={`${courierPath}/${linkid}`} nohint />
+          <Field value={`${courierPath}/${linkid}`} nohint fullWidth />
           <div>
             <Anchor ext href={`${courierPath}/${linkid}`}>
               <FaIcon icon="link fa-lg" />

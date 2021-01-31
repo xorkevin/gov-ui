@@ -71,7 +71,6 @@ const Courier = () => {
                   options={orgOpts}
                   label="Account"
                   nohint
-                  fullWidth
                 />
               </Form>
               <Sidebar>
