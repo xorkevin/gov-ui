@@ -1,6 +1,9 @@
-import {useCallback, useMemo, useContext} from 'react';
+import {Fragment, useCallback, useMemo, useContext} from 'react';
 import {Switch, Route, Redirect, useRouteMatch} from 'react-router-dom';
+import {useResource} from '@xorkevin/substation';
 import {
+  Grid,
+  Column,
   Field,
   FieldSelect,
   FieldMultiSelect,
@@ -10,6 +13,8 @@ import {
 
 import {GovUICtx} from '../../middleware';
 import {randomID} from '../../utility';
+
+const selectAPIOidConfig = (api) => api.wellknown.openidconfig;
 
 const responseTypeOpts = [{display: 'code', value: 'code'}];
 const responseModeOpts = [
@@ -37,6 +42,7 @@ const OAuthTool = ({pathCallback}) => {
   const randomNonce = useMemo(() => randomID(24), []);
   const randomChallenge = useMemo(() => randomID(24), []);
   const form = useForm({
+    authendpoint: '',
     clientid: '',
     redirecturi: ctx.siteURL + pathCallback,
     responsetype: 'code',
@@ -56,6 +62,22 @@ const OAuthTool = ({pathCallback}) => {
     [ctx],
   );
 
+  const formAssign = form.assign;
+  const posthookConfig = useCallback(
+    (_status, config) => {
+      formAssign({
+        authendpoint: config.authorization_endpoint,
+      });
+    },
+    [formAssign],
+  );
+  const [oidConfig] = useResource(
+    selectAPIOidConfig,
+    [],
+    {},
+    {posthook: posthookConfig},
+  );
+
   const onSubmit = useCallback(() => {
     console.log('sent auth request');
   }, []);
@@ -63,40 +85,85 @@ const OAuthTool = ({pathCallback}) => {
   return (
     <div>
       <h3>OAuth Tester</h3>
-      <Form formState={form.state} onChange={form.update} onSubmit={onSubmit}>
-        <Field name="clientid" label="Client ID" nohint />
-        <Field name="redirecturi" label="Redirect URI" nohint />
-        <FieldSelect
-          name="responsetype"
-          label="Response Type"
-          options={responseTypeOpts}
-          nohint
-        />
-        <FieldSelect
-          name="responsemode"
-          label="Response Mode"
-          options={responseModeOpts}
-          nohint
-        />
-        <FieldMultiSelect
-          name="scope"
-          label="Scope"
-          options={scopeOpts}
-          nohint
-        />
-        <FieldSelect name="prompt" label="Prompt" options={promptOpts} nohint />
-        <Field name="maxage" label="Max Age" nohint />
-        <Field name="loginhint" label="Login Hint" nohint />
-        <Field name="state" label="State" nohint />
-        <Field name="nonce" label="Nonce" nohint />
-        <FieldSelect
-          name="challengemethod"
-          label="Code Challenge Method"
-          options={challengeMethodOpts}
-          nohint
-        />
-        <Field name="challenge" label="Code Challenge" nohint />
-      </Form>
+      <Grid>
+        <Column md={16}>
+          <Form
+            formState={form.state}
+            onChange={form.update}
+            onSubmit={onSubmit}
+          >
+            <Grid>
+              <Column md={12}>
+                <Field name="clientid" label="Client ID" nohint fullWidth />
+                <Field
+                  name="redirecturi"
+                  label="Redirect URI"
+                  nohint
+                  fullWidth
+                />
+                <FieldSelect
+                  name="responsetype"
+                  label="Response Type"
+                  options={responseTypeOpts}
+                  nohint
+                  fullWidth
+                />
+                <FieldSelect
+                  name="responsemode"
+                  label="Response Mode"
+                  options={responseModeOpts}
+                  nohint
+                  fullWidth
+                />
+                <FieldMultiSelect
+                  name="scope"
+                  label="Scope"
+                  options={scopeOpts}
+                  nohint
+                  fullWidth
+                />
+                <FieldSelect
+                  name="prompt"
+                  label="Prompt"
+                  options={promptOpts}
+                  nohint
+                  fullWidth
+                />
+                <Field name="maxage" label="Max Age" nohint fullWidth />
+                <Field name="loginhint" label="Login Hint" nohint fullWidth />
+              </Column>
+              <Column md={12}>
+                <Field
+                  name="authendpoint"
+                  label="Authorization Endpoint"
+                  nohint
+                  fullWidth
+                />
+                <Field name="state" label="State" nohint fullWidth />
+                <Field name="nonce" label="Nonce" nohint fullWidth />
+                <FieldSelect
+                  name="challengemethod"
+                  label="Code Challenge Method"
+                  options={challengeMethodOpts}
+                  nohint
+                  fullWidth
+                />
+                <Field
+                  name="challenge"
+                  label="Code Challenge"
+                  nohint
+                  fullWidth
+                />
+              </Column>
+            </Grid>
+          </Form>
+        </Column>
+        <Column md={8}>
+          {oidConfig.success && (
+            <Fragment>{JSON.stringify(oidConfig.data, null, 2)}</Fragment>
+          )}
+        </Column>
+      </Grid>
     </div>
   );
 };
