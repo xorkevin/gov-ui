@@ -1,6 +1,6 @@
 import {useCallback, useMemo} from 'react';
 import {isValidURL} from '../../utility';
-import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
+import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
   Grid,
   Column,
@@ -110,7 +110,7 @@ const LinkRow = ({
   );
 };
 
-const CourierLink = ({courierPath}) => {
+const CourierLink = ({accountid, courierPath}) => {
   const snackbar = useSnackbar();
   const displayErrSnack = useCallback(
     (_status, err) => {
@@ -118,8 +118,6 @@ const CourierLink = ({courierPath}) => {
     },
     [snackbar],
   );
-
-  const {userid} = useAuthValue();
 
   const form = useForm({
     linkid: '',
@@ -138,7 +136,7 @@ const CourierLink = ({courierPath}) => {
   );
   const [links, reexecute] = useAuthResource(
     selectAPILinks,
-    [userid, LINK_LIMIT, paginate.index],
+    [accountid, LINK_LIMIT, paginate.index],
     [],
     {posthook: posthookLinks},
   );
@@ -157,7 +155,7 @@ const CourierLink = ({courierPath}) => {
   );
   const [create, execCreate] = useAuthCall(
     selectAPICreate,
-    [userid, form.state],
+    [accountid, form.state],
     {},
     {prehook: prehookValidate, posthook: posthookRefresh},
   );
@@ -171,7 +169,7 @@ const CourierLink = ({courierPath}) => {
 
   const [brands] = useAuthResource(
     selectAPIBrands,
-    [userid, BRAND_LIMIT, 0],
+    [accountid, BRAND_LIMIT, 0],
     [],
   );
   const brandOptions = useMemo(() => brands.data.map(({brandid}) => brandid), [
@@ -185,11 +183,11 @@ const CourierLink = ({courierPath}) => {
       <Grid>
         <Column fullWidth md={16}>
           <ListGroup>
-            {links.data.map(({linkid, url, creation_time}) => (
+            {links.data.map(({linkid, url, creatorid, creation_time}) => (
               <LinkRow
                 key={linkid}
                 courierPath={courierPath}
-                creatorid={userid}
+                creatorid={creatorid}
                 linkid={linkid}
                 url={url}
                 creation_time={creation_time}

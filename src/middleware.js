@@ -11,9 +11,11 @@ const permissionedRoles = Object.freeze([
 
 const allRoles = Object.freeze(['user'].concat(permissionedRoles));
 
+const orgPrefix = 'org.';
 const orgUsrPrefix = 'usr.org.';
 const orgModPrefix = 'mod.org.';
 
+const orgRole = (orgid) => orgPrefix + orgid;
 const orgUsrRole = (orgid) => orgUsrPrefix + orgid;
 const orgModRole = (orgid) => orgModPrefix + orgid;
 
@@ -210,8 +212,10 @@ const GovUIDefaultOpts = Object.freeze({
   apiRolesToScopes: rolesToScopes,
   // user orgs
   enableUserOrgs: true,
+  orgPrefix,
   orgUsrPrefix,
   orgModPrefix,
+  orgRole,
   orgUsrRole,
   orgModRole,
   isOrgRole,
