@@ -47,7 +47,7 @@ const formValidCheck = ({display_name}) => {
 const prehookValidate = ([form]) => {
   const {display_name} = form;
   if (display_name.length === 0) {
-    return 'A display name must be provided';
+    return {message: 'A display name must be provided'};
   }
 };
 

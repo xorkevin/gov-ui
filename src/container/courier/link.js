@@ -48,10 +48,13 @@ const formValidCheck = ({url}) => {
   return valid;
 };
 
-const prehookValidate = ([form]) => {
+const prehookValidate = ([accountid, form]) => {
+  if (accountid.length === 0) {
+    return {message: 'An account must be provided'};
+  }
   const {url} = form;
   if (url.length === 0) {
-    return 'A url must be provided';
+    return {message: 'A url must be provided'};
   }
 };
 
