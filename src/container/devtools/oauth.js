@@ -1,4 +1,11 @@
-import {Fragment, useCallback, useMemo, useContext} from 'react';
+import {
+  Fragment,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  useContext,
+} from 'react';
 import {Switch, Route, Redirect, useRouteMatch} from 'react-router-dom';
 import {useResource} from '@xorkevin/substation';
 import {useAuthResource} from '@xorkevin/turbine';
@@ -14,6 +21,7 @@ import {
   Description,
   Chip,
 } from '@xorkevin/nuke';
+import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
 
 import {GovUICtx} from '../../middleware';
 import {randomID} from '../../utility';
@@ -21,6 +29,7 @@ import {randomID} from '../../utility';
 const selectAPIOidConfig = (api) => api.wellknown.openidconfig;
 const selectAPIApps = (api) => api.oauth.app.get;
 
+const NONCE_LENGTH = 43;
 const OAUTHAPP_LIMIT = 32;
 
 const responseTypeOpts = [{display: 'code', value: 'code'}];
@@ -58,9 +67,9 @@ const ChipList = ({list}) => {
 const OAuthTool = ({pathCallback}) => {
   const ctx = useContext(GovUICtx);
 
-  const randomState = useMemo(() => randomID(24), []);
-  const randomNonce = useMemo(() => randomID(24), []);
-  const randomChallenge = useMemo(() => randomID(24), []);
+  const randomState = useMemo(() => randomID(NONCE_LENGTH), []);
+  const randomNonce = useMemo(() => randomID(NONCE_LENGTH), []);
+  const randomChallenge = useMemo(() => randomID(NONCE_LENGTH), []);
   const form = useForm({
     authendpoint: '',
     clientid: '',
@@ -108,20 +117,108 @@ const OAuthTool = ({pathCallback}) => {
     [apps],
   );
 
-  const onSubmit = useCallback(() => {
-    console.log('sent auth request');
-  }, []);
+  const formChallengeMethod = form.state.challengemethod;
+  const formChallenge = form.state.challenge;
+  const [codeChallengeValue, setCodeChallengeValue] = useState(formChallenge);
+  useEffect(() => {
+    const cancelRef = {current: false};
+    switch (formChallengeMethod) {
+      case 'plain':
+        setCodeChallengeValue(formChallenge);
+        break;
+      case 'S256':
+        (async () => {
+          const data = new TextEncoder().encode(formChallenge);
+          const hash = await crypto.subtle.digest('SHA-256', data);
+          if (cancelRef.current) {
+            return;
+          }
+          const hashstr = btoa(
+            new Uint8Array(hash).reduce(
+              (data, byte) => data + String.fromCharCode(byte),
+              '',
+            ),
+          )
+            .replaceAll('=', '')
+            .replaceAll('+', '-')
+            .replaceAll('/', '_');
+          setCodeChallengeValue(hashstr);
+        })();
+        break;
+      default:
+        setCodeChallengeValue('');
+    }
+    return () => {
+      cancelRef.current = true;
+    };
+  }, [formChallengeMethod, formChallenge]);
+  const linkDest = useMemo(() => {
+    const {
+      authendpoint,
+      clientid,
+      redirecturi,
+      responsetype,
+      responsemode,
+      scope,
+      prompt,
+      maxage,
+      loginhint,
+      state,
+      nonce,
+      challengemethod,
+    } = form.state;
+    if (authendpoint.length === 0) {
+      return '#';
+    }
+    try {
+      const url = new URL(authendpoint);
+      const q = url.searchParams;
+      if (clientid.length > 0) {
+        q.set('client_id', clientid);
+      }
+      if (redirecturi.length > 0) {
+        q.set('redirect_uri', redirecturi);
+      }
+      if (responsetype.length > 0) {
+        q.set('response_type', responsetype);
+      }
+      if (responsemode.length > 0) {
+        q.set('response_mode', responsemode);
+      }
+      if (state.length > 0) {
+        q.set('state', state);
+      }
+      if (nonce.length > 0) {
+        q.set('nonce', nonce);
+      }
+      if (challengemethod.length > 0 && codeChallengeValue.length > 0) {
+        q.set('code_challenge_method', challengemethod);
+        q.set('code_challenge', codeChallengeValue);
+      }
+      if (scope.length > 0) {
+        q.set('scope', scope.join(' '));
+      }
+      if (prompt.length > 0) {
+        q.set('prompt', prompt);
+      }
+      if (maxage.length > 0) {
+        q.set('maxage', maxage);
+      }
+      if (loginhint.length > 0) {
+        q.set('loginhint', loginhint);
+      }
+      return url.toString();
+    } catch (_e) {
+      return '#';
+    }
+  }, [form, codeChallengeValue]);
 
   return (
     <div>
       <h3>OAuth Tester</h3>
       <Grid>
         <Column md={12}>
-          <Form
-            formState={form.state}
-            onChange={form.update}
-            onSubmit={onSubmit}
-          >
+          <Form formState={form.state} onChange={form.update}>
             <Grid>
               <Column md={12}>
                 <FieldSearchSelect
@@ -272,6 +369,10 @@ const OAuthTool = ({pathCallback}) => {
           {oidConfig.err && <p>{oidConfig.err.message}</p>}
         </Column>
       </Grid>
+      <h4>OAuth Link</h4>
+      <AnchorText href={linkDest}>
+        <code>{linkDest}</code>
+      </AnchorText>
     </div>
   );
 };

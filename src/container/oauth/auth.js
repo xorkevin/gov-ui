@@ -418,7 +418,7 @@ const AuthContainer = () => {
         const q = modeFrag ? new URLSearchParams() : url.searchParams;
         q.set('code', code);
         if (state) {
-          q.Add('state', state);
+          q.set('state', state);
         }
         if (modeFrag) {
           url.hash = '#' + q.toString();
@@ -443,7 +443,7 @@ const AuthContainer = () => {
           q.set('error_description', msg);
         }
         if (state) {
-          q.Add('state', state);
+          q.set('state', state);
         }
         if (modeFrag) {
           url.hash = '#' + q.toString();
