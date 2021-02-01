@@ -1,4 +1,12 @@
-import {Fragment, useState, useCallback, useMemo, useContext} from 'react';
+import {
+  Fragment,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+  useContext,
+} from 'react';
 import {useLocation} from 'react-router-dom';
 import {useResource, useURL, selectAPINull} from '@xorkevin/substation';
 import {
@@ -301,15 +309,39 @@ const AuthFlow = ({redirSuccess, redirErr, app, conn, params, reqParams}) => {
     (params.loginHint === '' || params.loginHint === username) &&
     (!maxAgeValid || Date.now() / 1000 - timeAuth <= maxAge);
   const hasConsented = conn.success && scopestr === conn.data.scope;
+  const connIsDone = conn.err || conn.success;
 
   const showNone = prompts.has(OID_PROMPT_NONE);
+  const once = useRef(false);
+  useEffect(() => {
+    if (once.current) {
+      return;
+    }
+    if (showNone) {
+      if (!isLoggedIn) {
+        once.current = true;
+        redirErr(OID_ERR_LOGIN_REQUIRED, 'Not logged in');
+      }
+      if (connIsDone && !hasConsented) {
+        once.current = true;
+        redirErr(OID_ERR_CONSENT_REQUIRED, 'Has not approved requested scopes');
+      }
+      if (isLoggedIn && hasConsented) {
+        once.current = true;
+        allowAuth();
+      }
+    }
+  }, [
+    once,
+    showNone,
+    redirErr,
+    allowAuth,
+    isLoggedIn,
+    hasConsented,
+    connIsDone,
+  ]);
+
   if (showNone) {
-    if (!isLoggedIn) {
-      redirErr(OID_ERR_LOGIN_REQUIRED, 'Not logged in');
-    }
-    if ((conn.err || conn.success) && !hasConsented) {
-      redirErr(OID_ERR_CONSENT_REQUIRED, 'Has not approved requested scopes');
-    }
     return null;
   }
   const _showSelect = prompts.has(OID_PROMPT_SELECT);
@@ -463,14 +495,22 @@ const AuthContainer = () => {
     [redirectURI, responseMode, responseModeValid, state],
   );
 
-  if (redirectValid) {
-    if (!responseTypeValid) {
-      redirErr(OID_ERR_UNSUPPORTED_RESTYPE, 'Invalid response type');
+  const once = useRef(false);
+  useEffect(() => {
+    if (once.current) {
+      return;
     }
-    if (!responseModeValid) {
-      redirErr(OID_ERR_INVALID_REQ, 'Invalid response mode');
+    if (redirectValid) {
+      if (!responseTypeValid) {
+        once.current = true;
+        redirErr(OID_ERR_UNSUPPORTED_RESTYPE, 'Invalid response type');
+      }
+      if (!responseModeValid) {
+        once.current = true;
+        redirErr(OID_ERR_INVALID_REQ, 'Invalid response mode');
+      }
     }
-  }
+  }, [once, redirErr, redirectValid, responseTypeValid, responseModeValid]);
 
   return (
     <MainContent>

@@ -372,7 +372,7 @@ const OAuthTool = ({pathCallback}) => {
         </Column>
       </Grid>
       <h4>OAuth Link</h4>
-      <AnchorText ext href={linkDest}>
+      <AnchorText href={linkDest}>
         <code>{linkDest}</code>
       </AnchorText>
       <ButtonGroup>
