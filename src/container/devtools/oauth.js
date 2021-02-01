@@ -19,8 +19,10 @@ import {
   Form,
   useForm,
   Description,
+  ButtonGroup,
   Chip,
 } from '@xorkevin/nuke';
+import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
 
 import {GovUICtx} from '../../middleware';
@@ -370,9 +372,12 @@ const OAuthTool = ({pathCallback}) => {
         </Column>
       </Grid>
       <h4>OAuth Link</h4>
-      <AnchorText href={linkDest}>
+      <AnchorText ext href={linkDest}>
         <code>{linkDest}</code>
       </AnchorText>
+      <ButtonGroup>
+        <ButtonPrimary>Send OAuth Request</ButtonPrimary>
+      </ButtonGroup>
     </div>
   );
 };

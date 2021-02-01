@@ -80,6 +80,11 @@ const Nav = () => {
     <Navbar
       right={
         <Fragment>
+          {!loggedIn && (
+            <NavItem local link="/x/login">
+              Sign in
+            </NavItem>
+          )}
           <NavItem forwardedRef={menu.anchorRef} onClick={menu.toggle}>
             {profile.success && profile.data.image && (
               <Img
@@ -128,16 +133,16 @@ const Nav = () => {
               <MenuDivider />
               <MenuHeader>About</MenuHeader>
               <MenuItem
-                link="https://github.com/xorkevin/gov-ui"
                 ext
+                link="https://github.com/xorkevin/gov-ui"
                 icon={<FaIcon icon="github" />}
                 label={<FaIcon icon="external-link" />}
               >
                 gov-ui
               </MenuItem>
               <MenuItem
-                link="https://xorkevin.com/"
                 ext
+                link="https://xorkevin.com/"
                 icon={<FaIcon icon="globe-w" />}
                 label={<FaIcon icon="external-link" />}
               >

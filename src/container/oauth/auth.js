@@ -220,6 +220,10 @@ const ReaffirmAuth = ({allowAuth, denyAuth, app, profile}) => {
 const OID_ERR_INVALID_REQ = 'invalid_request';
 const OID_ERR_UNSUPPORTED_RESTYPE = 'unsupported_response_type';
 const OID_ERR_ACCESS_DENIED = 'access_denied';
+//const OID_ERR_INTERACTION_REQUIRED = 'interaction_required';
+const OID_ERR_LOGIN_REQUIRED = 'login_required';
+//const OID_ERR_SELECT_REQUIRED = 'account_selection_required';
+const OID_ERR_CONSENT_REQUIRED = 'consent_required';
 const OID_ERR_SERVER = 'server_error';
 
 const OID_RESTYPE_CODE = 'code';
@@ -292,16 +296,24 @@ const AuthFlow = ({redirSuccess, redirErr, app, conn, params, reqParams}) => {
     redirErr(OID_ERR_ACCESS_DENIED, 'Access denied');
   }, [redirErr]);
 
+  const isLoggedIn =
+    loggedIn &&
+    (params.loginHint === '' || params.loginHint === username) &&
+    (!maxAgeValid || Date.now() / 1000 - timeAuth <= maxAge);
+  const hasConsented = conn.success && scopestr === conn.data.scope;
+
   const showNone = prompts.has(OID_PROMPT_NONE);
   if (showNone) {
+    if (!isLoggedIn) {
+      redirErr(OID_ERR_LOGIN_REQUIRED, 'Not logged in');
+    }
+    if ((conn.err || conn.success) && !hasConsented) {
+      redirErr(OID_ERR_CONSENT_REQUIRED, 'Has not approved requested scopes');
+    }
     return null;
   }
   const _showSelect = prompts.has(OID_PROMPT_SELECT);
-  const showLogin =
-    !loggedIn ||
-    (params.loginHint !== '' && params.loginHint !== username) ||
-    prompts.has(OID_PROMPT_LOGIN) ||
-    (maxAgeValid && Date.now() / 1000 - timeAuth > maxAge);
+  const showLogin = !isLoggedIn || prompts.has(OID_PROMPT_LOGIN);
   if (showLogin) {
     return (
       <Login
@@ -314,10 +326,7 @@ const AuthFlow = ({redirSuccess, redirErr, app, conn, params, reqParams}) => {
       />
     );
   }
-  const showConsent =
-    prompts.has(OID_PROMPT_CONSENT) ||
-    !conn.success ||
-    scopestr !== conn.data.scope;
+  const showConsent = !hasConsented || prompts.has(OID_PROMPT_CONSENT);
   if (showConsent) {
     return (
       <CheckConsent
