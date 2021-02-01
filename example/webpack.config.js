@@ -138,7 +138,6 @@ const createConfig = (env, argv) => {
   if (argv.mode === 'development') {
     config.plugins.push(
       new webpack.DefinePlugin({
-        SITE_URL: JSON.stringify('http://localhost:3000'),
         APIBASE_URL: JSON.stringify('/api'),
         COURIERBASE_URL: JSON.stringify(
           'http://go.governor.dev.localhost:8080',
@@ -148,7 +147,6 @@ const createConfig = (env, argv) => {
   } else {
     config.plugins.push(
       new webpack.DefinePlugin({
-        SITE_URL: JSON.stringify('http://governor.dev.localhost:8080'),
         APIBASE_URL: JSON.stringify('/api'),
         COURIERBASE_URL: JSON.stringify(
           'http://go.governor.dev.localhost:8080',

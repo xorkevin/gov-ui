@@ -3,12 +3,11 @@ export default {
     url: '/roles',
     children: {
       get: {
-        url: '?prefix={0}&amount={1}&offset={2}',
+        url: '',
         method: 'GET',
-        transformer: (prefix, amount, offset) => [
-          [prefix, amount, offset],
-          null,
-        ],
+        transformer: (prefix, amount, offset) => ({
+          query: {prefix, amount, offset},
+        }),
         expectdata: true,
         selector: (_status, data) => data && data.roles,
         err: 'Could not get user roles',
@@ -17,9 +16,11 @@ export default {
         url: '/invitation',
         children: {
           get: {
-            url: '?amount={0}&offset={1}',
+            url: '',
             method: 'GET',
-            transformer: (amount, offset) => [[amount, offset], null],
+            transformer: (amount, offset) => ({
+              query: {amount, offset},
+            }),
             expectdata: true,
             selector: (_status, data) => data && data.invitations,
             err: 'Could not get user role invitations',
@@ -27,13 +28,17 @@ export default {
           accept: {
             url: '/{0}/accept',
             method: 'POST',
-            transformer: (role) => [[role], null],
+            transformer: (role) => ({
+              params: [role],
+            }),
             err: 'Could not accept role invitation',
           },
           del: {
             url: '/{0}',
             method: 'DELETE',
-            transformer: (role) => [[role], null],
+            transformer: (role) => ({
+              params: [role],
+            }),
             err: 'Could not delete role invitation',
           },
         },
@@ -44,9 +49,11 @@ export default {
     url: '/sessions',
     children: {
       get: {
-        url: '?amount={0}&offset={1}',
+        url: '',
         method: 'GET',
-        transformer: (amount, offset) => [[amount, offset], null],
+        transformer: (amount, offset) => ({
+          query: {amount, offset},
+        }),
         expectdata: true,
         selector: (_status, data) => data && data.active_sessions,
         err: 'Could not get sessions',
@@ -54,7 +61,9 @@ export default {
       del: {
         url: '',
         method: 'DELETE',
-        transformer: (session_ids) => [null, {session_ids}],
+        transformer: (session_ids) => ({
+          body: {session_ids},
+        }),
         expectdata: false,
         err: 'Could not delete sessions',
       },
@@ -72,17 +81,18 @@ export default {
       edit: {
         url: '',
         method: 'PUT',
-        transformer: (email, password) => [null, {email, password}],
+        transformer: (email, password) => ({
+          body: {email, password},
+        }),
         expectdata: false,
         err: 'Could not edit email',
         children: {
           confirm: {
             url: '/verify',
             method: 'PUT',
-            transformer: (userid, key, password) => [
-              null,
-              {userid, key, password},
-            ],
+            transformer: (userid, key, password) => ({
+              body: {userid, key, password},
+            }),
             expectdata: false,
             err: 'Could not edit email',
           },
@@ -96,27 +106,27 @@ export default {
       edit: {
         url: '',
         method: 'PUT',
-        transformer: (old_password, new_password) => [
-          null,
-          {old_password, new_password},
-        ],
+        transformer: (old_password, new_password) => ({
+          body: {old_password, new_password},
+        }),
         expectdata: false,
         err: 'Could not edit password',
       },
       forgot: {
         url: '/forgot',
         method: 'PUT',
-        transformer: (username) => [null, {username}],
+        transformer: (username) => ({
+          body: {username},
+        }),
         expectdata: false,
         err: 'Could not reset password',
         children: {
           confirm: {
             url: '/reset',
             method: 'PUT',
-            transformer: (userid, key, new_password) => [
-              null,
-              {userid, key, new_password},
-            ],
+            transformer: (userid, key, new_password) => ({
+              body: {userid, key, new_password},
+            }),
             expectdata: false,
             err: 'Could not reset password',
           },
@@ -127,32 +137,41 @@ export default {
   id: {
     url: '/id/{0}',
     method: 'GET',
-    transformer: (userid) => [[userid], null],
+    transformer: (userid) => ({
+      params: [userid],
+    }),
     expectdata: true,
     err: 'Unable to get user info',
     children: {
       priv: {
         url: '/private',
         method: 'GET',
-        transformer: (userid) => [[userid], null],
+        transformer: (userid) => ({
+          params: [userid],
+        }),
         expectdata: true,
         err: 'Unable to get user info',
       },
       roles: {
-        url: '/roles?prefix={1}&amount={2}&offset={3}',
+        url: '/roles',
         method: 'GET',
-        transformer: (userid, prefix, amount, offset) => [
-          [userid, prefix, amount, offset],
-          null,
-        ],
+        transformer: (userid, prefix, amount, offset) => ({
+          params: [userid],
+          query: {prefix, amount, offset},
+        }),
         expectdata: true,
         selector: (_status, data) => data && data.roles,
         err: 'Unable to get user roles',
       },
       roleint: {
-        url: '/roleint?roles={1}',
+        url: '/roleint',
         method: 'GET',
-        transformer: (userid, roles) => [[userid, roles.join(',')], null],
+        transformer: (userid, roles) => ({
+          params: [userid],
+          query: {
+            roles: roles.join(','),
+          },
+        }),
         expectdata: true,
         selector: (_status, data) => data && data.roles,
         err: 'Could not get user roles',
@@ -163,7 +182,10 @@ export default {
           rank: {
             url: '/rank',
             method: 'PATCH',
-            transformer: (userid, add, remove) => [[userid], {add, remove}],
+            transformer: (userid, add, remove) => ({
+              params: [userid],
+              body: {add, remove},
+            }),
             expectdata: false,
             err: 'Unable to update user permissions',
           },
@@ -174,31 +196,41 @@ export default {
   name: {
     url: '/name/{0}',
     method: 'GET',
-    transformer: (name) => [[name], null],
+    transformer: (name) => ({
+      params: [name],
+    }),
     expectdata: true,
     err: 'Unable to get user info',
     children: {
       priv: {
         url: '/private',
         method: 'GET',
-        transformer: (name) => [[name], null],
+        transformer: (name) => ({
+          params: [name],
+        }),
         expectdata: true,
         err: 'Unable to get user info',
       },
     },
   },
   ids: {
-    url: '/ids?ids={0}',
+    url: '/ids',
     method: 'GET',
-    transformer: (userids) => [[userids.join(',')], null],
+    transformer: (userids) => ({
+      query: {
+        ids: userids.join(','),
+      },
+    }),
     expectdata: true,
     selector: (_status, data) => data && data.users,
     err: 'Unable to get user info',
   },
   all: {
-    url: '/all?amount={0}&offset={1}',
+    url: '/all',
     method: 'GET',
-    transformer: (amount, offset) => [[amount, offset], null],
+    transformer: (amount, offset) => ({
+      query: {amount, offset},
+    }),
     expectdata: true,
     selector: (_status, data) => data && data.users,
     err: 'Unable to get user info',
@@ -207,9 +239,12 @@ export default {
     url: '/role/{0}',
     children: {
       get: {
-        url: '?amount={1}&offset={2}',
+        url: '',
         method: 'GET',
-        transformer: (role, amount, offset) => [[role, amount, offset], null],
+        transformer: (role, amount, offset) => ({
+          params: [role],
+          query: {amount, offset},
+        }),
         expectdata: true,
         selector: (_status, data) => data && data.users,
         err: 'Unable to get users for role',
@@ -218,12 +253,12 @@ export default {
         url: '/invitation',
         children: {
           get: {
-            url: '?amount={1}&offset={2}',
+            url: '',
             method: 'GET',
-            transformer: (role, amount, offset) => [
-              [role, amount, offset],
-              null,
-            ],
+            transformer: (role, amount, offset) => ({
+              params: [role],
+              query: {amount, offset},
+            }),
             expectdata: true,
             selector: (_status, data) => data && data.invitations,
             err: 'Could not get role invitations',
@@ -231,7 +266,9 @@ export default {
           del: {
             url: '/id/{1}',
             method: 'DELETE',
-            transformer: (role, userid) => [[role, userid], null],
+            transformer: (role, userid) => ({
+              params: [role, userid],
+            }),
             err: 'Could not delete role invitation',
           },
         },
@@ -247,7 +284,9 @@ export default {
       confirm: {
         url: '/confirm',
         method: 'POST',
-        transformer: (userid, key) => [null, {userid, key}],
+        transformer: (userid, key) => ({
+          body: {userid, key},
+        }),
         expectdata: true,
         err: 'Could not create account',
       },
@@ -257,9 +296,11 @@ export default {
     url: '/approvals',
     children: {
       get: {
-        url: '?amount={0}&offset={1}',
+        url: '',
         method: 'GET',
-        transformer: (amount, offset) => [[amount, offset], null],
+        transformer: (amount, offset) => ({
+          query: {amount, offset},
+        }),
         expectdata: true,
         selector: (_status, data) => data && data.approvals,
         err: 'Unable to get approvals',
@@ -270,14 +311,18 @@ export default {
           approve: {
             url: '',
             method: 'POST',
-            transformer: (userid) => [[userid], null],
+            transformer: (userid) => ({
+              params: [userid],
+            }),
             expectdata: false,
             err: 'Unable to approve request',
           },
           del: {
             url: '',
             method: 'DELETE',
-            transformer: (userid) => [[userid], null],
+            transformer: (userid) => ({
+              params: [userid],
+            }),
             expectdata: false,
             err: 'Unable to delete request',
           },

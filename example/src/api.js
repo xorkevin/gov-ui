@@ -22,13 +22,13 @@ const BASEOPTS = Object.freeze({
 });
 
 // eslint-disable-next-line no-undef
-const baseUrl = APIBASE_URL;
+const baseUrl = window.location.origin + APIBASE_URL;
 
 const APIClient = Object.freeze(
   Object.assign(
     {},
     makeAPIClient(baseUrl, BASEOPTS, API),
-    makeAPIClient('', BASEOPTS, WELL_KNOWN),
+    makeAPIClient(window.location.origin, BASEOPTS, WELL_KNOWN),
   ),
 );
 

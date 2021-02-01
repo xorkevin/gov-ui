@@ -15,9 +15,9 @@ export default {
         url: '/image',
         method: 'PUT',
         transformer: (file) => {
-          const formData = new FormData();
-          formData.set('image', file);
-          return [null, formData];
+          const body = new FormData();
+          body.set('image', file);
+          return {body};
         },
         expectdata: false,
         err: 'Unable to update profile picture',
@@ -27,7 +27,9 @@ export default {
   id: {
     url: '/{0}',
     method: 'GET',
-    transformer: (userid) => [[userid], null],
+    transformer: (userid) => ({
+      params: [userid],
+    }),
     expectdata: true,
     err: 'Unable to get profile',
     children: {
@@ -39,7 +41,7 @@ export default {
   create: {
     url: '',
     method: 'POST',
-    transformer: () => [null, {}],
+    transformer: () => ({body: {}}),
     expectdata: false,
     err: 'Unable to create profile',
   },

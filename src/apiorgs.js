@@ -1,16 +1,22 @@
 export default {
   get: {
-    url: '/ids?ids={0}',
+    url: '/ids',
     method: 'GET',
-    transformer: (ids) => [[ids.join(',')], null],
+    transformer: (ids) => ({
+      query: {
+        ids: ids.join(','),
+      },
+    }),
     expectdata: true,
     selector: (_status, data) => data.orgs,
     err: 'Unable to get orgs',
   },
   getall: {
-    url: '?amount={0}&offset={1}',
+    url: '',
     method: 'GET',
-    transformer: (amount, offset) => [[amount, offset], null],
+    transformer: (amount, offset) => ({
+      query: {amount, offset},
+    }),
     expectdata: true,
     selector: (_status, data) => data.orgs,
     err: 'Unable to get orgs',
@@ -21,21 +27,28 @@ export default {
       get: {
         url: '',
         method: 'GET',
-        transformer: (id) => [[id], null],
+        transformer: (id) => ({
+          params: [id],
+        }),
         expectdata: true,
         err: 'Unable to get org',
       },
       edit: {
         url: '',
         method: 'PUT',
-        transformer: (id, body) => [[id], body],
+        transformer: (id, body) => ({
+          params: [id],
+          body,
+        }),
         expectdata: false,
         err: 'Unable to edit org',
       },
       del: {
         url: '',
         method: 'DELETE',
-        transformer: (id) => [[id], null],
+        transformer: (id) => ({
+          params: [id],
+        }),
         expectdata: false,
         err: 'Unable to delete org',
       },
@@ -44,14 +57,16 @@ export default {
   name: {
     url: '/name/{0}',
     method: 'GET',
-    transformer: (name) => [[name], null],
+    transformer: (name) => ({
+      params: [name],
+    }),
     expectdata: true,
     err: 'Unable to get org',
   },
   create: {
     url: '',
     method: 'POST',
-    transformer: (body) => [[], body],
+    transformer: (body) => ({body}),
     expectdata: true,
     err: 'Unable to create org',
   },

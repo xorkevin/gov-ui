@@ -3,17 +3,23 @@ export default {
     url: '/app',
     children: {
       get: {
-        url: '?amount={0}&offset={1}',
+        url: '',
         method: 'GET',
-        transformer: (amount, offset) => [[amount, offset], null],
+        transformer: (amount, offset) => ({
+          query: {amount, offset},
+        }),
         expectdata: true,
         selector: (_status, data) => data.apps,
         err: 'Unable to get apps',
       },
       ids: {
-        url: '/ids?ids={0}',
+        url: '/ids',
         method: 'GET',
-        transformer: (ids) => [[ids.join(',')], null],
+        transformer: (ids) => ({
+          query: {
+            ids: ids.join(','),
+          },
+        }),
         expectdata: true,
         selector: (_status, data) => data.apps,
         err: 'Unable to get apps',
@@ -21,7 +27,9 @@ export default {
       id: {
         url: '/id/{0}',
         method: 'GET',
-        transformer: (clientid) => [[clientid], null],
+        transformer: (clientid) => ({
+          params: [clientid],
+        }),
         expectdata: true,
         err: 'Unable to get client config',
         children: {
@@ -31,7 +39,10 @@ export default {
           edit: {
             url: '',
             method: 'PUT',
-            transformer: (clientid, body) => [[clientid], body],
+            transformer: (clientid, body) => ({
+              params: [clientid],
+              body,
+            }),
             expectdata: false,
             err: 'Unable to edit client config',
             children: {
@@ -39,9 +50,12 @@ export default {
                 url: '/image',
                 method: 'PUT',
                 transformer: (clientid, file) => {
-                  const formData = new FormData();
-                  formData.set('image', file);
-                  return [[clientid], formData];
+                  const body = new FormData();
+                  body.set('image', file);
+                  return {
+                    params: [clientid],
+                    body,
+                  };
                 },
               },
             },
@@ -49,14 +63,18 @@ export default {
           rotate: {
             url: '/rotate',
             method: 'PUT',
-            transformer: (clientid) => [[clientid], null],
+            transformer: (clientid) => ({
+              params: [clientid],
+            }),
             expectdata: true,
             err: 'Could not rotate client secret',
           },
           del: {
             url: '',
             method: 'DELETE',
-            transformer: (clientid) => [[clientid], null],
+            transformer: (clientid) => ({
+              params: [clientid],
+            }),
             expectdata: false,
             err: 'Could not delete client config',
           },
@@ -76,7 +94,7 @@ export default {
       code: {
         url: '/code',
         method: 'POST',
-        transformer: (body) => [null, body],
+        transformer: (body) => ({body}),
         expectdata: true,
         err: 'Could not obtain authorization',
       },
@@ -86,9 +104,11 @@ export default {
     url: '/connection',
     children: {
       get: {
-        url: '?amount={0}&offset={1}',
+        url: '',
         method: 'GET',
-        transformer: (amount, offset) => [[amount, offset], null],
+        transformer: (amount, offset) => ({
+          query: {amount, offset},
+        }),
         expectdata: true,
         selector: (_status, data) => data.connections,
         err: 'Unable to get OAuth connections',
@@ -99,14 +119,18 @@ export default {
           get: {
             url: '',
             method: 'GET',
-            transformer: (id) => [[id], null],
+            transformer: (id) => ({
+              params: [id],
+            }),
             expectdata: true,
             err: 'Unable to get OAuth connection',
           },
           del: {
             url: '',
             method: 'DELETE',
-            transformer: (id) => [[id], null],
+            transformer: (id) => ({
+              params: [id],
+            }),
             expectdata: false,
             err: 'Unable to remove OAuth connection',
           },

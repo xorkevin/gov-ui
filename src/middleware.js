@@ -187,7 +187,7 @@ const openidAllScopeDesc = Object.freeze({
 const GovUIDefaultOpts = Object.freeze({
   // main
   siteName: 'Governor',
-  siteURL: 'http://localhost',
+  siteURL: window.location.origin,
   mainFallbackView: 'Loading',
   fallbackView: 'Loading',
   pathHome: '/',
