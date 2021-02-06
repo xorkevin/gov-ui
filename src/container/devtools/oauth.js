@@ -463,8 +463,8 @@ const OAuthCB = () => {
   }, [req, timeValid, setTimeValid]);
 
   const statesEqual = req && params.state === req.state;
-  const statesMessage = statesEqual ? 'States Match' : 'State Mismatch';
-  const timeMessage = timeValid ? 'Unexpired' : 'Expired';
+  const statesMessage = statesEqual ? '\u2713 Match' : '\u00D7 Mismatch';
+  const timeMessage = timeValid ? '\u2713 Unexpired' : '\u00D7 Expired';
 
   return (
     <div>

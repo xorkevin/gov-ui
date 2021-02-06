@@ -9,6 +9,7 @@ import {
   Sidebar,
   SidebarItem,
   SidebarHeader,
+  FaIcon,
 } from '@xorkevin/nuke';
 
 import {GovUICtx} from '../../middleware';
@@ -27,10 +28,18 @@ const DevtoolsContainer = () => {
             <Column fullWidth md={6} lg={4}>
               <Sidebar>
                 <SidebarHeader>Devtools</SidebarHeader>
-                <SidebarItem local link={`${match.url}/dash`}>
+                <SidebarItem
+                  local
+                  link={`${match.url}/dash`}
+                  icon={<FaIcon icon="television" />}
+                >
                   Dashboard
                 </SidebarItem>
-                <SidebarItem local link={`${match.url}/oauth`}>
+                <SidebarItem
+                  local
+                  link={`${match.url}/oauth`}
+                  icon={<FaIcon icon="openid" />}
+                >
                   OAuth
                 </SidebarItem>
               </Sidebar>
