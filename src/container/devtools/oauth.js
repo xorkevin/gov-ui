@@ -462,21 +462,34 @@ const OAuthCB = () => {
     };
   }, [req, timeValid, setTimeValid]);
 
+  const statesEqual = req && params.state === req.state;
+  const statesMessage = statesEqual ? 'States Match' : 'State Mismatch';
+  const timeMessage = timeValid ? 'Unexpired' : 'Expired';
+
   return (
     <div>
       <h3>OAuth Callback Tool</h3>
       <Grid>
         <Column md={12}>
           <h4>OAuth Response</h4>
+          <Description
+            label="State"
+            item={
+              <Fragment>
+                {params.state} <Chip>{statesMessage}</Chip>
+              </Fragment>
+            }
+          />
           {params.error ? (
             <Fragment>
-              <Description label="State" item={params.state} />
-              <Description label="Error Code" item={params.error} />
+              <Description
+                label="Error Code"
+                item={<Chip>{params.error}</Chip>}
+              />
               <Description label="Error Message" item={params.errorDesc} />
             </Fragment>
           ) : (
             <Fragment>
-              <Description label="State" item={params.state} />
               <Description label="Code" item={params.code} />
             </Fragment>
           )}
@@ -488,7 +501,11 @@ const OAuthCB = () => {
             <Fragment>
               <Description
                 label="Time"
-                item={`${req.time}${timeValid ? '' : ' (Expired)'}`}
+                item={
+                  <Fragment>
+                    {req.time} <Chip>{timeMessage}</Chip>
+                  </Fragment>
+                }
               />
               <Description label="Client ID" item={req.clientid} />
               <Description label="State" item={req.state} />
