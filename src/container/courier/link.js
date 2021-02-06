@@ -85,7 +85,13 @@ const LinkRow = ({
               {url}
             </Anchor>
           </h5>
-          <Field value={`${courierPath}/${linkid}`} nohint fullWidth />
+          <Field
+            noctx
+            value={`${courierPath}/${linkid}`}
+            readOnly
+            nohint
+            fullWidth
+          />
           <div>
             <Anchor ext href={`${courierPath}/${linkid}`}>
               <FaIcon icon="link fa-lg" />

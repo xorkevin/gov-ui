@@ -286,7 +286,15 @@ const OAuthTool = ({pathCallback}) => {
                 />
                 <Field
                   name="challenge"
+                  label="Code Challenge Secret"
+                  nohint
+                  fullWidth
+                />
+                <Field
+                  noctx
+                  value={codeChallengeValue}
                   label="Code Challenge"
+                  readOnly
                   nohint
                   fullWidth
                 />
