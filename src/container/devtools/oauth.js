@@ -6,7 +6,13 @@ import {
   useMemo,
   useContext,
 } from 'react';
-import {Switch, Route, Redirect, useRouteMatch} from 'react-router-dom';
+import {
+  Switch,
+  Route,
+  Redirect,
+  useRouteMatch,
+  useLocation,
+} from 'react-router-dom';
 import {useResource} from '@xorkevin/substation';
 import {useAuthResource} from '@xorkevin/turbine';
 import {
@@ -26,7 +32,7 @@ import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
 
 import {GovUICtx} from '../../middleware';
-import {randomID} from '../../utility';
+import {getSearchParams, randomID} from '../../utility';
 
 const selectAPIOidConfig = (api) => api.wellknown.openidconfig;
 const selectAPIApps = (api) => api.oauth.app.get;
@@ -52,6 +58,25 @@ const challengeMethodOpts = [
   {display: 'plain', value: 'plain'},
   {display: 'SHA-256', value: 'S256'},
 ];
+
+const secondsMinute = 60;
+
+const unixTime = () => Date.now() / 1000;
+
+const storageOAuthReqKey = () => `govui:devtools:oauthreq`;
+
+const storeOAuthReq = (key, req) => {
+  localStorage.setItem(key, JSON.stringify(req));
+};
+
+const retrieveOAuthReq = (key) => {
+  const k = localStorage.getItem(key);
+  try {
+    return JSON.parse(k);
+  } catch (_e) {
+    return null;
+  }
+};
 
 const ChipList = ({list}) => {
   if (!Array.isArray(list)) {
@@ -154,6 +179,7 @@ const OAuthTool = ({pathCallback}) => {
       cancelRef.current = true;
     };
   }, [formChallengeMethod, formChallenge]);
+  const formState = form.state;
   const linkDest = useMemo(() => {
     const {
       authendpoint,
@@ -168,7 +194,7 @@ const OAuthTool = ({pathCallback}) => {
       state,
       nonce,
       challengemethod,
-    } = form.state;
+    } = formState;
     if (authendpoint.length === 0) {
       return '#';
     }
@@ -204,20 +230,33 @@ const OAuthTool = ({pathCallback}) => {
         q.set('prompt', prompt);
       }
       if (maxage.length > 0) {
-        q.set('maxage', maxage);
+        q.set('max_age', maxage);
       }
       if (loginhint.length > 0) {
-        q.set('loginhint', loginhint);
+        q.set('login_hint', loginhint);
       }
       return url.toString();
     } catch (_e) {
       return '#';
     }
-  }, [form, codeChallengeValue]);
+  }, [formState, codeChallengeValue]);
+
+  const makeOAuthReq = useCallback(() => {
+    const req = {
+      time: unixTime(),
+      clientid: formState.clientid,
+      state: formState.state,
+      nonce: formState.nonce,
+      challengemethod: formState.challengemethod,
+      challenge: formState.challenge,
+    };
+    storeOAuthReq(storageOAuthReqKey(), req);
+    window.location.replace(linkDest);
+  }, [formState, linkDest]);
 
   return (
     <div>
-      <h3>OAuth Tester</h3>
+      <h3>OAuth Tool</h3>
       <Grid>
         <Column md={12}>
           <Form formState={form.state} onChange={form.update}>
@@ -384,16 +423,85 @@ const OAuthTool = ({pathCallback}) => {
         <code>{linkDest}</code>
       </AnchorText>
       <ButtonGroup>
-        <ButtonPrimary>Send OAuth Request</ButtonPrimary>
+        <ButtonPrimary onClick={makeOAuthReq}>Send OAuth Request</ButtonPrimary>
       </ButtonGroup>
     </div>
   );
 };
 
 const OAuthCB = () => {
+  const {search} = useLocation();
+  const params = useMemo(() => {
+    const query = getSearchParams(search);
+    return {
+      state: query.get('state') || '',
+      error: query.get('error') || '',
+      errorDesc: query.get('error_description') || '',
+      code: query.get('code') || '',
+    };
+  }, [search]);
+  const req = useMemo(() => {
+    return retrieveOAuthReq(storageOAuthReqKey());
+  }, []);
+
+  const [timeValid, setTimeValid] = useState(true);
+  useEffect(() => {
+    if (!timeValid) {
+      return;
+    }
+    const handler = () => {
+      const k = req && unixTime() < req.time + secondsMinute;
+      if (k !== timeValid) {
+        setTimeValid(k);
+      }
+    };
+    const interval = window.setInterval(handler, 1000);
+    handler();
+    return () => {
+      window.clearInterval(interval);
+    };
+  }, [req, timeValid, setTimeValid]);
+
   return (
     <div>
-      <h3>OAuth Callback Tester</h3>
+      <h3>OAuth Callback Tool</h3>
+      <Grid>
+        <Column md={12}>
+          <h4>OAuth Response</h4>
+          {params.error ? (
+            <Fragment>
+              <Description label="State" item={params.state} />
+              <Description label="Error Code" item={params.error} />
+              <Description label="Error Message" item={params.errorDesc} />
+            </Fragment>
+          ) : (
+            <Fragment>
+              <Description label="State" item={params.state} />
+              <Description label="Code" item={params.code} />
+            </Fragment>
+          )}
+        </Column>
+        <Column md={12}>
+          <h4>Stored request</h4>
+          {!req && <strong>None</strong>}
+          {req && (
+            <Fragment>
+              <Description
+                label="Time"
+                item={`${req.time}${timeValid ? '' : ' (Expired)'}`}
+              />
+              <Description label="Client ID" item={req.clientid} />
+              <Description label="State" item={req.state} />
+              <Description label="Nonce" item={req.nonce} />
+              <Description
+                label="Challenge Method"
+                item={req.challengemethod}
+              />
+              <Description label="Challenge Secret" item={req.challenge} />
+            </Fragment>
+          )}
+        </Column>
+      </Grid>
     </div>
   );
 };
