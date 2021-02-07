@@ -149,7 +149,11 @@ const Nav = () => {
                 xorkevin
               </MenuItem>
               <MenuDivider />
-              <MenuItem local link="/devtools">
+              <MenuItem
+                local
+                link="/devtools"
+                icon={<FaIcon icon="terminal" />}
+              >
                 Devtools
               </MenuItem>
             </Menu>
