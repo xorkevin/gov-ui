@@ -7,7 +7,6 @@ import {
   useLogout,
   useRefreshAuth,
   Protected,
-  AntiProtected,
 } from '@xorkevin/turbine';
 import {
   useDarkModeValue,
@@ -45,7 +44,6 @@ import {
 
 import {permissionedRoles} from 'roles';
 
-const LoginC = AntiProtected(LoginContainer);
 const AccountC = Protected(AccountContainer);
 const UserC = Protected(UserContainer);
 const OrgC = Protected(OrgContainer);
@@ -116,6 +114,13 @@ const Nav = () => {
                   <MenuItem local link="/a" icon={<FaIcon icon="id-card-o" />}>
                     Account
                   </MenuItem>
+                  <MenuItem
+                    local
+                    link="/x/login"
+                    icon={<FaIcon icon="exchange" />}
+                  >
+                    Switch account
+                  </MenuItem>
                 </Fragment>
               )}
               <MenuItem
@@ -126,9 +131,12 @@ const Nav = () => {
                 {dark ? 'Light' : 'Dark'} Mode
               </MenuItem>
               {loggedIn && (
-                <MenuItem onClick={logout} icon={<FaIcon icon="sign-out" />}>
-                  Sign out
-                </MenuItem>
+                <Fragment>
+                  <MenuDivider />
+                  <MenuItem onClick={logout} icon={<FaIcon icon="sign-out" />}>
+                    Sign out
+                  </MenuItem>
+                </Fragment>
               )}
               <MenuDivider />
               <MenuHeader>About</MenuHeader>
@@ -251,7 +259,7 @@ const App = () => {
             <DevtoolsContainer />
           </Route>
           <Route path="/x">
-            <LoginC />
+            <LoginContainer />
           </Route>
           <Route path="/oauth">
             <OAuthContainer />
