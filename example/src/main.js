@@ -6,8 +6,8 @@ import 'main.scss';
 import ReactDOM from 'react-dom';
 import {BrowserRouter} from 'react-router-dom';
 import {RecoilRoot} from 'recoil';
-import {APIMiddleware} from '@xorkevin/substation';
-import {AuthMiddleware} from '@xorkevin/turbine';
+import {makeAPIClient, APIMiddleware} from '@xorkevin/substation';
+import {GovAuthAPI, AuthMiddleware} from '@xorkevin/turbine';
 import {
   ComposeMiddleware,
   DarkModeMiddleware,
@@ -16,12 +16,11 @@ import {
   Section,
   Container,
 } from '@xorkevin/nuke';
-import {GovUIMiddleware} from '@xorkevin/gov-ui';
+import {GovAPI, GovUIMiddleware} from '@xorkevin/gov-ui';
 import platform from 'platform';
 
 import {allRoles} from 'roles';
 import App from 'app';
-import {APIClient} from 'api';
 
 const UnAuthFallback = (
   <MainContent>
@@ -31,6 +30,50 @@ const UnAuthFallback = (
       </Container>
     </Section>
   </MainContent>
+);
+
+const authMiddleware = AuthMiddleware({
+  fallbackView: UnAuthFallback,
+  roleIntersect: allRoles,
+});
+
+const API = {
+  setupz: GovAPI.setupz(),
+  healthz: GovAPI.healthz(),
+  turbine: GovAuthAPI.turbine('/u'),
+  u: GovAPI.user('/u'),
+  profile: GovAPI.profile('/profile'),
+  orgs: GovAPI.orgs('/org'),
+  oauth: GovAPI.oauth('/oauth'),
+  courier: GovAPI.courier('/courier'),
+};
+
+const WELL_KNOWN = {
+  wellknown: GovAPI.wellknown(),
+};
+
+const apiCredentialsMiddleware = (transform) => (...args) => {
+  const req = transform(...args);
+  req.opts = Object.assign({credentials: 'include'}, req.opts);
+  return req;
+};
+
+// eslint-disable-next-line no-undef
+const baseUrl = window.location.origin + APIBASE_URL;
+
+const apiMiddleware = APIMiddleware(
+  Object.freeze(
+    Object.assign(
+      {},
+      makeAPIClient(baseUrl, API, {
+        transform: [
+          apiCredentialsMiddleware,
+          authMiddleware.apiTransformMiddleware,
+        ],
+      }),
+      makeAPIClient(window.location.origin, WELL_KNOWN),
+    ),
+  ),
 );
 
 const MainFallbackView = (
@@ -60,8 +103,8 @@ const parsePlatform = (user_agent) => {
 };
 
 const Middleware = ComposeMiddleware(
-  APIMiddleware(APIClient),
-  AuthMiddleware({fallbackView: UnAuthFallback, roleIntersect: allRoles}),
+  apiMiddleware,
+  authMiddleware,
   DarkModeMiddleware(),
   SnackbarMiddleware(),
   GovUIMiddleware({
