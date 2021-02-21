@@ -278,6 +278,7 @@ export default {
   create: {
     url: '',
     method: 'POST',
+    transformer: (body) => ({body}),
     expectdata: true,
     err: 'Could not create account',
     children: {

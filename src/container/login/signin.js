@@ -1,5 +1,5 @@
 import {Fragment, useState, useCallback} from 'react';
-import {useLogin, useAccounts} from '@xorkevin/turbine';
+import {useLogin, useProtectedRedir, useAccounts} from '@xorkevin/turbine';
 import {
   MainContent,
   Section,
@@ -18,7 +18,7 @@ import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonSecondary from '@xorkevin/nuke/src/component/button/secondary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 
-const SigninContainer = ({
+const AddAccountContainer = ({
   hasAccounts,
   displayAccounts,
   pathCreate,
@@ -32,6 +32,15 @@ const SigninContainer = ({
   });
 
   const [login, execLogin] = useLogin(form.state.username, form.state.password);
+  const redirect = useProtectedRedir();
+
+  const handleLogin = useCallback(async () => {
+    const [_data, _status, err] = await execLogin();
+    if (err) {
+      return;
+    }
+    redirect();
+  }, [execLogin, redirect]);
 
   return (
     <Card
@@ -53,7 +62,7 @@ const SigninContainer = ({
                 Choose account
               </ButtonSecondary>
             )}
-            <ButtonPrimary onClick={execLogin}>Login</ButtonPrimary>
+            <ButtonPrimary onClick={handleLogin}>Login</ButtonPrimary>
           </ButtonGroup>
           {menu.show && (
             <Menu size="md" anchor={menu.anchor} close={menu.close}>
@@ -80,7 +89,7 @@ const SigninContainer = ({
         <Form
           formState={form.state}
           onChange={form.update}
-          onSubmit={execLogin}
+          onSubmit={handleLogin}
         >
           <Field
             name="username"
@@ -124,7 +133,7 @@ const SwitchAccountContainer = ({accounts, displayLogin}) => {
   );
 };
 
-const LoginContainer = ({pathCreate, pathForgot}) => {
+const SigninContainer = ({pathCreate, pathForgot}) => {
   const accounts = useAccounts();
   const hasAccounts = accounts.length > 0;
   const [showAccounts, setShowAccounts] = useState(true);
@@ -146,7 +155,7 @@ const LoginContainer = ({pathCreate, pathForgot}) => {
               displayLogin={displayLogin}
             />
           ) : (
-            <SigninContainer
+            <AddAccountContainer
               hasAccounts={hasAccounts}
               displayAccounts={displayAccounts}
               pathCreate={pathCreate}
@@ -159,4 +168,4 @@ const LoginContainer = ({pathCreate, pathForgot}) => {
   );
 };
 
-export default LoginContainer;
+export default SigninContainer;
