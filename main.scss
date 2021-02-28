@@ -1,12 +1,48 @@
+$transition-normal: 0.125s cubic-bezier(0.375, 0, 0.25, 1) !default;
+
+$black: #000000;
+$white: #ffffff;
+
+$color-back-light-1: rgba($white, 0.9375) !default;
+$color-back-light-2: rgba($white, 0.625) !default;
+$color-back-light-3: rgba($white, 0.125) !default;
+
 $color-primary: #0d47a1 !default;
 $color-primary-1: lighten($color-primary, 25%) !default;
 $color-primary-2: lighten($color-primary, 12.5%) !default;
 $color-primary-3: $color-primary !default;
 
+$color-back-primary: lighten($color-primary, 12.5%) !default;
+
+$color-back-primary-1: rgba($color-back-primary, 0.9375) !default;
+$color-back-primary-2: rgba($color-back-primary, 0.5) !default;
+$color-back-primary-3: rgba($color-back-primary, 0.0625) !default;
+
 $color-success: #388e3c !default;
 $color-success-light: lighten($color-success, 12.5%) !default;
 $color-danger: #c62828 !default;
 $color-danger-light: lighten($color-danger, 12.5%) !default;
+
+.signin-account-item {
+  border-radius: 4px;
+  transition: background-color $transition-normal;
+
+  &:hover {
+    background-color: $color-back-primary-3;
+    cursor: pointer;
+  }
+}
+
+.signin-account-image {
+  width: 48px;
+  max-width: 100%;
+}
+
+.dark .signin-account-item {
+  &:hover {
+    background-color: $color-back-light-3;
+  }
+}
 
 .account-field-disabled-solid.disabled {
   opacity: 1;
@@ -40,6 +76,7 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
 
 .oauth-auth-profile-image {
   width: 24px;
+  max-width: 100%;
 }
 
 .oauth-auth-account-name {

@@ -25,7 +25,7 @@ export default {
     },
   },
   id: {
-    url: '/{0}',
+    url: '/id/{0}',
     method: 'GET',
     transformer: (userid) => ({
       params: [userid],
@@ -37,6 +37,18 @@ export default {
         url: '/image',
       },
     },
+  },
+  ids: {
+    url: '/ids',
+    method: 'GET',
+    transformer: (userids) => ({
+      query: {
+        ids: userids.join(','),
+      },
+    }),
+    expectdata: true,
+    selector: (_status, data) => data && data.profiles,
+    err: 'Unable to get profiles',
   },
   create: {
     url: '',
