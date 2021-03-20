@@ -8,6 +8,7 @@ export default {
   edit: {
     url: '',
     method: 'PUT',
+    transformer: (body) => ({body}),
     expectdata: false,
     err: 'Unable to edit profile',
     children: {

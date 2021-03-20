@@ -24,6 +24,7 @@ import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
 import Img from '@xorkevin/nuke/src/component/image/rounded';
 
 import {GovUICtx} from '../../middleware';
+import {dateToLocale} from '../../utility';
 
 const APP_LIMIT = 32;
 
@@ -32,7 +33,14 @@ const selectAPIDel = (api) => api.oauth.connections.id.del;
 const selectAPIApps = (api) => api.oauth.app.ids;
 const selectAPIImage = (api) => api.oauth.app.id.image;
 
-const AppRow = ({clientid, scope, creation_time, app, refresh}) => {
+const AppRow = ({
+  clientid,
+  scope,
+  access_time,
+  creation_time,
+  app,
+  refresh,
+}) => {
   const ctx = useContext(GovUICtx);
 
   const snackbar = useSnackbar();
@@ -65,6 +73,10 @@ const AppRow = ({clientid, scope, creation_time, app, refresh}) => {
     {},
     {posthook: posthookRemove, errhook: displayErrSnack},
   );
+
+  const creationTime = useMemo(() => dateToLocale(creation_time * 1000), [
+    creation_time,
+  ]);
 
   return (
     <ListItem>
@@ -101,8 +113,9 @@ const AppRow = ({clientid, scope, creation_time, app, refresh}) => {
                   })}
               </div>
               <div>
-                Access granted on <Time value={creation_time * 1000} />
+                Last accessed <Time value={access_time * 1000} />
               </div>
+              <div>Access granted on {creationTime}</div>
             </Column>
           </Grid>
         </Column>
@@ -164,6 +177,7 @@ const Apps = () => {
                   clientid={i.client_id}
                   scope={i.scope}
                   time={i.time}
+                  access_time={i.access_time}
                   creation_time={i.creation_time}
                   app={appMap[i.client_id]}
                   refresh={reexecute}

@@ -83,6 +83,7 @@ export default {
       create: {
         url: '',
         method: 'POST',
+        transformer: (body) => ({body}),
         expectdata: true,
         err: 'Unable to register app',
       },

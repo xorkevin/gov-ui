@@ -75,6 +75,31 @@ const randomID = (len = 8) => {
   return idarr.join('');
 };
 
+const TimeFormatter = () => {
+  if (Intl && Intl.DateTimeFormat) {
+    return new Intl.DateTimeFormat(undefined, {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      timeZoneName: 'short',
+    });
+  }
+  return {
+    format: (date) => {
+      return date.toString();
+    },
+  };
+};
+
+const timeFormatter = TimeFormatter();
+const dateToLocale = (date) => {
+  return timeFormatter.format(date);
+};
+
 export {
   formatURL,
   formatURLArgs,
@@ -86,4 +111,5 @@ export {
   emailRegex,
   isValidURL,
   randomID,
+  dateToLocale,
 };
