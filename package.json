@@ -22,26 +22,25 @@
   },
   "homepage": "https://github.com/xorkevin/gov-ui#readme",
   "devDependencies": {
-    "@babel/core": "^7.12.10",
-    "@babel/eslint-parser": "^7.12.1",
-    "@babel/preset-env": "^7.12.11",
-    "@babel/preset-react": "^7.12.10",
-    "eslint": "^7.17.0",
-    "eslint-config-prettier": "^7.1.0",
+    "@babel/core": "^7.13.10",
+    "@babel/eslint-parser": "^7.13.10",
+    "@babel/preset-env": "^7.13.10",
+    "@babel/preset-react": "^7.12.13",
+    "eslint": "^7.22.0",
+    "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-babel": "^5.3.1",
     "eslint-plugin-react": "^7.22.0",
     "eslint-plugin-react-hooks": "^4.2.0",
-    "react": "^17.0.1"
+    "react": "17.0.1"
   },
   "peerDependencies": {
+    "@xorkevin/nuke": "^0.1.14",
+    "@xorkevin/substation": "^0.1.6",
+    "@xorkevin/turbine": "^0.1.13",
     "fork-awesome": "^1.1.7",
     "react": "^17.0.1",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
-    "recoil": "^0.1.2",
-    "@xorkevin/nuke": "^0.1.13",
-    "@xorkevin/substation": "^0.1.5",
-    "@xorkevin/turbine": "^0.1.12"
-  },
-  "dependencies": {}
+    "recoil": "^0.1.3"
+  }
 }
