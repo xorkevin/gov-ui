@@ -54,7 +54,7 @@ const WELL_KNOWN = {
 
 const apiCredentialsMiddleware = (transform) => (...args) => {
   const req = transform(...args);
-  req.opts = Object.assign({credentials: 'include'}, req.opts);
+  req.opts = Object.assign({credentials: 'same-origin'}, req.opts);
   return req;
 };
 
