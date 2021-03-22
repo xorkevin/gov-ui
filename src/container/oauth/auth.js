@@ -93,6 +93,24 @@ const CardAccount = ({profile}) => {
   );
 };
 
+const CardScopes = ({scopeSet}) => {
+  const ctx = useContext(GovUICtx);
+  return (
+    <Fragment>
+      {ctx.openidAllScopes
+        .filter((i) => scopeSet.has(i) && ctx.openidAllScopeDesc[i])
+        .map((i) => (
+          <Grid key={i} align="center">
+            <span className="oauth-auth-scope-indicator"></span>
+            <span className="oauth-auth-scope-desc">
+              {ctx.openidAllScopeDesc[i].desc}
+            </span>
+          </Grid>
+        ))}
+    </Fragment>
+  );
+};
+
 const Login = ({denyAuth, app, loginPosthook, usernameHint}) => {
   const form = useForm({
     username: usernameHint || '',
@@ -180,22 +198,13 @@ const CheckConsent = ({allowAuth, denyAuth, app, profile, scopeSet}) => {
         <h5>
           This will allow <CardLink app={app} /> to:
         </h5>
-        {ctx.openidAllScopes
-          .filter((i) => scopeSet.has(i) && ctx.openidAllScopeDesc[i])
-          .map((i) => (
-            <Grid key={i} align="center">
-              <span className="oauth-auth-scope-indicator"></span>
-              <span className="oauth-auth-scope-desc">
-                {ctx.openidAllScopeDesc[i].desc}
-              </span>
-            </Grid>
-          ))}
+        <CardScopes scopeSet={scopeSet} />
       </Container>
     </Card>
   );
 };
 
-const ReaffirmAuth = ({allowAuth, denyAuth, app, profile}) => {
+const ReaffirmAuth = ({allowAuth, denyAuth, app, profile, scopeSet}) => {
   const ctx = useContext(GovUICtx);
   return (
     <Card
@@ -220,6 +229,10 @@ const ReaffirmAuth = ({allowAuth, denyAuth, app, profile}) => {
           Continue to <CardLink app={app} /> with your {ctx.siteName} account
         </h3>
         <CardAccount profile={profile} />
+        <h5>
+          <CardLink app={app} /> can:
+        </h5>
+        <CardScopes scopeSet={scopeSet} />
       </Container>
     </Card>
   );
@@ -376,6 +389,7 @@ const AuthFlow = ({redirSuccess, redirErr, app, conn, params, reqParams}) => {
       denyAuth={denyAuth}
       app={app}
       profile={profile.data}
+      scopeSet={scopeSet}
     />
   );
 };

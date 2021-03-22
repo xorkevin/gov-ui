@@ -13,7 +13,7 @@ import {
   useRouteMatch,
   useLocation,
 } from 'react-router-dom';
-import {useResource} from '@xorkevin/substation';
+import {useResource, makeFetch} from '@xorkevin/substation';
 import {useAuthResource} from '@xorkevin/turbine';
 import {
   Grid,
@@ -58,10 +58,13 @@ const challengeMethodOpts = [
   {display: 'plain', value: 'plain'},
   {display: 'SHA-256', value: 'S256'},
 ];
+const responseTypeToGrantType = {
+  code: 'authorization_code',
+};
 
 const secondsMinute = 60;
 
-const unixTime = () => Date.now() / 1000;
+const unixTime = () => Math.floor(Date.now() / 1000);
 
 const storageOAuthReqKey = () => `govui:devtools:oauthreq`;
 
@@ -90,6 +93,8 @@ const ChipList = ({list}) => {
     </Fragment>
   );
 };
+
+const errMsgHandler = (message) => () => [null, -1, {message}];
 
 const OAuthTool = ({pathCallback}) => {
   const ctx = useContext(GovUICtx);
@@ -245,6 +250,8 @@ const OAuthTool = ({pathCallback}) => {
     const req = {
       time: unixTime(),
       clientid: formState.clientid,
+      redirecturi: formState.redirecturi,
+      responsetype: formState.responsetype,
       state: formState.state,
       nonce: formState.nonce,
       challengemethod: formState.challengemethod,
@@ -466,20 +473,62 @@ const OAuthCB = () => {
   const statesMessage = statesEqual ? '\u2713 Match' : '\u00D7 Mismatch';
   const timeMessage = timeValid ? '\u2713 Unexpired' : '\u00D7 Expired';
 
+  const [oidConfig] = useResource(selectAPIOidConfig, [], {});
+
+  const tokenReq = useMemo(() => {
+    if (params.error) {
+      return errMsgHandler('Auth code response error');
+    }
+    if (!req) {
+      return errMsgHandler('No stored request');
+    }
+    if (!statesEqual) {
+      return errMsgHandler('Invalid state');
+    }
+    if (!timeValid) {
+      return errMsgHandler('Invalid time');
+    }
+    if (!oidConfig.success) {
+      return errMsgHandler('No openid config');
+    }
+    return makeFetch({
+      url: oidConfig.data.token_endpoint,
+      method: 'POST',
+      transformer: () => ({
+        headers: {
+          Authorization: `Basic ${btoa(`${req.clientid}:clientsecret`)}`,
+        },
+        body: new URLSearchParams({
+          grant_type: responseTypeToGrantType[req.responsetype],
+          redirect_uri: req.redirecturi,
+          code: params.code,
+          code_verifier: req.challenge,
+        }),
+        opts: {
+          credentials: 'omit',
+        },
+      }),
+      expectdata: true,
+      err: 'Failed token request',
+    });
+  }, [params, req, statesEqual, timeValid, oidConfig]);
+
+  const makeTokenReq = useCallback(async () => {
+    const [data, status, err] = await tokenReq();
+    if (err) {
+      console.log('Token req err', err);
+      return;
+    }
+    console.log('Token req res', status, data);
+  }, [tokenReq]);
+
   return (
     <div>
       <h3>OAuth Callback Tool</h3>
       <Grid>
         <Column md={12}>
           <h4>OAuth Response</h4>
-          <Description
-            label="State"
-            item={
-              <Fragment>
-                {params.state} <Chip>{statesMessage}</Chip>
-              </Fragment>
-            }
-          />
+          <Description label="State" item={params.state} />
           {params.error ? (
             <Fragment>
               <Description
@@ -493,8 +542,6 @@ const OAuthCB = () => {
               <Description label="Code" item={params.code} />
             </Fragment>
           )}
-        </Column>
-        <Column md={12}>
           <h4>Stored request</h4>
           {!req && <strong>None</strong>}
           {req && (
@@ -508,7 +555,20 @@ const OAuthCB = () => {
                 }
               />
               <Description label="Client ID" item={req.clientid} />
-              <Description label="State" item={req.state} />
+              <Description label="Redirect URI" item={req.redirecturi} />
+              <Description label="Response Type" item={req.responsetype} />
+              <Description
+                label="Grant Type"
+                item={responseTypeToGrantType[req.responsetype]}
+              />
+              <Description
+                label="State"
+                item={
+                  <Fragment>
+                    {req.state} <Chip>{statesMessage}</Chip>
+                  </Fragment>
+                }
+              />
               <Description label="Nonce" item={req.nonce} />
               <Description
                 label="Challenge Method"
@@ -518,7 +578,70 @@ const OAuthCB = () => {
             </Fragment>
           )}
         </Column>
+        <Column md={12}>
+          <h4>Openid Configuration</h4>
+          {oidConfig.success && (
+            <Fragment>
+              <Description label="Issuer" item={oidConfig.data.issuer} />
+              <Description
+                label="Token Endpoint"
+                item={oidConfig.data.token_endpoint}
+              />
+              <Description
+                label="Userinfo Endpoint"
+                item={oidConfig.data.userinfo_endpoint}
+              />
+              <Description label="JWKs URI" item={oidConfig.data.jwks_uri} />
+              <Description
+                label="Scopes Supported"
+                item={<ChipList list={oidConfig.data.scopes_supported} />}
+              />
+              <Description
+                label="Grant Types Supported"
+                item={<ChipList list={oidConfig.data.grant_types_supported} />}
+              />
+              <Description
+                label="Subject Types Supported"
+                item={
+                  <ChipList list={oidConfig.data.subject_types_supported} />
+                }
+              />
+              <Description
+                label="ID Token Signing Algorithms Supported"
+                item={
+                  <ChipList
+                    list={oidConfig.data.id_token_signing_alg_values_supported}
+                  />
+                }
+              />
+              <Description
+                label="Token Endpoint Auth Methods Supported"
+                item={
+                  <ChipList
+                    list={oidConfig.data.token_endpoint_auth_methods_supported}
+                  />
+                }
+              />
+              <Description
+                label="Code Challenge Methods Supported"
+                item={
+                  <ChipList
+                    list={oidConfig.data.code_challenge_methods_supported}
+                  />
+                }
+              />
+              <Description
+                label="Claims Supported"
+                item={<ChipList list={oidConfig.data.claims_supported} />}
+              />
+            </Fragment>
+          )}
+        </Column>
       </Grid>
+      <h4>Token Request</h4>
+      <ButtonGroup>
+        <ButtonPrimary onClick={makeTokenReq}>Send Token Request</ButtonPrimary>
+      </ButtonGroup>
     </div>
   );
 };
