@@ -65,6 +65,18 @@ const responseTypeToGrantType = {
   code: 'authorization_code',
 };
 
+const jwtAlgToSubtleCrypto = {
+  RS256: {
+    importParams: {
+      name: 'RSASSA-PKCS1-v1_5',
+      hash: 'SHA-256',
+    },
+    verifyParams: {
+      name: 'RSASSA-PKCS1-v1_5',
+    },
+  },
+};
+
 const secondsMinute = 60;
 
 const unixTime = () => Math.floor(Date.now() / 1000);
@@ -682,11 +694,11 @@ const OAuthCB = () => {
       setJWTSig({kid: '', err: errMsg('No jwks key')});
       return;
     }
-    const jwk = jwksRes.data.keys[0];
     if (!isString(tokenRes.data.id_token)) {
       setJWTSig({kid: '', err: errMsg('No id token')});
       return;
     }
+
     const jwt = tokenRes.data.id_token.split('.');
     if (jwt.length !== 3) {
       setJWTSig({kid: '', err: errMsg('Malformed id token')});
@@ -699,11 +711,26 @@ const OAuthCB = () => {
         const b64headers = jwt[0].replaceAll('-', '+').replaceAll('_', '/');
         return JSON.parse(atob(b64headers));
       } catch (err) {
-        setJWTSig({kid: jwk.kid, err});
+        setJWTSig({kid: '', err});
         return null;
       }
     })();
     if (!jwtheaders) {
+      return;
+    }
+    if (!jwtheaders.kid) {
+      setJWTSig({
+        kid: '',
+        err: errMsg('JWT missing kid header'),
+      });
+      return;
+    }
+    const jwk = jwksRes.data.keys.find((i) => i.kid === jwtheaders.kid);
+    if (!jwk) {
+      setJWTSig({
+        kid: '',
+        err: errMsg(`JWK with kid ${jwtheaders.kid} not found`),
+      });
       return;
     }
     if (jwtheaders.alg !== jwk.alg) {
@@ -714,16 +741,23 @@ const OAuthCB = () => {
       return;
     }
 
+    const params = jwtAlgToSubtleCrypto[jwk.alg];
+    if (!params) {
+      setJWTSig({
+        kid: jwk.kid,
+        err: errMsg(`Unsupported alg ${jwk.alg}`),
+      });
+      return;
+    }
+    const {importParams, verifyParams} = params;
+
     const cancelRef = {current: false};
     (async () => {
       try {
         const pubkey = await window.crypto.subtle.importKey(
           'jwk',
           jwk,
-          {
-            name: 'RSASSA-PKCS1-v1_5',
-            hash: 'SHA-256',
-          },
+          importParams,
           false,
           ['verify'],
         );
@@ -731,7 +765,7 @@ const OAuthCB = () => {
           return;
         }
         const ok = await window.crypto.subtle.verify(
-          {name: 'RSASSA-PKCS1-v1_5'},
+          verifyParams,
           pubkey,
           base64ToArrayBuffer(jwtsig),
           textEncoder.encode(jwtpayload),
