@@ -69,6 +69,19 @@ const secondsMinute = 60;
 
 const unixTime = () => Math.floor(Date.now() / 1000);
 
+const isString = (s) => typeof s === 'string';
+
+const textEncoder = new TextEncoder();
+
+const base64ToArrayBuffer = (s) => {
+  const binary = atob(s.replaceAll('-', '+').replaceAll('_', '/'));
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes.buffer;
+};
+
 const storageOAuthReqKey = () => 'govui:devtools:oauthreq';
 
 const storeOAuthReq = (req) => {
@@ -108,6 +121,7 @@ const ChipList = ({list}) => {
 };
 
 const errMsgHandler = (message) => () => [null, -1, {message}];
+const errMsg = (message) => ({message});
 
 const OAuthTool = ({pathCallback}) => {
   const ctx = useContext(GovUICtx);
@@ -522,6 +536,41 @@ const OAuthCB = () => {
 
   const [oidConfig] = useResource(selectAPIOidConfig, [], {});
 
+  const jwksReq = useMemo(() => {
+    if (!oidConfig.success) {
+      return errMsgHandler('No openid config');
+    }
+    return makeFetch({
+      url: oidConfig.data.jwks_uri,
+      method: 'GET',
+      expectdata: true,
+      err: 'Failed to get jwks',
+    });
+  }, [oidConfig]);
+
+  const [jwksRes, setJWKSRes] = useState({
+    success: false,
+    err: false,
+    data: null,
+  });
+  useEffect(() => {
+    const cancelRef = {current: false};
+    (async () => {
+      const [data, _, err] = await jwksReq();
+      if (cancelRef && cancelRef.current) {
+        return;
+      }
+      if (err) {
+        setJWKSRes({success: false, err, data: null});
+        return;
+      }
+      setJWKSRes({success: true, err: false, data});
+    })();
+    return () => {
+      cancelRef.current = true;
+    };
+  }, [jwksReq, setJWKSRes]);
+
   const formState = form.state;
 
   const tokenReq = useMemo(() => {
@@ -578,22 +627,23 @@ const OAuthCB = () => {
     setTokenRes({success: true, err: false, data});
   }, [tokenReq, setTokenRes]);
 
-  const [idTokenClaims, idTokenErr] = useMemo(() => {
+  const [idTokenHeaders, idTokenClaims, idTokenErr] = useMemo(() => {
     if (!tokenRes.success) {
-      return [null, errMsgHandler('Token request incomplete')];
+      return [null, null, errMsgHandler('Token request incomplete')];
     }
-    if (!tokenRes.data.id_token) {
-      return [null, errMsgHandler('No id token')];
+    if (!isString(tokenRes.data.id_token)) {
+      return [null, null, errMsgHandler('No id token')];
     }
     const jwt = tokenRes.data.id_token.split('.');
     if (jwt.length !== 3) {
-      return [null, errMsgHandler('Malformed jwt')];
+      return [null, null, errMsgHandler('Malformed jwt')];
     }
     const b64claims = jwt[1].replaceAll('-', '+').replaceAll('_', '/');
+    const b64headers = jwt[0].replaceAll('-', '+').replaceAll('_', '/');
     try {
-      return [JSON.parse(atob(b64claims)), false];
+      return [JSON.parse(atob(b64headers)), JSON.parse(atob(b64claims)), false];
     } catch (err) {
-      return [null, err];
+      return [null, null, err];
     }
   }, [tokenRes]);
 
@@ -617,6 +667,105 @@ const OAuthCB = () => {
       nonce: msg(!req.nonce || idTokenClaims['nonce'] === req.nonce),
     };
   }, [idTokenErr, idTokenClaims, oidConfig, req]);
+
+  const [jwtSig, setJWTSig] = useState({kid: '', err: false});
+  useEffect(() => {
+    if (!jwksRes.success) {
+      setJWTSig({kid: '', err: errMsg('No jwks')});
+      return;
+    }
+    if (!tokenRes.success) {
+      setJWTSig({kid: '', err: errMsg('No id token')});
+      return;
+    }
+    if (!Array.isArray(jwksRes.data.keys) || jwksRes.data.keys.length === 0) {
+      setJWTSig({kid: '', err: errMsg('No jwks key')});
+      return;
+    }
+    const jwk = jwksRes.data.keys[0];
+    if (!isString(tokenRes.data.id_token)) {
+      setJWTSig({kid: '', err: errMsg('No id token')});
+      return;
+    }
+    const jwt = tokenRes.data.id_token.split('.');
+    if (jwt.length !== 3) {
+      setJWTSig({kid: '', err: errMsg('Malformed id token')});
+      return;
+    }
+    const jwtpayload = `${jwt[0]}.${jwt[1]}`;
+    const jwtsig = jwt[2];
+    const jwtheaders = (() => {
+      try {
+        const b64headers = jwt[0].replaceAll('-', '+').replaceAll('_', '/');
+        return JSON.parse(atob(b64headers));
+      } catch (err) {
+        setJWTSig({kid: jwk.kid, err});
+        return null;
+      }
+    })();
+    if (!jwtheaders) {
+      return;
+    }
+    if (jwtheaders.alg !== jwk.alg) {
+      setJWTSig({
+        kid: jwk.kid,
+        err: errMsg(`Invalid jwt alg ${jwtheaders.alg}`),
+      });
+      return;
+    }
+
+    const cancelRef = {current: false};
+    (async () => {
+      try {
+        const pubkey = await window.crypto.subtle.importKey(
+          'jwk',
+          jwk,
+          {
+            name: 'RSASSA-PKCS1-v1_5',
+            hash: 'SHA-256',
+          },
+          false,
+          ['verify'],
+        );
+        if (cancelRef && cancelRef.current) {
+          return;
+        }
+        const ok = await window.crypto.subtle.verify(
+          {name: 'RSASSA-PKCS1-v1_5'},
+          pubkey,
+          base64ToArrayBuffer(jwtsig),
+          textEncoder.encode(jwtpayload),
+        );
+        if (cancelRef && cancelRef.current) {
+          return;
+        }
+        if (!ok) {
+          setJWTSig({kid: jwk.kid, err: errMsg('Invalid signature')});
+          return;
+        }
+        setJWTSig({kid: jwk.kid, err: false});
+      } catch (err) {
+        if (cancelRef && cancelRef.current) {
+          return;
+        }
+        setJWTSig({kid: jwk.kid, err});
+      }
+    })();
+    return () => {
+      cancelRef.current = true;
+    };
+  }, [jwksRes, tokenRes, setJWTSig]);
+  const jwtSigMessage = jwtSig.err ? '\u00D7 Invalid' : '\u2713 Valid';
+  const jwtSigInfo = useMemo(() => {
+    if (!jwtSig.kid) {
+      return '';
+    }
+    const jwk = jwksRes.data.keys.find((i) => i.kid === jwtSig.kid);
+    if (!jwk) {
+      return '';
+    }
+    return `Verified with key ${jwk.kid} using alg ${jwk.alg}.`;
+  }, [jwtSig, jwksRes]);
 
   return (
     <div>
@@ -737,6 +886,15 @@ const OAuthCB = () => {
             </Fragment>
           )}
           {oidConfig.err && <p>{oidConfig.err.message}</p>}
+          <h4>JWKS</h4>
+          {jwksRes.success && (
+            <Fragment>
+              <pre className="devtools-code">
+                {JSON.stringify(jwksRes.data, null, '  ')}
+              </pre>
+            </Fragment>
+          )}
+          {jwksRes.err && <p>{jwksRes.err.message}</p>}
         </Column>
       </Grid>
       <h4>Token Request</h4>
@@ -771,7 +929,10 @@ const OAuthCB = () => {
             <div>
               <h6>Scopes</h6>
               <ChipList
-                list={tokenRes.data.scope && tokenRes.data.scope.split(' ')}
+                list={
+                  isString(tokenRes.data.scope) &&
+                  tokenRes.data.scope.split(' ')
+                }
               />
             </div>
             <Field
@@ -781,6 +942,12 @@ const OAuthCB = () => {
               readOnly
               nohint
             />
+            <div>
+              <h6>JWT Signature</h6>
+              <Chip>{jwtSigMessage}</Chip>
+              {jwtSig.err && <p>{jwtSig.err.message}</p>}
+              {jwtSigInfo && <p>{jwtSigInfo}</p>}
+            </div>
           </Column>
           <Column md={12}>
             <h5>ID Token Claims</h5>
@@ -799,7 +966,10 @@ const OAuthCB = () => {
                       }
                     />
                   ))}
-                <pre>{JSON.stringify(idTokenClaims, null, '  ')}</pre>
+                <pre className="devtools-code">
+                  {JSON.stringify(idTokenHeaders, null, '  ')}
+                  {JSON.stringify(idTokenClaims, null, '  ')}
+                </pre>
               </Fragment>
             )}
             {idTokenErr && <p>{idTokenErr.message}</p>}

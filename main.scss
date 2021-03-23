@@ -142,3 +142,8 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
 .devtools-dash-health-status {
   padding: 4px 4px 4px 8px;
 }
+
+.devtools-code {
+  padding: 8px;
+  overflow: auto;
+}
