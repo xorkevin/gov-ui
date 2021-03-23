@@ -267,12 +267,12 @@ const AppRow = ({
             <div>
               <h4>Client Secret Rotated</h4>
               {OAUTHAPP_MESSAGE}
-              <p>
+              <div>
                 <h5>Client ID</h5>
                 <code>{rotate.data.client_id}</code>
                 <h5>Secret</h5>
                 <code>{rotate.data.key}</code>
-              </p>
+              </div>
               <ButtonGroup>
                 <ButtonTertiary onClick={cancelEdit}>Close</ButtonTertiary>
               </ButtonGroup>

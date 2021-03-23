@@ -24,11 +24,14 @@ import {
   FieldMultiSelect,
   Form,
   useForm,
+  SnackbarSurface,
+  useSnackbarView,
   Description,
   ButtonGroup,
   Chip,
 } from '@xorkevin/nuke';
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
+import ButtonSecondary from '@xorkevin/nuke/src/component/button/secondary';
 import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
 
 import {GovUICtx} from '../../middleware';
@@ -66,19 +69,29 @@ const secondsMinute = 60;
 
 const unixTime = () => Math.floor(Date.now() / 1000);
 
-const storageOAuthReqKey = () => `govui:devtools:oauthreq`;
+const storageOAuthReqKey = () => 'govui:devtools:oauthreq';
 
-const storeOAuthReq = (key, req) => {
-  localStorage.setItem(key, JSON.stringify(req));
+const storeOAuthReq = (req) => {
+  localStorage.setItem(storageOAuthReqKey(), JSON.stringify(req));
 };
 
-const retrieveOAuthReq = (key) => {
-  const k = localStorage.getItem(key);
+const retrieveOAuthReq = () => {
+  const k = localStorage.getItem(storageOAuthReqKey());
   try {
     return JSON.parse(k);
   } catch (_e) {
     return null;
   }
+};
+
+const storageOAuthClientSecretKey = () => 'govui:devtools:oauthclientsecret';
+
+const storeOAuthClientSecret = (secret) => {
+  localStorage.setItem(storageOAuthClientSecretKey(), secret);
+};
+
+const retrieveOAuthClientSecret = () => {
+  return localStorage.getItem(storageOAuthClientSecretKey());
 };
 
 const ChipList = ({list}) => {
@@ -98,6 +111,10 @@ const errMsgHandler = (message) => () => [null, -1, {message}];
 
 const OAuthTool = ({pathCallback}) => {
   const ctx = useContext(GovUICtx);
+
+  const displaySnackbarStoreSecret = useSnackbarView(
+    <SnackbarSurface>&#x2713; Client secret stored</SnackbarSurface>,
+  );
 
   const randomState = useMemo(() => randomID(NONCE_LENGTH), []);
   const randomNonce = useMemo(() => randomID(NONCE_LENGTH), []);
@@ -257,9 +274,18 @@ const OAuthTool = ({pathCallback}) => {
       challengemethod: formState.challengemethod,
       challenge: formState.challenge,
     };
-    storeOAuthReq(storageOAuthReqKey(), req);
+    storeOAuthReq(req);
     window.location.replace(linkDest);
   }, [formState, linkDest]);
+
+  const secretForm = useForm({
+    clientsecret: '',
+  });
+  const secretFormState = secretForm.state;
+  const storeClientSecret = useCallback(() => {
+    storeOAuthClientSecret(secretFormState.clientsecret);
+    displaySnackbarStoreSecret();
+  }, [secretFormState, displaySnackbarStoreSecret]);
 
   return (
     <div>
@@ -347,6 +373,19 @@ const OAuthTool = ({pathCallback}) => {
               </Column>
             </Grid>
           </Form>
+          <h4>Store client secret</h4>
+          <Form
+            formState={secretForm.state}
+            onChange={secretForm.update}
+            onSubmit={storeClientSecret}
+          >
+            <Field name="clientsecret" label="Client secret" nohint />
+          </Form>
+          <ButtonGroup>
+            <ButtonSecondary onClick={storeClientSecret}>
+              Store Client Secret
+            </ButtonSecondary>
+          </ButtonGroup>
         </Column>
         <Column md={12}>
           <h4>Openid Configuration</h4>
@@ -448,7 +487,7 @@ const OAuthCB = () => {
     };
   }, [search]);
   const req = useMemo(() => {
-    return retrieveOAuthReq(storageOAuthReqKey());
+    return retrieveOAuthReq();
   }, []);
 
   const [timeValid, setTimeValid] = useState(true);
@@ -473,7 +512,17 @@ const OAuthCB = () => {
   const statesMessage = statesEqual ? '\u2713 Match' : '\u00D7 Mismatch';
   const timeMessage = timeValid ? '\u2713 Unexpired' : '\u00D7 Expired';
 
+  const clientsecret = useMemo(() => {
+    return retrieveOAuthClientSecret();
+  }, []);
+
+  const form = useForm({
+    clientsecret: clientsecret || '',
+  });
+
   const [oidConfig] = useResource(selectAPIOidConfig, [], {});
+
+  const formState = form.state;
 
   const tokenReq = useMemo(() => {
     if (params.error) {
@@ -496,7 +545,9 @@ const OAuthCB = () => {
       method: 'POST',
       transformer: () => ({
         headers: {
-          Authorization: `Basic ${btoa(`${req.clientid}:clientsecret`)}`,
+          Authorization: `Basic ${btoa(
+            `${req.clientid}:${formState.clientsecret}`,
+          )}`,
         },
         body: new URLSearchParams({
           grant_type: responseTypeToGrantType[req.responsetype],
@@ -511,16 +562,61 @@ const OAuthCB = () => {
       expectdata: true,
       err: 'Failed token request',
     });
-  }, [params, req, statesEqual, timeValid, oidConfig]);
+  }, [params, req, statesEqual, timeValid, formState, oidConfig]);
 
+  const [tokenRes, setTokenRes] = useState({
+    success: false,
+    err: false,
+    data: null,
+  });
   const makeTokenReq = useCallback(async () => {
-    const [data, status, err] = await tokenReq();
+    const [data, _, err] = await tokenReq();
     if (err) {
-      console.log('Token req err', err);
+      setTokenRes({success: false, err, data: null});
       return;
     }
-    console.log('Token req res', status, data);
-  }, [tokenReq]);
+    setTokenRes({success: true, err: false, data});
+  }, [tokenReq, setTokenRes]);
+
+  const [idTokenClaims, idTokenErr] = useMemo(() => {
+    if (!tokenRes.success) {
+      return [null, errMsgHandler('Token request incomplete')];
+    }
+    if (!tokenRes.data.id_token) {
+      return [null, errMsgHandler('No id token')];
+    }
+    const jwt = tokenRes.data.id_token.split('.');
+    if (jwt.length !== 3) {
+      return [null, errMsgHandler('Malformed jwt')];
+    }
+    const b64claims = jwt[1].replaceAll('-', '+').replaceAll('_', '/');
+    try {
+      return [JSON.parse(atob(b64claims)), false];
+    } catch (err) {
+      return [null, err];
+    }
+  }, [tokenRes]);
+
+  const validClaims = useMemo(() => {
+    const valid = '\u2713 Valid';
+    const invalid = '\u00D7 Invalid';
+    if (idTokenErr) {
+      return {
+        iss: invalid,
+        aud: invalid,
+      };
+    }
+    const msg = (v) => (v ? valid : invalid);
+    return {
+      iss: msg(idTokenClaims['iss'] === oidConfig.data.issuer),
+      aud: msg(
+        Array.isArray(idTokenClaims['aud']) &&
+          idTokenClaims['aud'].includes(req.clientid),
+      ),
+      azp: msg(idTokenClaims['azp'] === req.clientid),
+      nonce: msg(!req.nonce || idTokenClaims['nonce'] === req.nonce),
+    };
+  }, [idTokenErr, idTokenClaims, oidConfig, req]);
 
   return (
     <div>
@@ -577,6 +673,10 @@ const OAuthCB = () => {
               <Description label="Challenge Secret" item={req.challenge} />
             </Fragment>
           )}
+          <h4>Client secret</h4>
+          <Form formState={form.state} onChange={form.update}>
+            <Field name="clientsecret" label="Client secret" nohint />
+          </Form>
         </Column>
         <Column md={12}>
           <h4>Openid Configuration</h4>
@@ -636,12 +736,83 @@ const OAuthCB = () => {
               />
             </Fragment>
           )}
+          {oidConfig.err && <p>{oidConfig.err.message}</p>}
         </Column>
       </Grid>
       <h4>Token Request</h4>
       <ButtonGroup>
         <ButtonPrimary onClick={makeTokenReq}>Send Token Request</ButtonPrimary>
       </ButtonGroup>
+      {tokenRes.success && (
+        <Grid>
+          <Column md={12}>
+            <Field
+              noctx
+              value={tokenRes.data.access_token}
+              label="Access Token"
+              readOnly
+              nohint
+            />
+            <div>
+              <h6>Token type</h6>
+              {tokenRes.data.token_type}
+            </div>
+            <div>
+              <h6>Expires in</h6>
+              {tokenRes.data.expires_in}
+            </div>
+            <Field
+              noctx
+              value={tokenRes.data.refresh_token}
+              label="Refresh Token"
+              readOnly
+              nohint
+            />
+            <div>
+              <h6>Scopes</h6>
+              <ChipList
+                list={tokenRes.data.scope && tokenRes.data.scope.split(' ')}
+              />
+            </div>
+            <Field
+              noctx
+              value={tokenRes.data.id_token}
+              label="ID Token"
+              readOnly
+              nohint
+            />
+          </Column>
+          <Column md={12}>
+            <h5>ID Token Claims</h5>
+            {!idTokenErr && (
+              <Fragment>
+                {Array.isArray(oidConfig.data.claims_supported) &&
+                  oidConfig.data.claims_supported.map((i) => (
+                    <Description
+                      key={i}
+                      label={i}
+                      item={
+                        <Fragment>
+                          {idTokenClaims[i] && idTokenClaims[i].toString()}{' '}
+                          {validClaims[i] && <Chip>{validClaims[i]}</Chip>}
+                        </Fragment>
+                      }
+                    />
+                  ))}
+                <pre>{JSON.stringify(idTokenClaims, null, '  ')}</pre>
+              </Fragment>
+            )}
+            {idTokenErr && <p>{idTokenErr.message}</p>}
+          </Column>
+        </Grid>
+      )}
+      {tokenRes.err && (
+        <p>
+          {tokenRes.err.message ||
+            tokenRes.err.error_description ||
+            tokenRes.err.error}
+        </p>
+      )}
     </div>
   );
 };
