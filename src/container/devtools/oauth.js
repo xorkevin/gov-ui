@@ -801,6 +801,43 @@ const OAuthCB = () => {
     return `Verified with key ${jwk.kid} using alg ${jwk.alg}.`;
   }, [jwtSig, jwksRes]);
 
+  const userinfoReq = useMemo(() => {
+    if (!oidConfig.success) {
+      return errMsgHandler('No openid config');
+    }
+    if (!tokenRes.success) {
+      return errMsgHandler('No access token');
+    }
+    return makeFetch({
+      url: oidConfig.data.userinfo_endpoint,
+      method: 'GET',
+      transformer: () => ({
+        headers: {
+          Authorization: `Bearer ${tokenRes.data.access_token}`,
+        },
+        opts: {
+          credentials: 'omit',
+        },
+      }),
+      expectdata: true,
+      err: 'Failed userinfo request',
+    });
+  }, [oidConfig, tokenRes]);
+
+  const [userinfoRes, setUserinfoRes] = useState({
+    success: false,
+    err: false,
+    data: null,
+  });
+  const makeUserinfoReq = useCallback(async () => {
+    const [data, _, err] = await userinfoReq();
+    if (err) {
+      setUserinfoRes({success: false, err, data: null});
+      return;
+    }
+    setUserinfoRes({success: true, err: false, data});
+  }, [userinfoReq, setUserinfoRes]);
+
   return (
     <div>
       <h3>OAuth Callback Tool</h3>
@@ -931,84 +968,99 @@ const OAuthCB = () => {
           {jwksRes.err && <p>{jwksRes.err.message}</p>}
         </Column>
       </Grid>
+      <hr />
       <h4>Token Request</h4>
       <ButtonGroup>
         <ButtonPrimary onClick={makeTokenReq}>Send Token Request</ButtonPrimary>
       </ButtonGroup>
       {tokenRes.success && (
-        <Grid>
-          <Column md={12}>
-            <Field
-              noctx
-              value={tokenRes.data.access_token}
-              label="Access Token"
-              readOnly
-              nohint
-            />
-            <div>
-              <h6>Token type</h6>
-              {tokenRes.data.token_type}
-            </div>
-            <div>
-              <h6>Expires in</h6>
-              {tokenRes.data.expires_in}
-            </div>
-            <Field
-              noctx
-              value={tokenRes.data.refresh_token}
-              label="Refresh Token"
-              readOnly
-              nohint
-            />
-            <div>
-              <h6>Scopes</h6>
-              <ChipList
-                list={
-                  isString(tokenRes.data.scope) &&
-                  tokenRes.data.scope.split(' ')
-                }
+        <Fragment>
+          <Grid>
+            <Column md={12}>
+              <Field
+                noctx
+                value={tokenRes.data.access_token}
+                label="Access Token"
+                readOnly
+                nohint
               />
-            </div>
-            <Field
-              noctx
-              value={tokenRes.data.id_token}
-              label="ID Token"
-              readOnly
-              nohint
-            />
-            <div>
-              <h6>JWT Signature</h6>
-              <Chip>{jwtSigMessage}</Chip>
-              {jwtSig.err && <p>{jwtSig.err.message}</p>}
-              {jwtSigInfo && <p>{jwtSigInfo}</p>}
-            </div>
-          </Column>
-          <Column md={12}>
-            <h5>ID Token Claims</h5>
-            {!idTokenErr && (
-              <Fragment>
-                {Array.isArray(oidConfig.data.claims_supported) &&
-                  oidConfig.data.claims_supported.map((i) => (
-                    <Description
-                      key={i}
-                      label={i}
-                      item={
-                        <Fragment>
-                          {idTokenClaims[i] && idTokenClaims[i].toString()}{' '}
-                          {validClaims[i] && <Chip>{validClaims[i]}</Chip>}
-                        </Fragment>
-                      }
-                    />
-                  ))}
-                <pre className="devtools-code">
-                  {JSON.stringify(idTokenHeaders, null, '  ')}
-                  {JSON.stringify(idTokenClaims, null, '  ')}
-                </pre>
-              </Fragment>
-            )}
-            {idTokenErr && <p>{idTokenErr.message}</p>}
-          </Column>
-        </Grid>
+              <div>
+                <h6>Token type</h6>
+                {tokenRes.data.token_type}
+              </div>
+              <div>
+                <h6>Expires in</h6>
+                {tokenRes.data.expires_in}
+              </div>
+              <Field
+                noctx
+                value={tokenRes.data.refresh_token}
+                label="Refresh Token"
+                readOnly
+                nohint
+              />
+              <div>
+                <h6>Scopes</h6>
+                <ChipList
+                  list={
+                    isString(tokenRes.data.scope) &&
+                    tokenRes.data.scope.split(' ')
+                  }
+                />
+              </div>
+              <Field
+                noctx
+                value={tokenRes.data.id_token}
+                label="ID Token"
+                readOnly
+                nohint
+              />
+              <div>
+                <h6>JWT Signature</h6>
+                <Chip>{jwtSigMessage}</Chip>
+                {jwtSig.err && <p>{jwtSig.err.message}</p>}
+                {jwtSigInfo && <p>{jwtSigInfo}</p>}
+              </div>
+            </Column>
+            <Column md={12}>
+              <h5>ID Token Claims</h5>
+              {!idTokenErr && (
+                <Fragment>
+                  {Array.isArray(oidConfig.data.claims_supported) &&
+                    oidConfig.data.claims_supported.map((i) => (
+                      <Description
+                        key={i}
+                        label={i}
+                        item={
+                          <Fragment>
+                            {idTokenClaims[i] && idTokenClaims[i].toString()}{' '}
+                            {validClaims[i] && <Chip>{validClaims[i]}</Chip>}
+                          </Fragment>
+                        }
+                      />
+                    ))}
+                  <pre className="devtools-code">
+                    {JSON.stringify(idTokenHeaders, null, '  ')}
+                    {JSON.stringify(idTokenClaims, null, '  ')}
+                  </pre>
+                </Fragment>
+              )}
+              {idTokenErr && <p>{idTokenErr.message}</p>}
+            </Column>
+          </Grid>
+          <hr />
+          <h4>Userinfo Request</h4>
+          <ButtonGroup>
+            <ButtonPrimary onClick={makeUserinfoReq}>
+              Send Userinfo Request
+            </ButtonPrimary>
+          </ButtonGroup>
+          {userinfoRes.success && (
+            <pre className="devtools-code">
+              {JSON.stringify(userinfoRes.data, null, '  ')}
+            </pre>
+          )}
+        </Fragment>
       )}
       {tokenRes.err && (
         <p>
