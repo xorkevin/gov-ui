@@ -680,6 +680,27 @@ const OAuthCB = () => {
     };
   }, [idTokenErr, idTokenClaims, oidConfig, req]);
 
+  const [accessTokenValid, setAccessTokenValid] = useState(true);
+  useEffect(() => {
+    if (idTokenErr) {
+      return;
+    }
+    if (!accessTokenValid) {
+      return;
+    }
+    const handler = () => {
+      setAccessTokenValid(unixTime() <= idTokenClaims['exp']);
+    };
+    const interval = window.setInterval(handler, 1000);
+    handler();
+    return () => {
+      window.clearInterval(interval);
+    };
+  }, [idTokenErr, idTokenClaims, accessTokenValid, setAccessTokenValid]);
+  const accessTokenMessage = accessTokenValid
+    ? '\u2713 Valid'
+    : '\u00D7 Invalid';
+
   const [jwtSig, setJWTSig] = useState({kid: '', err: false});
   useEffect(() => {
     if (!jwksRes.success) {
@@ -1035,6 +1056,7 @@ const OAuthCB = () => {
                           <Fragment>
                             {idTokenClaims[i] && idTokenClaims[i].toString()}{' '}
                             {validClaims[i] && <Chip>{validClaims[i]}</Chip>}
+                            {i === 'exp' && <Chip>{accessTokenMessage}</Chip>}
                           </Fragment>
                         }
                       />
@@ -1060,6 +1082,7 @@ const OAuthCB = () => {
               {JSON.stringify(userinfoRes.data, null, '  ')}
             </pre>
           )}
+          {userinfoRes.err && <p>{userinfoRes.err.message}</p>}
         </Fragment>
       )}
       {tokenRes.err && (
