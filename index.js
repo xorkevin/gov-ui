@@ -2,6 +2,7 @@ import {lazy} from 'react';
 
 import {GovUIDefaultOpts, GovUICtx, GovUIMiddleware} from './src/middleware';
 import GovAPI from './src/apiconfig';
+import NavContainer from './src/container/nav';
 
 const DevtoolsContainer = lazy(() => import('./src/container/devtools'));
 const LoginContainer = lazy(() => import('./src/container/login'));
@@ -18,6 +19,7 @@ export {
   GovUICtx,
   GovUIMiddleware,
   GovAPI,
+  NavContainer,
   DevtoolsContainer,
   LoginContainer,
   OAuthContainer,

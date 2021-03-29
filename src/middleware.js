@@ -191,6 +191,8 @@ const GovUIDefaultOpts = Object.freeze({
   mainFallbackView: 'Loading',
   fallbackView: 'Loading',
   pathHome: '/',
+  pathLogin: '/x/login',
+  pathAccount: '/a',
   permissionedRoles,
   allRoles,
   isUsrRole,

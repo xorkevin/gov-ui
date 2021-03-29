@@ -2,7 +2,6 @@ import {Fragment, useContext} from 'react';
 import {Link} from 'react-router-dom';
 import {emailRegex} from '../utility';
 import {useAPICall} from '@xorkevin/substation';
-import {AuthCtx} from '@xorkevin/turbine';
 import {
   MainContent,
   Section,
@@ -15,6 +14,8 @@ import {
 } from '@xorkevin/nuke';
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
+
+import {GovUICtx} from '../middleware';
 
 const selectAPISetup = (api) => api.setupz;
 
@@ -50,7 +51,7 @@ const formValidCheck = ({username, password, email, first_name, last_name}) => {
 };
 
 const Setup = () => {
-  const ctx = useContext(AuthCtx);
+  const ctx = useContext(GovUICtx);
   const form = useForm({
     username: '',
     password: '',

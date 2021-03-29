@@ -35,6 +35,8 @@ const UnAuthFallback = (
 const authMiddleware = AuthMiddleware({
   fallbackView: UnAuthFallback,
   roleIntersect: allRoles,
+  pathHome: '/',
+  pathLogin: '/x/login',
 });
 
 const API = {
@@ -110,6 +112,9 @@ const Middleware = ComposeMiddleware(
   GovUIMiddleware({
     mainFallbackView: MainFallbackView,
     fallbackView: FallbackView,
+    pathHome: '/',
+    pathLogin: '/x/login',
+    pathAccount: '/a',
     userSessionParsePlatform: parsePlatform,
     // eslint-disable-next-line no-undef
     courierLinkPath: COURIERBASE_URL,

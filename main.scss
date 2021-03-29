@@ -23,6 +23,10 @@ $color-success-light: lighten($color-success, 12.5%) !default;
 $color-danger: #c62828 !default;
 $color-danger-light: lighten($color-danger, 12.5%) !default;
 
+.navbar-profile-picture {
+  width: 24px;
+}
+
 .signin-account-item {
   border-radius: 4px;
   transition: background-color $transition-normal;

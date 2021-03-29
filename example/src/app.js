@@ -1,24 +1,12 @@
 import {Fragment, Suspense, useContext} from 'react';
 import {Switch, Route, Redirect, useLocation} from 'react-router-dom';
-import {useURL} from '@xorkevin/substation';
+import {useAuthValue, useRefreshAuth, Protected} from '@xorkevin/turbine';
 import {
-  useAuthValue,
-  useAuthResource,
-  useLogout,
-  useRefreshAuth,
-  Protected,
-} from '@xorkevin/turbine';
-import {
-  useDarkModeValue,
-  useSetDarkMode,
   MainContent,
   Section,
   Container,
   SnackbarContainer,
-  Navbar,
   NavItem,
-  useMenu,
-  Menu,
   MenuItem,
   MenuHeader,
   MenuDivider,
@@ -28,9 +16,9 @@ import {
   FaIcon,
 } from '@xorkevin/nuke';
 import AnchorSecondary from '@xorkevin/nuke/src/component/anchor/secondary';
-import Img from '@xorkevin/nuke/src/component/image/circle';
 import {
   GovUICtx,
+  NavContainer,
   DevtoolsContainer,
   LoginContainer,
   OAuthContainer,
@@ -50,151 +38,7 @@ const OrgC = Protected(OrgContainer);
 const AdminC = Protected(AdminContainer, permissionedRoles);
 const CourierC = Protected(CourierContainer);
 
-const selectAPIProfile = (api) => api.profile.get;
-const selectAPIProfileImage = (api) => api.profile.id.image;
-
-const useHideNav = () => {
-  const loc = useLocation();
-  return loc.pathname.startsWith('/oauth');
-};
-
-const Nav = () => {
-  const dark = useDarkModeValue();
-  const toggleDark = useSetDarkMode();
-  const menu = useMenu();
-  const logout = useLogout();
-  const {loggedIn, userid, username, first_name, last_name} = useAuthValue();
-  const [profile] = useAuthResource(selectAPIProfile, [], {
-    image: '',
-  });
-  const imageURL = useURL(selectAPIProfileImage, [userid]);
-
-  const hideNav = useHideNav();
-  if (hideNav) {
-    return null;
-  }
-
-  return (
-    <Navbar
-      right={
-        <Fragment>
-          {!loggedIn && (
-            <NavItem local link="/x/login">
-              Sign in
-            </NavItem>
-          )}
-          <NavItem forwardedRef={menu.anchorRef} onClick={menu.toggle}>
-            {profile.success && profile.data.image && (
-              <Img
-                className="navbar-image"
-                src={imageURL}
-                preview={profile.data.image}
-                ratio={1}
-              />
-            )}
-            <FaIcon icon="caret-down" />
-          </NavItem>
-          {menu.show && (
-            <Menu size="md" anchor={menu.anchor} close={menu.close}>
-              {loggedIn && (
-                <Fragment>
-                  <MenuHeader>Profile</MenuHeader>
-                  <MenuItem
-                    local
-                    link={`/u/${username}`}
-                    icon={<FaIcon icon="user" />}
-                  >
-                    {`${first_name} ${last_name}`}
-                  </MenuItem>
-                </Fragment>
-              )}
-              <MenuHeader>Settings</MenuHeader>
-              {loggedIn && (
-                <Fragment>
-                  <MenuItem local link="/a" icon={<FaIcon icon="id-card-o" />}>
-                    Account
-                  </MenuItem>
-                  <MenuItem
-                    local
-                    link="/x/login"
-                    icon={<FaIcon icon="exchange" />}
-                  >
-                    Switch account
-                  </MenuItem>
-                </Fragment>
-              )}
-              <MenuItem
-                onClick={toggleDark}
-                icon={<FaIcon icon="bolt" />}
-                label="Ctrl+B"
-              >
-                {dark ? 'Light' : 'Dark'} Mode
-              </MenuItem>
-              {loggedIn && (
-                <Fragment>
-                  <MenuDivider />
-                  <MenuItem onClick={logout} icon={<FaIcon icon="sign-out" />}>
-                    Sign out
-                  </MenuItem>
-                </Fragment>
-              )}
-              <MenuDivider />
-              <MenuHeader>About</MenuHeader>
-              <MenuItem
-                ext
-                link="https://github.com/xorkevin/gov-ui"
-                icon={<FaIcon icon="github" />}
-                label={<FaIcon icon="external-link" />}
-              >
-                gov-ui
-              </MenuItem>
-              <MenuItem
-                ext
-                link="https://xorkevin.com/"
-                icon={<FaIcon icon="globe-w" />}
-                label={<FaIcon icon="external-link" />}
-              >
-                xorkevin
-              </MenuItem>
-              <MenuDivider />
-              <MenuItem
-                local
-                link="/devtools"
-                icon={<FaIcon icon="terminal" />}
-              >
-                Devtools
-              </MenuItem>
-            </Menu>
-          )}
-        </Fragment>
-      }
-    >
-      <NavItem local link="/">
-        <FaIcon icon="home" />
-        <small>Home</small>
-      </NavItem>
-      {loggedIn && (
-        <Fragment>
-          <NavItem local link="/admin">
-            <FaIcon icon="building-o" />
-            <small>Admin</small>
-          </NavItem>
-          <NavItem local link="/courier">
-            <FaIcon icon="paper-plane" />
-            <small>Courier</small>
-          </NavItem>
-        </Fragment>
-      )}
-    </Navbar>
-  );
-};
-
 const Foot = () => {
-  const hideNav = useHideNav();
-  if (hideNav) {
-    return null;
-  }
-
   return (
     <Footer>
       <Grid className="dark" justify="center" align="center">
@@ -244,11 +88,64 @@ const Home = () => {
 
 const App = () => {
   const ctx = useContext(GovUICtx);
+  const {loggedIn} = useAuthValue();
   useRefreshAuth();
+
+  const loc = useLocation();
+  const hideNav = loc.pathname.startsWith('/oauth');
 
   return (
     <div>
-      <Nav />
+      {hideNav ? null : (
+        <NavContainer
+          menuend={
+            <Fragment>
+              <MenuHeader>About</MenuHeader>
+              <MenuItem
+                ext
+                link="https://github.com/xorkevin/gov-ui"
+                icon={<FaIcon icon="github" />}
+                label={<FaIcon icon="external-link" />}
+              >
+                gov-ui
+              </MenuItem>
+              <MenuItem
+                ext
+                link="https://xorkevin.com/"
+                icon={<FaIcon icon="globe-w" />}
+                label={<FaIcon icon="external-link" />}
+              >
+                xorkevin
+              </MenuItem>
+              <MenuDivider />
+              <MenuItem
+                local
+                link="/devtools"
+                icon={<FaIcon icon="terminal" />}
+              >
+                Devtools
+              </MenuItem>
+            </Fragment>
+          }
+        >
+          <NavItem local link="/">
+            <FaIcon icon="home" />
+            <small>Home</small>
+          </NavItem>
+          {loggedIn && (
+            <Fragment>
+              <NavItem local link="/admin">
+                <FaIcon icon="building-o" />
+                <small>Admin</small>
+              </NavItem>
+              <NavItem local link="/courier">
+                <FaIcon icon="paper-plane" />
+                <small>Courier</small>
+              </NavItem>
+            </Fragment>
+          )}
+        </NavContainer>
+      )}
 
       <Suspense fallback={ctx.mainFallbackView}>
         <Switch>
@@ -286,7 +183,7 @@ const App = () => {
         </Switch>
       </Suspense>
 
-      <Foot />
+      {hideNav ? null : <Foot />}
       <SnackbarContainer />
     </div>
   );
