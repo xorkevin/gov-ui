@@ -42,6 +42,11 @@ const courier = (url = '/courier') => ({
 const setupz = () => ({
   url: '/setupz',
   method: 'POST',
+  transformer: (admin) => ({
+    body: {
+      admin,
+    },
+  }),
   expectdata: true,
   err: 'Could not run server setup',
 });
