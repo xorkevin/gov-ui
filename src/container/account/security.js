@@ -335,100 +335,98 @@ const AccountSecurity = ({pathConfirm, parsePlatform}) => {
 
   return (
     <div>
-      <Fragment>
-        <h3>Change password</h3>
-        <hr />
-        <Grid>
-          <Column fullWidth md={16}>
-            <Form
-              formState={formPass.state}
-              onChange={formPass.update}
-              onSubmit={execEditPass}
-              errCheck={formErrCheckPass}
-              validCheck={formValidCheckPass}
-            >
-              <Field
-                name="old_password"
-                type="password"
-                label="Old password"
-                fullWidth
-                autoComplete="current-password"
-              />
-              <Field
-                name="new_password"
-                type="password"
-                label="New password"
-                hint="Must be at least 10 characters"
-                hintRight={
-                  formPass.state.new_password.length > 0
-                    ? formPass.state.new_password.length
-                    : ''
-                }
-                fullWidth
-                autoComplete="new-password"
-              />
-            </Form>
-            <ButtonGroup>
-              <ButtonPrimary onClick={execEditPass}>
-                Update Password
+      <h3>Change password</h3>
+      <hr />
+      <Grid>
+        <Column fullWidth md={16}>
+          <Form
+            formState={formPass.state}
+            onChange={formPass.update}
+            onSubmit={execEditPass}
+            errCheck={formErrCheckPass}
+            validCheck={formValidCheckPass}
+          >
+            <Field
+              name="old_password"
+              type="password"
+              label="Old password"
+              fullWidth
+              autoComplete="current-password"
+            />
+            <Field
+              name="new_password"
+              type="password"
+              label="New password"
+              hint="Must be at least 10 characters"
+              hintRight={
+                formPass.state.new_password.length > 0
+                  ? formPass.state.new_password.length
+                  : ''
+              }
+              fullWidth
+              autoComplete="new-password"
+            />
+          </Form>
+          <ButtonGroup>
+            <ButtonPrimary onClick={execEditPass}>
+              Update Password
+            </ButtonPrimary>
+          </ButtonGroup>
+          {editPass.err && <p>{editPass.err.message}</p>}
+        </Column>
+      </Grid>
+      <h3>Change email</h3>
+      <hr />
+      <Grid>
+        <Column fullWidth md={16}>
+          <Form
+            formState={formEmail.state}
+            onChange={formEmail.update}
+            onSubmit={execEditEmail}
+            errCheck={formErrCheckEmail}
+            validCheck={formValidCheckEmail}
+          >
+            <Field
+              name="email"
+              label="New email"
+              nohint
+              fullWidth
+              autoComplete="email"
+            />
+            <Field
+              name="password"
+              type="password"
+              label="Password"
+              nohint
+              fullWidth
+              autoComplete="current-password"
+            />
+          </Form>
+          <ButtonGroup>
+            {editEmail.success ? (
+              <Link to={pathConfirm}>
+                <ButtonSecondary>Confirm</ButtonSecondary>
+              </Link>
+            ) : (
+              <ButtonPrimary onClick={execEditEmail}>
+                Update Email
               </ButtonPrimary>
-            </ButtonGroup>
-            {editPass.err && <p>{editPass.err.message}</p>}
-          </Column>
-        </Grid>
-        <h3>Change email</h3>
-        <hr />
-        <Grid>
-          <Column fullWidth md={16}>
-            <Form
-              formState={formEmail.state}
-              onChange={formEmail.update}
-              onSubmit={execEditEmail}
-              errCheck={formErrCheckEmail}
-              validCheck={formValidCheckEmail}
-            >
-              <Field
-                name="email"
-                label="New email"
-                nohint
-                fullWidth
-                autoComplete="email"
-              />
-              <Field
-                name="password"
-                type="password"
-                label="Password"
-                nohint
-                fullWidth
-                autoComplete="current-password"
-              />
-            </Form>
-            <ButtonGroup>
-              {editEmail.success ? (
-                <Link to={pathConfirm}>
-                  <ButtonSecondary>Confirm</ButtonSecondary>
-                </Link>
-              ) : (
-                <ButtonPrimary onClick={execEditEmail}>
-                  Update Email
-                </ButtonPrimary>
-              )}
-            </ButtonGroup>
-            {editEmail.err && <p>{editEmail.err.message}</p>}
-            {editEmail.success && (
-              <p>
-                Confirm your email change with the code emailed to the address
-                provided above.
-              </p>
             )}
-          </Column>
-          <Column fullWidth md={8}>
-            <h5>Current email</h5>
-            {email}
-          </Column>
-        </Grid>
-        <Account2FA />
-      </Fragment>
+          </ButtonGroup>
+          {editEmail.err && <p>{editEmail.err.message}</p>}
+          {editEmail.success && (
+            <p>
+              Confirm your email change with the code emailed to the address
+              provided above.
+            </p>
+          )}
+        </Column>
+        <Column fullWidth md={8}>
+          <h5>Current email</h5>
+          {email}
+        </Column>
+      </Grid>
+      <Account2FA />
       <AccountSessions parsePlatform={parsePlatform} />
     </div>
   );
