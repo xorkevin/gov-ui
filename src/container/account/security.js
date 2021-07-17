@@ -1,7 +1,8 @@
-import {Fragment, useCallback, useMemo, useContext} from 'react';
+import {Fragment, useState, useCallback, useMemo, useContext} from 'react';
 import {Link} from 'react-router-dom';
 import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
+  Container,
   Grid,
   Column,
   Field,
@@ -62,6 +63,59 @@ const formValidCheckEmail = ({email}) => {
     valid.email = true;
   }
   return valid;
+};
+
+// Manage 2FA
+
+const Account2FA = () => {
+  const {otp_enabled} = useAuthValue();
+
+  const [displayOTPForm, setDisplayOTPForm] = useState(false);
+  const showOTPForm = useCallback(() => {
+    setDisplayOTPForm(true);
+  }, [setDisplayOTPForm]);
+  const hideOTPForm = useCallback(() => {
+    setDisplayOTPForm(false);
+  }, [setDisplayOTPForm]);
+
+  return (
+    <Fragment>
+      <h3>Two-factor Authentication</h3>
+      <hr />
+      <Grid>
+        <Column fullWidth md={16}>
+          <ListGroup>
+            <ListItem>
+              {displayOTPForm ? (
+                <Container padded>
+                  <h5>TOTP Authenticator App</h5>
+                  <ButtonGroup>
+                    <ButtonTertiary onClick={hideOTPForm}>
+                      Cancel
+                    </ButtonTertiary>
+                    <ButtonPrimary>Enable</ButtonPrimary>
+                  </ButtonGroup>
+                </Container>
+              ) : (
+                <Grid justify="space-between" align="center" nowrap>
+                  <Column>
+                    <h5>TOTP Authenticator App</h5>
+                  </Column>
+                  <Column shrink="0">
+                    {otp_enabled ? (
+                      <ButtonTertiary>Disable</ButtonTertiary>
+                    ) : (
+                      <ButtonTertiary onClick={showOTPForm}>Add</ButtonTertiary>
+                    )}
+                  </Column>
+                </Grid>
+              )}
+            </ListItem>
+          </ListGroup>
+        </Column>
+      </Grid>
+    </Fragment>
+  );
 };
 
 // Manage sessions
@@ -373,6 +427,7 @@ const AccountSecurity = ({pathConfirm, parsePlatform}) => {
             {email}
           </Column>
         </Grid>
+        <Account2FA />
       </Fragment>
       <AccountSessions parsePlatform={parsePlatform} />
     </div>
