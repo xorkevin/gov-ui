@@ -134,6 +134,38 @@ export default {
       },
     },
   },
+  otp: {
+    url: '/otp',
+    children: {
+      add: {
+        url: '',
+        method: 'PUT',
+        transformer: (alg, digits, password) => ({
+          body: {alg, digits, password},
+        }),
+        expectdata: true,
+        err: 'Could not add otp 2fa',
+      },
+      confirm: {
+        url: '/verify',
+        method: 'PUT',
+        transformer: (code) => ({
+          body: {code},
+        }),
+        expectdata: false,
+        err: 'Could not enable otp 2fa',
+      },
+      remove: {
+        url: '',
+        method: 'PUT',
+        transformer: (body) => ({
+          body,
+        }),
+        expectdata: false,
+        err: 'Could not add otp 2fa',
+      },
+    },
+  },
   id: {
     url: '/id/{0}',
     method: 'GET',

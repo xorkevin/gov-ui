@@ -6,6 +6,7 @@ import {
   Grid,
   Column,
   Field,
+  FieldSelect,
   Form,
   useForm,
   SnackbarSurface,
@@ -50,28 +51,28 @@ const AccountPass = () => {
     <SnackbarSurface>&#x2713; Password updated</SnackbarSurface>,
   );
 
-  const formPass = useForm({
+  const form = useForm({
     old_password: '',
     new_password: '',
   });
 
-  const formPassAssign = formPass.assign;
-  const posthookPass = useCallback(
+  const formAssign = form.assign;
+  const posthook = useCallback(
     (_status, _data) => {
-      formPassAssign({
+      formAssign({
         old_password: '',
         new_password: '',
       });
       displaySnackbar();
     },
-    [formPassAssign, displaySnackbar],
+    [formAssign, displaySnackbar],
   );
 
-  const [editPass, execEditPass] = useAuthCall(
+  const [edit, execEdit] = useAuthCall(
     selectAPIEditPass,
-    [formPass.state.old_password, formPass.state.new_password],
+    [form.state.old_password, form.state.new_password],
     {},
-    {posthook: posthookPass},
+    {posthook},
   );
   return (
     <Fragment>
@@ -80,9 +81,9 @@ const AccountPass = () => {
       <Grid>
         <Column fullWidth md={16}>
           <Form
-            formState={formPass.state}
-            onChange={formPass.update}
-            onSubmit={execEditPass}
+            formState={form.state}
+            onChange={form.update}
+            onSubmit={execEdit}
             errCheck={formErrCheckPass}
             validCheck={formValidCheckPass}
           >
@@ -99,8 +100,8 @@ const AccountPass = () => {
               label="New password"
               hint="Must be at least 10 characters"
               hintRight={
-                formPass.state.new_password.length > 0
-                  ? formPass.state.new_password.length
+                form.state.new_password.length > 0
+                  ? form.state.new_password.length
                   : ''
               }
               fullWidth
@@ -108,11 +109,9 @@ const AccountPass = () => {
             />
           </Form>
           <ButtonGroup>
-            <ButtonPrimary onClick={execEditPass}>
-              Update Password
-            </ButtonPrimary>
+            <ButtonPrimary onClick={execEdit}>Update Password</ButtonPrimary>
           </ButtonGroup>
-          {editPass.err && <p>{editPass.err.message}</p>}
+          {edit.err && <p>{edit.err.message}</p>}
         </Column>
       </Grid>
     </Fragment>
@@ -142,14 +141,14 @@ const formValidCheckEmail = ({email}) => {
 const AccountEmail = ({pathConfirm}) => {
   const {email} = useAuthValue();
 
-  const formEmail = useForm({
+  const form = useForm({
     email: '',
     password: '',
   });
 
-  const [editEmail, execEditEmail] = useAuthCall(selectAPIEditEmail, [
-    formEmail.state.email,
-    formEmail.state.password,
+  const [edit, execEdit] = useAuthCall(selectAPIEditEmail, [
+    form.state.email,
+    form.state.password,
   ]);
 
   return (
@@ -159,9 +158,9 @@ const AccountEmail = ({pathConfirm}) => {
       <Grid>
         <Column fullWidth md={16}>
           <Form
-            formState={formEmail.state}
-            onChange={formEmail.update}
-            onSubmit={execEditEmail}
+            formState={form.state}
+            onChange={form.update}
+            onSubmit={execEdit}
             errCheck={formErrCheckEmail}
             validCheck={formValidCheckEmail}
           >
@@ -182,18 +181,16 @@ const AccountEmail = ({pathConfirm}) => {
             />
           </Form>
           <ButtonGroup>
-            {editEmail.success ? (
+            {edit.success ? (
               <Link to={pathConfirm}>
                 <ButtonSecondary>Confirm</ButtonSecondary>
               </Link>
             ) : (
-              <ButtonPrimary onClick={execEditEmail}>
-                Update Email
-              </ButtonPrimary>
+              <ButtonPrimary onClick={execEdit}>Update Email</ButtonPrimary>
             )}
           </ButtonGroup>
-          {editEmail.err && <p>{editEmail.err.message}</p>}
-          {editEmail.success && (
+          {edit.err && <p>{edit.err.message}</p>}
+          {edit.success && (
             <p>
               Confirm your email change with the code emailed to the address
               provided above.
@@ -211,6 +208,35 @@ const AccountEmail = ({pathConfirm}) => {
 
 // Manage 2FA
 
+const selectAPIOTPAdd = (api) => api.u.user.otp.add;
+//const selectAPIOTPConfirm = (api) => api.u.user.otp.confirm;
+//const selectAPIOTPRemove = (api) => api.u.user.otp.remove;
+
+const otpAlgOpts = [
+  {display: 'SHA-1 (highest compatibility)', value: 'SHA1'},
+  {display: 'SHA-256 (more secure)', value: 'SHA256'},
+];
+const otpDigitsOpts = [
+  {display: '6 (highest compatibility)', value: '6'},
+  {display: '8 (more secure)', value: '8'},
+];
+
+const URIHider = ({uri}) => {
+  const [display, setDisplay] = useState(false);
+  const toggle = useCallback(() => {
+    setDisplay((i) => !i);
+  }, [setDisplay]);
+
+  return (
+    <Fragment>
+      <ButtonTertiary onClick={toggle}>
+        {display ? 'Hide' : 'Show Key URI'}
+      </ButtonTertiary>
+      {display && <code>{uri}</code>}
+    </Fragment>
+  );
+};
+
 const Account2FA = () => {
   const {otp_enabled} = useAuthValue();
 
@@ -221,6 +247,35 @@ const Account2FA = () => {
   const hideOTPForm = useCallback(() => {
     setDisplayOTPForm(false);
   }, [setDisplayOTPForm]);
+
+  const form = useForm({
+    alg: 'SHA1',
+    digits: '6',
+    password: '',
+  });
+
+  const formAssign = form.assign;
+  const posthookAdd = useCallback(
+    (_status, _data) => {
+      formAssign({
+        password: '',
+      });
+    },
+    [formAssign],
+  );
+  const digits = (() => {
+    const k = parseInt(form.state.digits, 10);
+    if (Number.isNaN(k)) {
+      return 6;
+    }
+    return k;
+  })();
+  const [add, execAdd] = useAuthCall(
+    selectAPIOTPAdd,
+    [form.state.alg, digits, form.state.password],
+    {},
+    {posthook: posthookAdd},
+  );
 
   return (
     <Fragment>
@@ -233,12 +288,62 @@ const Account2FA = () => {
               {displayOTPForm ? (
                 <Container padded>
                   <h5>TOTP Authenticator App</h5>
-                  <ButtonGroup>
-                    <ButtonTertiary onClick={hideOTPForm}>
-                      Cancel
-                    </ButtonTertiary>
-                    <ButtonPrimary>Enable</ButtonPrimary>
-                  </ButtonGroup>
+                  {add.success ? (
+                    <Fragment>
+                      <p>
+                        Enter a code generated by your device to finish enabling
+                        OTP 2FA.
+                      </p>
+                      <URIHider uri={add.data.uri} />
+                      <h5>Backup code</h5>
+                      <p>
+                        Store the following code in a safe and secure place as
+                        you will be able to use this code to log in to your
+                        account if you lose access to your OTP device or
+                        authenticator app. You will <strong>not</strong> be able
+                        to view it again.
+                      </p>
+                      <code>{add.data.backup}</code>
+                    </Fragment>
+                  ) : (
+                    <Fragment>
+                      <Form
+                        formState={form.state}
+                        onChange={form.update}
+                        onSubmit={execAdd}
+                      >
+                        <FieldSelect
+                          name="alg"
+                          label="Hash algorithm"
+                          options={otpAlgOpts}
+                          nohint
+                          fullWidth
+                        />
+                        <FieldSelect
+                          name="digits"
+                          label="OTP Code Digits"
+                          options={otpDigitsOpts}
+                          nohint
+                          fullWidth
+                        />
+                        <Field
+                          name="password"
+                          type="password"
+                          label="Password"
+                          nohint
+                          fullWidth
+                          autoComplete="current-password"
+                        />
+                      </Form>
+                      <ButtonGroup>
+                        <ButtonTertiary onClick={hideOTPForm}>
+                          Cancel
+                        </ButtonTertiary>
+                        <ButtonPrimary onClick={execAdd}>Enable</ButtonPrimary>
+                      </ButtonGroup>
+                      {add.err && <p>{add.err.message}</p>}
+                    </Fragment>
+                  )}
                 </Container>
               ) : (
                 <Grid justify="space-between" align="center" nowrap>
