@@ -245,22 +245,22 @@ const URIHider = ({uri}) => {
 };
 
 const Account2FAConfirm = ({addRes, hideOTPForm}) => {
-  const confirmForm = useForm({
+  const form = useForm({
     code: '',
   });
 
-  const confirmFormAssign = confirmForm.assign;
+  const formAssign = form.assign;
   const posthookConfirm = useCallback(
     (_status, _data) => {
-      confirmFormAssign({
+      formAssign({
         code: '',
       });
     },
-    [confirmFormAssign],
+    [formAssign],
   );
   const [confirmOTP, execConfirm] = useAuthCall(
     selectAPIOTPConfirm,
-    [confirmForm.state.code],
+    [form.state.code],
     {},
     {posthook: posthookConfirm},
   );
@@ -299,8 +299,8 @@ const Account2FAConfirm = ({addRes, hideOTPForm}) => {
       <QRCode data={addRes.uri} level={QRECLevel.L} scale={8} />
       <URIHider uri={addRes.uri} />
       <Form
-        formState={confirmForm.state}
-        onChange={confirmForm.update}
+        formState={form.state}
+        onChange={form.update}
         onSubmit={execConfirm}
       >
         <Field name="code" label="Code" nohint fullWidth inputMode="numeric" />
@@ -313,17 +313,7 @@ const Account2FAConfirm = ({addRes, hideOTPForm}) => {
   );
 };
 
-const Account2FA = () => {
-  const {otp_enabled} = useAuthValue();
-
-  const [displayOTPForm, setDisplayOTPForm] = useState(false);
-  const showOTPForm = useCallback(() => {
-    setDisplayOTPForm(true);
-  }, [setDisplayOTPForm]);
-  const hideOTPForm = useCallback(() => {
-    setDisplayOTPForm(false);
-  }, [setDisplayOTPForm]);
-
+const Account2FAAdd = ({hideOTPForm}) => {
   const form = useForm({
     alg: 'SHA1',
     digits: '6',
@@ -331,7 +321,7 @@ const Account2FA = () => {
   });
 
   const formAssign = form.assign;
-  const posthookAdd = useCallback(
+  const posthook = useCallback(
     (_status, _data) => {
       formAssign({
         password: '',
@@ -350,8 +340,116 @@ const Account2FA = () => {
     selectAPIOTPAdd,
     [form.state.alg, digits, form.state.password],
     {uri: '', backup: ''},
-    {posthook: posthookAdd},
+    {posthook},
   );
+
+  if (add.success) {
+    return <Account2FAConfirm addRes={add.data} hideOTPForm={hideOTPForm} />;
+  }
+
+  return (
+    <Fragment>
+      <Form formState={form.state} onChange={form.update} onSubmit={execAdd}>
+        <FieldSelect
+          name="alg"
+          label="Hash algorithm"
+          options={otpAlgOpts}
+          nohint
+          fullWidth
+        />
+        <FieldSelect
+          name="digits"
+          label="OTP Code Digits"
+          options={otpDigitsOpts}
+          nohint
+          fullWidth
+        />
+        <Field
+          name="password"
+          type="password"
+          label="Password"
+          nohint
+          fullWidth
+          autoComplete="current-password"
+        />
+      </Form>
+      <ButtonGroup>
+        <ButtonTertiary onClick={hideOTPForm}>Cancel</ButtonTertiary>
+        <ButtonPrimary onClick={execAdd}>Enable</ButtonPrimary>
+      </ButtonGroup>
+      {add.err && <p>{add.err.message}</p>}
+    </Fragment>
+  );
+};
+
+const Account2FARm = ({hideOTPForm}) => {
+  const form = useForm({
+    code: '',
+    backup: '',
+    password: '',
+  });
+
+  const formAssign = form.assign;
+
+  const [displayBackup, setDisplayBackup] = useState(false);
+  const toggleBackup = useCallback(() => {
+    formAssign({
+      code: '',
+      backup: '',
+    });
+    setDisplayBackup((i) => !i);
+  }, [setDisplayBackup, formAssign]);
+
+  return (
+    <Fragment>
+      <Form formState={form.state} onChange={form.update}>
+        {displayBackup ? (
+          <Field
+            name="backup"
+            label="Backup"
+            nohint
+            fullWidth
+            inputMode="numeric"
+          />
+        ) : (
+          <Field
+            name="code"
+            label="Code"
+            nohint
+            fullWidth
+            inputMode="numeric"
+          />
+        )}
+        <Field
+          name="password"
+          type="password"
+          label="Password"
+          nohint
+          fullWidth
+          autoComplete="current-password"
+        />
+      </Form>
+      <ButtonGroup>
+        <ButtonTertiary onClick={hideOTPForm}>Cancel</ButtonTertiary>
+        <ButtonSecondary onClick={toggleBackup}>
+          {displayBackup ? 'Use regular code' : 'Use backup code'}
+        </ButtonSecondary>
+        <ButtonPrimary>Disable</ButtonPrimary>
+      </ButtonGroup>
+    </Fragment>
+  );
+};
+
+const Account2FA = () => {
+  const {otp_enabled} = useAuthValue();
+
+  const [displayOTPForm, setDisplayOTPForm] = useState(false);
+  const showOTPForm = useCallback(() => {
+    setDisplayOTPForm(true);
+  }, [setDisplayOTPForm]);
+  const hideOTPForm = useCallback(() => {
+    setDisplayOTPForm(false);
+  }, [setDisplayOTPForm]);
 
   return (
     <Fragment>
@@ -364,49 +462,10 @@ const Account2FA = () => {
               {displayOTPForm ? (
                 <Container padded>
                   <h5>TOTP Authenticator App</h5>
-                  {add.success ? (
-                    <Account2FAConfirm
-                      addRes={add.data}
-                      hideOTPForm={hideOTPForm}
-                    />
+                  {otp_enabled ? (
+                    <Account2FARm hideOTPForm={hideOTPForm} />
                   ) : (
-                    <Fragment>
-                      <Form
-                        formState={form.state}
-                        onChange={form.update}
-                        onSubmit={execAdd}
-                      >
-                        <FieldSelect
-                          name="alg"
-                          label="Hash algorithm"
-                          options={otpAlgOpts}
-                          nohint
-                          fullWidth
-                        />
-                        <FieldSelect
-                          name="digits"
-                          label="OTP Code Digits"
-                          options={otpDigitsOpts}
-                          nohint
-                          fullWidth
-                        />
-                        <Field
-                          name="password"
-                          type="password"
-                          label="Password"
-                          nohint
-                          fullWidth
-                          autoComplete="current-password"
-                        />
-                      </Form>
-                      <ButtonGroup>
-                        <ButtonTertiary onClick={hideOTPForm}>
-                          Cancel
-                        </ButtonTertiary>
-                        <ButtonPrimary onClick={execAdd}>Enable</ButtonPrimary>
-                      </ButtonGroup>
-                      {add.err && <p>{add.err.message}</p>}
-                    </Fragment>
+                    <Account2FAAdd hideOTPForm={hideOTPForm} />
                   )}
                 </Container>
               ) : (
@@ -415,11 +474,9 @@ const Account2FA = () => {
                     <h5>TOTP Authenticator App</h5>
                   </Column>
                   <Column shrink="0">
-                    {otp_enabled ? (
-                      <ButtonTertiary>Disable</ButtonTertiary>
-                    ) : (
-                      <ButtonTertiary onClick={showOTPForm}>Add</ButtonTertiary>
-                    )}
+                    <ButtonTertiary onClick={showOTPForm}>
+                      {otp_enabled ? 'Remove' : 'Add'}
+                    </ButtonTertiary>
                   </Column>
                 </Grid>
               )}
