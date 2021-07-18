@@ -157,12 +157,12 @@ export default {
       },
       remove: {
         url: '',
-        method: 'PUT',
-        transformer: (body) => ({
-          body,
+        method: 'DELETE',
+        transformer: (code, backup, password) => ({
+          body: {code, backup, password},
         }),
         expectdata: false,
-        err: 'Could not add otp 2fa',
+        err: 'Could not remove otp 2fa',
       },
     },
   },

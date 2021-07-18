@@ -217,7 +217,7 @@ const AccountEmail = ({pathConfirm}) => {
 
 const selectAPIOTPAdd = (api) => api.u.user.otp.add;
 const selectAPIOTPConfirm = (api) => api.u.user.otp.confirm;
-//const selectAPIOTPRemove = (api) => api.u.user.otp.remove;
+const selectAPIOTPRemove = (api) => api.u.user.otp.remove;
 
 const otpAlgOpts = [
   {display: 'SHA-1 (highest compatibility)', value: 'SHA1'},
@@ -400,9 +400,43 @@ const Account2FARm = ({hideOTPForm}) => {
     setDisplayBackup((i) => !i);
   }, [setDisplayBackup, formAssign]);
 
+  const posthook = useCallback(
+    (_status, _data) => {
+      formAssign({
+        code: '',
+        backup: '',
+        password: '',
+      });
+    },
+    [formAssign],
+  );
+  const [remove, execRemove] = useAuthCall(
+    selectAPIOTPRemove,
+    [form.state.code, form.state.backup, form.state.password],
+    {},
+    {posthook},
+  );
+
+  const [_user, refreshUser] = useRefreshUser();
+  const finishConfirm = useCallback(() => {
+    refreshUser();
+    hideOTPForm();
+  }, [refreshUser, hideOTPForm]);
+
+  if (remove.success) {
+    return (
+      <Fragment>
+        <p>2FA with TOTP is disabled.</p>
+        <ButtonGroup>
+          <ButtonSecondary onClick={finishConfirm}>Finish</ButtonSecondary>
+        </ButtonGroup>
+      </Fragment>
+    );
+  }
+
   return (
     <Fragment>
-      <Form formState={form.state} onChange={form.update}>
+      <Form formState={form.state} onChange={form.update} onSubmit={execRemove}>
         {displayBackup ? (
           <Field
             name="backup"
@@ -434,8 +468,9 @@ const Account2FARm = ({hideOTPForm}) => {
         <ButtonSecondary onClick={toggleBackup}>
           {displayBackup ? 'Use regular code' : 'Use backup code'}
         </ButtonSecondary>
-        <ButtonPrimary>Disable</ButtonPrimary>
+        <ButtonPrimary onClick={execRemove}>Disable</ButtonPrimary>
       </ButtonGroup>
+      {remove.err && <p>{remove.err.message}</p>}
     </Fragment>
   );
 };
