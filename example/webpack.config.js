@@ -25,6 +25,7 @@ const govuiDeps = [
   '@xorkevin/substation',
   '@xorkevin/turbine',
   '@xorkevin/nuke',
+  'qrcode',
 ];
 
 const esModules = [

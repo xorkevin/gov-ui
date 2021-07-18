@@ -1,3 +1,5 @@
+import QRCode from 'qrcode';
+
 const formatURLArgs = (str, args) => {
   return str.replace(/{(\d+)}/g, (match, number) => {
     if (typeof args[number] != 'undefined') {
@@ -53,7 +55,8 @@ const searchParamsToString = (search) => {
   return k;
 };
 
-const emailRegex = /^[a-z0-9_-][a-z0-9_+-]*(\.[a-z0-9_+-]+)*@[a-z0-9]+(-+[a-z0-9]+)*(\.[a-z0-9]+(-+[a-z0-9]+)*)*$/;
+const emailRegex =
+  /^[a-z0-9_-][a-z0-9_+-]*(\.[a-z0-9_+-]+)*@[a-z0-9]+(-+[a-z0-9]+)*(\.[a-z0-9]+(-+[a-z0-9]+)*)*$/;
 
 const isValidURL = (url) => {
   try {
@@ -100,6 +103,42 @@ const dateToLocale = (date) => {
   return timeFormatter.format(date);
 };
 
+const QRECLow = Symbol('QRECLow');
+const QRECMedium = Symbol('QRECMedium');
+const QRECQuartile = Symbol('QRECQuartile');
+const QRECHigh = Symbol('QRECHigh');
+
+const QRECLevel = Object.freeze({
+  L: QRECLow,
+  M: QRECMedium,
+  Q: QRECQuartile,
+  H: QRECHigh,
+});
+
+const qrecLevelToOpt = {
+  QRECLow: 'L',
+  QRECMedium: 'M',
+  QRECQuartile: 'Q',
+  QRECHigh: 'H',
+};
+const qrecLevelsSet = new Set(Object.keys(qrecLevelToOpt));
+
+const generateQR = async (data, ecLevel, scale) => {
+  try {
+    const uri = await QRCode.toDataURL([{data, mode: 'byte'}], {
+      errorCorrectionLevel: qrecLevelsSet.has(ecLevel)
+        ? qrecLevelToOpt[ecLevel]
+        : 'L',
+      type: 'image/png',
+      scale: typeof scale !== 'number' || scale <= 0 ? 8 : scale,
+      margin: 0,
+    });
+    return [uri, null];
+  } catch (err) {
+    return [null, err];
+  }
+};
+
 export {
   formatURL,
   formatURLArgs,
@@ -112,4 +151,6 @@ export {
   isValidURL,
   randomID,
   dateToLocale,
+  QRECLevel,
+  generateQR,
 };
