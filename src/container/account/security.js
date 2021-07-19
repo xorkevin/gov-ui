@@ -465,9 +465,9 @@ const Account2FARm = ({hideOTPForm}) => {
       </Form>
       <ButtonGroup>
         <ButtonTertiary onClick={hideOTPForm}>Cancel</ButtonTertiary>
-        <ButtonSecondary onClick={toggleBackup}>
+        <ButtonTertiary onClick={toggleBackup}>
           {displayBackup ? 'Use regular code' : 'Use backup code'}
-        </ButtonSecondary>
+        </ButtonTertiary>
         <ButtonPrimary onClick={execRemove}>Disable</ButtonPrimary>
       </ButtonGroup>
       {remove.err && <p>{remove.err.message}</p>}

@@ -25,7 +25,6 @@ import {
   ButtonGroup,
 } from '@xorkevin/nuke';
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
-import ButtonSecondary from '@xorkevin/nuke/src/component/button/secondary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 import Img from '@xorkevin/nuke/src/component/image/circle';
 
@@ -46,16 +45,41 @@ const AddAccountContainer = ({
     password: '',
   });
 
-  const [login, execLogin] = useLogin(form.state.username, form.state.password);
+  const formOTP = useForm({
+    code: '',
+    backup: '',
+  });
+
+  const [login, execLogin] = useLogin(
+    form.state.username,
+    form.state.password,
+    formOTP.state.code,
+    formOTP.state.backup,
+  );
   const redirect = useProtectedRedir();
+
+  const [displayOTP, setDisplayOTP] = useState(false);
+
+  const formOTPAssign = form.assign;
+  const [displayBackup, setDisplayBackup] = useState(false);
+  const toggleBackup = useCallback(() => {
+    formOTPAssign({
+      code: '',
+      backup: '',
+    });
+    setDisplayBackup((i) => !i);
+  }, [setDisplayBackup, formOTPAssign]);
 
   const handleLogin = useCallback(async () => {
     const [_data, _status, err] = await execLogin();
     if (err) {
+      if (err.code === 'otp_required') {
+        setDisplayOTP(true);
+      }
       return;
     }
     redirect();
-  }, [execLogin, redirect]);
+  }, [execLogin, redirect, setDisplayOTP]);
 
   return (
     <Card
@@ -72,15 +96,20 @@ const AddAccountContainer = ({
             <ButtonTertiary forwardedRef={menu.anchorRef} onClick={menu.toggle}>
               <FaIcon icon="ellipsis-v" />
             </ButtonTertiary>
-            {hasAccounts && (
-              <ButtonSecondary onClick={displayAccounts}>
-                Choose account
-              </ButtonSecondary>
-            )}
-            <ButtonPrimary onClick={handleLogin}>Login</ButtonPrimary>
+            <ButtonPrimary onClick={handleLogin}>
+              {displayOTP ? 'Verify' : 'Login'}
+            </ButtonPrimary>
           </ButtonGroup>
           {menu.show && (
             <Menu size="md" anchor={menu.anchor} close={menu.close}>
+              {hasAccounts && (
+                <MenuItem
+                  onClick={displayAccounts}
+                  icon={<FaIcon icon="exchange" />}
+                >
+                  Choose account
+                </MenuItem>
+              )}
               <MenuItem
                 local
                 link={pathCreate}
@@ -101,27 +130,65 @@ const AddAccountContainer = ({
       }
     >
       <Container padded>
-        <Form
-          formState={form.state}
-          onChange={form.update}
-          onSubmit={handleLogin}
-        >
-          <Field
-            name="username"
-            label="Username / Email"
-            fullWidth
-            autoComplete="username"
-            autoFocus
-          />
-          <Field
-            name="password"
-            type="password"
-            label="Password"
-            fullWidth
-            autoComplete="current-password"
-          />
-        </Form>
-        {login.err && <p>{login.err.message}</p>}
+        {displayOTP ? (
+          <Fragment>
+            <p>Enter an otp from your authenticator app</p>
+            <Form
+              formState={formOTP.state}
+              onChange={formOTP.update}
+              onSubmit={handleLogin}
+            >
+              {displayBackup ? (
+                <Field
+                  name="backup"
+                  label="Backup"
+                  nohint
+                  fullWidth
+                  inputMode="numeric"
+                  autoFocus
+                />
+              ) : (
+                <Field
+                  name="code"
+                  label="Code"
+                  nohint
+                  fullWidth
+                  inputMode="numeric"
+                  autoFocus
+                />
+              )}
+            </Form>
+            <ButtonGroup>
+              <ButtonTertiary onClick={toggleBackup}>
+                {displayBackup ? 'Use regular code' : 'Use backup code'}
+              </ButtonTertiary>
+            </ButtonGroup>
+          </Fragment>
+        ) : (
+          <Form
+            formState={form.state}
+            onChange={form.update}
+            onSubmit={handleLogin}
+          >
+            <Field
+              name="username"
+              label="Username / Email"
+              fullWidth
+              autoComplete="username"
+              autoFocus
+            />
+            <Field
+              name="password"
+              type="password"
+              label="Password"
+              fullWidth
+              autoComplete="current-password"
+            />
+          </Form>
+        )}
+        {login.err && login.err.code !== 'otp_required' && (
+          <p>{login.err.message}</p>
+        )}
       </Container>
     </Card>
   );
