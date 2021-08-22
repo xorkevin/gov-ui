@@ -102,6 +102,7 @@ const App = () => {
     <div>
       {hideNav ? null : (
         <NavContainer
+          closeOnClick
           menuend={
             <Fragment>
               <MenuHeader>About</MenuHeader>

@@ -12,6 +12,7 @@ import {
   ComposeMiddleware,
   DarkModeMiddleware,
   SnackbarMiddleware,
+  PopoverMiddleware,
   MainContent,
   Section,
   Container,
@@ -54,11 +55,13 @@ const WELL_KNOWN = {
   wellknown: GovAPI.wellknown(),
 };
 
-const apiCredentialsMiddleware = (transform) => (...args) => {
-  const req = transform(...args);
-  req.opts = Object.assign({credentials: 'same-origin'}, req.opts);
-  return req;
-};
+const apiCredentialsMiddleware =
+  (transform) =>
+  (...args) => {
+    const req = transform(...args);
+    req.opts = Object.assign({credentials: 'same-origin'}, req.opts);
+    return req;
+  };
 
 // eslint-disable-next-line no-undef
 const baseUrl = window.location.origin + APIBASE_URL;
@@ -109,6 +112,9 @@ const Middleware = ComposeMiddleware(
   authMiddleware,
   DarkModeMiddleware(),
   SnackbarMiddleware(),
+  PopoverMiddleware({
+    root: document.getElementById('popover-portal'),
+  }),
   GovUIMiddleware({
     mainFallbackView: MainFallbackView,
     fallbackView: FallbackView,

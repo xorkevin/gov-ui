@@ -21,7 +21,9 @@ import {formatURL} from '../utility';
 const selectAPIProfile = (api) => api.profile.get;
 const selectAPIProfileImage = (api) => api.profile.id.image;
 
-const Nav = ({children, right, menucontent, menuend}) => {
+const noop = () => {};
+
+const Nav = ({closeOnClick, right, menucontent, menuend, children}) => {
   const ctx = useContext(GovUICtx);
   const dark = useDarkModeValue();
   const toggleDark = useSetDarkMode();
@@ -55,7 +57,12 @@ const Nav = ({children, right, menucontent, menuend}) => {
             <FaIcon icon="caret-down" />
           </NavItem>
           {menu.show && (
-            <Menu size="md" anchor={menu.anchor} close={menu.close}>
+            <Menu
+              size="md"
+              anchor={menu.anchor}
+              close={menu.close}
+              onClick={closeOnClick ? menu.close : noop}
+            >
               {loggedIn && (
                 <Fragment>
                   <MenuHeader>Profile</MenuHeader>

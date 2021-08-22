@@ -1,3 +1,4 @@
+import {useCallback} from 'react';
 import {
   Switch,
   Route,
@@ -31,6 +32,24 @@ const Chat = () => {
 const ChatRow = () => {
   const match = useRouteMatch();
   const menu = useMenu();
+
+  const menuToggle = menu.toggle;
+  const toggleMenu = useCallback(
+    (e) => {
+      // prevent link from being clicked. anchor tag lies outside of event bubbling system.
+      e.preventDefault();
+      e.stopPropagation();
+      menuToggle();
+    },
+    [menuToggle],
+  );
+
+  const preventPropagate = useCallback((e) => {
+    // prevent link from being clicked. anchor tag lies outside of event bubbling system.
+    e.preventDefault();
+    e.stopPropagation();
+  }, []);
+
   return (
     <ListItem local link={`${match.url}/some-user-id`}>
       <Grid justify="space-between" align="center" nowrap>
@@ -39,11 +58,16 @@ const ChatRow = () => {
           <Time value={Date.now()} />
         </Column>
         <Column shrink="0">
-          <ButtonTertiary forwardedRef={menu.anchorRef} onClick={menu.toggle}>
+          <ButtonTertiary forwardedRef={menu.anchorRef} onClick={toggleMenu}>
             <FaIcon icon="ellipsis-v" />
           </ButtonTertiary>
           {menu.show && (
-            <Menu size="md" anchor={menu.anchor} close={menu.close}>
+            <Menu
+              size="md"
+              anchor={menu.anchor}
+              close={menu.close}
+              onClick={preventPropagate}
+            >
               <MenuItem icon={<FaIcon icon="bars" />}>Action</MenuItem>
             </Menu>
           )}
