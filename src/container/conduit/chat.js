@@ -5,7 +5,18 @@ import {
   useRouteMatch,
   useParams,
 } from 'react-router-dom';
-import {Grid, Column, ListGroup, ListItem} from '@xorkevin/nuke';
+import {
+  Grid,
+  Column,
+  ListGroup,
+  ListItem,
+  useMenu,
+  Menu,
+  MenuItem,
+  FaIcon,
+  Time,
+} from '@xorkevin/nuke';
+import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 
 const SelectAChat = () => {
   return <div>Select a chat</div>;
@@ -17,6 +28,31 @@ const Chat = () => {
   return <div>Hello, World, chatid: {chatid}</div>;
 };
 
+const ChatRow = () => {
+  const match = useRouteMatch();
+  const menu = useMenu();
+  return (
+    <ListItem local link={`${match.url}/some-user-id`}>
+      <Grid justify="space-between" align="center" nowrap>
+        <Column>
+          <h5>Gandalf the Grey</h5>
+          <Time value={Date.now()} />
+        </Column>
+        <Column shrink="0">
+          <ButtonTertiary forwardedRef={menu.anchorRef} onClick={menu.toggle}>
+            <FaIcon icon="ellipsis-v" />
+          </ButtonTertiary>
+          {menu.show && (
+            <Menu size="md" anchor={menu.anchor} close={menu.close}>
+              <MenuItem icon={<FaIcon icon="bars" />}>Action</MenuItem>
+            </Menu>
+          )}
+        </Column>
+      </Grid>
+    </ListItem>
+  );
+};
+
 const ConduitChat = () => {
   const match = useRouteMatch();
   return (
@@ -24,7 +60,7 @@ const ConduitChat = () => {
       <Column fullWidth sm={6}>
         <h4>Direct Messages</h4>
         <ListGroup>
-          <ListItem>Gandalf the Grey</ListItem>
+          <ChatRow />
         </ListGroup>
       </Column>
       <Column fullWidth sm={18}>
