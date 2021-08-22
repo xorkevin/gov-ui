@@ -31,6 +31,7 @@ const Conduit = () => {
   const logout = useLogout();
   const {username, first_name, last_name} = useAuthValue();
   const match = useRouteMatch();
+
   return (
     <MainContent>
       <Grid>
@@ -59,6 +60,7 @@ const Conduit = () => {
                 position="right"
                 anchor={menu.anchor}
                 close={menu.close}
+                onClick={menu.close}
               >
                 <MenuHeader>Profile</MenuHeader>
                 <MenuItem

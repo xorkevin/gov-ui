@@ -83,7 +83,9 @@ const ConduitChat = () => {
     <Grid>
       <Column fullWidth sm={6}>
         <h4>Direct Messages</h4>
-        <ListGroup>
+        <ListGroup className="conduit-chat-list">
+          <ChatRow />
+          <ChatRow />
           <ChatRow />
         </ListGroup>
       </Column>

@@ -3,9 +3,21 @@ $transition-normal: 0.125s cubic-bezier(0.375, 0, 0.25, 1) !default;
 $black: #000000;
 $white: #ffffff;
 
+$color-text-dark-1: rgba($black, 0.9375) !default; // primary
+$color-text-dark-2: rgba($black, 0.75) !default; // secondary
+$color-text-dark-3: rgba($black, 0.375) !default; // disabled/hint/icons
+
+$color-text-light-1: rgba($white, 0.9375) !default; // primary
+$color-text-light-2: rgba($white, 0.75) !default; // secondary
+$color-text-light-3: rgba($white, 0.375) !default; // disabled/hint/icons
+
 $color-back-light-1: rgba($white, 0.9375) !default;
 $color-back-light-2: rgba($white, 0.625) !default;
 $color-back-light-3: rgba($white, 0.125) !default;
+
+$color-back-dark-1: rgba($black, 0.9375) !default;
+$color-back-dark-2: rgba($black, 0.625) !default;
+$color-back-dark-3: rgba($black, 0.125) !default;
 
 $color-primary: #0d47a1 !default;
 $color-primary-1: lighten($color-primary, 25%) !default;
@@ -127,6 +139,14 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.conduit-chat-list {
+  border: 1px solid $color-text-dark-3;
+}
+
+.dark .conduit-chat-list {
+  border-color: $color-text-light-3;
 }
 
 .devtools-dash-health-indicator {
