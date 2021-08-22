@@ -27,6 +27,7 @@ import {
   OrgContainer,
   AdminContainer,
   CourierContainer,
+  ConduitContainer,
   SetupContainer,
 } from '@xorkevin/gov-ui';
 
@@ -37,6 +38,7 @@ const UserC = Protected(UserContainer);
 const OrgC = Protected(OrgContainer);
 const AdminC = Protected(AdminContainer, permissionedRoles);
 const CourierC = Protected(CourierContainer);
+const ConduitC = Protected(ConduitContainer);
 
 const Foot = () => {
   return (
@@ -86,13 +88,15 @@ const Home = () => {
   );
 };
 
+const hideNavPrefixes = Object.freeze(['/oauth', '/conduit']);
+
 const App = () => {
   const ctx = useContext(GovUICtx);
   const {loggedIn} = useAuthValue();
   useRefreshAuth();
 
   const loc = useLocation();
-  const hideNav = loc.pathname.startsWith('/oauth');
+  const hideNav = hideNavPrefixes.some((i) => loc.pathname.startsWith(i));
 
   return (
     <div>
@@ -142,6 +146,10 @@ const App = () => {
                 <FaIcon icon="paper-plane" />
                 <small>Courier</small>
               </NavItem>
+              <NavItem local link="/conduit">
+                <FaIcon icon="fire" />
+                <small>Conduit</small>
+              </NavItem>
             </Fragment>
           )}
         </NavContainer>
@@ -175,6 +183,9 @@ const App = () => {
           </Route>
           <Route path="/courier">
             <CourierC />
+          </Route>
+          <Route path="/conduit">
+            <ConduitC />
           </Route>
           <Route path="/setup">
             <SetupContainer />
