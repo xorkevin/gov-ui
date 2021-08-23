@@ -4,6 +4,7 @@ import profileAPI from './apiprofile';
 import orgsAPI from './apiorgs';
 import oauthAPI from './apioauth';
 import courierAPI from './apicourier';
+import conduitAPI from './apiconduit';
 
 const user = (url = '/u') => ({
   url,
@@ -37,6 +38,11 @@ const oauth = (url = '/oauth') => ({
 const courier = (url = '/courier') => ({
   url,
   children: courierAPI,
+});
+
+const conduit = (url = '/conduit') => ({
+  url,
+  children: conduitAPI,
 });
 
 const setupz = () => ({
@@ -90,6 +96,7 @@ const GovAPI = Object.freeze({
   orgs,
   oauth,
   courier,
+  conduit,
 });
 
 export default GovAPI;

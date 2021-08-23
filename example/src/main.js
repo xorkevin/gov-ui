@@ -49,6 +49,7 @@ const API = {
   orgs: GovAPI.orgs('/org'),
   oauth: GovAPI.oauth('/oauth'),
   courier: GovAPI.courier('/courier'),
+  conduit: GovAPI.conduit('/conduit'),
 };
 
 const WELL_KNOWN = {

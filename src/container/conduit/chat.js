@@ -1,4 +1,4 @@
-import {useCallback} from 'react';
+import {useReducer, useCallback} from 'react';
 import {
   Switch,
   Route,
@@ -6,6 +6,7 @@ import {
   useRouteMatch,
   useParams,
 } from 'react-router-dom';
+import {useAuthResource} from '@xorkevin/turbine';
 import {
   Grid,
   Column,
@@ -19,6 +20,8 @@ import {
 } from '@xorkevin/nuke';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 
+const selectAPILatestChats = (api) => api.conduit.chat.latest;
+
 const SelectAChat = () => {
   return <div>Select a chat</div>;
 };
@@ -29,7 +32,7 @@ const Chat = () => {
   return <div>Hello, World, chatid: {chatid}</div>;
 };
 
-const ChatRow = () => {
+const ChatRow = ({chatid}) => {
   const match = useRouteMatch();
   const menu = useMenu();
 
@@ -51,7 +54,7 @@ const ChatRow = () => {
   }, []);
 
   return (
-    <ListItem local link={`${match.url}/some-user-id`}>
+    <ListItem local link={`${match.url}/${chatid}`}>
       <Grid justify="space-between" align="center" nowrap>
         <Column>
           <h5>Gandalf the Grey</h5>
@@ -77,16 +80,55 @@ const ChatRow = () => {
   );
 };
 
+const CHATS_LIMIT = 32;
+
+const CHATS_RESET = Symbol('CHATS_RESET');
+const CHATS_RCV = Symbol('CHATS_RCV');
+const CHATS_APPEND = Symbol('CHATS_APPEND');
+
+const ChatsReset = (chatids) => ({
+  type: CHATS_RCV,
+  chatids,
+});
+
+const chatsReducer = (state, action) => {
+  switch (action.type) {
+    case CHATS_RESET:
+      return {
+        chatids: action.chatids,
+      };
+    case CHATS_RCV: {
+      return state;
+    }
+    case CHATS_APPEND: {
+      return state;
+    }
+    default:
+      return state;
+  }
+};
+
 const ConduitChat = () => {
   const match = useRouteMatch();
+
+  const [chats, dispatchChats] = useReducer(chatsReducer, {chatids: []});
+
+  const posthook = useCallback(
+    (_status, chatids) => {
+      dispatchChats(ChatsReset(chatids));
+    },
+    [dispatchChats],
+  );
+  useAuthResource(selectAPILatestChats, ['dm', 0, CHATS_LIMIT], [], {posthook});
+
   return (
     <Grid>
       <Column fullWidth sm={6}>
         <h4>Direct Messages</h4>
         <ListGroup className="conduit-chat-list">
-          <ChatRow />
-          <ChatRow />
-          <ChatRow />
+          {chats.chatids.map((i) => (
+            <ChatRow key={i} chatid={i} />
+          ))}
         </ListGroup>
       </Column>
       <Column fullWidth sm={18}>
