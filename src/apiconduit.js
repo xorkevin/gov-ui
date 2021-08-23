@@ -12,6 +12,15 @@ export default {
         selector: (_status, data) => data.chatids,
         err: 'Unable to get latest chats',
       },
+      create: {
+        url: '',
+        method: 'POST',
+        transformer: (kind, name, theme, userids) => ({
+          body: {kind, name, theme, userids},
+        }),
+        expectdata: true,
+        err: 'Unable to create chat',
+      },
     },
   },
 };

@@ -72,6 +72,7 @@ export default {
   edit: {
     url: '',
     method: 'PUT',
+    transformer: (body) => ({body}),
     expectdata: false,
     err: 'Could not edit account',
   },

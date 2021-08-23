@@ -6,7 +6,7 @@ import {
   useRouteMatch,
   useParams,
 } from 'react-router-dom';
-import {useAuthResource} from '@xorkevin/turbine';
+import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
   Grid,
   Column,
@@ -15,12 +15,18 @@ import {
   useMenu,
   Menu,
   MenuItem,
+  Field,
+  Form,
+  useForm,
+  ButtonGroup,
   FaIcon,
   Time,
 } from '@xorkevin/nuke';
+import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 
 const selectAPILatestChats = (api) => api.conduit.chat.latest;
+const selectAPICreateChat = (api) => api.conduit.chat.create;
 
 const SelectAChat = () => {
   return <div>Select a chat</div>;
@@ -57,7 +63,7 @@ const ChatRow = ({chatid}) => {
     <ListItem local link={`${match.url}/${chatid}`}>
       <Grid justify="space-between" align="center" nowrap>
         <Column>
-          <h5>Gandalf the Grey</h5>
+          <h5>{chatid}</h5>
           <Time value={Date.now()} />
         </Column>
         <Column shrink="0">
@@ -87,7 +93,7 @@ const CHATS_RCV = Symbol('CHATS_RCV');
 const CHATS_APPEND = Symbol('CHATS_APPEND');
 
 const ChatsReset = (chatids) => ({
-  type: CHATS_RCV,
+  type: CHATS_RESET,
   chatids,
 });
 
@@ -113,18 +119,48 @@ const ConduitChat = () => {
 
   const [chats, dispatchChats] = useReducer(chatsReducer, {chatids: []});
 
-  const posthook = useCallback(
+  const posthookInit = useCallback(
     (_status, chatids) => {
       dispatchChats(ChatsReset(chatids));
     },
     [dispatchChats],
   );
-  useAuthResource(selectAPILatestChats, ['dm', 0, CHATS_LIMIT], [], {posthook});
+  useAuthResource(selectAPILatestChats, ['dm', 0, CHATS_LIMIT], [], {
+    posthook: posthookInit,
+  });
+
+  const form = useForm({
+    userids: '',
+  });
+
+  const formAssign = form.assign;
+  const posthookCreate = useCallback(() => {
+    formAssign({
+      userids: '',
+    });
+  }, [formAssign]);
+  const [create, execCreate] = useAuthCall(
+    selectAPICreateChat,
+    ['dm', '', '{}', form.state.userids.split(',')],
+    {},
+    {posthook: posthookCreate},
+  );
 
   return (
     <Grid>
       <Column fullWidth sm={6}>
         <h4>Direct Messages</h4>
+        <Form
+          formState={form.state}
+          onChange={form.update}
+          onSubmit={execCreate}
+        >
+          <Field name="userids" label="Users" nohint />
+        </Form>
+        <ButtonGroup>
+          <ButtonPrimary onClick={execCreate}>Create Chat</ButtonPrimary>
+        </ButtonGroup>
+        {create.err && <p>{create.err.message}</p>}
         <ListGroup className="conduit-chat-list">
           {chats.chatids.map((i) => (
             <ChatRow key={i} chatid={i} />
