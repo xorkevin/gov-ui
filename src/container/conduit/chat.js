@@ -47,16 +47,14 @@ const ChatRow = ({chatid}) => {
     (e) => {
       // prevent link from being clicked. anchor tag lies outside of event bubbling system.
       e.preventDefault();
-      e.stopPropagation();
       menuToggle();
     },
     [menuToggle],
   );
 
-  const preventPropagate = useCallback((e) => {
+  const preventDefault = useCallback((e) => {
     // prevent link from being clicked. anchor tag lies outside of event bubbling system.
     e.preventDefault();
-    e.stopPropagation();
   }, []);
 
   return (
@@ -75,7 +73,7 @@ const ChatRow = ({chatid}) => {
               size="md"
               anchor={menu.anchor}
               close={menu.close}
-              onClick={preventPropagate}
+              onClick={preventDefault}
             >
               <MenuItem icon={<FaIcon icon="bars" />}>Action</MenuItem>
             </Menu>
