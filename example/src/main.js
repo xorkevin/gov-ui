@@ -11,8 +11,9 @@ import {GovAuthAPI, AuthMiddleware} from '@xorkevin/turbine';
 import {
   ComposeMiddleware,
   DarkModeMiddleware,
-  SnackbarMiddleware,
+  ModalMiddleware,
   PopoverMiddleware,
+  SnackbarMiddleware,
   MainContent,
   Section,
   Container,
@@ -112,10 +113,13 @@ const Middleware = ComposeMiddleware(
   apiMiddleware,
   authMiddleware,
   DarkModeMiddleware(),
-  SnackbarMiddleware(),
+  ModalMiddleware({
+    root: document.getElementById('popover-portal'),
+  }),
   PopoverMiddleware({
     root: document.getElementById('popover-portal'),
   }),
+  SnackbarMiddleware(),
   GovUIMiddleware({
     mainFallbackView: MainFallbackView,
     fallbackView: FallbackView,

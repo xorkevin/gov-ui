@@ -268,6 +268,16 @@ export default {
     selector: (_status, data) => data && data.users,
     err: 'Unable to get user info',
   },
+  search: {
+    url: '/search',
+    method: 'GET',
+    transformer: (prefix, amount) => ({
+      query: {prefix, amount},
+    }),
+    expectdata: true,
+    selector: (_status, data) => data && data.users,
+    err: 'Unable to get users',
+  },
   role: {
     url: '/role/{0}',
     children: {

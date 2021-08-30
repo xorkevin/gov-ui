@@ -1,13 +1,14 @@
 import {Fragment, useState, useCallback, useMemo, useContext} from 'react';
-import {useResource, selectAPINull} from '@xorkevin/substation';
+import {useAPI, useResource, selectAPINull} from '@xorkevin/substation';
 import {AuthCtx, useAuthValue, useAuthCall} from '@xorkevin/turbine';
 import {
   Grid,
   Column,
-  Field,
+  FieldDynSuggest,
   FieldMultiSelect,
   Form,
   useForm,
+  useFormSearch,
   SnackbarSurface,
   useSnackbarView,
   ButtonGroup,
@@ -20,8 +21,11 @@ import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 
 const modRegex = /^mod\..+/;
 
+const USERS_LIMIT = 8;
+
 const selectAPIUser = (api) => api.u.user.name;
 const selectAPIEditRank = (api) => api.u.user.id.edit.rank;
+const selectAPISearch = (api) => api.u.user.search;
 
 const UserSearch = ({setUsername, err}) => {
   const form = useForm({
@@ -33,11 +37,31 @@ const UserSearch = ({setUsername, err}) => {
     setUsername(formState.username);
   }, [formState, setUsername]);
 
+  const apiSearch = useAPI(selectAPISearch);
+  const searchUsers = useCallback(
+    async (search) => {
+      const [data, status, err] = await apiSearch(search, USERS_LIMIT);
+      if (err || status < 200 || status >= 300 || !Array.isArray(data)) {
+        return [];
+      }
+      return data.map((i) => i.username);
+    },
+    [apiSearch],
+  );
+  const userSuggest = useFormSearch(searchUsers, 256);
+
   return (
     <Grid>
       <Column fullWidth md={16}>
         <Form formState={form.state} onChange={form.update} onSubmit={search}>
-          <Field name="username" label="Username" fullWidth />
+          <FieldDynSuggest
+            name="username"
+            label="Username"
+            onSearch={userSuggest.setSearch}
+            options={userSuggest.opts}
+            nohint
+            fullWidth
+          />
         </Form>
         <ButtonGroup>
           <ButtonPrimary onClick={search}>Search</ButtonPrimary>
