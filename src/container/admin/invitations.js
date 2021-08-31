@@ -164,7 +164,12 @@ const Invitations = () => {
       <Grid>
         <Column fullWidth md={24}>
           <Form formState={form.state} onChange={form.update}>
-            <FieldSearchSelect name="role" options={roleOpts} label="Role" />
+            <FieldSearchSelect
+              name="role"
+              options={roleOpts}
+              label="Role"
+              nohint
+            />
           </Form>
           <ListGroup>
             {invitations.data.map((i) => (

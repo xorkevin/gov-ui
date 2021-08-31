@@ -72,9 +72,9 @@ const UserSearch = ({setUsername, err}) => {
   );
 };
 
-const UserDetails = ({user, reexecute, back}) => {
+const UserDetails = ({user, back}) => {
   const snackRolesUpdate = useSnackbarView(
-    <SnackbarSurface>&#x2713; Roles updated</SnackbarSurface>,
+    <SnackbarSurface>&#x2713; Role invitations sent</SnackbarSurface>,
   );
 
   const form = useForm({
@@ -89,14 +89,10 @@ const UserDetails = ({user, reexecute, back}) => {
       remove: [],
     });
   }, [formAssign]);
-  const posthook = useCallback(
-    (_status, _data, opts) => {
-      clearForm();
-      reexecute(opts);
-      snackRolesUpdate();
-    },
-    [snackRolesUpdate, reexecute, clearForm],
-  );
+  const posthook = useCallback(() => {
+    clearForm();
+    snackRolesUpdate();
+  }, [snackRolesUpdate, clearForm]);
   const [edit, execEdit] = useAuthCall(
     selectAPIEditRank,
     [user.data.userid, form.state.add, form.state.remove],
@@ -182,7 +178,7 @@ const Users = () => {
 
   const hasUsername = username.length > 0;
 
-  const [user, reexecute] = useResource(
+  const [user, _execUser] = useResource(
     hasUsername ? selectAPIUser : selectAPINull,
     [username],
     {
@@ -202,9 +198,7 @@ const Users = () => {
       <h3>Manage Roles</h3>
       <hr />
       {!displayUser && <UserSearch setUsername={setUsername} err={user.err} />}
-      {displayUser && (
-        <UserDetails user={user} reexecute={reexecute} back={back} />
-      )}
+      {displayUser && <UserDetails user={user} back={back} />}
     </div>
   );
 };

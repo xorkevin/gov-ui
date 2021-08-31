@@ -1,12 +1,13 @@
-import {Fragment, useState, useCallback, useMemo} from 'react';
+import {Fragment, useCallback, useMemo} from 'react';
 import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {useURL} from '@xorkevin/substation';
 import {
-  Container,
   Grid,
   Column,
   ListGroup,
   ListItem,
+  ModalSurface,
+  useModal,
   useMenu,
   Menu,
   MenuItem,
@@ -38,11 +39,6 @@ const selectAPIDelete = (api) => api.oauth.app.id.del;
 const selectAPIImage = (api) => api.oauth.app.id.image;
 const selectAPIUpdateImage = (api) => api.oauth.app.id.edit.image;
 
-const MODE_BASE = 0;
-const MODE_EDIT = 1;
-const MODE_EDIT_IMAGE = 2;
-const MODE_ROTATE = 3;
-
 const OAUTHAPP_MESSAGE = (
   <p>
     The secret authenticates the OAuth App to allow it to retrieve an access
@@ -51,6 +47,103 @@ const OAUTHAPP_MESSAGE = (
     again.
   </p>
 );
+
+const EditApp = ({
+  clientid,
+  name,
+  url,
+  redirect_uri,
+  posthookUpd,
+  errhook,
+  close,
+}) => {
+  const form = useForm({
+    name,
+    url,
+    redirect_uri,
+  });
+
+  const updateSuccess = useCallback(
+    (status, data, opts) => {
+      close();
+      posthookUpd(status, data, opts);
+    },
+    [close, posthookUpd],
+  );
+  const [_updateState, execUpdate] = useAuthCall(
+    selectAPIUpdate,
+    [clientid, form.state],
+    {},
+    {posthook: updateSuccess, errhook},
+  );
+
+  return (
+    <Fragment>
+      <h4>Edit {name} Client</h4>
+      <h5>Client ID</h5>
+      <code>{clientid}</code>
+      <Form formState={form.state} onChange={form.update} onSubmit={execUpdate}>
+        <Field name="name" label="Name" nohint fullWidth />
+        <Field name="url" label="URL" hint="app url" fullWidth />
+        <Field
+          name="redirect_uri"
+          label="Redirect URI"
+          hint="return uri after authorization"
+          fullWidth
+        />
+      </Form>
+      <ButtonGroup>
+        <ButtonTertiary onClick={close}>Cancel</ButtonTertiary>
+        <ButtonPrimary onClick={execUpdate}>Update</ButtonPrimary>
+      </ButtonGroup>
+    </Fragment>
+  );
+};
+
+const EditImage = ({clientid, name, posthookUpdImage, errhook, close}) => {
+  const form = useForm({
+    image: undefined,
+  });
+
+  const updateImageSuccess = useCallback(
+    (status, data, opts) => {
+      close();
+      posthookUpdImage(status, data, opts);
+    },
+    [close, posthookUpdImage],
+  );
+  const [_editImage, execEditImage] = useAuthCall(
+    selectAPIUpdateImage,
+    [clientid, form.state.image],
+    {},
+    {posthook: updateImageSuccess, errhook},
+  );
+
+  return (
+    <Fragment>
+      <h4>Edit {name} Client Logo</h4>
+      <Form
+        formState={form.state}
+        onChange={form.update}
+        onSubmit={execEditImage}
+      >
+        <FieldFile
+          name="image"
+          hint="Choose an image"
+          accept="image/jpeg, image/png"
+          onChange={form.update}
+          fullWidth
+        >
+          <ButtonTertiary>Choose</ButtonTertiary>
+        </FieldFile>
+      </Form>
+      <ButtonGroup>
+        <ButtonTertiary onClick={close}>Cancel</ButtonTertiary>
+        <ButtonPrimary onClick={execEditImage}>Upload</ButtonPrimary>
+      </ButtonGroup>
+    </Fragment>
+  );
+};
 
 const AppRow = ({
   clientid,
@@ -72,62 +165,15 @@ const AppRow = ({
     {posthook: posthookDel, errhook},
   );
 
-  const form = useForm({
-    name: '',
-    url: '',
-    redirect_uri: '',
-  });
-  const [mode, setMode] = useState(MODE_BASE);
-  const updateSuccess = useCallback(
-    (status, data, opts) => {
-      setMode(MODE_BASE);
-      posthookUpd(status, data, opts);
-    },
-    [setMode, posthookUpd],
-  );
-  const [_updateState, execUpdate] = useAuthCall(
-    selectAPIUpdate,
-    [clientid, form.state],
-    {},
-    {posthook: updateSuccess, errhook},
-  );
+  const modalEdit = useModal();
+  const modalImage = useModal();
+  const modalRotate = useModal();
 
-  const imageform = useForm({
-    image: undefined,
-  });
-  const updateImageSuccess = useCallback(
-    (status, data, opts) => {
-      setMode(MODE_BASE);
-      posthookUpdImage(status, data, opts);
-    },
-    [setMode, posthookUpdImage],
-  );
-  const [_editImage, execEditImage] = useAuthCall(
-    selectAPIUpdateImage,
-    [clientid, imageform.state.image],
-    {},
-    {posthook: updateImageSuccess, errhook},
-  );
-
-  const formAssign = form.assign;
-  const beginEdit = useCallback(() => {
-    formAssign({
-      name,
-      url,
-      redirect_uri,
-    });
-    setMode(MODE_EDIT);
-  }, [name, url, redirect_uri, formAssign, setMode]);
-
-  const beginEditImage = useCallback(() => {
-    setMode(MODE_EDIT_IMAGE);
-  }, [setMode]);
-
-  const cancelEdit = useCallback(() => setMode(MODE_BASE), [setMode]);
-
+  const modalRotateToggle = modalRotate.toggle;
   const posthookRotate = useCallback(() => {
-    setMode(MODE_ROTATE);
-  }, [setMode]);
+    modalRotateToggle();
+    posthookUpd();
+  }, [modalRotateToggle, posthookUpd]);
   const [rotate, execRotate] = useAuthCall(
     selectAPIRotate,
     [clientid],
@@ -146,141 +192,207 @@ const AppRow = ({
 
   return (
     <ListItem>
-      {mode === MODE_BASE && (
-        <Grid justify="space-between" align="center" nowrap>
-          <Column grow="1">
-            <Grid justify="center" align="center">
-              <Column fullWidth sm={6}>
-                {logo && (
-                  <Img
-                    className="oauth-app-logo"
-                    src={imageURL}
-                    preview={logo}
-                    ratio={1}
-                  />
-                )}
-                <h5 className="text-center">{name}</h5>
-              </Column>
-              <Column fullWidth sm={18}>
+      <Grid justify="space-between" align="center" nowrap>
+        <Column grow="1">
+          <Grid justify="center" align="center">
+            <Column fullWidth sm={6}>
+              {logo && (
+                <Img
+                  className="oauth-app-logo"
+                  src={imageURL}
+                  preview={logo}
+                  ratio={1}
+                />
+              )}
+              <h5 className="text-center">{name}</h5>
+            </Column>
+            <Column fullWidth sm={18}>
+              <div>
+                App URL:{' '}
+                <Anchor ext href={url}>
+                  {url}
+                </Anchor>
+                <div>Redirect URI: {redirect_uri}</div>
                 <div>
-                  App URL:{' '}
-                  <Anchor ext href={url}>
-                    {url}
-                  </Anchor>
-                  <div>Redirect URI: {redirect_uri}</div>
-                  <div>
-                    Client ID: <code>{clientid}</code>
-                  </div>
-                  <div>
-                    <FaIcon icon="key" />
-                    <Tooltip tooltip="For security, the key cannot be shown">
-                      &bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;
-                    </Tooltip>
-                  </div>
+                  Client ID: <code>{clientid}</code>
                 </div>
-                <p>
-                  Last Modified <Time value={time * 1000} />
-                  <br />
-                  <small>Added {createdAt}</small>
-                </p>
-              </Column>
-            </Grid>
-          </Column>
-          <Column shrink="0">
-            <ButtonTertiary forwardedRef={menu.anchorRef} onClick={menu.toggle}>
-              <FaIcon icon="ellipsis-v" />
-            </ButtonTertiary>
-            {menu.show && (
-              <Menu size="md" anchor={menu.anchor} close={menu.close}>
-                <MenuItem onClick={beginEdit} icon={<FaIcon icon="pencil" />}>
-                  Edit
-                </MenuItem>
-                <MenuItem
-                  onClick={beginEditImage}
-                  icon={<FaIcon icon="picture-o" />}
-                >
-                  Edit Logo
-                </MenuItem>
-                <MenuItem onClick={execRotate} icon={<FaIcon icon="repeat" />}>
-                  Rotate key
-                </MenuItem>
-                <MenuItem onClick={execDelete} icon={<FaIcon icon="trash" />}>
-                  Delete
-                </MenuItem>
-              </Menu>
-            )}
-          </Column>
-        </Grid>
-      )}
-      {mode === MODE_EDIT && (
-        <Container padded>
-          <h4>Edit Client</h4>
-          <h5>Client ID</h5>
-          <code>{clientid}</code>
+                <div>
+                  <FaIcon icon="key" />
+                  <Tooltip tooltip="For security, the key cannot be shown">
+                    &bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;
+                  </Tooltip>
+                </div>
+              </div>
+              <p>
+                Last Modified <Time value={time * 1000} />
+                <br />
+                <small>Added {createdAt}</small>
+              </p>
+            </Column>
+          </Grid>
+        </Column>
+        <Column shrink="0">
+          <ButtonTertiary forwardedRef={menu.anchorRef} onClick={menu.toggle}>
+            <FaIcon icon="ellipsis-v" />
+          </ButtonTertiary>
+          {menu.show && (
+            <Menu
+              size="md"
+              anchor={menu.anchor}
+              close={menu.close}
+              onClick={menu.close}
+            >
+              <MenuItem
+                forwardedRef={modalEdit.anchorRef}
+                onClick={modalEdit.toggle}
+                icon={<FaIcon icon="pencil" />}
+              >
+                Edit
+              </MenuItem>
+              <MenuItem
+                forwardedRef={modalImage.anchorRef}
+                onClick={modalImage.toggle}
+                icon={<FaIcon icon="picture-o" />}
+              >
+                Edit Logo
+              </MenuItem>
+              <MenuItem
+                forwardedRef={modalRotate.anchorRef}
+                onClick={execRotate}
+                icon={<FaIcon icon="repeat" />}
+              >
+                Rotate key
+              </MenuItem>
+              <MenuItem onClick={execDelete} icon={<FaIcon icon="trash" />}>
+                Delete
+              </MenuItem>
+            </Menu>
+          )}
+          {modalEdit.show && (
+            <ModalSurface
+              size="md"
+              anchor={modalEdit.anchor}
+              close={modalEdit.close}
+            >
+              <EditApp
+                clientid={clientid}
+                name={name}
+                url={url}
+                redirect_uri={redirect_uri}
+                posthookUpd={posthookUpd}
+                errhook={errhook}
+                close={modalEdit.close}
+              />
+            </ModalSurface>
+          )}
+          {modalImage.show && (
+            <ModalSurface
+              size="md"
+              anchor={modalImage.anchor}
+              close={modalImage.close}
+            >
+              <EditImage
+                clientid={clientid}
+                name={name}
+                posthookUpdImage={posthookUpdImage}
+                errhook={errhook}
+                close={modalImage.close}
+              />
+            </ModalSurface>
+          )}
+          {modalRotate.show && (
+            <ModalSurface
+              size="md"
+              anchor={modalRotate.anchor}
+              close={modalRotate.close}
+            >
+              {rotate.success && (
+                <div>
+                  <h4>{name} Client Secret Rotated</h4>
+                  {OAUTHAPP_MESSAGE}
+                  <div>
+                    <h5>Client ID</h5>
+                    <code>{rotate.data.client_id}</code>
+                    <h5>Secret</h5>
+                    <code>{rotate.data.key}</code>
+                  </div>
+                  <ButtonGroup>
+                    <ButtonTertiary onClick={modalRotate.close}>
+                      Close
+                    </ButtonTertiary>
+                  </ButtonGroup>
+                </div>
+              )}
+            </ModalSurface>
+          )}
+        </Column>
+      </Grid>
+    </ListItem>
+  );
+};
+
+const RegisterApp = ({reexecute, close}) => {
+  const form = useForm({
+    name: '',
+    url: '',
+    redirect_uri: '',
+  });
+
+  const posthookCreate = useCallback(
+    (_status, _data, opts) => {
+      reexecute(opts);
+    },
+    [reexecute],
+  );
+  const [create, execCreate] = useAuthCall(
+    selectAPICreate,
+    [form.state],
+    {},
+    {posthook: posthookCreate},
+  );
+
+  return (
+    <Fragment>
+      {!create.success && (
+        <Fragment>
+          <h4>Register OAuth app</h4>
           <Form
             formState={form.state}
             onChange={form.update}
-            onSubmit={execUpdate}
+            onSubmit={execCreate}
           >
-            <Field name="name" label="Name" nohint />
-            <Field name="url" label="URL" hint="app url" />
+            <Field name="name" label="Name" nohint fullWidth />
+            <Field name="url" label="URL" hint="app url" fullWidth />
             <Field
               name="redirect_uri"
               label="Redirect URI"
               hint="return uri after authorization"
+              fullWidth
             />
           </Form>
           <ButtonGroup>
-            <ButtonTertiary onClick={cancelEdit}>Cancel</ButtonTertiary>
-            <ButtonPrimary onClick={execUpdate}>Update</ButtonPrimary>
+            <ButtonTertiary onClick={close}>Close</ButtonTertiary>
+            <ButtonPrimary onClick={execCreate}>Create</ButtonPrimary>
           </ButtonGroup>
-        </Container>
+        </Fragment>
       )}
-      {mode === MODE_EDIT_IMAGE && (
-        <Container padded>
-          <h4>Edit Logo</h4>
-          <h5>{name}</h5>
-          <Form
-            formState={imageform.state}
-            onChange={imageform.update}
-            onSubmit={execEditImage}
-          >
-            <FieldFile
-              name="image"
-              hint="Choose an image"
-              accept="image/jpeg, image/png"
-              onChange={imageform.update}
-              fullWidth
-            >
-              <ButtonTertiary>Choose</ButtonTertiary>
-            </FieldFile>
-          </Form>
+      {create.err && <p>{create.err.message}</p>}
+      {create.success && (
+        <Fragment>
+          <h4>Success! OAuth App Registered</h4>
+          {OAUTHAPP_MESSAGE}
+          <div>
+            <h5>Client ID</h5>
+            <code>{create.data.client_id}</code>
+            <h5>Secret</h5>
+            <code>{create.data.key}</code>
+          </div>
           <ButtonGroup>
-            <ButtonTertiary onClick={cancelEdit}>Cancel</ButtonTertiary>
-            <ButtonPrimary onClick={execEditImage}>Upload</ButtonPrimary>
+            <ButtonTertiary onClick={close}>Close</ButtonTertiary>
           </ButtonGroup>
-        </Container>
+        </Fragment>
       )}
-      {mode === MODE_ROTATE && (
-        <Container padded>
-          {rotate.success && (
-            <div>
-              <h4>Client Secret Rotated</h4>
-              {OAUTHAPP_MESSAGE}
-              <div>
-                <h5>Client ID</h5>
-                <code>{rotate.data.client_id}</code>
-                <h5>Secret</h5>
-                <code>{rotate.data.key}</code>
-              </div>
-              <ButtonGroup>
-                <ButtonTertiary onClick={cancelEdit}>Close</ButtonTertiary>
-              </ButtonGroup>
-            </div>
-          )}
-        </Container>
-      )}
-    </ListItem>
+    </Fragment>
   );
 };
 
@@ -320,31 +432,6 @@ const OAuthApps = () => {
     {posthook},
   );
 
-  const form = useForm({
-    name: '',
-    url: '',
-    redirect_uri: '',
-  });
-
-  const formAssign = form.assign;
-  const posthookCreate = useCallback(
-    (_status, _data, opts) => {
-      formAssign({
-        name: '',
-        url: '',
-        redirect_uri: '',
-      });
-      reexecute(opts);
-    },
-    [reexecute, formAssign],
-  );
-  const [create, execCreate] = useAuthCall(
-    selectAPICreate,
-    [form.state],
-    {},
-    {posthook: posthookCreate},
-  );
-
   const posthookDelete = useCallback(
     (_status, _data, opts) => {
       displaySnackbarDel();
@@ -361,93 +448,71 @@ const OAuthApps = () => {
     [reexecute, displaySnackbarUpd],
   );
 
+  const modal = useModal();
+
   return (
     <div>
-      <h3>OAuth apps</h3>
+      <Grid justify="space-between" align="flex-end">
+        <Column grow="1">
+          <h3>OAuth apps</h3>
+        </Column>
+        <Column>
+          <ButtonGroup>
+            <ButtonPrimary
+              forwardedRef={modal.anchorRef}
+              onClick={modal.toggle}
+            >
+              Add
+            </ButtonPrimary>
+          </ButtonGroup>
+          {modal.show && (
+            <ModalSurface size="md" anchor={modal.anchor} close={modal.close}>
+              <RegisterApp reexecute={reexecute} close={modal.close} />
+            </ModalSurface>
+          )}
+        </Column>
+      </Grid>
       <hr />
       {apps.err && <p>{apps.err.message}</p>}
       {apps.success && (
         <Fragment>
-          <Grid>
-            <Column fullWidth md={16}>
-              <ListGroup>
-                {apps.data.map(
-                  ({
-                    client_id,
-                    name,
-                    url,
-                    redirect_uri,
-                    logo,
-                    time,
-                    creation_time,
-                  }) => (
-                    <AppRow
-                      key={client_id}
-                      clientid={client_id}
-                      name={name}
-                      url={url}
-                      redirect_uri={redirect_uri}
-                      logo={logo}
-                      time={time}
-                      creation_time={creation_time}
-                      posthookDel={posthookDelete}
-                      posthookUpd={posthookUpdate}
-                      posthookUpdImage={snackImageUpdate}
-                      errhook={displayErrSnack}
-                    />
-                  ),
-                )}
-              </ListGroup>
-              <ButtonGroup>
-                <ButtonTertiary
-                  disabled={paginate.atFirst}
-                  onClick={paginate.prev}
-                >
-                  prev
-                </ButtonTertiary>
-                {paginate.page}
-                <ButtonTertiary
-                  disabled={paginate.atLast}
-                  onClick={paginate.next}
-                >
-                  next
-                </ButtonTertiary>
-              </ButtonGroup>
-            </Column>
-            <Column fullWidth md={8}>
-              <h4>Register OAuth app</h4>
-              <Form
-                formState={form.state}
-                onChange={form.update}
-                onSubmit={execCreate}
-              >
-                <Field name="name" label="Name" nohint fullWidth />
-                <Field name="url" label="URL" hint="app url" fullWidth />
-                <Field
-                  name="redirect_uri"
-                  label="Redirect URI"
-                  hint="return uri after authorization"
-                  fullWidth
+          <ListGroup>
+            {apps.data.map(
+              ({
+                client_id,
+                name,
+                url,
+                redirect_uri,
+                logo,
+                time,
+                creation_time,
+              }) => (
+                <AppRow
+                  key={client_id}
+                  clientid={client_id}
+                  name={name}
+                  url={url}
+                  redirect_uri={redirect_uri}
+                  logo={logo}
+                  time={time}
+                  creation_time={creation_time}
+                  posthookDel={posthookDelete}
+                  posthookUpd={posthookUpdate}
+                  posthookUpdImage={snackImageUpdate}
+                  errhook={displayErrSnack}
                 />
-              </Form>
-              <ButtonGroup>
-                <ButtonPrimary onClick={execCreate}>Create</ButtonPrimary>
-              </ButtonGroup>
-              {create.err && <p>{create.err.message}</p>}
-              {create.success && (
-                <div>
-                  <h4>Success! OAuth App Registered</h4>
-                  {OAUTHAPP_MESSAGE}
-                  <div>
-                    <h5>Client ID</h5>
-                    <code>{create.data.client_id}</code>
-                    <h5>Secret</h5>
-                    <code>{create.data.key}</code>
-                  </div>
-                </div>
-              )}
-            </Column>
-          </Grid>
+              ),
+            )}
+          </ListGroup>
+          <ButtonGroup>
+            <ButtonTertiary disabled={paginate.atFirst} onClick={paginate.prev}>
+              prev
+            </ButtonTertiary>
+            {paginate.page}
+            <ButtonTertiary disabled={paginate.atLast} onClick={paginate.next}>
+              next
+            </ButtonTertiary>
+          </ButtonGroup>
         </Fragment>
       )}
     </div>
