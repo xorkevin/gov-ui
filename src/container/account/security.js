@@ -266,19 +266,13 @@ const Account2FAConfirm = ({addRes, close}) => {
     {posthook: posthookConfirm},
   );
 
-  const [_user, refreshUser] = useRefreshUser();
-  const finishConfirm = useCallback(() => {
-    refreshUser();
-    close();
-  }, [refreshUser, close]);
-
   if (confirmOTP.success) {
     return (
       <Fragment>
         <h4>TOTP Authenticator App</h4>
         <p>2FA with TOTP is enabled.</p>
         <ButtonGroup>
-          <ButtonSecondary onClick={finishConfirm}>Finish</ButtonSecondary>
+          <ButtonSecondary onClick={close}>Finish</ButtonSecondary>
         </ButtonGroup>
       </Fragment>
     );
@@ -421,19 +415,13 @@ const Account2FARm = ({close}) => {
     {posthook},
   );
 
-  const [_user, refreshUser] = useRefreshUser();
-  const finishConfirm = useCallback(() => {
-    refreshUser();
-    close();
-  }, [refreshUser, close]);
-
   if (remove.success) {
     return (
       <Fragment>
         <h4>TOTP Authenticator App</h4>
         <p>2FA with TOTP is disabled.</p>
         <ButtonGroup>
-          <ButtonSecondary onClick={finishConfirm}>Finish</ButtonSecondary>
+          <ButtonSecondary onClick={close}>Finish</ButtonSecondary>
         </ButtonGroup>
       </Fragment>
     );
@@ -483,8 +471,15 @@ const Account2FARm = ({close}) => {
 
 const Account2FA = () => {
   const {otp_enabled} = useAuthValue();
+  const [_user, refreshUser] = useRefreshUser();
 
   const modal = useModal();
+  const modalClose = modal.close;
+
+  const closeRefresh = useCallback(() => {
+    modalClose();
+    refreshUser();
+  }, [modalClose, refreshUser]);
 
   return (
     <Fragment>
@@ -513,9 +508,9 @@ const Account2FA = () => {
                     close={modal.close}
                   >
                     {otp_enabled ? (
-                      <Account2FARm close={modal.close} />
+                      <Account2FARm close={closeRefresh} />
                     ) : (
-                      <Account2FAAdd close={modal.close} />
+                      <Account2FAAdd close={closeRefresh} />
                     )}
                   </ModalSurface>
                 )}
