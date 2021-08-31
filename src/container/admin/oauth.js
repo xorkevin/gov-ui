@@ -448,6 +448,14 @@ const OAuthApps = () => {
     [reexecute, displaySnackbarUpd],
   );
 
+  const posthookUpdateImage = useCallback(
+    (_status, _data, opts) => {
+      snackImageUpdate();
+      reexecute(opts);
+    },
+    [reexecute, snackImageUpdate],
+  );
+
   const modal = useModal();
 
   return (
@@ -498,7 +506,7 @@ const OAuthApps = () => {
                   creation_time={creation_time}
                   posthookDel={posthookDelete}
                   posthookUpd={posthookUpdate}
-                  posthookUpdImage={snackImageUpdate}
+                  posthookUpdImage={posthookUpdateImage}
                   errhook={displayErrSnack}
                 />
               ),
