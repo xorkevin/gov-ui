@@ -7,9 +7,10 @@ import {
   useRefreshUser,
 } from '@xorkevin/turbine';
 import {
-  Container,
   Grid,
   Column,
+  ModalSurface,
+  useModal,
   Field,
   FieldSelect,
   Form,
@@ -244,7 +245,7 @@ const URIHider = ({uri}) => {
   );
 };
 
-const Account2FAConfirm = ({addRes, hideOTPForm}) => {
+const Account2FAConfirm = ({addRes, close}) => {
   const form = useForm({
     code: '',
   });
@@ -268,12 +269,13 @@ const Account2FAConfirm = ({addRes, hideOTPForm}) => {
   const [_user, refreshUser] = useRefreshUser();
   const finishConfirm = useCallback(() => {
     refreshUser();
-    hideOTPForm();
-  }, [refreshUser, hideOTPForm]);
+    close();
+  }, [refreshUser, close]);
 
   if (confirmOTP.success) {
     return (
       <Fragment>
+        <h4>TOTP Authenticator App</h4>
         <p>2FA with TOTP is enabled.</p>
         <ButtonGroup>
           <ButtonSecondary onClick={finishConfirm}>Finish</ButtonSecondary>
@@ -284,6 +286,7 @@ const Account2FAConfirm = ({addRes, hideOTPForm}) => {
 
   return (
     <Fragment>
+      <h4>TOTP Authenticator App</h4>
       <p>
         Store the following code in a safe and secure place as you will be able
         to use this code to log in to your account if you lose access to your
@@ -313,7 +316,7 @@ const Account2FAConfirm = ({addRes, hideOTPForm}) => {
   );
 };
 
-const Account2FAAdd = ({hideOTPForm}) => {
+const Account2FAAdd = ({close}) => {
   const form = useForm({
     alg: 'SHA1',
     digits: '6',
@@ -344,12 +347,21 @@ const Account2FAAdd = ({hideOTPForm}) => {
   );
 
   if (add.success) {
-    return <Account2FAConfirm addRes={add.data} hideOTPForm={hideOTPForm} />;
+    return <Account2FAConfirm addRes={add.data} close={close} />;
   }
 
   return (
     <Fragment>
+      <h4>TOTP Authenticator App</h4>
       <Form formState={form.state} onChange={form.update} onSubmit={execAdd}>
+        <Field
+          name="password"
+          type="password"
+          label="Password"
+          nohint
+          fullWidth
+          autoComplete="current-password"
+        />
         <FieldSelect
           name="alg"
           label="Hash algorithm"
@@ -364,17 +376,9 @@ const Account2FAAdd = ({hideOTPForm}) => {
           nohint
           fullWidth
         />
-        <Field
-          name="password"
-          type="password"
-          label="Password"
-          nohint
-          fullWidth
-          autoComplete="current-password"
-        />
       </Form>
       <ButtonGroup>
-        <ButtonTertiary onClick={hideOTPForm}>Cancel</ButtonTertiary>
+        <ButtonTertiary onClick={close}>Cancel</ButtonTertiary>
         <ButtonPrimary onClick={execAdd}>Enable</ButtonPrimary>
       </ButtonGroup>
       {add.err && <p>{add.err.message}</p>}
@@ -382,7 +386,7 @@ const Account2FAAdd = ({hideOTPForm}) => {
   );
 };
 
-const Account2FARm = ({hideOTPForm}) => {
+const Account2FARm = ({close}) => {
   const form = useForm({
     code: '',
     backup: '',
@@ -420,12 +424,13 @@ const Account2FARm = ({hideOTPForm}) => {
   const [_user, refreshUser] = useRefreshUser();
   const finishConfirm = useCallback(() => {
     refreshUser();
-    hideOTPForm();
-  }, [refreshUser, hideOTPForm]);
+    close();
+  }, [refreshUser, close]);
 
   if (remove.success) {
     return (
       <Fragment>
+        <h4>TOTP Authenticator App</h4>
         <p>2FA with TOTP is disabled.</p>
         <ButtonGroup>
           <ButtonSecondary onClick={finishConfirm}>Finish</ButtonSecondary>
@@ -436,7 +441,16 @@ const Account2FARm = ({hideOTPForm}) => {
 
   return (
     <Fragment>
+      <h4>TOTP Authenticator App</h4>
       <Form formState={form.state} onChange={form.update} onSubmit={execRemove}>
+        <Field
+          name="password"
+          type="password"
+          label="Password"
+          nohint
+          fullWidth
+          autoComplete="current-password"
+        />
         {displayBackup ? (
           <Field
             name="backup"
@@ -454,17 +468,9 @@ const Account2FARm = ({hideOTPForm}) => {
             inputMode="numeric"
           />
         )}
-        <Field
-          name="password"
-          type="password"
-          label="Password"
-          nohint
-          fullWidth
-          autoComplete="current-password"
-        />
       </Form>
       <ButtonGroup>
-        <ButtonTertiary onClick={hideOTPForm}>Cancel</ButtonTertiary>
+        <ButtonTertiary onClick={close}>Cancel</ButtonTertiary>
         <ButtonTertiary onClick={toggleBackup}>
           {displayBackup ? 'Use regular code' : 'Use backup code'}
         </ButtonTertiary>
@@ -478,13 +484,7 @@ const Account2FARm = ({hideOTPForm}) => {
 const Account2FA = () => {
   const {otp_enabled} = useAuthValue();
 
-  const [displayOTPForm, setDisplayOTPForm] = useState(false);
-  const showOTPForm = useCallback(() => {
-    setDisplayOTPForm(true);
-  }, [setDisplayOTPForm]);
-  const hideOTPForm = useCallback(() => {
-    setDisplayOTPForm(false);
-  }, [setDisplayOTPForm]);
+  const modal = useModal();
 
   return (
     <Fragment>
@@ -494,27 +494,32 @@ const Account2FA = () => {
         <Column fullWidth md={16}>
           <ListGroup>
             <ListItem>
-              {displayOTPForm ? (
-                <Container padded>
+              <Grid justify="space-between" align="center" nowrap>
+                <Column>
                   <h5>TOTP Authenticator App</h5>
-                  {otp_enabled ? (
-                    <Account2FARm hideOTPForm={hideOTPForm} />
-                  ) : (
-                    <Account2FAAdd hideOTPForm={hideOTPForm} />
-                  )}
-                </Container>
-              ) : (
-                <Grid justify="space-between" align="center" nowrap>
-                  <Column>
-                    <h5>TOTP Authenticator App</h5>
-                  </Column>
-                  <Column shrink="0">
-                    <ButtonTertiary onClick={showOTPForm}>
-                      {otp_enabled ? 'Remove' : 'Add'}
-                    </ButtonTertiary>
-                  </Column>
-                </Grid>
-              )}
+                </Column>
+                <Column shrink="0">
+                  <ButtonTertiary
+                    forwardedRef={modal.anchorRef}
+                    onClick={modal.toggle}
+                  >
+                    {otp_enabled ? 'Remove' : 'Add'}
+                  </ButtonTertiary>
+                </Column>
+                {modal.show && (
+                  <ModalSurface
+                    size="md"
+                    anchor={modal.anchor}
+                    close={modal.close}
+                  >
+                    {otp_enabled ? (
+                      <Account2FARm close={modal.close} />
+                    ) : (
+                      <Account2FAAdd close={modal.close} />
+                    )}
+                  </ModalSurface>
+                )}
+              </Grid>
             </ListItem>
           </ListGroup>
         </Column>
