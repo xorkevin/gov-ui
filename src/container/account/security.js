@@ -250,20 +250,10 @@ const Account2FAConfirm = ({addRes, close}) => {
     code: '',
   });
 
-  const formAssign = form.assign;
-  const posthookConfirm = useCallback(
-    (_status, _data) => {
-      formAssign({
-        code: '',
-      });
-    },
-    [formAssign],
-  );
   const [confirmOTP, execConfirm] = useAuthCall(
     selectAPIOTPConfirm,
     [form.state.code],
     {},
-    {posthook: posthookConfirm},
   );
 
   if (confirmOTP.success) {
@@ -317,15 +307,6 @@ const Account2FAAdd = ({close}) => {
     password: '',
   });
 
-  const formAssign = form.assign;
-  const posthook = useCallback(
-    (_status, _data) => {
-      formAssign({
-        password: '',
-      });
-    },
-    [formAssign],
-  );
   const digits = (() => {
     const k = parseInt(form.state.digits, 10);
     if (Number.isNaN(k)) {
@@ -337,7 +318,6 @@ const Account2FAAdd = ({close}) => {
     selectAPIOTPAdd,
     [form.state.alg, digits, form.state.password],
     {uri: '', backup: ''},
-    {posthook},
   );
 
   if (add.success) {
@@ -398,21 +378,10 @@ const Account2FARm = ({close}) => {
     setDisplayBackup((i) => !i);
   }, [setDisplayBackup, formAssign]);
 
-  const posthook = useCallback(
-    (_status, _data) => {
-      formAssign({
-        code: '',
-        backup: '',
-        password: '',
-      });
-    },
-    [formAssign],
-  );
   const [remove, execRemove] = useAuthCall(
     selectAPIOTPRemove,
     [form.state.code, form.state.backup, form.state.password],
     {},
-    {posthook},
   );
 
   if (remove.success) {

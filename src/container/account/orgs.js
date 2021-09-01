@@ -1,4 +1,4 @@
-import {useState, useCallback, useMemo, useContext} from 'react';
+import {Fragment, useState, useCallback, useMemo, useContext} from 'react';
 import {selectAPINull} from '@xorkevin/substation';
 import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
@@ -8,6 +8,8 @@ import {
   ListItem,
   Tabbar,
   TabItem,
+  ModalSurface,
+  useModal,
   useMenu,
   Menu,
   MenuItem,
@@ -138,6 +140,47 @@ const OrgRow = ({
   );
 };
 
+const CreateOrg = ({posthookCreate, close}) => {
+  const form = useForm({
+    display_name: '',
+    desc: '',
+  });
+
+  const posthook = useCallback(
+    (status, data, opts) => {
+      close();
+      posthookCreate(status, data, opts);
+    },
+    [posthookCreate, close],
+  );
+  const [create, execCreate] = useAuthCall(
+    selectAPICreate,
+    [form.state],
+    {},
+    {prehook: prehookValidate, posthook},
+  );
+
+  return (
+    <Fragment>
+      <h4>Create new org</h4>
+      <Form
+        formState={form.state}
+        onChange={form.update}
+        onSubmit={execCreate}
+        validCheck={formValidCheck}
+      >
+        <Field name="display_name" label="Display name" nohint fullWidth />
+        <Field name="desc" label="Description" nohint fullWidth />
+      </Form>
+      <ButtonGroup>
+        <ButtonTertiary onClick={close}>Close</ButtonTertiary>
+        <ButtonPrimary onClick={execCreate}>Create Org</ButtonPrimary>
+      </ButtonGroup>
+      {create.err && <p>{create.err.message}</p>}
+    </Fragment>
+  );
+};
+
 const Orgs = () => {
   const ctx = useContext(GovUICtx);
   const displaySnackbarCreate = useSnackbarView(
@@ -157,11 +200,6 @@ const Orgs = () => {
     setViewMod(true);
     setFirst();
   }, [setViewMod, setFirst]);
-
-  const form = useForm({
-    display_name: '',
-    desc: '',
-  });
 
   const setAtEnd = paginate.setAtEnd;
   const posthookRoles = useCallback(
@@ -184,95 +222,86 @@ const Orgs = () => {
   const prefixLen = isViewMod
     ? ctx.orgModPrefix.length
     : ctx.orgUsrPrefix.length;
-  const orgids = useMemo(() => roles.data.map((i) => i.slice(prefixLen)), [
-    prefixLen,
-    roles,
-  ]);
+  const orgids = useMemo(
+    () => roles.data.map((i) => i.slice(prefixLen)),
+    [prefixLen, roles],
+  );
   const [orgs] = useAuthResource(
     orgids.length > 0 ? selectAPIOrgs : selectAPINull,
     [orgids],
     [],
   );
 
-  const formAssign = form.assign;
   const posthookCreate = useCallback(
     (_status, _data, opts) => {
-      formAssign({
-        display_name: '',
-        desc: '',
-      });
-      reexecute(opts);
       displaySnackbarCreate();
+      reexecute(opts);
     },
-    [displaySnackbarCreate, reexecute, formAssign],
+    [displaySnackbarCreate, reexecute],
   );
-  const [create, execCreate] = useAuthCall(
-    selectAPICreate,
-    [form.state],
-    {},
-    {prehook: prehookValidate, posthook: posthookCreate},
-  );
+
+  const modal = useModal();
 
   return (
     <div>
-      <h3>Organizations</h3>
-      <hr />
-      <Grid>
-        <Column fullWidth md={16}>
-          <Tabbar>
-            <TabItem className={!isViewMod ? 'active' : ''} onClick={viewUsr}>
-              Member
-            </TabItem>
-            <TabItem className={isViewMod ? 'active' : ''} onClick={viewMod}>
-              Moderator
-            </TabItem>
-          </Tabbar>
-          <ListGroup>
-            {orgids.length > 0 &&
-              orgs.data.map((i) => (
-                <OrgRow
-                  key={i.orgid}
-                  isMod={isViewMod}
-                  pathOrg={ctx.pathOrg}
-                  pathOrgSettings={ctx.pathOrgSettings}
-                  orgid={i.orgid}
-                  name={i.name}
-                  display_name={i.display_name}
-                  desc={i.desc}
-                  creation_time={i.creation_time}
-                  refresh={reexecute}
-                />
-              ))}
-          </ListGroup>
-          <ButtonGroup>
-            <ButtonTertiary disabled={paginate.atFirst} onClick={paginate.prev}>
-              prev
-            </ButtonTertiary>
-            {paginate.page}
-            <ButtonTertiary disabled={paginate.atLast} onClick={paginate.next}>
-              next
-            </ButtonTertiary>
-          </ButtonGroup>
-          {roles.err && <p>{roles.err.message}</p>}
-          {orgs.err && <p>{orgs.err.message}</p>}
+      <Grid justify="space-between" align="flex-end">
+        <Column grow="1">
+          <h3>Organizations</h3>
         </Column>
-        <Column fullWidth md={8}>
-          <h4>Create new org</h4>
-          <Form
-            formState={form.state}
-            onChange={form.update}
-            onSubmit={execCreate}
-            validCheck={formValidCheck}
-          >
-            <Field name="display_name" label="Display name" nohint />
-            <Field name="desc" label="Description" nohint />
-          </Form>
+        <Column>
           <ButtonGroup>
-            <ButtonPrimary onClick={execCreate}>Create Org</ButtonPrimary>
+            <ButtonTertiary
+              forwardedRef={modal.anchorRef}
+              onClick={modal.toggle}
+            >
+              <FaIcon icon="plus" /> Add
+            </ButtonTertiary>
           </ButtonGroup>
-          {create.err && <p>{create.err.message}</p>}
+          {modal.show && (
+            <ModalSurface size="md" anchor={modal.anchor} close={modal.close}>
+              <CreateOrg posthookCreate={posthookCreate} close={modal.close} />
+            </ModalSurface>
+          )}
         </Column>
       </Grid>
+      <hr />
+      <Tabbar>
+        <TabItem className={!isViewMod ? 'active' : ''} onClick={viewUsr}>
+          Member
+        </TabItem>
+        <TabItem className={isViewMod ? 'active' : ''} onClick={viewMod}>
+          Moderator
+        </TabItem>
+      </Tabbar>
+      <ListGroup>
+        {orgids.length > 0 &&
+          Array.isArray(orgs.data) &&
+          orgs.data.map((i) => (
+            <OrgRow
+              key={i.orgid}
+              isMod={isViewMod}
+              pathOrg={ctx.pathOrg}
+              pathOrgSettings={ctx.pathOrgSettings}
+              orgid={i.orgid}
+              name={i.name}
+              display_name={i.display_name}
+              desc={i.desc}
+              creation_time={i.creation_time}
+              refresh={reexecute}
+            />
+          ))}
+      </ListGroup>
+      <ButtonGroup>
+        <ButtonTertiary disabled={paginate.atFirst} onClick={paginate.prev}>
+          prev
+        </ButtonTertiary>
+        {paginate.page}
+        <ButtonTertiary disabled={paginate.atLast} onClick={paginate.next}>
+          next
+        </ButtonTertiary>
+      </ButtonGroup>
+      {roles.err && <p>{roles.err.message}</p>}
+      {orgs.err && <p>{orgs.err.message}</p>}
     </div>
   );
 };

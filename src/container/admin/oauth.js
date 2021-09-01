@@ -170,10 +170,13 @@ const AppRow = ({
   const modalRotate = useModal();
 
   const modalRotateToggle = modalRotate.toggle;
-  const posthookRotate = useCallback(() => {
-    modalRotateToggle();
-    posthookUpd();
-  }, [modalRotateToggle, posthookUpd]);
+  const posthookRotate = useCallback(
+    (status, data, opts) => {
+      modalRotateToggle();
+      posthookUpd(status, data, opts);
+    },
+    [modalRotateToggle, posthookUpd],
+  );
   const [rotate, execRotate] = useAuthCall(
     selectAPIRotate,
     [clientid],
@@ -466,12 +469,12 @@ const OAuthApps = () => {
         </Column>
         <Column>
           <ButtonGroup>
-            <ButtonPrimary
+            <ButtonTertiary
               forwardedRef={modal.anchorRef}
               onClick={modal.toggle}
             >
-              Add
-            </ButtonPrimary>
+              <FaIcon icon="plus" /> Add
+            </ButtonTertiary>
           </ButtonGroup>
           {modal.show && (
             <ModalSurface size="md" anchor={modal.anchor} close={modal.close}>
