@@ -254,7 +254,7 @@ const Orgs = () => {
               forwardedRef={modal.anchorRef}
               onClick={modal.toggle}
             >
-              <FaIcon icon="plus" /> Add
+              <FaIcon icon="plus" /> New
             </ButtonTertiary>
           </ButtonGroup>
           {modal.show && (
