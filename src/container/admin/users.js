@@ -72,7 +72,9 @@ const UserSearch = ({setUsername, err}) => {
   );
 };
 
-const UserDetails = ({user, back}) => {
+const UserDetails = ({user, back, reexecute}) => {
+  const {roleIntersect} = useContext(AuthCtx);
+
   const snackRolesUpdate = useSnackbarView(
     <SnackbarSurface>&#x2713; Role invitations sent</SnackbarSurface>,
   );
@@ -92,17 +94,20 @@ const UserDetails = ({user, back}) => {
   const posthook = useCallback(() => {
     clearForm();
     snackRolesUpdate();
-  }, [snackRolesUpdate, clearForm]);
+    reexecute();
+  }, [reexecute, snackRolesUpdate, clearForm]);
   const [edit, execEdit] = useAuthCall(
     selectAPIEditRank,
-    [user.data.userid, form.state.add, form.state.remove],
+    [user.userid, form.state.add, form.state.remove],
     {},
     {posthook},
   );
 
-  const {roleIntersect} = useContext(AuthCtx);
   const {roles} = useAuthValue();
   const allPermissions = useMemo(() => {
+    if (!Array.isArray(roleIntersect)) {
+      return [];
+    }
     if (roles.includes('admin')) {
       return roleIntersect.map((i) => ({display: i, value: i}));
     }
@@ -124,7 +129,7 @@ const UserDetails = ({user, back}) => {
       </ButtonGroup>
       <Grid>
         <Column fullWidth md={16}>
-          <h4>{`${user.data.first_name} ${user.data.last_name}`}</h4>
+          <h4>{`${user.first_name} ${user.last_name}`}</h4>
           <Form
             formState={form.state}
             onChange={form.update}
@@ -153,15 +158,14 @@ const UserDetails = ({user, back}) => {
         </Column>
         <Column fullWidth md={8}>
           <h5>Userid</h5>
-          <code>{user.data.userid}</code>
+          <code>{user.userid}</code>
           <h5>Username</h5>
-          <div>{user.data.username}</div>
+          <div>{user.username}</div>
           <h5>Current Roles</h5>
-          {user.data.roles.map((tag) => (
-            <Chip key={tag}>{tag}</Chip>
-          ))}
+          {Array.isArray(user.roles) &&
+            user.roles.map((tag) => <Chip key={tag}>{tag}</Chip>)}
           <p>
-            Created <Time value={user.data.creation_time * 1000} />
+            Created <Time value={user.creation_time * 1000} />
           </p>
         </Column>
       </Grid>
@@ -178,7 +182,7 @@ const Users = () => {
 
   const hasUsername = username.length > 0;
 
-  const [user, _execUser] = useResource(
+  const [user, reexecute] = useResource(
     hasUsername ? selectAPIUser : selectAPINull,
     [username],
     {
@@ -198,7 +202,9 @@ const Users = () => {
       <h3>Manage Roles</h3>
       <hr />
       {!displayUser && <UserSearch setUsername={setUsername} err={user.err} />}
-      {displayUser && <UserDetails user={user} back={back} />}
+      {displayUser && (
+        <UserDetails user={user.data} back={back} reexecute={reexecute} />
+      )}
     </div>
   );
 };

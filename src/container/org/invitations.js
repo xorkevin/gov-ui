@@ -1,6 +1,6 @@
-import {Fragment, useState, useCallback, useMemo, useContext} from 'react';
-import {useAPICall, useResource, selectAPINull} from '@xorkevin/substation';
-import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
+import {useState, useCallback, useMemo, useContext} from 'react';
+import {useResource, selectAPINull} from '@xorkevin/substation';
+import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
   Grid,
   Column,
@@ -11,22 +11,15 @@ import {
   useMenu,
   Menu,
   MenuItem,
-  Field,
-  Form,
-  useForm,
   SnackbarSurface,
   useSnackbar,
-  useSnackbarView,
   usePaginate,
   ButtonGroup,
   FaIcon,
   Chip,
   Time,
 } from '@xorkevin/nuke';
-import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
-import ButtonSecondary from '@xorkevin/nuke/src/component/button/secondary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
-import ButtonDangerSecondary from '@xorkevin/nuke/src/component/button/dangersecondary';
 import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
 
 import {GovUICtx} from '../../middleware';
@@ -37,155 +30,6 @@ const INVITATION_LIMIT = 32;
 const selectAPIInvitations = (api) => api.u.user.role.invitation.get;
 const selectAPIWithdraw = (api) => api.u.user.role.invitation.del;
 const selectAPIUsers = (api) => api.u.user.ids;
-const selectAPIUser = (api) => api.u.user.name;
-const selectAPIEditRank = (api) => api.u.user.id.edit.rank;
-
-const EditMembers = ({refresh, pathUserProfile, usrRole, modRole}) => {
-  const {userid: auth_userid} = useAuthValue();
-
-  const snackMemberAdded = useSnackbarView(
-    <SnackbarSurface>&#x2713; Member invited</SnackbarSurface>,
-  );
-  const snackMemberRemoved = useSnackbarView(
-    <SnackbarSurface>&#x2713; Member removed</SnackbarSurface>,
-  );
-
-  const [hidden, setHidden] = useState(false);
-
-  const form = useForm({
-    username: '',
-  });
-
-  const formAssign = form.assign;
-  const hide = useCallback(() => {
-    setHidden(true);
-    formAssign({
-      username: '',
-    });
-  }, [formAssign, setHidden]);
-
-  const posthookSearch = useCallback(() => {
-    setHidden(false);
-  }, [setHidden]);
-  const [user, execSearchUser] = useAPICall(
-    selectAPIUser,
-    [form.state.username],
-    {
-      userid: '',
-      username: '',
-      first_name: '',
-      last_name: '',
-      roles: [],
-      creation_time: 0,
-    },
-    {posthook: posthookSearch},
-  );
-  const userid = user.data.userid;
-
-  const isSelf = auth_userid === userid;
-
-  const memberRole = useMemo(
-    () => ({
-      add: [usrRole],
-      remove: [],
-    }),
-    [usrRole],
-  );
-
-  const moderatorRole = useMemo(
-    () => ({
-      add: [usrRole, modRole],
-      remove: [],
-    }),
-    [usrRole, modRole],
-  );
-
-  const posthookAdd = useCallback(
-    (_status, _data, opts) => {
-      hide();
-      snackMemberAdded();
-      refresh(opts);
-    },
-    [refresh, snackMemberAdded, hide],
-  );
-  const [addMember, execAddMember] = useAuthCall(
-    selectAPIEditRank,
-    [userid, memberRole.add, memberRole.remove],
-    {},
-    {posthook: posthookAdd},
-  );
-  const [addMod, execAddMod] = useAuthCall(
-    selectAPIEditRank,
-    [userid, moderatorRole.add, moderatorRole.remove],
-    {},
-    {posthook: posthookAdd},
-  );
-
-  const posthookRemove = useCallback(
-    (_status, _data, opts) => {
-      hide();
-      snackMemberRemoved();
-      refresh(opts);
-    },
-    [refresh, snackMemberRemoved, hide],
-  );
-  const [rmMember, execRmMember] = useAuthCall(
-    selectAPIEditRank,
-    [userid, moderatorRole.remove, moderatorRole.add],
-    {},
-    {posthook: posthookRemove},
-  );
-
-  return (
-    <Fragment>
-      <h3>Edit Member</h3>
-      <hr />
-      <Grid>
-        <Column fullWidth md={24}>
-          <Form
-            formState={form.state}
-            onChange={form.update}
-            onSubmit={execSearchUser}
-          >
-            <Field name="username" label="username" nohint />
-          </Form>
-          <ButtonGroup>
-            <ButtonTertiary onClick={hide}>Clear</ButtonTertiary>
-            <ButtonSecondary onClick={execSearchUser}>Search</ButtonSecondary>
-          </ButtonGroup>
-          {!hidden && user.success && (
-            <div>
-              <h5>
-                <AnchorText
-                  local
-                  href={formatURL(pathUserProfile, user.data.username)}
-                >
-                  {user.data.first_name} {user.data.last_name}
-                </AnchorText>{' '}
-                <small>{user.data.username}</small>
-              </h5>
-              <ButtonGroup>
-                <ButtonPrimary onClick={execAddMember}>
-                  Add as Member
-                </ButtonPrimary>
-                <ButtonPrimary onClick={execAddMod} disabled={isSelf}>
-                  Add as Moderator
-                </ButtonPrimary>
-                <ButtonDangerSecondary onClick={execRmMember} disabled={isSelf}>
-                  Remove Member
-                </ButtonDangerSecondary>
-              </ButtonGroup>
-            </div>
-          )}
-          {user.err && <p>{user.err.message}</p>}
-          {addMember.err && <p>{addMember.err.message}</p>}
-          {addMod.err && <p>{addMod.err.message}</p>}
-          {rmMember.err && <p>{rmMember.err.message}</p>}
-        </Column>
-      </Grid>
-    </Fragment>
-  );
-};
 
 const InvitationRow = ({
   userid,
@@ -363,12 +207,6 @@ const Invitations = ({org}) => {
           {invitations.err && <p>{invitations.err.message}</p>}
         </Column>
       </Grid>
-      <EditMembers
-        refresh={reexecute}
-        pathUserProfile={ctx.pathUserProfile}
-        usrRole={usrRole}
-        modRole={modRole}
-      />
     </div>
   );
 };

@@ -22,6 +22,7 @@ import {
 import {GovUICtx} from '../../middleware';
 
 const OrgMembers = lazy(() => import('./members'));
+const OrgManage = lazy(() => import('./manage'));
 const OrgInvitations = lazy(() => import('./invitations'));
 const OrgSettings = lazy(() => import('./settings'));
 
@@ -79,6 +80,15 @@ const OrgDetails = ({pathOrg}) => {
                   {isMod && (
                     <SidebarItem
                       local
+                      link={`${match.url}/manage`}
+                      icon={<FaIcon icon="user" />}
+                    >
+                      Manage
+                    </SidebarItem>
+                  )}
+                  {isMod && (
+                    <SidebarItem
+                      local
                       link={`${match.url}/invitations`}
                       icon={<FaIcon icon="envelope-o" />}
                     >
@@ -104,6 +114,11 @@ const OrgDetails = ({pathOrg}) => {
                     <Route path={`${match.path}/members`}>
                       <OrgMembers org={org.data} />
                     </Route>
+                    {isMod && (
+                      <Route path={`${match.path}/manage`}>
+                        <OrgManage org={org.data} />
+                      </Route>
+                    )}
                     {isMod && (
                       <Route path={`${match.path}/invitations`}>
                         <OrgInvitations org={org.data} />
