@@ -2,8 +2,6 @@ import {Fragment, useState, useCallback, useMemo, useContext} from 'react';
 import {useAPI, useResource, selectAPINull} from '@xorkevin/substation';
 import {useAuthValue, useAuthCall} from '@xorkevin/turbine';
 import {
-  Grid,
-  Column,
   FieldDynSuggest,
   Form,
   useForm,
@@ -53,24 +51,22 @@ const UserSearch = ({setUsername, err}) => {
   const userSuggest = useFormSearch(searchUsers, 256);
 
   return (
-    <Grid>
-      <Column fullWidth md={16}>
-        <Form formState={form.state} onChange={form.update} onSubmit={search}>
-          <FieldDynSuggest
-            name="username"
-            label="Username"
-            onSearch={userSuggest.setSearch}
-            options={userSuggest.opts}
-            nohint
-            fullWidth
-          />
-        </Form>
-        <ButtonGroup>
-          <ButtonPrimary onClick={search}>Search</ButtonPrimary>
-        </ButtonGroup>
-        {err && <p>{err.message}</p>}
-      </Column>
-    </Grid>
+    <Fragment>
+      <Form formState={form.state} onChange={form.update} onSubmit={search}>
+        <FieldDynSuggest
+          name="username"
+          label="Username"
+          onSearch={userSuggest.setSearch}
+          options={userSuggest.opts}
+          nohint
+          fullWidth
+        />
+      </Form>
+      <ButtonGroup>
+        <ButtonPrimary onClick={search}>Search</ButtonPrimary>
+      </ButtonGroup>
+      {err && <p>{err.message}</p>}
+    </Fragment>
   );
 };
 
