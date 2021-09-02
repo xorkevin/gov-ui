@@ -310,7 +310,7 @@ const AppRow = ({
               close={modalRotate.close}
             >
               {rotate.success && (
-                <div>
+                <Fragment>
                   <h4>{name} Client Secret Rotated</h4>
                   {OAUTHAPP_MESSAGE}
                   <div>
@@ -324,7 +324,7 @@ const AppRow = ({
                       Close
                     </ButtonTertiary>
                   </ButtonGroup>
-                </div>
+                </Fragment>
               )}
             </ModalSurface>
           )}

@@ -1,4 +1,4 @@
-import {Fragment, useState, useCallback, useMemo, useContext} from 'react';
+import {Fragment, useCallback, useMemo, useContext} from 'react';
 import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
   Container,
@@ -6,6 +6,8 @@ import {
   Column,
   ListGroup,
   ListItem,
+  ModalSurface,
+  useModal,
   useMenu,
   Menu,
   MenuItem,
@@ -37,10 +39,6 @@ const selectAPIUpdate = (api) => api.u.apikey.id.edit;
 const selectAPIRotate = (api) => api.u.apikey.id.rotate;
 const selectAPIDelete = (api) => api.u.apikey.id.del;
 
-const MODE_BASE = 0;
-const MODE_EDIT = 1;
-const MODE_ROTATE = 2;
-
 const API_KEY_MESSAGE = (
   <p>
     This API Key allows anyone who has access to it to make API requests on your
@@ -49,6 +47,60 @@ const API_KEY_MESSAGE = (
     <strong>not</strong> be able to view it again.
   </p>
 );
+
+const EditKey = ({
+  keyid,
+  name,
+  desc,
+  scope,
+  scopeOptions,
+  posthookUpd,
+  errhook,
+  close,
+}) => {
+  const form = useForm({
+    name,
+    desc,
+    scope: scope.split(' ').filter((s) => s.length > 0),
+  });
+
+  const updateSuccess = useCallback(
+    (status, data, opts) => {
+      close();
+      posthookUpd(status, data, opts);
+    },
+    [close, posthookUpd],
+  );
+  const [_updateState, execUpdate] = useAuthCall(
+    selectAPIUpdate,
+    [keyid, form.state.name, form.state.desc, form.state.scope.join(' ')],
+    {},
+    {posthook: updateSuccess, errhook},
+  );
+
+  return (
+    <Fragment>
+      <h4>Edit Key</h4>
+      <h5>Key ID</h5>
+      <code>{keyid}</code>
+      <Form formState={form.state} onChange={form.update} onSubmit={execUpdate}>
+        <Field name="name" label="Name" nohint fullWidth />
+        <Field name="desc" label="Description (optional)" nohint fullWidth />
+        <FieldMultiSelect
+          name="scope"
+          label="Permissions"
+          options={scopeOptions}
+          nohint
+          fullWidth
+        />
+      </Form>
+      <ButtonGroup>
+        <ButtonTertiary onClick={close}>Cancel</ButtonTertiary>
+        <ButtonPrimary onClick={execUpdate}>Update</ButtonPrimary>
+      </ButtonGroup>
+    </Fragment>
+  );
+};
 
 const ApikeyRow = ({
   name,
@@ -69,41 +121,17 @@ const ApikeyRow = ({
     {posthook: posthookDel, errhook},
   );
 
-  const form = useForm({
-    name: '',
-    desc: '',
-    scope: [],
-  });
-  const [mode, setMode] = useState(MODE_BASE);
-  const updateSuccess = useCallback(
+  const modalEdit = useModal();
+  const modalRotate = useModal();
+
+  const modalRotateToggle = modalRotate.toggle;
+  const posthookRotate = useCallback(
     (status, data, opts) => {
-      setMode(MODE_BASE);
+      modalRotateToggle();
       posthookUpd(status, data, opts);
     },
-    [setMode, posthookUpd],
+    [modalRotateToggle, posthookUpd],
   );
-  const [_updateState, execUpdate] = useAuthCall(
-    selectAPIUpdate,
-    [keyid, form.state.name, form.state.desc, form.state.scope.join(' ')],
-    {},
-    {posthook: updateSuccess, errhook},
-  );
-
-  const formAssign = form.assign;
-  const beginEdit = useCallback(() => {
-    formAssign({
-      name,
-      desc,
-      scope: scope.split(' ').filter((s) => s.length > 0),
-    });
-    setMode(MODE_EDIT);
-  }, [name, desc, scope, formAssign, setMode]);
-
-  const cancelEdit = useCallback(() => setMode(MODE_BASE), [setMode]);
-
-  const posthookRotate = useCallback(() => {
-    setMode(MODE_ROTATE);
-  }, [setMode]);
   const [rotate, execRotate] = useAuthCall(
     selectAPIRotate,
     [keyid],
@@ -115,105 +143,115 @@ const ApikeyRow = ({
 
   return (
     <ListItem>
-      {mode === MODE_BASE && (
-        <Grid justify="space-between" align="center" nowrap>
-          <Column grow="1">
-            <Container padded>
-              <h5>
-                {name}
-                {desc.length > 0 ? ' - ' : ''}
-                {desc}
-              </h5>
-              <div>
-                <div>
-                  ID: <code>{keyid}</code>
-                </div>
-                <div>
-                  <FaIcon icon="key" />
-                  <Tooltip tooltip="For security, the key cannot be shown">
-                    &bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;
-                  </Tooltip>
-                </div>
-              </div>
-              <div>
-                {scope
-                  .split(' ')
-                  .filter((s) => s.length > 0)
-                  .map((s) => (
-                    <Chip key={s}>
-                      <Tooltip tooltip={allScopeDesc[s]}>{s}</Tooltip>
-                    </Chip>
-                  ))}
-              </div>
-              <p>
-                Created <Time value={time * 1000} />
-              </p>
-            </Container>
-          </Column>
-          <Column shrink="0">
-            <ButtonTertiary forwardedRef={menu.anchorRef} onClick={menu.toggle}>
-              <FaIcon icon="ellipsis-v" />
-            </ButtonTertiary>
-            {menu.show && (
-              <Menu size="md" anchor={menu.anchor} close={menu.close}>
-                <MenuItem onClick={beginEdit} icon={<FaIcon icon="pencil" />}>
-                  Edit
-                </MenuItem>
-                <MenuItem onClick={execRotate} icon={<FaIcon icon="repeat" />}>
-                  Rotate key
-                </MenuItem>
-                <MenuItem onClick={execDelete} icon={<FaIcon icon="trash" />}>
-                  Delete
-                </MenuItem>
-              </Menu>
-            )}
-          </Column>
-        </Grid>
-      )}
-      {mode === MODE_EDIT && (
-        <Container padded>
-          <h4>Edit Key</h4>
-          <h5>Key ID</h5>
-          <code>{keyid}</code>
-          <Form
-            formState={form.state}
-            onChange={form.update}
-            onSubmit={execUpdate}
-          >
-            <Field name="name" label="Name" nohint />
-            <Field name="desc" label="Description (optional)" nohint />
-            <FieldMultiSelect
-              name="scope"
-              label="Permissions"
-              options={scopeOptions}
-              nohint
-            />
-          </Form>
-          <ButtonGroup>
-            <ButtonTertiary onClick={cancelEdit}>Cancel</ButtonTertiary>
-            <ButtonPrimary onClick={execUpdate}>Update</ButtonPrimary>
-          </ButtonGroup>
-        </Container>
-      )}
-      {mode === MODE_ROTATE && (
-        <Container padded>
-          {rotate.success && (
+      <Grid justify="space-between" align="center" nowrap>
+        <Column grow="1">
+          <Container padded>
+            <h5>
+              {name}
+              {desc.length > 0 ? ' - ' : ''}
+              {desc}
+            </h5>
             <div>
-              <h4>API Key Rotated</h4>
-              {API_KEY_MESSAGE}
-              <p>
-                <h5>Key ID</h5>
-                <code>{rotate.data.keyid}</code>
-                <h5>Secret</h5>
-                <code>{rotate.data.key}</code>
-              </p>
-              <ButtonGroup>
-                <ButtonTertiary onClick={cancelEdit}>Close</ButtonTertiary>
-              </ButtonGroup>
+              <div>
+                ID: <code>{keyid}</code>
+              </div>
+              <div>
+                <FaIcon icon="key" />
+                <Tooltip tooltip="For security, the key cannot be shown">
+                  &bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;
+                </Tooltip>
+              </div>
             </div>
+            <div>
+              {scope
+                .split(' ')
+                .filter((s) => s.length > 0)
+                .map((s) => (
+                  <Chip key={s}>
+                    <Tooltip tooltip={allScopeDesc[s]}>{s}</Tooltip>
+                  </Chip>
+                ))}
+            </div>
+            <p>
+              Created <Time value={time * 1000} />
+            </p>
+          </Container>
+        </Column>
+        <Column shrink="0">
+          <ButtonTertiary forwardedRef={menu.anchorRef} onClick={menu.toggle}>
+            <FaIcon icon="ellipsis-v" />
+          </ButtonTertiary>
+          {menu.show && (
+            <Menu
+              size="md"
+              anchor={menu.anchor}
+              close={menu.close}
+              onClick={menu.close}
+            >
+              <MenuItem
+                forwardedRef={modalEdit.anchorRef}
+                onClick={modalEdit.toggle}
+                icon={<FaIcon icon="pencil" />}
+              >
+                Edit
+              </MenuItem>
+              <MenuItem
+                forwardedRef={modalRotate.anchorRef}
+                onClick={execRotate}
+                icon={<FaIcon icon="repeat" />}
+              >
+                Rotate key
+              </MenuItem>
+              <MenuItem onClick={execDelete} icon={<FaIcon icon="trash" />}>
+                Delete
+              </MenuItem>
+            </Menu>
           )}
-        </Container>
-      )}
+          {modalEdit.show && (
+            <ModalSurface
+              size="md"
+              anchor={modalEdit.anchor}
+              close={modalEdit.close}
+            >
+              <EditKey
+                keyid={keyid}
+                name={name}
+                desc={desc}
+                scope={scope}
+                scopeOptions={scopeOptions}
+                posthookUpd={posthookUpd}
+                errhook={errhook}
+                close={modalEdit.close}
+              />
+            </ModalSurface>
+          )}
+          {modalRotate.show && (
+            <ModalSurface
+              size="md"
+              anchor={modalRotate.anchor}
+              close={modalRotate.close}
+            >
+              {rotate.success && (
+                <Fragment>
+                  <h4>API Key Rotated</h4>
+                  {API_KEY_MESSAGE}
+                  <div>
+                    <h5>Key ID</h5>
+                    <code>{rotate.data.keyid}</code>
+                    <h5>Secret</h5>
+                    <code>{rotate.data.key}</code>
+                  </div>
+                  <ButtonGroup>
+                    <ButtonTertiary onClick={modalRotate.close}>
+                      Close
+                    </ButtonTertiary>
+                  </ButtonGroup>
+                </Fragment>
+              )}
+            </ModalSurface>
+          )}
+        </Column>
+      </Grid>
     </ListItem>
   );
 };
@@ -284,6 +322,74 @@ const CheckKey = () => {
   );
 };
 
+const CreateKey = ({reexecute, close, scopeOptions}) => {
+  const form = useForm({
+    name: '',
+    desc: '',
+    scope: [],
+  });
+
+  const posthookCreate = useCallback(
+    (_status, _data, opts) => {
+      reexecute(opts);
+    },
+    [reexecute],
+  );
+  const [create, execCreate] = useAuthCall(
+    selectAPICreate,
+    [form.state.name, form.state.desc, form.state.scope.join(' ')],
+    {},
+    {posthook: posthookCreate},
+  );
+
+  return (
+    <Fragment>
+      {!create.success && (
+        <Fragment>
+          <h4>Create new API key</h4>
+          <Form
+            formState={form.state}
+            onChange={form.update}
+            onSubmit={execCreate}
+          >
+            <Field name="name" label="Name" nohint fullWidth />
+            <Field
+              name="desc"
+              label="Description (optional)"
+              nohint
+              fullWidth
+            />
+            <FieldMultiSelect
+              name="scope"
+              label="Scopes"
+              options={scopeOptions}
+              nohint
+              fullWidth
+            />
+          </Form>
+          <ButtonGroup>
+            <ButtonTertiary onClick={close}>Close</ButtonTertiary>
+            <ButtonPrimary onClick={execCreate}>Create</ButtonPrimary>
+          </ButtonGroup>
+        </Fragment>
+      )}
+      {create.err && <p>{create.err.message}</p>}
+      {create.success && (
+        <Fragment>
+          <h4>Success! API Key Created</h4>
+          {API_KEY_MESSAGE}
+          <div>
+            <h5>Key ID</h5>
+            <code>{create.data.keyid}</code>
+            <h5>Secret</h5>
+            <code>{create.data.key}</code>
+          </div>
+        </Fragment>
+      )}
+    </Fragment>
+  );
+};
+
 const Apikeys = () => {
   const ctx = useContext(GovUICtx);
   const displaySnackbarDel = useSnackbarView(
@@ -318,31 +424,6 @@ const Apikeys = () => {
     {posthook},
   );
 
-  const form = useForm({
-    name: '',
-    desc: '',
-    scope: [],
-  });
-
-  const formAssign = form.assign;
-  const posthookCreate = useCallback(
-    (_status, _data, opts) => {
-      formAssign({
-        name: '',
-        desc: '',
-        scope: [],
-      });
-      reexecute(opts);
-    },
-    [reexecute, formAssign],
-  );
-  const [create, execCreate] = useAuthCall(
-    selectAPICreate,
-    [form.state.name, form.state.desc, form.state.scope.join(' ')],
-    {},
-    {posthook: posthookCreate},
-  );
-
   const posthookDelete = useCallback(
     (_status, _data, opts) => {
       displaySnackbarDel();
@@ -359,6 +440,8 @@ const Apikeys = () => {
     [reexecute, displaySnackbarUpd],
   );
 
+  const modal = useModal();
+
   const {roles} = useAuthValue();
   const scopeOptions = useMemo(() => {
     const scopeSet = new Set(
@@ -371,78 +454,58 @@ const Apikeys = () => {
 
   return (
     <div>
-      <h3>API keys</h3>
-      <hr />
-      <Grid>
-        <Column fullWidth md={16}>
-          <ListGroup>
-            {apikeys.data.map(({name, desc, keyid, scope, time}) => (
-              <ApikeyRow
-                key={keyid}
-                keyid={keyid}
-                name={name}
-                desc={desc}
-                scope={scope}
-                time={time}
-                posthookDel={posthookDelete}
-                posthookUpd={posthookUpdate}
-                errhook={displayErrSnack}
-                scopeOptions={scopeOptions}
-                allScopeDesc={ctx.apiAllScopeDesc}
-              />
-            ))}
-          </ListGroup>
-          <ButtonGroup>
-            <ButtonTertiary disabled={paginate.atFirst} onClick={paginate.prev}>
-              prev
-            </ButtonTertiary>
-            {paginate.page}
-            <ButtonTertiary disabled={paginate.atLast} onClick={paginate.next}>
-              next
-            </ButtonTertiary>
-          </ButtonGroup>
-          {apikeys.err && <p>{apikeys.err.message}</p>}
+      <Grid justify="space-between" align="flex-end">
+        <Column grow="1">
+          <h3>API keys</h3>
         </Column>
-        <Column fullWidth md={8}>
-          <h4>Create new API key</h4>
-          <Form
-            formState={form.state}
-            onChange={form.update}
-            onSubmit={execCreate}
-          >
-            <Field name="name" label="Name" nohint fullWidth />
-            <Field
-              name="desc"
-              label="Description (optional)"
-              nohint
-              fullWidth
-            />
-            <FieldMultiSelect
-              name="scope"
-              label="Scopes"
-              options={scopeOptions}
-              nohint
-              fullWidth
-            />
-          </Form>
+        <Column>
           <ButtonGroup>
-            <ButtonPrimary onClick={execCreate}>Create</ButtonPrimary>
+            <ButtonTertiary
+              forwardedRef={modal.anchorRef}
+              onClick={modal.toggle}
+            >
+              <FaIcon icon="plus" /> New
+            </ButtonTertiary>
           </ButtonGroup>
-          {create.err && <p>{create.err.message}</p>}
-          {create.success && (
-            <div>
-              <h4>Success! API Key Created</h4>
-              {API_KEY_MESSAGE}
-              <div>
-                <h5>Key ID</h5>
-                <code>{create.data.keyid}</code>
-                <h5>Secret</h5>
-                <code>{create.data.key}</code>
-              </div>
-            </div>
+          {modal.show && (
+            <ModalSurface size="md" anchor={modal.anchor} close={modal.close}>
+              <CreateKey
+                reexecute={reexecute}
+                close={modal.close}
+                scopeOptions={scopeOptions}
+              />
+            </ModalSurface>
           )}
         </Column>
       </Grid>
+      <hr />
+      <ListGroup>
+        {apikeys.data.map(({name, desc, keyid, scope, time}) => (
+          <ApikeyRow
+            key={keyid}
+            keyid={keyid}
+            name={name}
+            desc={desc}
+            scope={scope}
+            time={time}
+            posthookDel={posthookDelete}
+            posthookUpd={posthookUpdate}
+            errhook={displayErrSnack}
+            scopeOptions={scopeOptions}
+            allScopeDesc={ctx.apiAllScopeDesc}
+          />
+        ))}
+      </ListGroup>
+      <ButtonGroup>
+        <ButtonTertiary disabled={paginate.atFirst} onClick={paginate.prev}>
+          prev
+        </ButtonTertiary>
+        {paginate.page}
+        <ButtonTertiary disabled={paginate.atLast} onClick={paginate.next}>
+          next
+        </ButtonTertiary>
+      </ButtonGroup>
+      {apikeys.err && <p>{apikeys.err.message}</p>}
       <CheckKey />
     </div>
   );
