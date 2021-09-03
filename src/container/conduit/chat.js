@@ -192,11 +192,6 @@ const ConduitChat = () => {
   });
 
   const modal = useModal();
-  const modalClose = modal.close;
-  modal.close = useCallback(() => {
-    console.trace();
-    modalClose();
-  }, [modalClose]);
 
   return (
     <Grid>
