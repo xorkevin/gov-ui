@@ -1,4 +1,4 @@
-import {useReducer, useCallback} from 'react';
+import {Fragment, useReducer, useCallback} from 'react';
 import {
   Switch,
   Route,
@@ -6,18 +6,22 @@ import {
   useRouteMatch,
   useParams,
 } from 'react-router-dom';
+import {useAPI} from '@xorkevin/substation';
 import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
   Grid,
   Column,
   ListGroup,
   ListItem,
+  ModalSurface,
+  useModal,
   useMenu,
   Menu,
   MenuItem,
-  Field,
+  FieldDynMultiSelect,
   Form,
   useForm,
+  useFormSearch,
   ButtonGroup,
   FaIcon,
   Time,
@@ -25,8 +29,12 @@ import {
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 
+const CHATS_LIMIT = 32;
+const USERS_LIMIT = 8;
+
 const selectAPILatestChats = (api) => api.conduit.chat.latest;
 const selectAPICreateChat = (api) => api.conduit.chat.create;
+const selectAPISearch = (api) => api.u.user.search;
 
 const SelectAChat = () => {
   return <div>Select a chat</div>;
@@ -84,7 +92,63 @@ const ChatRow = ({chatid}) => {
   );
 };
 
-const CHATS_LIMIT = 32;
+const CreateChat = ({close}) => {
+  const form = useForm({
+    userids: [],
+  });
+
+  const posthook = useCallback(() => {
+    close();
+  }, [close]);
+  const [create, execCreate] = useAuthCall(
+    selectAPICreateChat,
+    ['dm', '', '{}', form.state.userids],
+    {},
+    {posthook},
+  );
+
+  const apiSearch = useAPI(selectAPISearch);
+  const searchUsers = useCallback(
+    async (search) => {
+      const [data, status, err] = await apiSearch(search, USERS_LIMIT);
+      if (err || status < 200 || status >= 300 || !Array.isArray(data)) {
+        return [];
+      }
+      return data.map((i) => ({value: i.userid, display: i.username}));
+    },
+    [apiSearch],
+  );
+  const userSuggest = useFormSearch(searchUsers, 256);
+
+  return (
+    <Fragment>
+      <h4>New Chat</h4>
+      <Form
+        formState={form.state}
+        onChange={form.update}
+        onSubmit={execCreate}
+        displays={form.displays}
+        putDisplays={form.putDisplays}
+        addDisplay={form.addDisplay}
+        compactDisplays={form.compactDisplays}
+      >
+        <FieldDynMultiSelect
+          name="userids"
+          label="Users"
+          onSearch={userSuggest.setSearch}
+          options={userSuggest.opts}
+          nohint
+          fullWidth
+        />
+      </Form>
+      <ButtonGroup>
+        <ButtonTertiary onClick={close}>Cancel</ButtonTertiary>
+        <ButtonPrimary onClick={execCreate}>Create Chat</ButtonPrimary>
+      </ButtonGroup>
+      {create.err && <p>{create.err.message}</p>}
+    </Fragment>
+  );
+};
 
 const CHATS_RESET = Symbol('CHATS_RESET');
 const CHATS_RCV = Symbol('CHATS_RCV');
@@ -127,38 +191,36 @@ const ConduitChat = () => {
     posthook: posthookInit,
   });
 
-  const form = useForm({
-    userids: '',
-  });
-
-  const formAssign = form.assign;
-  const posthookCreate = useCallback(() => {
-    formAssign({
-      userids: '',
-    });
-  }, [formAssign]);
-  const [create, execCreate] = useAuthCall(
-    selectAPICreateChat,
-    ['dm', '', '{}', form.state.userids.split(',')],
-    {},
-    {posthook: posthookCreate},
-  );
+  const modal = useModal();
+  const modalClose = modal.close;
+  modal.close = useCallback(() => {
+    console.trace();
+    modalClose();
+  }, [modalClose]);
 
   return (
     <Grid>
       <Column fullWidth sm={6}>
-        <h4>Direct Messages</h4>
-        <Form
-          formState={form.state}
-          onChange={form.update}
-          onSubmit={execCreate}
-        >
-          <Field name="userids" label="Users" nohint />
-        </Form>
-        <ButtonGroup>
-          <ButtonPrimary onClick={execCreate}>Create Chat</ButtonPrimary>
-        </ButtonGroup>
-        {create.err && <p>{create.err.message}</p>}
+        <Grid justify="space-between" align="flex-end">
+          <Column grow="1">
+            <h4>Direct Messages</h4>
+          </Column>
+          <Column>
+            <ButtonGroup>
+              <ButtonTertiary
+                forwardedRef={modal.anchorRef}
+                onClick={modal.toggle}
+              >
+                <FaIcon icon="plus" />
+              </ButtonTertiary>
+            </ButtonGroup>
+            {modal.show && (
+              <ModalSurface size="md" anchor={modal.anchor} close={modal.close}>
+                <CreateChat close={modal.close} />
+              </ModalSurface>
+            )}
+          </Column>
+        </Grid>
         <ListGroup className="conduit-chat-list">
           {chats.chatids.map((i) => (
             <ChatRow key={i} chatid={i} />
