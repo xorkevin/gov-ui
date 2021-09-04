@@ -46,7 +46,9 @@ const Chat = () => {
   return <div>Hello, World, chatid: {chatid}</div>;
 };
 
-const ChatRow = ({chatid}) => {
+const ChatRow = ({chat}) => {
+  const {userid} = useAuthValue();
+
   const match = useRouteMatch();
   const menu = useMenu();
 
@@ -66,11 +68,17 @@ const ChatRow = ({chatid}) => {
   }, []);
 
   return (
-    <ListItem local link={`${match.url}/${chatid}`}>
+    <ListItem local link={`${match.url}/${chat.chatid}`}>
       <Grid justify="space-between" align="center" nowrap>
         <Column>
-          <h5>{chatid}</h5>
-          <Time value={Date.now()} />
+          <h5>
+            {chat.name ||
+              chat.members
+                .filter((i) => i === userid)
+                .slice(0, 5)
+                .join(' ')}
+          </h5>
+          <Time value={chat.last_updated} />
         </Column>
         <Column shrink="0">
           <ButtonTertiary forwardedRef={menu.anchorRef} onClick={toggleMenu}>
@@ -158,17 +166,23 @@ const CHATS_RESET = Symbol('CHATS_RESET');
 const CHATS_RCV = Symbol('CHATS_RCV');
 const CHATS_APPEND = Symbol('CHATS_APPEND');
 
-const ChatsReset = (chatids) => ({
+const ChatsReset = (chats) => ({
   type: CHATS_RESET,
-  chatids,
+  chats,
 });
 
 const chatsReducer = (state, action) => {
   switch (action.type) {
-    case CHATS_RESET:
+    case CHATS_RESET: {
       return {
-        chatids: action.chatids,
+        chats: action.chats.slice().sort((a, b) => {
+          const la = a.last_updated || 0;
+          const lb = b.last_updated || 0;
+          // reverse sort
+          return lb - la;
+        }),
       };
+    }
     case CHATS_RCV: {
       return state;
     }
@@ -183,17 +197,20 @@ const chatsReducer = (state, action) => {
 const ConduitChat = () => {
   const match = useRouteMatch();
 
-  const [chats, dispatchChats] = useReducer(chatsReducer, {chatids: []});
+  const [chats, dispatchChats] = useReducer(chatsReducer, {chats: []});
 
   const posthookInit = useCallback(
-    (_status, chatids) => {
-      dispatchChats(ChatsReset(chatids));
+    (_status, chats) => {
+      dispatchChats(ChatsReset(chats));
     },
     [dispatchChats],
   );
-  useAuthResource(selectAPILatestChats, ['dm', 0, CHATS_LIMIT], [], {
-    posthook: posthookInit,
-  });
+  const [initChats, _execInitChatids] = useAuthResource(
+    selectAPILatestChats,
+    ['dm', 0, CHATS_LIMIT],
+    [],
+    {posthook: posthookInit},
+  );
 
   const modal = useModal();
 
@@ -220,9 +237,10 @@ const ConduitChat = () => {
             )}
           </Column>
         </Grid>
+        {initChats.err && <p>initChats.err.message</p>}
         <ListGroup className="conduit-chat-list">
-          {chats.chatids.map((i) => (
-            <ChatRow key={i} chatid={i} />
+          {chats.chats.map((i) => (
+            <ChatRow key={i.chatid} chat={i} />
           ))}
         </ListGroup>
       </Column>

@@ -2,6 +2,18 @@ export default {
   chat: {
     url: '/chat',
     children: {
+      ids: {
+        url: '',
+        method: 'GET',
+        transformer: (ids) => ({
+          query: {
+            ids: ids.join(','),
+          },
+        }),
+        expectdata: true,
+        selector: (_status, data) => data && data.chats,
+        err: 'Unable to get chats',
+      },
       latest: {
         url: '/latest',
         method: 'GET',
@@ -9,7 +21,7 @@ export default {
           query: {kind, before, amount},
         }),
         expectdata: true,
-        selector: (_status, data) => data.chatids,
+        selector: (_status, data) => data && data.chats,
         err: 'Unable to get latest chats',
       },
       create: {
