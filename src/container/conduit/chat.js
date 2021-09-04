@@ -7,7 +7,7 @@ import {
   useParams,
 } from 'react-router-dom';
 import {useAPI} from '@xorkevin/substation';
-import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
+import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
   Grid,
   Column,
@@ -93,6 +93,8 @@ const ChatRow = ({chatid}) => {
 };
 
 const CreateChat = ({close}) => {
+  const {userid} = useAuthValue();
+
   const form = useForm({
     userids: [],
   });
@@ -114,9 +116,11 @@ const CreateChat = ({close}) => {
       if (err || status < 200 || status >= 300 || !Array.isArray(data)) {
         return [];
       }
-      return data.map((i) => ({value: i.userid, display: i.username}));
+      return data
+        .filter((i) => i.userid !== userid)
+        .map((i) => ({value: i.userid, display: i.username}));
     },
-    [apiSearch],
+    [userid, apiSearch],
   );
   const userSuggest = useFormSearch(searchUsers, 256);
 
