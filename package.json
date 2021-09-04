@@ -34,7 +34,7 @@
     "react": "17.0.1"
   },
   "peerDependencies": {
-    "@xorkevin/nuke": "^0.1.22",
+    "@xorkevin/nuke": "^0.1.23",
     "@xorkevin/substation": "^0.1.7",
     "@xorkevin/turbine": "^0.1.17",
     "fork-awesome": "^1.1.7",
