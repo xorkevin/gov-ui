@@ -1,4 +1,4 @@
-import {Fragment, useReducer, useCallback} from 'react';
+import {Fragment, useReducer, useCallback, useMemo} from 'react';
 import {
   Switch,
   Route,
@@ -6,7 +6,7 @@ import {
   useRouteMatch,
   useParams,
 } from 'react-router-dom';
-import {useAPI} from '@xorkevin/substation';
+import {useAPI, useResource, selectAPINull} from '@xorkevin/substation';
 import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
   Grid,
@@ -32,6 +32,7 @@ import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 const CHATS_LIMIT = 32;
 const USERS_LIMIT = 8;
 
+const selectAPIUsers = (api) => api.u.user.ids;
 const selectAPILatestChats = (api) => api.conduit.chat.latest;
 const selectAPICreateChat = (api) => api.conduit.chat.create;
 const selectAPISearch = (api) => api.u.user.search;
@@ -46,7 +47,7 @@ const Chat = () => {
   return <div>Hello, World, chatid: {chatid}</div>;
 };
 
-const ChatRow = ({chat}) => {
+const ChatRow = ({chat, usersCache}) => {
   const {userid} = useAuthValue();
 
   const match = useRouteMatch();
@@ -74,9 +75,16 @@ const ChatRow = ({chat}) => {
           <h5>
             {chat.name ||
               chat.members
-                .filter((i) => i === userid)
+                .filter((i) => i !== userid)
                 .slice(0, 5)
-                .join(' ')}
+                .map((i) => {
+                  const k = usersCache[i];
+                  if (!k) {
+                    return '';
+                  }
+                  return k.username;
+                })
+                .join(', ')}
           </h5>
           <Time value={chat.last_updated} />
         </Column>
@@ -174,6 +182,9 @@ const ChatsReset = (chats) => ({
 const chatsReducer = (state, action) => {
   switch (action.type) {
     case CHATS_RESET: {
+      if (!Array.isArray(action.chats)) {
+        return state;
+      }
       return {
         chats: action.chats.slice().sort((a, b) => {
           const la = a.last_updated || 0;
@@ -194,6 +205,41 @@ const chatsReducer = (state, action) => {
   }
 };
 
+const USERS_APPEND = Symbol('USERS_APPEND');
+const USERS_INVALIDATE = Symbol('USERS_INVALIDATE');
+
+const UsersAppend = (users) => ({
+  type: USERS_APPEND,
+  users,
+});
+
+const usersCacheReducer = (state, action) => {
+  switch (action.type) {
+    case USERS_APPEND: {
+      if (!Array.isArray(action.users) || action.users.length === 0) {
+        return state;
+      }
+      return Object.assign(
+        {},
+        state,
+        Object.fromEntries(action.users.map((i) => [i.userid, i])),
+      );
+    }
+    case USERS_INVALIDATE: {
+      if (!Array.isArray(action.userids) || action.userids.length === 0) {
+        return state;
+      }
+      const next = Object.assign({}, state);
+      for (const i of action.userids) {
+        delete next[i];
+      }
+      return next;
+    }
+    default:
+      return state;
+  }
+};
+
 const ConduitChat = () => {
   const match = useRouteMatch();
 
@@ -205,11 +251,34 @@ const ConduitChat = () => {
     },
     [dispatchChats],
   );
-  const [initChats, _execInitChatids] = useAuthResource(
+  const [initChats, _execInitChats] = useAuthResource(
     selectAPILatestChats,
     ['dm', 0, CHATS_LIMIT],
     [],
     {posthook: posthookInit},
+  );
+
+  const [usersCache, dispatchUsersCache] = useReducer(usersCacheReducer, {});
+
+  const useridDiff = useMemo(
+    () =>
+      chats.chats.flatMap((i) =>
+        Array.isArray(i.members) ? i.members.filter((j) => !usersCache[j]) : [],
+      ),
+    [chats, usersCache],
+  );
+
+  const posthookUsers = useCallback(
+    (_status, users) => {
+      dispatchUsersCache(UsersAppend(users));
+    },
+    [dispatchUsersCache],
+  );
+  const [getUsers, _execGetUsers] = useResource(
+    useridDiff.length > 0 ? selectAPIUsers : selectAPINull,
+    [useridDiff],
+    [],
+    {posthook: posthookUsers},
   );
 
   const modal = useModal();
@@ -237,10 +306,11 @@ const ConduitChat = () => {
             )}
           </Column>
         </Grid>
-        {initChats.err && <p>initChats.err.message</p>}
+        {initChats.err && <p>{initChats.err.message}</p>}
+        {getUsers.err && <p>{getUsers.err.message}</p>}
         <ListGroup className="conduit-chat-list">
           {chats.chats.map((i) => (
-            <ChatRow key={i.chatid} chat={i} />
+            <ChatRow key={i.chatid} chat={i} usersCache={usersCache} />
           ))}
         </ListGroup>
       </Column>
