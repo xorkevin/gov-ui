@@ -1,4 +1,4 @@
-import {Fragment, useReducer, useCallback, useMemo} from 'react';
+import {Fragment, useReducer, useCallback} from 'react';
 import {
   Switch,
   Route,
@@ -174,9 +174,17 @@ const CHATS_RESET = Symbol('CHATS_RESET');
 const CHATS_RCV = Symbol('CHATS_RCV');
 const CHATS_APPEND = Symbol('CHATS_APPEND');
 
+const USERS_APPEND = Symbol('USERS_APPEND');
+const USERS_INVALIDATE = Symbol('USERS_INVALIDATE');
+
 const ChatsReset = (chats) => ({
   type: CHATS_RESET,
   chats,
+});
+
+const UsersAppend = (users) => ({
+  type: USERS_APPEND,
+  users,
 });
 
 const chatsReducer = (state, action) => {
@@ -192,6 +200,10 @@ const chatsReducer = (state, action) => {
           // reverse sort
           return lb - la;
         }),
+        users: {},
+        usersDiff: action.chats.flatMap((i) =>
+          Array.isArray(i.members) ? i.members : [],
+        ),
       };
     }
     case CHATS_RCV: {
@@ -200,40 +212,45 @@ const chatsReducer = (state, action) => {
     case CHATS_APPEND: {
       return state;
     }
-    default:
-      return state;
-  }
-};
-
-const USERS_APPEND = Symbol('USERS_APPEND');
-const USERS_INVALIDATE = Symbol('USERS_INVALIDATE');
-
-const UsersAppend = (users) => ({
-  type: USERS_APPEND,
-  users,
-});
-
-const usersCacheReducer = (state, action) => {
-  switch (action.type) {
     case USERS_APPEND: {
       if (!Array.isArray(action.users) || action.users.length === 0) {
         return state;
       }
-      return Object.assign(
-        {},
-        state,
-        Object.fromEntries(action.users.map((i) => [i.userid, i])),
+      const allMembers = state.chats.flatMap((i) =>
+        Array.isArray(i.members) ? i.members : [],
       );
+      const membersSet = new Set(allMembers);
+      const users = Object.fromEntries(
+        Object.entries(
+          Object.assign(
+            {},
+            state.users,
+            Object.fromEntries(action.users.map((i) => [i.userid, i])),
+          ),
+        ).filter(([k, _v]) => membersSet.has(k)),
+      );
+      return {
+        chats: state.chats,
+        users,
+        usersDiff: allMembers.filter((i) => !users[i]),
+      };
     }
     case USERS_INVALIDATE: {
       if (!Array.isArray(action.userids) || action.userids.length === 0) {
         return state;
       }
-      const next = Object.assign({}, state);
+      const users = Object.assign({}, state.users);
       for (const i of action.userids) {
-        delete next[i];
+        delete users[i];
       }
-      return next;
+      const allMembers = state.chats.flatMap((i) =>
+        Array.isArray(i.members) ? i.members : [],
+      );
+      return {
+        chats: state.chats,
+        users,
+        usersDiff: allMembers.filter((i) => !users[i]),
+      };
     }
     default:
       return state;
@@ -243,7 +260,11 @@ const usersCacheReducer = (state, action) => {
 const ConduitChat = () => {
   const match = useRouteMatch();
 
-  const [chats, dispatchChats] = useReducer(chatsReducer, {chats: []});
+  const [chats, dispatchChats] = useReducer(chatsReducer, {
+    chats: [],
+    users: {},
+    usersDiff: [],
+  });
 
   const posthookInit = useCallback(
     (_status, chats) => {
@@ -258,25 +279,16 @@ const ConduitChat = () => {
     {posthook: posthookInit},
   );
 
-  const [usersCache, dispatchUsersCache] = useReducer(usersCacheReducer, {});
-
-  const useridDiff = useMemo(
-    () =>
-      chats.chats.flatMap((i) =>
-        Array.isArray(i.members) ? i.members.filter((j) => !usersCache[j]) : [],
-      ),
-    [chats, usersCache],
-  );
-
   const posthookUsers = useCallback(
     (_status, users) => {
-      dispatchUsersCache(UsersAppend(users));
+      dispatchChats(UsersAppend(users));
     },
-    [dispatchUsersCache],
+    [dispatchChats],
   );
+  const usersDiff = chats.usersDiff;
   const [getUsers, _execGetUsers] = useResource(
-    useridDiff.length > 0 ? selectAPIUsers : selectAPINull,
-    [useridDiff],
+    usersDiff.length > 0 ? selectAPIUsers : selectAPINull,
+    [usersDiff],
     [],
     {posthook: posthookUsers},
   );
@@ -310,7 +322,7 @@ const ConduitChat = () => {
         {getUsers.err && <p>{getUsers.err.message}</p>}
         <ListGroup className="conduit-chat-list">
           {chats.chats.map((i) => (
-            <ChatRow key={i.chatid} chat={i} usersCache={usersCache} />
+            <ChatRow key={i.chatid} chat={i} usersCache={chats.users} />
           ))}
         </ListGroup>
       </Column>
