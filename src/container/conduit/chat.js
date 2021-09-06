@@ -206,6 +206,7 @@ const chatsReducer = (state, action) => {
         users: {},
         usersDiff,
         chatsSet: new Set(action.chats.map((i) => i.chatid)),
+        validUsersSet: new Set(),
         usersSet: new Set(usersDiff),
       };
     }
@@ -237,7 +238,9 @@ const chatsReducer = (state, action) => {
       });
       return Object.assign({}, state, {
         chats,
-        usersDiff: Array.from(usersSet).filter((i) => !state.users[i]),
+        usersDiff: Array.from(usersSet).filter(
+          (i) => !state.validUsersSet.has(i),
+        ),
         chatsSet,
         usersSet,
       });
@@ -251,22 +254,31 @@ const chatsReducer = (state, action) => {
         state.users,
         Object.fromEntries(action.users.map((i) => [i.userid, i])),
       );
+      const validUsersSet = state.validUsersSet;
+      action.users.forEach((i) => {
+        validUsersSet.add(i.userid);
+      });
       return Object.assign({}, state, {
         users,
-        usersDiff: Array.from(state.usersSet).filter((i) => !users[i]),
+        usersDiff: Array.from(state.usersSet).filter(
+          (i) => !validUsersSet.has(i),
+        ),
+        validUsersSet,
       });
     }
     case USERS_INVALIDATE: {
       if (!Array.isArray(action.userids) || action.userids.length === 0) {
         return state;
       }
-      const users = Object.assign({}, state.users);
-      for (const i of action.userids) {
-        delete users[i];
-      }
+      const validUsersSet = state.validUsersSet;
+      action.userids.forEach((i) => {
+        validUsersSet.delete(i);
+      });
       return Object.assign({}, state, {
-        users,
-        usersDiff: Array.from(state.usersSet).filter((i) => !users[i]),
+        usersDiff: Array.from(state.usersSet).filter(
+          (i) => !validUsersSet.has(i),
+        ),
+        validUsersSet,
       });
     }
     default:
@@ -282,6 +294,7 @@ const ConduitChat = () => {
     users: {},
     usersDiff: [],
     chatsSet: new Set(),
+    validUsersSet: new Set(),
     usersSet: new Set(),
   });
 
