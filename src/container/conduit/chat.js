@@ -33,6 +33,7 @@ const CHATS_LIMIT = 32;
 const USERS_LIMIT = 8;
 
 const selectAPIUsers = (api) => api.u.user.ids;
+const selectAPIChats = (api) => api.conduit.chat.ids;
 const selectAPILatestChats = (api) => api.conduit.chat.latest;
 const selectAPICreateChat = (api) => api.conduit.chat.create;
 const selectAPISearch = (api) => api.u.user.search;
@@ -108,16 +109,23 @@ const ChatRow = ({chat, usersCache}) => {
   );
 };
 
-const CreateChat = ({close}) => {
+const CreateChat = ({close, addChat}) => {
   const {userid} = useAuthValue();
 
   const form = useForm({
     userids: [],
   });
 
-  const posthook = useCallback(() => {
-    close();
-  }, [close]);
+  const posthook = useCallback(
+    (_status, chat) => {
+      close();
+      // TODO: remove this branch after websockets
+      if (chat && chat.chatid) {
+        addChat(chat.chatid);
+      }
+    },
+    [close, addChat],
+  );
   const [create, execCreate] = useAuthCall(
     selectAPICreateChat,
     ['dm', '', '{}', form.state.userids],
@@ -171,8 +179,8 @@ const CreateChat = ({close}) => {
 };
 
 const CHATS_RESET = Symbol('CHATS_RESET');
-const CHATS_RCV = Symbol('CHATS_RCV');
 const CHATS_APPEND = Symbol('CHATS_APPEND');
+const CHATS_INVALIDATE = Symbol('CHATS_INVALIDATE');
 
 const USERS_APPEND = Symbol('USERS_APPEND');
 const USERS_INVALIDATE = Symbol('USERS_INVALIDATE');
@@ -180,6 +188,16 @@ const USERS_INVALIDATE = Symbol('USERS_INVALIDATE');
 const ChatsReset = (chats) => ({
   type: CHATS_RESET,
   chats,
+});
+
+const ChatsAppend = (chats) => ({
+  type: CHATS_APPEND,
+  chats,
+});
+
+const ChatsInvalidate = (chatids) => ({
+  type: CHATS_INVALIDATE,
+  chatids,
 });
 
 const UsersAppend = (users) => ({
@@ -193,43 +211,63 @@ const chatsReducer = (state, action) => {
       if (!Array.isArray(action.chats)) {
         return state;
       }
-      const usersDiff = action.chats.flatMap((i) =>
+      const chats = action.chats
+        .filter((i) => i.chatid && i.last_updated > 0)
+        .sort((a, b) => {
+          // reverse sort
+          return b.last_updated - a.last_updated;
+        });
+      const usersDiff = chats.flatMap((i) =>
         Array.isArray(i.members) ? i.members : [],
       );
+      const chatids = chats.map((i) => i.chatid);
       return {
-        chats: action.chats.slice().sort((a, b) => {
-          const la = a.last_updated || 0;
-          const lb = b.last_updated || 0;
-          // reverse sort
-          return lb - la;
-        }),
+        chats,
         users: {},
+        chatsDiff: [],
         usersDiff,
-        chatsSet: new Set(action.chats.map((i) => i.chatid)),
+        validChatsSet: new Set(chatids),
+        chatsSet: new Set(chatids),
+        allChatsMap: new Map(chats.map((i) => [i.chatid, i.last_updated])),
         validUsersSet: new Set(),
         usersSet: new Set(usersDiff),
       };
-    }
-    case CHATS_RCV: {
-      return state;
     }
     case CHATS_APPEND: {
       if (!Array.isArray(action.chats) || action.chats.length === 0) {
         return state;
       }
       const addedChats = action.chats
-        .filter((i) => !state.chatsSet.has(i.chatid))
+        .filter((i) => {
+          if (!i.chatid || !i.last_updated) {
+            return false;
+          }
+          if (!state.allChatsMap.has(i.chatid)) {
+            return true;
+          }
+          return i.last_updated > state.allChatsMap.get(i.chatid);
+        })
         .sort((a, b) => {
-          const la = a.last_updated || 0;
-          const lb = b.last_updated || 0;
           // reverse sort
-          return lb - la;
+          return b.last_updated - a.last_updated;
         });
-      const chats = state.chats.concat(addedChats);
+      const addedChatidSet = new Set(addedChats.map((i) => i.chatid));
+      const chats = state.chats.filter((i) => !addedChatidSet.has(i.chatid));
+      addedChats.forEach((i) => {
+        chats.push(i);
+      });
+      chats.sort((a, b) => {
+        // reverse sort
+        return b.last_updated - a.last_updated;
+      });
+      const validChatsSet = state.validChatsSet;
       const chatsSet = state.chatsSet;
+      const allChatsMap = state.allChatsMap;
       const usersSet = state.usersSet;
       addedChats.forEach((i) => {
+        validChatsSet.add(i.chatid);
         chatsSet.add(i.chatid);
+        allChatsMap.set(i.chatid, i.last_updated);
         if (Array.isArray(i.members)) {
           i.members.forEach((j) => {
             usersSet.add(j);
@@ -238,11 +276,30 @@ const chatsReducer = (state, action) => {
       });
       return Object.assign({}, state, {
         chats,
+        chatsDiff: Array.from(chatsSet).filter((i) => !validChatsSet.has(i)),
         usersDiff: Array.from(usersSet).filter(
           (i) => !state.validUsersSet.has(i),
         ),
+        validChatsSet,
         chatsSet,
+        allChatsMap,
         usersSet,
+      });
+    }
+    case CHATS_INVALIDATE: {
+      if (!Array.isArray(action.chatids) || action.chatids.length === 0) {
+        return state;
+      }
+      const validChatsSet = state.validChatsSet;
+      const chatsSet = state.chatsSet;
+      action.chatids.forEach((i) => {
+        validChatsSet.delete(i);
+        chatsSet.add(i);
+      });
+      return Object.assign({}, state, {
+        chatsDiff: Array.from(chatsSet).filter((i) => !validChatsSet.has(i)),
+        validChatsSet,
+        chatsSet,
       });
     }
     case USERS_APPEND: {
@@ -292,8 +349,11 @@ const ConduitChat = () => {
   const [chats, dispatchChats] = useReducer(chatsReducer, {
     chats: [],
     users: {},
+    chatsDiff: [],
     usersDiff: [],
+    validChatsSet: new Set(),
     chatsSet: new Set(),
+    allChatsMap: new Map(),
     validUsersSet: new Set(),
     usersSet: new Set(),
   });
@@ -311,6 +371,20 @@ const ConduitChat = () => {
     {posthook: posthookInit},
   );
 
+  const posthookChats = useCallback(
+    (_status, chats) => {
+      dispatchChats(ChatsAppend(chats));
+    },
+    [dispatchChats],
+  );
+  const chatsDiff = chats.chatsDiff;
+  const [getChats, _execGetChats] = useAuthResource(
+    chatsDiff.length > 0 ? selectAPIChats : selectAPINull,
+    [chatsDiff],
+    [],
+    {posthook: posthookChats},
+  );
+
   const posthookUsers = useCallback(
     (_status, users) => {
       dispatchChats(UsersAppend(users));
@@ -323,6 +397,13 @@ const ConduitChat = () => {
     [usersDiff],
     [],
     {posthook: posthookUsers},
+  );
+
+  const addChat = useCallback(
+    (chatid) => {
+      dispatchChats(ChatsInvalidate([chatid]));
+    },
+    [dispatchChats],
   );
 
   const modal = useModal();
@@ -345,12 +426,13 @@ const ConduitChat = () => {
             </ButtonGroup>
             {modal.show && (
               <ModalSurface size="md" anchor={modal.anchor} close={modal.close}>
-                <CreateChat close={modal.close} />
+                <CreateChat close={modal.close} addChat={addChat} />
               </ModalSurface>
             )}
           </Column>
         </Grid>
         {initChats.err && <p>{initChats.err.message}</p>}
+        {getChats.err && <p>{getChats.err.message}</p>}
         {getUsers.err && <p>{getUsers.err.message}</p>}
         <ListGroup className="conduit-chat-list">
           {chats.chats.map((i) => (
