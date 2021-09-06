@@ -205,6 +205,7 @@ const chatsReducer = (state, action) => {
         }),
         users: {},
         usersDiff,
+        chatsSet: new Set(action.chats.map((i) => i.chatid)),
         usersSet: new Set(usersDiff),
       };
     }
@@ -212,7 +213,34 @@ const chatsReducer = (state, action) => {
       return state;
     }
     case CHATS_APPEND: {
-      return state;
+      if (!Array.isArray(action.chats) || action.chats.length === 0) {
+        return state;
+      }
+      const addedChats = action.chats
+        .filter((i) => !state.chatsSet.has(i.chatid))
+        .sort((a, b) => {
+          const la = a.last_updated || 0;
+          const lb = b.last_updated || 0;
+          // reverse sort
+          return lb - la;
+        });
+      const chats = state.chats.concat(addedChats);
+      const chatsSet = state.chatsSet;
+      const usersSet = state.usersSet;
+      addedChats.forEach((i) => {
+        chatsSet.add(i.chatid);
+        if (Array.isArray(i.members)) {
+          i.members.forEach((j) => {
+            usersSet.add(j);
+          });
+        }
+      });
+      return Object.assign({}, state, {
+        chats,
+        usersDiff: Array.from(usersSet).filter((i) => !state.users[i]),
+        chatsSet,
+        usersSet,
+      });
     }
     case USERS_APPEND: {
       if (!Array.isArray(action.users) || action.users.length === 0) {
@@ -223,12 +251,10 @@ const chatsReducer = (state, action) => {
         state.users,
         Object.fromEntries(action.users.map((i) => [i.userid, i])),
       );
-      return {
-        chats: state.chats,
+      return Object.assign({}, state, {
         users,
         usersDiff: Array.from(state.usersSet).filter((i) => !users[i]),
-        usersSet: state.usersSet,
-      };
+      });
     }
     case USERS_INVALIDATE: {
       if (!Array.isArray(action.userids) || action.userids.length === 0) {
@@ -238,12 +264,10 @@ const chatsReducer = (state, action) => {
       for (const i of action.userids) {
         delete users[i];
       }
-      return {
-        chats: state.chats,
+      return Object.assign({}, state, {
         users,
         usersDiff: Array.from(state.usersSet).filter((i) => !users[i]),
-        usersSet: state.usersSet,
-      };
+      });
     }
     default:
       return state;
@@ -257,6 +281,7 @@ const ConduitChat = () => {
     chats: [],
     users: {},
     usersDiff: [],
+    chatsSet: new Set(),
     usersSet: new Set(),
   });
 
