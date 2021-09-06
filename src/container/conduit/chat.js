@@ -193,6 +193,9 @@ const chatsReducer = (state, action) => {
       if (!Array.isArray(action.chats)) {
         return state;
       }
+      const usersDiff = action.chats.flatMap((i) =>
+        Array.isArray(i.members) ? i.members : [],
+      );
       return {
         chats: action.chats.slice().sort((a, b) => {
           const la = a.last_updated || 0;
@@ -201,9 +204,8 @@ const chatsReducer = (state, action) => {
           return lb - la;
         }),
         users: {},
-        usersDiff: action.chats.flatMap((i) =>
-          Array.isArray(i.members) ? i.members : [],
-        ),
+        usersDiff,
+        usersSet: new Set(usersDiff),
       };
     }
     case CHATS_RCV: {
@@ -216,23 +218,16 @@ const chatsReducer = (state, action) => {
       if (!Array.isArray(action.users) || action.users.length === 0) {
         return state;
       }
-      const allMembers = state.chats.flatMap((i) =>
-        Array.isArray(i.members) ? i.members : [],
-      );
-      const membersSet = new Set(allMembers);
-      const users = Object.fromEntries(
-        Object.entries(
-          Object.assign(
-            {},
-            state.users,
-            Object.fromEntries(action.users.map((i) => [i.userid, i])),
-          ),
-        ).filter(([k, _v]) => membersSet.has(k)),
+      const users = Object.assign(
+        {},
+        state.users,
+        Object.fromEntries(action.users.map((i) => [i.userid, i])),
       );
       return {
         chats: state.chats,
         users,
-        usersDiff: allMembers.filter((i) => !users[i]),
+        usersDiff: Array.from(state.usersSet).filter((i) => !users[i]),
+        usersSet: state.usersSet,
       };
     }
     case USERS_INVALIDATE: {
@@ -243,13 +238,11 @@ const chatsReducer = (state, action) => {
       for (const i of action.userids) {
         delete users[i];
       }
-      const allMembers = state.chats.flatMap((i) =>
-        Array.isArray(i.members) ? i.members : [],
-      );
       return {
         chats: state.chats,
         users,
-        usersDiff: allMembers.filter((i) => !users[i]),
+        usersDiff: Array.from(state.usersSet).filter((i) => !users[i]),
+        usersSet: state.usersSet,
       };
     }
     default:
@@ -264,6 +257,7 @@ const ConduitChat = () => {
     chats: [],
     users: {},
     usersDiff: [],
+    usersSet: new Set(),
   });
 
   const posthookInit = useCallback(
