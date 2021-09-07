@@ -396,7 +396,6 @@ const ConduitChat = () => {
     }
     const observer = new IntersectionObserver((entries) => {
       if (entries.some((i) => i.isIntersecting)) {
-        console.log('intersect');
         setBefore(firstLastUpdated);
       }
     });
