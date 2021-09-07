@@ -1,4 +1,11 @@
-import {Fragment, useReducer, useCallback} from 'react';
+import {
+  Fragment,
+  useState,
+  useReducer,
+  useEffect,
+  useCallback,
+  useRef,
+} from 'react';
 import {
   Switch,
   Route,
@@ -371,6 +378,48 @@ const ConduitChat = () => {
     {posthook: posthookInit},
   );
 
+  const endElem = useRef(null);
+  const firstLastUpdated =
+    chats.chats.length === 0
+      ? 0
+      : chats.chats[chats.chats.length - 1].last_updated;
+  const [before, setBefore] = useState(0);
+  useEffect(() => {
+    if (!endElem.current) {
+      return;
+    }
+    if (firstLastUpdated === 0) {
+      return;
+    }
+    if (firstLastUpdated === before) {
+      return;
+    }
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.some((i) => i.isIntersecting)) {
+        console.log('intersect');
+        setBefore(firstLastUpdated);
+      }
+    });
+    observer.observe(endElem.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [endElem, setBefore, before, firstLastUpdated]);
+
+  const posthookLoadChats = useCallback(
+    (_status, chats) => {
+      dispatchChats(ChatsAppend(chats));
+    },
+    [dispatchChats],
+  );
+  const [loadChats, _execLoadChats] = useAuthResource(
+    before === 0 ? selectAPINull : selectAPILatestChats,
+    ['dm', before, CHATS_LIMIT],
+    [],
+    {posthook: posthookLoadChats},
+  );
+
   const posthookChats = useCallback(
     (_status, chats) => {
       dispatchChats(ChatsAppend(chats));
@@ -409,36 +458,48 @@ const ConduitChat = () => {
   const modal = useModal();
 
   return (
-    <Grid>
+    <Grid className="conduit-chat-root">
       <Column fullWidth sm={6}>
-        <Grid justify="space-between" align="flex-end">
-          <Column grow="1">
-            <h4>Direct Messages</h4>
-          </Column>
+        <Grid className="conduit-chat-sidebar" direction="column" nowrap>
           <Column>
-            <ButtonGroup>
-              <ButtonTertiary
-                forwardedRef={modal.anchorRef}
-                onClick={modal.toggle}
-              >
-                <FaIcon icon="plus" />
-              </ButtonTertiary>
-            </ButtonGroup>
-            {modal.show && (
-              <ModalSurface size="md" anchor={modal.anchor} close={modal.close}>
-                <CreateChat close={modal.close} addChat={addChat} />
-              </ModalSurface>
-            )}
+            <Grid justify="space-between" align="flex-end">
+              <Column grow="1">
+                <h4>Direct Messages</h4>
+              </Column>
+              <Column>
+                <ButtonGroup>
+                  <ButtonTertiary
+                    forwardedRef={modal.anchorRef}
+                    onClick={modal.toggle}
+                  >
+                    <FaIcon icon="plus" />
+                  </ButtonTertiary>
+                </ButtonGroup>
+                {modal.show && (
+                  <ModalSurface
+                    size="md"
+                    anchor={modal.anchor}
+                    close={modal.close}
+                  >
+                    <CreateChat close={modal.close} addChat={addChat} />
+                  </ModalSurface>
+                )}
+              </Column>
+            </Grid>
+            {initChats.err && <p>{initChats.err.message}</p>}
+            {loadChats.err && <p>{loadChats.err.message}</p>}
+            {getChats.err && <p>{getChats.err.message}</p>}
+            {getUsers.err && <p>{getUsers.err.message}</p>}
+          </Column>
+          <Column className="conduit-chat-list-outer" grow="1" basis="0">
+            <ListGroup className="conduit-chat-list">
+              {chats.chats.map((i) => (
+                <ChatRow key={i.chatid} chat={i} usersCache={chats.users} />
+              ))}
+              <div className="end-marker" ref={endElem} />
+            </ListGroup>
           </Column>
         </Grid>
-        {initChats.err && <p>{initChats.err.message}</p>}
-        {getChats.err && <p>{getChats.err.message}</p>}
-        {getUsers.err && <p>{getUsers.err.message}</p>}
-        <ListGroup className="conduit-chat-list">
-          {chats.chats.map((i) => (
-            <ChatRow key={i.chatid} chat={i} usersCache={chats.users} />
-          ))}
-        </ListGroup>
       </Column>
       <Column fullWidth sm={18}>
         <Switch>

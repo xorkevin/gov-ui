@@ -34,7 +34,7 @@ const Conduit = () => {
 
   return (
     <MainContent>
-      <Grid>
+      <Grid className="conduit-root">
         <Column fullWidth sm={2}>
           <Sidebar>
             <SidebarHeader>

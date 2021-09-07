@@ -141,8 +141,31 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
   text-overflow: ellipsis;
 }
 
+.conduit-root {
+  max-height: 100vh;
+  height: 100vh;
+}
+
+.conduit-chat-root {
+  height: 100%;
+}
+
+.conduit-chat-sidebar {
+  height: 100%;
+}
+
+.conduit-chat-list-outer {
+  min-height: 0;
+}
+
 .conduit-chat-list {
+  max-height: 100%;
   border: 1px solid $color-text-dark-3;
+  overflow: auto;
+
+  & > .listgroup-items > .end-marker {
+    opacity: 0;
+  }
 }
 
 .dark .conduit-chat-list {
