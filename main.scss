@@ -142,7 +142,6 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
 }
 
 .conduit-root {
-  max-height: 100vh;
   height: 100vh;
 }
 
@@ -163,9 +162,17 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
   border: 1px solid $color-text-dark-3;
   overflow: auto;
 
-  & > .listgroup-items > .end-marker {
-    opacity: 0;
+  & > .listgroup-items {
+    position: relative;
   }
+}
+
+.conduit-chat-list-end-marker {
+  width: 100%;
+  height: 50vh;
+  position: absolute;
+  bottom: 0;
+  visibility: hidden;
 }
 
 .dark .conduit-chat-list {

@@ -35,7 +35,7 @@ const Conduit = () => {
   return (
     <MainContent>
       <Grid className="conduit-root">
-        <Column fullWidth sm={2}>
+        <Column fullWidth lg={2} sm={4}>
           <Sidebar>
             <SidebarHeader>
               <h3>Conduit</h3>
@@ -100,7 +100,7 @@ const Conduit = () => {
             )}
           </Sidebar>
         </Column>
-        <Column fullWidth sm={22}>
+        <Column fullWidth lg={22} sm={20}>
           <Suspense fallback={ctx.fallbackView}>
             <Switch>
               <Route path={`${match.path}/chat`}>

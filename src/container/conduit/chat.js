@@ -37,6 +37,7 @@ import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 
 const CHATS_LIMIT = 32;
+const CHATS_SCROLL_LIMIT = 16;
 const USERS_LIMIT = 8;
 
 const selectAPIUsers = (api) => api.u.user.ids;
@@ -414,7 +415,7 @@ const ConduitChat = () => {
   );
   const [loadChats, _execLoadChats] = useAuthResource(
     before === 0 ? selectAPINull : selectAPILatestChats,
-    ['dm', before, CHATS_LIMIT],
+    ['dm', before, CHATS_SCROLL_LIMIT],
     [],
     {posthook: posthookLoadChats},
   );
@@ -459,7 +460,7 @@ const ConduitChat = () => {
   return (
     <Grid className="conduit-chat-root">
       <Column fullWidth sm={6}>
-        <Grid className="conduit-chat-sidebar" direction="column" nowrap>
+        <Grid className="conduit-chat-sidebar" direction="column" nowrap strict>
           <Column>
             <Grid justify="space-between" align="flex-end">
               <Column grow="1">
@@ -495,7 +496,7 @@ const ConduitChat = () => {
               {chats.chats.map((i) => (
                 <ChatRow key={i.chatid} chat={i} usersCache={chats.users} />
               ))}
-              <div className="end-marker" ref={endElem} />
+              <div className="conduit-chat-list-end-marker" ref={endElem} />
             </ListGroup>
           </Column>
         </Grid>
