@@ -33,6 +33,37 @@ export default {
         expectdata: true,
         err: 'Unable to create chat',
       },
+      id: {
+        url: '/id/{0}',
+        children: {
+          msg: {
+            url: '/msg',
+            children: {
+              create: {
+                url: '',
+                method: 'POST',
+                transformer: (chatid, kind, value) => ({
+                  params: [chatid],
+                  body: {kind, value},
+                }),
+                expectdata: true,
+                err: 'Unable to send chat msg',
+              },
+              latest: {
+                url: '/latest',
+                method: 'GET',
+                transformer: (chatid, kind, before, amount) => ({
+                  params: [chatid],
+                  query: {kind, before, amount},
+                }),
+                expectdata: true,
+                selector: (_status, data) => data && data.msgs,
+                err: 'Unable to get latest msgs',
+              },
+            },
+          },
+        },
+      },
     },
   },
 };

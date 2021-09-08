@@ -25,6 +25,7 @@ import {
   useMenu,
   Menu,
   MenuItem,
+  Field,
   FieldDynMultiSelect,
   Form,
   useForm,
@@ -38,13 +39,16 @@ import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 
 const CHATS_LIMIT = 32;
 const CHATS_SCROLL_LIMIT = 16;
+const MSGS_LIMIT = 32;
 const USERS_LIMIT = 8;
 
 const selectAPIUsers = (api) => api.u.user.ids;
+const selectAPISearch = (api) => api.u.user.search;
 const selectAPIChats = (api) => api.conduit.chat.ids;
 const selectAPILatestChats = (api) => api.conduit.chat.latest;
 const selectAPICreateChat = (api) => api.conduit.chat.create;
-const selectAPISearch = (api) => api.u.user.search;
+const selectAPICreateMsg = (api) => api.conduit.chat.id.msg.create;
+const selectAPILatestMsgs = (api) => api.conduit.chat.id.msg.latest;
 
 const SelectAChat = () => {
   return <div>Select a chat</div>;
@@ -56,13 +60,41 @@ const Chat = ({allChatsMap, invalidateChat}) => {
     invalidateChat(chatid);
   }, [invalidateChat, chatid]);
 
+  const [initMsgs, _execInitMsgs] = useAuthResource(
+    selectAPILatestMsgs,
+    [chatid, '', '', MSGS_LIMIT],
+    [],
+  );
+
+  const form = useForm({
+    value: '',
+  });
+
+  const [create, execCreate] = useAuthCall(
+    selectAPICreateMsg,
+    [chatid, 'text', form.state.value],
+    {},
+  );
+
   if (!allChatsMap.has(chatid)) {
     return <div>Chat not found</div>;
   }
 
   const chat = allChatsMap.get(chatid);
 
-  return <pre>{JSON.stringify(chat, null, '  ')}</pre>;
+  return (
+    <div>
+      <pre>{JSON.stringify(chat, null, '  ')}</pre>
+      <pre>{JSON.stringify(initMsgs, null, '  ')}</pre>
+      <Form formState={form.state} onChange={form.update} onSubmit={execCreate}>
+        <Field name="value" label="Message" nohint fullWidth />
+      </Form>
+      <ButtonGroup>
+        <ButtonPrimary onClick={execCreate}>Send</ButtonPrimary>
+      </ButtonGroup>
+      {create.err && <p>{create.err.message}</p>}
+    </div>
+  );
 };
 
 const ChatRow = ({chat, usersCache}) => {
@@ -107,9 +139,11 @@ const ChatRow = ({chat, usersCache}) => {
           <Time value={chat.last_updated} />
         </Column>
         <Column shrink="0">
-          <ButtonTertiary forwardedRef={menu.anchorRef} onClick={toggleMenu}>
-            <FaIcon icon="ellipsis-v" />
-          </ButtonTertiary>
+          <ButtonGroup>
+            <ButtonTertiary forwardedRef={menu.anchorRef} onClick={toggleMenu}>
+              <FaIcon icon="ellipsis-v" />
+            </ButtonTertiary>
+          </ButtonGroup>
           {menu.show && (
             <Menu
               size="md"
@@ -234,8 +268,16 @@ const chatsReducer = (state, action) => {
           // reverse sort
           return b.last_updated - a.last_updated;
         });
-      const usersDiff = chats.flatMap((i) =>
-        Array.isArray(i.members) ? i.members : [],
+      const usersDiff = Array.from(
+        chats.reduce((a, i) => {
+          if (!Array.isArray(i.members)) {
+            return a;
+          }
+          i.members.forEach((j) => {
+            a.add(j);
+          });
+          return a;
+        }, new Set()),
       );
       const chatids = chats.map((i) => i.chatid);
       return {
