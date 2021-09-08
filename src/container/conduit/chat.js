@@ -50,10 +50,19 @@ const SelectAChat = () => {
   return <div>Select a chat</div>;
 };
 
-const Chat = () => {
+const Chat = ({allChatsMap, invalidateChat}) => {
   const {chatid} = useParams();
+  useEffect(() => {
+    invalidateChat(chatid);
+  }, [invalidateChat, chatid]);
 
-  return <div>Hello, World, chatid: {chatid}</div>;
+  if (!allChatsMap.has(chatid)) {
+    return <div>Chat not found</div>;
+  }
+
+  const chat = allChatsMap.get(chatid);
+
+  return <pre>{JSON.stringify(chat, null, '  ')}</pre>;
 };
 
 const ChatRow = ({chat, usersCache}) => {
@@ -117,7 +126,7 @@ const ChatRow = ({chat, usersCache}) => {
   );
 };
 
-const CreateChat = ({close, addChat}) => {
+const CreateChat = ({close, invalidateChat}) => {
   const {userid} = useAuthValue();
 
   const form = useForm({
@@ -129,10 +138,10 @@ const CreateChat = ({close, addChat}) => {
       close();
       // TODO: remove this branch after websockets
       if (chat && chat.chatid) {
-        addChat(chat.chatid);
+        invalidateChat(chat.chatid);
       }
     },
-    [close, addChat],
+    [close, invalidateChat],
   );
   const [create, execCreate] = useAuthCall(
     selectAPICreateChat,
@@ -236,7 +245,7 @@ const chatsReducer = (state, action) => {
         usersDiff,
         validChatsSet: new Set(chatids),
         chatsSet: new Set(chatids),
-        allChatsMap: new Map(chats.map((i) => [i.chatid, i.last_updated])),
+        allChatsMap: new Map(chats.map((i) => [i.chatid, i])),
         validUsersSet: new Set(),
         usersSet: new Set(usersDiff),
       };
@@ -253,12 +262,15 @@ const chatsReducer = (state, action) => {
           if (!state.allChatsMap.has(i.chatid)) {
             return true;
           }
-          return i.last_updated > state.allChatsMap.get(i.chatid);
+          return i.last_updated >= state.allChatsMap.get(i.chatid).last_updated;
         })
         .sort((a, b) => {
           // reverse sort
           return b.last_updated - a.last_updated;
         });
+      if (addedChats.length === 0) {
+        return state;
+      }
       const addedChatidSet = new Set(addedChats.map((i) => i.chatid));
       const chats = state.chats.filter((i) => !addedChatidSet.has(i.chatid));
       addedChats.forEach((i) => {
@@ -268,16 +280,15 @@ const chatsReducer = (state, action) => {
         // reverse sort
         return b.last_updated - a.last_updated;
       });
-      const validChatsSet = state.validChatsSet;
-      const chatsSet = state.chatsSet;
-      const allChatsMap = state.allChatsMap;
-      const usersSet = state.usersSet;
+      const {validChatsSet, chatsSet, allChatsMap, validUsersSet, usersSet} =
+        state;
       addedChats.forEach((i) => {
         validChatsSet.add(i.chatid);
         chatsSet.add(i.chatid);
-        allChatsMap.set(i.chatid, i.last_updated);
+        allChatsMap.set(i.chatid, i);
         if (Array.isArray(i.members)) {
           i.members.forEach((j) => {
+            validUsersSet.delete(j);
             usersSet.add(j);
           });
         }
@@ -285,12 +296,11 @@ const chatsReducer = (state, action) => {
       return Object.assign({}, state, {
         chats,
         chatsDiff: Array.from(chatsSet).filter((i) => !validChatsSet.has(i)),
-        usersDiff: Array.from(usersSet).filter(
-          (i) => !state.validUsersSet.has(i),
-        ),
+        usersDiff: Array.from(usersSet).filter((i) => !validUsersSet.has(i)),
         validChatsSet,
         chatsSet,
         allChatsMap,
+        validUsersSet,
         usersSet,
       });
     }
@@ -298,8 +308,7 @@ const chatsReducer = (state, action) => {
       if (!Array.isArray(action.chatids) || action.chatids.length === 0) {
         return state;
       }
-      const validChatsSet = state.validChatsSet;
-      const chatsSet = state.chatsSet;
+      const {validChatsSet, chatsSet} = state;
       action.chatids.forEach((i) => {
         validChatsSet.delete(i);
         chatsSet.add(i);
@@ -448,7 +457,7 @@ const ConduitChat = () => {
     {posthook: posthookUsers},
   );
 
-  const addChat = useCallback(
+  const invalidateChat = useCallback(
     (chatid) => {
       dispatchChats(ChatsInvalidate([chatid]));
     },
@@ -481,7 +490,10 @@ const ConduitChat = () => {
                     anchor={modal.anchor}
                     close={modal.close}
                   >
-                    <CreateChat close={modal.close} addChat={addChat} />
+                    <CreateChat
+                      close={modal.close}
+                      invalidateChat={invalidateChat}
+                    />
                   </ModalSurface>
                 )}
               </Column>
@@ -507,7 +519,10 @@ const ConduitChat = () => {
             <SelectAChat />
           </Route>
           <Route path={`${match.path}/:chatid`}>
-            <Chat />
+            <Chat
+              allChatsMap={chats.allChatsMap}
+              invalidateChat={invalidateChat}
+            />
           </Route>
           <Redirect to={`${match.url}`} />
         </Switch>
