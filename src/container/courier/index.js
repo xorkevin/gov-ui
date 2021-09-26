@@ -42,10 +42,10 @@ const Courier = () => {
     [],
   );
   const prefixLen = ctx.orgUsrPrefix.length;
-  const orgids = useMemo(() => roles.data.map((i) => i.slice(prefixLen)), [
-    prefixLen,
-    roles,
-  ]);
+  const orgids = useMemo(
+    () => roles.data.map((i) => i.slice(prefixLen)),
+    [prefixLen, roles],
+  );
   const [orgs] = useAuthResource(
     orgids.length > 0 ? selectAPIOrgs : selectAPINull,
     [orgids],
@@ -53,7 +53,7 @@ const Courier = () => {
   );
   const orgOpts = useMemo(
     () =>
-      [{display: username, value: userid}].concat(
+      [{display: `${username} (Personal)`, value: userid}].concat(
         orgs.data.map((i) => ({display: i.name, value: ctx.orgRole(i.orgid)})),
       ),
     [ctx, userid, username, orgs],
