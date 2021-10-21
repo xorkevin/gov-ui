@@ -19,10 +19,9 @@ import {
 import {GovUICtx} from '../../middleware';
 import {useOrgOpts} from '../../component/accounts';
 
-const CourierLink = lazy(() => import('./link'));
-const CourierBrand = lazy(() => import('./brand'));
+const Manage = lazy(() => import('./list'));
 
-const Courier = () => {
+const MailingLists = () => {
   const {userid} = useAuthValue();
   const ctx = useContext(GovUICtx);
   const match = useRouteMatch();
@@ -48,36 +47,23 @@ const Courier = () => {
                 />
               </Form>
               <Sidebar>
-                <SidebarHeader>Courier</SidebarHeader>
+                <SidebarHeader>Mailing Lists</SidebarHeader>
                 <SidebarItem
-                  link={`${match.url}/link`}
+                  link={`${match.url}/manage`}
                   local
-                  icon={<FaIcon icon="link" />}
+                  icon={<FaIcon icon="th-list" />}
                 >
-                  Links
-                </SidebarItem>
-                <SidebarItem
-                  link={`${match.url}/brand`}
-                  local
-                  icon={<FaIcon icon="shield" />}
-                >
-                  Brand
+                  Manage
                 </SidebarItem>
               </Sidebar>
             </Column>
             <Column fullWidth md={18}>
               <Suspense fallback={ctx.fallbackView}>
                 <Switch>
-                  <Route path={`${match.path}/link`}>
-                    <CourierLink
-                      accountid={form.state.accountid}
-                      courierPath={ctx.courierLinkPath}
-                    />
+                  <Route path={`${match.path}/manage`}>
+                    <Manage accountid={form.state.accountid} />
                   </Route>
-                  <Route path={`${match.path}/brand`}>
-                    <CourierBrand accountid={form.state.accountid} />
-                  </Route>
-                  <Redirect to={`${match.url}/link`} />
+                  <Redirect to={`${match.url}/manage`} />
                 </Switch>
               </Suspense>
             </Column>
@@ -88,4 +74,4 @@ const Courier = () => {
   );
 };
 
-export default Courier;
+export default MailingLists;

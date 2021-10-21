@@ -13,6 +13,7 @@ const OrgContainer = lazy(() => import('./src/container/org'));
 const AdminContainer = lazy(() => import('./src/container/admin'));
 const CourierContainer = lazy(() => import('./src/container/courier'));
 const ConduitContainer = lazy(() => import('./src/container/conduit'));
+const MailingListsContainer = lazy(() => import('./src/container/mailinglist'));
 const SetupContainer = lazy(() => import('./src/container/setup'));
 
 export {
@@ -30,5 +31,6 @@ export {
   AdminContainer,
   CourierContainer,
   ConduitContainer,
+  MailingListsContainer,
   SetupContainer,
 };

@@ -28,6 +28,7 @@ import {
   AdminContainer,
   CourierContainer,
   ConduitContainer,
+  MailingListsContainer,
   SetupContainer,
 } from '@xorkevin/gov-ui';
 
@@ -151,6 +152,10 @@ const App = () => {
                 <FaIcon icon="fire" />
                 <small>Conduit</small>
               </NavItem>
+              <NavItem local link="/lists">
+                <FaIcon icon="envelope" />
+                <small>Lists</small>
+              </NavItem>
             </Fragment>
           )}
         </NavContainer>
@@ -187,6 +192,9 @@ const App = () => {
           </Route>
           <Route path="/conduit">
             <ConduitC />
+          </Route>
+          <Route path="/lists">
+            <MailingListsContainer />
           </Route>
           <Route path="/setup">
             <SetupContainer />
