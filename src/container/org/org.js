@@ -81,7 +81,7 @@ const OrgDetails = ({pathOrg}) => {
                     <SidebarItem
                       local
                       link={`${match.url}/manage`}
-                      icon={<FaIcon icon="user" />}
+                      icon={<FaIcon icon="th-list" />}
                     >
                       Manage
                     </SidebarItem>

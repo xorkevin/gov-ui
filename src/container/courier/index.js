@@ -36,15 +36,16 @@ const Courier = () => {
   return (
     <MainContent>
       <Section>
-        <Container padded narrow>
+        <Container padded>
           <Grid>
-            <Column fullWidth md={6}>
+            <Column fullWidth md={6} lg={4}>
               <Form formState={form.state} onChange={form.update}>
                 <FieldSearchSelect
                   name="accountid"
                   options={orgOpts}
                   label="Account"
                   nohint
+                  fullWidth
                 />
               </Form>
               <Sidebar>
@@ -65,7 +66,7 @@ const Courier = () => {
                 </SidebarItem>
               </Sidebar>
             </Column>
-            <Column fullWidth md={18}>
+            <Column fullWidth md={18} lg={20}>
               <Suspense fallback={ctx.fallbackView}>
                 <Switch>
                   <Route path={`${match.path}/link`}>
