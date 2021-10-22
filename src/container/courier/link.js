@@ -1,5 +1,4 @@
 import {useCallback, useMemo} from 'react';
-import {isValidURL} from '../../utility';
 import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
   Grid,
@@ -23,6 +22,8 @@ import {
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 import Anchor from '@xorkevin/nuke/src/component/anchor/nocolor';
+
+import {isValidURL} from '../../utility';
 
 const LINK_LIMIT = 32;
 const BRAND_LIMIT = 128;
@@ -181,29 +182,31 @@ const CourierLink = ({accountid, courierPath}) => {
     [accountid, BRAND_LIMIT, 0],
     [],
   );
-  const brandOptions = useMemo(() => brands.data.map(({brandid}) => brandid), [
-    brands,
-  ]);
+  const brandOptions = useMemo(
+    () => brands.data.map(({brandid}) => brandid),
+    [brands],
+  );
 
   return (
     <div>
       <h3>Shortlinks</h3>
       <hr />
       <Grid>
-        <Column fullWidth md={16}>
+        <Column fullWidth md={16} lg={18}>
           <ListGroup>
-            {links.data.map(({linkid, url, creatorid, creation_time}) => (
-              <LinkRow
-                key={linkid}
-                courierPath={courierPath}
-                creatorid={creatorid}
-                linkid={linkid}
-                url={url}
-                creation_time={creation_time}
-                posthookDelete={posthookDelete}
-                errhook={displayErrSnack}
-              />
-            ))}
+            {Array.isArray(links.data) &&
+              links.data.map(({linkid, url, creatorid, creation_time}) => (
+                <LinkRow
+                  key={linkid}
+                  courierPath={courierPath}
+                  creatorid={creatorid}
+                  linkid={linkid}
+                  url={url}
+                  creation_time={creation_time}
+                  posthookDelete={posthookDelete}
+                  errhook={displayErrSnack}
+                />
+              ))}
           </ListGroup>
           <ButtonGroup>
             <ButtonTertiary disabled={paginate.atFirst} onClick={paginate.prev}>
@@ -216,7 +219,7 @@ const CourierLink = ({accountid, courierPath}) => {
           </ButtonGroup>
           {links.err && <p>{links.err.message}</p>}
         </Column>
-        <Column fullWidth md={8}>
+        <Column fullWidth md={8} lg={6}>
           <h4>Create new shortlink</h4>
           <Form
             formState={form.state}
@@ -231,12 +234,14 @@ const CourierLink = ({accountid, courierPath}) => {
               hint={`format: ${courierPath}/${
                 form.state.linkid.length > 0 ? form.state.linkid : ':linkid'
               }`}
+              fullWidth
             />
-            <Field name="url" label="Link URL" hint="destination" />
+            <Field name="url" label="Link URL" hint="destination" fullWidth />
             <FieldSuggest
               name="brandid"
               options={brandOptions}
               label="QR Brand (optional)"
+              fullWidth
             />
           </Form>
           <ButtonGroup>
