@@ -5,6 +5,7 @@ import orgsAPI from './apiorgs';
 import oauthAPI from './apioauth';
 import courierAPI from './apicourier';
 import conduitAPI from './apiconduit';
+import mailinglistAPI from './apimailinglist';
 
 const user = (url = '/u') => ({
   url,
@@ -43,6 +44,11 @@ const courier = (url = '/courier') => ({
 const conduit = (url = '/conduit') => ({
   url,
   children: conduitAPI,
+});
+
+const mailinglist = (url = '/mailinglist') => ({
+  url,
+  children: mailinglistAPI,
 });
 
 const setupz = () => ({
@@ -97,6 +103,7 @@ const GovAPI = Object.freeze({
   oauth,
   courier,
   conduit,
+  mailinglist,
 });
 
 export default GovAPI;

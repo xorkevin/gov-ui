@@ -51,6 +51,7 @@ const API = {
   oauth: GovAPI.oauth('/oauth'),
   courier: GovAPI.courier('/courier'),
   conduit: GovAPI.conduit('/conduit'),
+  mailinglist: GovAPI.mailinglist('/mailinglist'),
 };
 
 const WELL_KNOWN = {

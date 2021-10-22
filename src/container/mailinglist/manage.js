@@ -14,6 +14,7 @@ const Manage = () => {
   return (
     <div>
       <h3>Manage Lists</h3>
+      <hr />
       <Form formState={form.state} onChange={form.update}>
         <FieldSearchSelect
           name="accountid"
