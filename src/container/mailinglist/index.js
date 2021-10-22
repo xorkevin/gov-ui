@@ -14,7 +14,7 @@ import {
 
 import {GovUICtx} from '../../middleware';
 
-const Manage = lazy(() => import('./list'));
+const Manage = lazy(() => import('./manage'));
 
 const MailingLists = () => {
   const ctx = useContext(GovUICtx);

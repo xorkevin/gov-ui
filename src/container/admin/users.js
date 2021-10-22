@@ -1,4 +1,5 @@
-import {Fragment, useState, useCallback, useMemo, useContext} from 'react';
+import {Fragment, useCallback, useMemo, useContext} from 'react';
+import {Switch, Route, useRouteMatch, useParams} from 'react-router-dom';
 import {useAPI, useResource, selectAPINull} from '@xorkevin/substation';
 import {AuthCtx, useAuthValue, useAuthCall} from '@xorkevin/turbine';
 import {
@@ -11,6 +12,7 @@ import {
   useFormSearch,
   SnackbarSurface,
   useSnackbarView,
+  Anchor,
   ButtonGroup,
   Chip,
   FaIcon,
@@ -27,15 +29,12 @@ const selectAPIUser = (api) => api.u.user.name;
 const selectAPIEditRank = (api) => api.u.user.id.edit.rank;
 const selectAPISearch = (api) => api.u.user.search;
 
-const UserSearch = ({setUsername, err}) => {
+const UserSearch = () => {
+  const match = useRouteMatch();
+
   const form = useForm({
     username: '',
   });
-
-  const formState = form.state;
-  const search = useCallback(() => {
-    setUsername(formState.username);
-  }, [formState, setUsername]);
 
   const apiSearch = useAPI(selectAPISearch);
   const searchUsers = useCallback(
@@ -53,7 +52,7 @@ const UserSearch = ({setUsername, err}) => {
   return (
     <Grid>
       <Column fullWidth md={16}>
-        <Form formState={form.state} onChange={form.update} onSubmit={search}>
+        <Form formState={form.state} onChange={form.update}>
           <FieldDynSuggest
             name="username"
             label="Username"
@@ -64,15 +63,18 @@ const UserSearch = ({setUsername, err}) => {
           />
         </Form>
         <ButtonGroup>
-          <ButtonPrimary onClick={search}>Search</ButtonPrimary>
+          <Anchor local href={`${match.url}/${form.state.username}`}>
+            <ButtonPrimary>Search</ButtonPrimary>
+          </Anchor>
         </ButtonGroup>
-        {err && <p>{err.message}</p>}
       </Column>
     </Grid>
   );
 };
 
-const UserDetails = ({user, back, reexecute}) => {
+const UserDetails = ({back}) => {
+  const {username} = useParams();
+
   const {roleIntersect} = useContext(AuthCtx);
 
   const snackRolesUpdate = useSnackbarView(
@@ -91,6 +93,20 @@ const UserDetails = ({user, back, reexecute}) => {
       remove: [],
     });
   }, [formAssign]);
+
+  const [user, reexecute] = useResource(
+    username ? selectAPIUser : selectAPINull,
+    [username],
+    {
+      userid: '',
+      username: '',
+      first_name: '',
+      last_name: '',
+      roles: [],
+      creation_time: 0,
+    },
+  );
+
   const posthook = useCallback(() => {
     clearForm();
     snackRolesUpdate();
@@ -98,7 +114,7 @@ const UserDetails = ({user, back, reexecute}) => {
   }, [reexecute, snackRolesUpdate, clearForm]);
   const [edit, execEdit] = useAuthCall(
     selectAPIEditRank,
-    [user.userid, form.state.add, form.state.remove],
+    [user.data.userid, form.state.add, form.state.remove],
     {},
     {posthook},
   );
@@ -123,88 +139,76 @@ const UserDetails = ({user, back, reexecute}) => {
   return (
     <Fragment>
       <ButtonGroup>
-        <ButtonTertiary onClick={back}>
-          <FaIcon icon="chevron-left" /> Back
-        </ButtonTertiary>
+        <Anchor local href={back}>
+          <ButtonTertiary>
+            <FaIcon icon="chevron-left" /> Back
+          </ButtonTertiary>
+        </Anchor>
       </ButtonGroup>
-      <Grid>
-        <Column fullWidth md={16}>
-          <h4>{`${user.first_name} ${user.last_name}`}</h4>
-          <Form
-            formState={form.state}
-            onChange={form.update}
-            onSubmit={execEdit}
-          >
-            <FieldMultiSelect
-              name="add"
-              label="Add"
-              options={allPermissions}
-              nohint
-              fullWidth
-            />
-            <FieldMultiSelect
-              name="remove"
-              label="Remove"
-              options={allPermissions}
-              nohint
-              fullWidth
-            />
-          </Form>
-          <ButtonGroup>
-            <ButtonTertiary onClick={clearForm}>Clear</ButtonTertiary>
-            <ButtonPrimary onClick={execEdit}>Update Roles</ButtonPrimary>
-          </ButtonGroup>
-          {edit.err && <p>{edit.err.message}</p>}
-        </Column>
-        <Column fullWidth md={8}>
-          <h5>Userid</h5>
-          <code>{user.userid}</code>
-          <h5>Username</h5>
-          <div>{user.username}</div>
-          <h5>Current Roles</h5>
-          {Array.isArray(user.roles) &&
-            user.roles.map((tag) => <Chip key={tag}>{tag}</Chip>)}
-          <p>
-            Created <Time value={user.creation_time * 1000} />
-          </p>
-        </Column>
-      </Grid>
+      {user.success && (
+        <Grid>
+          <Column fullWidth md={16}>
+            <h4>{`${user.data.first_name} ${user.data.last_name}`}</h4>
+            <Form
+              formState={form.state}
+              onChange={form.update}
+              onSubmit={execEdit}
+            >
+              <FieldMultiSelect
+                name="add"
+                label="Add"
+                options={allPermissions}
+                nohint
+                fullWidth
+              />
+              <FieldMultiSelect
+                name="remove"
+                label="Remove"
+                options={allPermissions}
+                nohint
+                fullWidth
+              />
+            </Form>
+            <ButtonGroup>
+              <ButtonTertiary onClick={clearForm}>Clear</ButtonTertiary>
+              <ButtonPrimary onClick={execEdit}>Update Roles</ButtonPrimary>
+            </ButtonGroup>
+            {edit.err && <p>{edit.err.message}</p>}
+          </Column>
+          <Column fullWidth md={8}>
+            <h5>Userid</h5>
+            <code>{user.data.userid}</code>
+            <h5>Username</h5>
+            <div>{user.data.username}</div>
+            <h5>Current Roles</h5>
+            {Array.isArray(user.data.roles) &&
+              user.data.roles.map((tag) => <Chip key={tag}>{tag}</Chip>)}
+            <p>
+              Created <Time value={user.data.creation_time * 1000} />
+            </p>
+          </Column>
+        </Grid>
+      )}
+      {user.err && <p>{user.err.message}</p>}
     </Fragment>
   );
 };
 
 const Users = () => {
-  const [username, setUsername] = useState('');
-
-  const back = useCallback(() => {
-    setUsername('');
-  }, [setUsername]);
-
-  const hasUsername = username.length > 0;
-
-  const [user, reexecute] = useResource(
-    hasUsername ? selectAPIUser : selectAPINull,
-    [username],
-    {
-      userid: '',
-      username: '',
-      first_name: '',
-      last_name: '',
-      roles: [],
-      creation_time: 0,
-    },
-  );
-
-  const displayUser = hasUsername && user.success;
+  const match = useRouteMatch();
 
   return (
     <div>
       <h3>Manage Roles</h3>
       <hr />
-      {!displayUser && <UserSearch setUsername={setUsername} err={user.err} />}
-      {displayUser && (
-        <UserDetails user={user.data} back={back} reexecute={reexecute} />
-      )}
+      <Switch>
+        <Route exact path={match.path}>
+          <UserSearch />
+        </Route>
+        <Route path={`${match.path}/:username`}>
+          <UserDetails back={match.url} />
+        </Route>
+      </Switch>
     </div>
   );
 };
