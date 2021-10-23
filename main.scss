@@ -179,6 +179,14 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
   border-color: $color-text-light-3;
 }
 
+.mailinglist-item-name {
+  min-width: 0;
+}
+
+.mailinglist-item-heading {
+  display: inline;
+}
+
 .devtools-dash-health-indicator {
   display: block;
   width: 8px;

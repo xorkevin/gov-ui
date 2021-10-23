@@ -1,4 +1,5 @@
-import {Fragment, useCallback} from 'react';
+import {Fragment, useCallback, useContext} from 'react';
+import {useResource, selectAPINull} from '@xorkevin/substation';
 import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
   Grid,
@@ -27,12 +28,14 @@ import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
 
+import {GovUICtx} from '../../middleware';
 import {useOrgOpts} from '../../component/accounts';
 
 const LISTS_LIMIT = 32;
 
 const selectAPILists = (api) => api.mailinglist.group.latest;
 const selectAPICreate = (api) => api.mailinglist.group.create;
+const selectAPIOrg = (api) => api.orgs.id.get;
 
 const formValidCheck = ({listname, name}) => {
   const valid = {};
@@ -127,20 +130,20 @@ const CreateList = ({accountid, posthookCreate, close}) => {
   );
 };
 
-const ListRow = ({listid, name, archive, lastUpdated}) => {
+const ListRow = ({listname, name, archive, lastUpdated, creatorName}) => {
   const menu = useMenu();
 
   return (
     <ListItem>
       <Grid justify="space-between" align="center" nowrap>
-        <Column className="account-org-item-name">
-          <h5 className="account-org-item-heading">
+        <Column className="mailinglist-item-name">
+          <h5 className="mailinglist-item-heading">
             <AnchorText local href="#">
               {name}
             </AnchorText>{' '}
-            <small>{listid}</small>
-          </h5>
-          <small>{archive && <Chip>Archived</Chip>}</small>
+            <small>{`${creatorName}.${listname}`}</small>
+          </h5>{' '}
+          <small>{archive && <Chip>Archived</Chip>}</small>{' '}
           <Time value={lastUpdated} />
         </Column>
         <Column shrink="0">
@@ -161,7 +164,8 @@ const ListRow = ({listid, name, archive, lastUpdated}) => {
 };
 
 const Manage = () => {
-  const {userid} = useAuthValue();
+  const ctx = useContext(GovUICtx);
+  const {userid, username} = useAuthValue();
 
   const displaySnackbarCreate = useSnackbarView(
     <SnackbarSurface>&#x2713; Org created</SnackbarSurface>,
@@ -171,6 +175,20 @@ const Manage = () => {
     accountid: userid,
   });
   const orgOpts = useOrgOpts();
+
+  const isOrg = form.state.accountid !== userid;
+  const [org, _reexecuteOrg] = useResource(
+    isOrg ? selectAPIOrg : selectAPINull,
+    [ctx.orgNameToOrgID(form.state.accountid)],
+    {
+      orgid: '',
+      name: '',
+      display_name: '',
+      desc: '',
+      creation_time: 0,
+    },
+  );
+  const creatorName = isOrg ? (org.success ? org.data.name : '') : username;
 
   const paginate = usePaginate(LISTS_LIMIT);
 
@@ -238,6 +256,7 @@ const Manage = () => {
           lists.data.map((i) => (
             <ListRow
               key={i.listid}
+              listid={i.listid}
               creatorid={i.creatorid}
               listname={i.listname}
               name={i.name}
@@ -247,6 +266,7 @@ const Manage = () => {
               memberPolicy={i.member_policy}
               lastUpdated={i.last_updated}
               creationTime={i.creation_time}
+              creatorName={creatorName}
             />
           ))}
       </ListGroup>
@@ -259,6 +279,7 @@ const Manage = () => {
           next
         </ButtonTertiary>
       </ButtonGroup>
+      {org.err && <p>{org.err.message}</p>}
       {lists.err && <p>{lists.err.message}</p>}
     </div>
   );

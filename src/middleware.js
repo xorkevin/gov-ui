@@ -30,10 +30,19 @@ const splitRoleTag = (role) => role.split('.', 2);
 const orgRoleRegex = /^(usr|mod)\.org\./;
 const orgUsrRoleRegex = /^usr\.org\./;
 const orgModRoleRegex = /^mod\.org\./;
+const orgNameRegex = /^org\./;
 
 const isOrgRole = (role) => orgRoleRegex.test(role);
 const isOrgUsrRole = (role) => orgUsrRoleRegex.test(role);
 const isOrgModRole = (role) => orgModRoleRegex.test(role);
+const isOrgName = (name) => orgNameRegex.test(name);
+
+const orgNameToOrgID = (name) => {
+  if (isOrgName(name)) {
+    return name.slice(orgPrefix.length);
+  }
+  return '';
+};
 
 const roleToOrgID = (role) => {
   if (isOrgUsrRole(role)) {
@@ -224,7 +233,9 @@ const GovUIDefaultOpts = Object.freeze({
   isOrgRole,
   isOrgUsrRole,
   isOrgModRole,
+  isOrgName,
   roleToOrgID,
+  orgNameToOrgID,
   pathOrg: '/org/{0}',
   pathOrgSettings: '/org/{0}/settings',
   // user approvals
