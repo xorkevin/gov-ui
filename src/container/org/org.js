@@ -141,6 +141,7 @@ const OrgDetails = ({pathOrg}) => {
             </Grid>
           )}
           {org.err && <p>{org.err.message}</p>}
+          {roles.err && <p>{roles.err.message}</p>}
         </Container>
       </Section>
     </MainContent>
