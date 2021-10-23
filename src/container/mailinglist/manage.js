@@ -1,6 +1,18 @@
-import {Fragment, useCallback, useContext} from 'react';
+import {Fragment, useState, useCallback, useMemo, useContext} from 'react';
+import {
+  Switch,
+  Route,
+  Redirect,
+  useRouteMatch,
+  useParams,
+} from 'react-router-dom';
 import {useResource, selectAPINull} from '@xorkevin/substation';
-import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
+import {
+  useAuthValue,
+  useAuthCall,
+  useAuthResource,
+  useIntersectRoles,
+} from '@xorkevin/turbine';
 import {
   Grid,
   Column,
@@ -12,6 +24,8 @@ import {
   Menu,
   MenuItem,
   Field,
+  FieldTextarea,
+  FieldSwitch,
   FieldSelect,
   FieldSearchSelect,
   Form,
@@ -19,6 +33,7 @@ import {
   SnackbarSurface,
   useSnackbarView,
   usePaginate,
+  Anchor,
   ButtonGroup,
   FaIcon,
   Chip,
@@ -33,9 +48,21 @@ import {useOrgOpts} from '../../component/accounts';
 
 const LISTS_LIMIT = 32;
 
+const selectAPIList = (api) => api.mailinglist.id.get;
 const selectAPILists = (api) => api.mailinglist.group.latest;
 const selectAPICreate = (api) => api.mailinglist.group.create;
 const selectAPIOrg = (api) => api.orgs.id.get;
+
+const useFormLock = () => {
+  const [locked, setLocked] = useState(true);
+  const lock = useCallback(() => {
+    setLocked(true);
+  }, [setLocked]);
+  const unlock = useCallback(() => {
+    setLocked(false);
+  }, [setLocked]);
+  return [locked, lock, unlock];
+};
 
 const formValidCheck = ({listname, name}) => {
   const valid = {};
@@ -105,7 +132,7 @@ const CreateList = ({accountid, posthookCreate, close}) => {
       >
         <Field name="listname" label="List address" nohint fullWidth />
         <Field name="name" label="Display name" nohint fullWidth />
-        <Field name="desc" label="Description" nohint fullWidth />
+        <FieldTextarea name="desc" label="Description" nohint fullWidth />
         <FieldSelect
           name="sender_policy"
           label="Sender policy"
@@ -130,7 +157,15 @@ const CreateList = ({accountid, posthookCreate, close}) => {
   );
 };
 
-const ListRow = ({listname, name, archive, lastUpdated, creatorName}) => {
+const ListRow = ({
+  listid,
+  listname,
+  name,
+  archive,
+  lastUpdated,
+  creatorName,
+  baseurl,
+}) => {
   const menu = useMenu();
 
   return (
@@ -143,7 +178,7 @@ const ListRow = ({listname, name, archive, lastUpdated, creatorName}) => {
             </AnchorText>{' '}
             <small>{`${creatorName}.${listname}`}</small>
           </h5>{' '}
-          <small>{archive && <Chip>Archived</Chip>}</small>{' '}
+          <small>{archive && <Chip>Archived</Chip>}</small> Last updated{' '}
           <Time value={lastUpdated} />
         </Column>
         <Column shrink="0">
@@ -152,7 +187,7 @@ const ListRow = ({listname, name, archive, lastUpdated, creatorName}) => {
           </ButtonTertiary>
           {menu.show && (
             <Menu size="md" anchor={menu.anchor} close={menu.close}>
-              <MenuItem local link="#">
+              <MenuItem local link={`${baseurl}/${listid}`}>
                 Settings
               </MenuItem>
             </Menu>
@@ -163,7 +198,7 @@ const ListRow = ({listname, name, archive, lastUpdated, creatorName}) => {
   );
 };
 
-const Manage = () => {
+const ManageLists = ({baseurl}) => {
   const ctx = useContext(GovUICtx);
   const {userid, username} = useAuthValue();
 
@@ -176,7 +211,7 @@ const Manage = () => {
   });
   const orgOpts = useOrgOpts();
 
-  const isOrg = form.state.accountid !== userid;
+  const isOrg = ctx.isOrgName(form.state.accountid);
   const [org, _reexecuteOrg] = useResource(
     isOrg ? selectAPIOrg : selectAPINull,
     [ctx.orgNameToOrgID(form.state.accountid)],
@@ -220,7 +255,7 @@ const Manage = () => {
     <div>
       <Grid justify="space-between" align="flex-end">
         <Column grow="1">
-          <h3>Manage Lists</h3>
+          <h3>Manage Mailing Lists</h3>
         </Column>
         <Column>
           <ButtonGroup>
@@ -267,6 +302,7 @@ const Manage = () => {
               lastUpdated={i.last_updated}
               creationTime={i.creation_time}
               creatorName={creatorName}
+              baseurl={baseurl}
             />
           ))}
       </ListGroup>
@@ -282,6 +318,181 @@ const Manage = () => {
       {org.err && <p>{org.err.message}</p>}
       {lists.err && <p>{lists.err.message}</p>}
     </div>
+  );
+};
+
+const ManageListForm = ({list, creatorName}) => {
+  const [locked, lock, unlock] = useFormLock();
+
+  const form = useForm({
+    name: list.name,
+    description: list.description,
+    archive: list.archive,
+    sender_policy: list.sender_policy,
+    member_policy: list.member_policy,
+  });
+
+  return (
+    <Grid>
+      <Column fullWidth md={16}>
+        <Form formState={form.state} onChange={form.update}>
+          <Field
+            className="mailinglist-field-disabled-solid"
+            name="name"
+            label="Name"
+            nohint
+            disabled={locked}
+            fullWidth
+          />
+          <FieldTextarea
+            className="mailinglist-field-disabled-solid"
+            name="description"
+            label="Description"
+            nohint
+            disabled={locked}
+            fullWidth
+          />
+          <FieldSelect
+            className="mailinglist-field-disabled-solid"
+            name="sender_policy"
+            label="Sender policy"
+            options={senderPolicyOpts}
+            nohint
+            disabled={locked}
+            fullWidth
+          />
+          <FieldSelect
+            className="mailinglist-field-disabled-solid"
+            name="member_policy"
+            label="Member policy"
+            options={memberPolicyOpts}
+            nohint
+            disabled={locked}
+            fullWidth
+          />
+          <FieldSwitch
+            className="mailinglist-field-disabled-solid"
+            name="archive"
+            label="Archive"
+            danger
+            hint="Archives the mailing list"
+            disabled={locked}
+            fullWidth
+          />
+        </Form>
+        <ButtonGroup>
+          {locked ? (
+            <Fragment>
+              <FaIcon icon="lock" />
+              <ButtonTertiary onClick={unlock}>Edit</ButtonTertiary>
+            </Fragment>
+          ) : (
+            <Fragment>
+              <FaIcon icon="unlock-alt" />
+              <ButtonTertiary onClick={lock}>Cancel</ButtonTertiary>
+              <ButtonPrimary>Update Settings</ButtonPrimary>
+            </Fragment>
+          )}
+        </ButtonGroup>
+      </Column>
+      <Column fullWidth md={8}>
+        <h5>Listid</h5>
+        <code>{list.listid}</code>
+        <h5>Address</h5>
+        <div>{`${creatorName}.${list.listname}`}</div>
+        <p>
+          Created <Time value={list.creation_time * 1000} />
+        </p>
+      </Column>
+    </Grid>
+  );
+};
+
+const ManageList = ({baseurl}) => {
+  const ctx = useContext(GovUICtx);
+  const {userid, username} = useAuthValue();
+
+  const {listid} = useParams();
+
+  const [list, _reexecute] = useResource(
+    listid.length > 0 ? selectAPIList : selectAPINull,
+    [listid],
+    {
+      listid: '',
+      creatorid: '',
+      listname: '',
+      name: '',
+      description: '',
+      archive: false,
+      sender_policy: 'owner',
+      member_policy: 'owner',
+      last_updated: 0,
+      creation_time: 0,
+    },
+  );
+
+  const isOrg = list.success && ctx.isOrgName(list.data.creatorid);
+  const ownerOrgRole = isOrg ? ctx.usrRole(list.data.creatorid) : '';
+  const orgRoles = useMemo(() => {
+    if (ownerOrgRole) {
+      return [ownerOrgRole];
+    }
+    return [];
+  }, [ownerOrgRole]);
+  const [roles] = useIntersectRoles(orgRoles);
+  const roleSet = useMemo(() => {
+    if (!roles.success) {
+      return new Set();
+    }
+    return new Set(roles.data);
+  }, [roles]);
+  const isOwner = isOrg
+    ? roleSet.has(ownerOrgRole)
+    : list.success && list.data.creatorid === userid;
+
+  const [org, _reexecuteOrg] = useResource(
+    isOrg ? selectAPIOrg : selectAPINull,
+    [ctx.orgNameToOrgID(list.data.creatorid)],
+    {
+      orgid: '',
+      name: '',
+      display_name: '',
+      desc: '',
+      creation_time: 0,
+    },
+  );
+  const creatorName = isOrg ? (org.success ? org.data.name : '') : username;
+
+  return (
+    <div>
+      <ButtonGroup>
+        <Anchor local href={baseurl}>
+          <ButtonTertiary>
+            <FaIcon icon="chevron-left" /> Back
+          </ButtonTertiary>
+        </Anchor>
+      </ButtonGroup>
+      {list.success && isOwner && (
+        <ManageListForm list={list.data} creatorName={creatorName} />
+      )}
+      {list.err && <p>{list.err.message}</p>}
+    </div>
+  );
+};
+
+const Manage = () => {
+  const match = useRouteMatch();
+
+  return (
+    <Switch>
+      <Route exact path={match.path}>
+        <ManageLists baseurl={match.url} />
+      </Route>
+      <Route path={`${match.path}/:listid`}>
+        <ManageList baseurl={match.url} />
+      </Route>
+      <Redirect to={match.url} />
+    </Switch>
   );
 };
 

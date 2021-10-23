@@ -187,6 +187,10 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
   display: inline;
 }
 
+.mailinglist-field-disabled-solid.disabled {
+  opacity: 1;
+}
+
 .devtools-dash-health-indicator {
   display: block;
   width: 8px;

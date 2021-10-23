@@ -123,7 +123,9 @@ const createConfig = (env, argv) => {
       host: '0.0.0.0',
       port: 3000,
       disableHostCheck: true,
-      historyApiFallback: true,
+      historyApiFallback: {
+        disableDotRule: true,
+      },
       hot: false,
       proxy: {
         '/api': {

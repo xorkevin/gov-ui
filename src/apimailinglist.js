@@ -28,4 +28,18 @@ export default {
       },
     },
   },
+  id: {
+    url: '/l/{0}',
+    children: {
+      get: {
+        url: '',
+        method: 'GET',
+        transformer: (id) => ({
+          params: [id],
+        }),
+        expectdata: true,
+        err: 'Unable to get mailing list',
+      },
+    },
+  },
 };

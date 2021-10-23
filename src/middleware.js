@@ -11,6 +11,12 @@ const permissionedRoles = Object.freeze([
 
 const allRoles = Object.freeze(['user'].concat(permissionedRoles));
 
+const usrPrefix = 'usr.';
+const modPrefix = 'mod.';
+
+const usrRole = (name) => usrPrefix + name;
+const modRole = (name) => modPrefix + name;
+
 const orgPrefix = 'org.';
 const orgUsrPrefix = 'usr.org.';
 const orgModPrefix = 'mod.org.';
@@ -204,6 +210,10 @@ const GovUIDefaultOpts = Object.freeze({
   pathAccount: '/a',
   permissionedRoles,
   allRoles,
+  usrPrefix,
+  modPrefix,
+  usrRole,
+  modRole,
   isUsrRole,
   isModRole,
   splitRoleTag,

@@ -40,6 +40,7 @@ const OrgC = Protected(OrgContainer);
 const AdminC = Protected(AdminContainer, permissionedRoles);
 const CourierC = Protected(CourierContainer);
 const ConduitC = Protected(ConduitContainer);
+const MailingListsC = Protected(MailingListsContainer);
 
 const Foot = () => {
   return (
@@ -194,7 +195,7 @@ const App = () => {
             <ConduitC />
           </Route>
           <Route path="/lists">
-            <MailingListsContainer />
+            <MailingListsC />
           </Route>
           <Route path="/setup">
             <SetupContainer />
