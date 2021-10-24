@@ -26,6 +26,28 @@ export default {
         expectdata: true,
         err: 'Unable to create mailing list',
       },
+      list: {
+        url: '/list/{1}',
+        children: {
+          member: {
+            url: '/member',
+            children: {
+              edit: {
+                url: '',
+                method: 'PATCH',
+                transformer: (creatorid, listname, remove) => ({
+                  params: [creatorid, listname],
+                  body: {
+                    remove,
+                  },
+                }),
+                expectdata: false,
+                err: 'Unable to edit list members',
+              },
+            },
+          },
+        },
+      },
     },
   },
   id: {
@@ -39,6 +61,24 @@ export default {
         }),
         expectdata: true,
         err: 'Unable to get mailing list',
+      },
+      member: {
+        url: '/member',
+        children: {
+          ids: {
+            url: '/ids',
+            method: 'GET',
+            transformer: (listid, userids) => ({
+              params: [listid],
+              query: {
+                ids: userids.join(','),
+              },
+            }),
+            expectdata: true,
+            selector: (_status, data) => data && data.members,
+            err: 'Unable to get list members',
+          },
+        },
       },
     },
   },

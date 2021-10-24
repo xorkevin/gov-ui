@@ -23,9 +23,9 @@ const MailingLists = () => {
   return (
     <MainContent>
       <Section>
-        <Container padded>
+        <Container padded narrow>
           <Grid>
-            <Column fullWidth md={6} lg={4}>
+            <Column fullWidth md={6}>
               <Sidebar>
                 <SidebarHeader>Mailing Lists</SidebarHeader>
                 <SidebarItem
@@ -37,7 +37,7 @@ const MailingLists = () => {
                 </SidebarItem>
               </Sidebar>
             </Column>
-            <Column fullWidth md={18} lg={20}>
+            <Column fullWidth md={18}>
               <Suspense fallback={ctx.fallbackView}>
                 <Switch>
                   <Route path={`${match.path}/manage`}>

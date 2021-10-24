@@ -106,7 +106,7 @@ const OrgDetails = ({pathOrg}) => {
                   )}
                 </Sidebar>
               </Column>
-              <Column fullWidth sm={16}>
+              <Column fullWidth md={18}>
                 <h2>{org.data.display_name}</h2>
                 <p>{org.data.desc}</p>
                 <Suspense fallback={ctx.fallbackView}>

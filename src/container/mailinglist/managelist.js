@@ -8,6 +8,7 @@ import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 import {GovUICtx} from '../../middleware';
 
 const ManageSettings = lazy(() => import('./managesettings'));
+const ManageMembers = lazy(() => import('./managemembers'));
 
 const selectAPIList = (api) => api.mailinglist.id.get;
 const selectAPIOrg = (api) => api.orgs.id.get;
@@ -86,6 +87,11 @@ const ManageList = ({baseurl}) => {
           <p>{list.data.description}</p>
           <Tabbar>
             {isOwner && (
+              <TabItem local link={`${match.url}/members`}>
+                Members
+              </TabItem>
+            )}
+            {isOwner && (
               <TabItem local link={`${match.url}/settings`}>
                 Settings
               </TabItem>
@@ -93,6 +99,11 @@ const ManageList = ({baseurl}) => {
           </Tabbar>
           <Suspense fallback={ctx.fallbackView}>
             <Switch>
+              {isOwner && (
+                <Route path={`${match.path}/members`}>
+                  <ManageMembers list={list.data} />
+                </Route>
+              )}
               {isOwner && (
                 <Route path={`${match.path}/settings`}>
                   <ManageSettings list={list.data} creatorName={creatorName} />
