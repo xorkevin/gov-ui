@@ -1,8 +1,8 @@
 import {lazy} from 'react';
 import {Switch, Route, Redirect, useRouteMatch} from 'react-router-dom';
 
-const ManageLists = lazy(() => import('./managelists'));
-const ManageList = lazy(() => import('./managelist'));
+const Lists = lazy(() => import('./lists'));
+const List = lazy(() => import('./list'));
 
 const Manage = ({listurl}) => {
   const match = useRouteMatch();
@@ -10,10 +10,10 @@ const Manage = ({listurl}) => {
   return (
     <Switch>
       <Route exact path={match.path}>
-        <ManageLists baseurl={match.url} listurl={listurl} />
+        <Lists baseurl={match.url} listurl={listurl} />
       </Route>
       <Route path={`${match.path}/:listid`}>
-        <ManageList />
+        <List />
       </Route>
       <Redirect to={match.url} />
     </Switch>

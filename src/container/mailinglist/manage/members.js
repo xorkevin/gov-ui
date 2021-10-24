@@ -26,8 +26,8 @@ import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 import ButtonDangerSecondary from '@xorkevin/nuke/src/component/button/dangersecondary';
 import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
 
-import {GovUICtx} from '../../middleware';
-import {formatURL} from '../../utility';
+import {GovUICtx} from '../../../middleware';
+import {formatURL} from '../../../utility';
 
 const selectAPIListMembers = (api) => api.mailinglist.id.member;
 const selectAPIListMemberIDs = (api) => api.mailinglist.id.member.ids;

@@ -10,16 +10,16 @@ import {useResource, selectAPINull} from '@xorkevin/substation';
 import {useAuthValue, useIntersectRoles} from '@xorkevin/turbine';
 import {Tabbar, TabItem} from '@xorkevin/nuke';
 
-import {GovUICtx} from '../../middleware';
+import {GovUICtx} from '../../../middleware';
 
-const ManageMsgs = lazy(() => import('./managemsgs'));
-const ManageMembers = lazy(() => import('./managemembers'));
-const ManageSettings = lazy(() => import('./managesettings'));
+const Msgs = lazy(() => import('./msgs'));
+const Members = lazy(() => import('./members'));
+const Settings = lazy(() => import('./settings'));
 
 const selectAPIList = (api) => api.mailinglist.id.get;
 const selectAPIOrg = (api) => api.orgs.id.get;
 
-const ManageList = () => {
+const List = () => {
   const ctx = useContext(GovUICtx);
   const {userid, username} = useAuthValue();
 
@@ -98,13 +98,13 @@ const ManageList = () => {
           <Suspense fallback={ctx.fallbackView}>
             <Switch>
               <Route path={`${match.path}/msgs`}>
-                <ManageMsgs list={list.data} />
+                <Msgs list={list.data} />
               </Route>
               <Route path={`${match.path}/members`}>
-                <ManageMembers list={list.data} />
+                <Members list={list.data} />
               </Route>
               <Route path={`${match.path}/settings`}>
-                <ManageSettings
+                <Settings
                   list={list.data}
                   creatorName={creatorName}
                   refresh={reexecute}
@@ -121,4 +121,4 @@ const ManageList = () => {
   );
 };
 
-export default ManageList;
+export default List;

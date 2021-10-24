@@ -29,9 +29,9 @@ import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
 
-import {GovUICtx} from '../../middleware';
-import {formatURL} from '../../utility';
-import {useOrgOpts} from '../../component/accounts';
+import {GovUICtx} from '../../../middleware';
+import {formatURL} from '../../../utility';
+import {useOrgOpts} from '../../../component/accounts';
 import {senderPolicyOpts, memberPolicyOpts} from './opts';
 
 const LISTS_LIMIT = 32;
