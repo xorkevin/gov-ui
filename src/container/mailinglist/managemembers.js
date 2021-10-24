@@ -14,6 +14,7 @@ import {
   useForm,
   useFormSearch,
   SnackbarSurface,
+  useSnackbar,
   useSnackbarView,
   usePaginate,
   ButtonGroup,
@@ -39,15 +40,23 @@ const USERS_LIMIT = 8;
 const MEMBERS_LIMIT = 32;
 
 const MemberRow = ({
+  userid,
   username,
   first_name,
   last_name,
+  list,
   pathUserProfile,
-  setUsername,
+  posthookRemove,
+  errhookRemove,
 }) => {
-  const editUser = useCallback(() => {
-    setUsername(username);
-  }, [setUsername, username]);
+  const useridArr = useMemo(() => [userid], [userid]);
+
+  const [_rmMember, execRmMember] = useAuthCall(
+    selectAPIListMemberEdit,
+    [list.creatorid, list.listname, useridArr],
+    {},
+    {posthook: posthookRemove, errhook: errhookRemove},
+  );
 
   const menu = useMenu();
 
@@ -68,7 +77,7 @@ const MemberRow = ({
           </ButtonTertiary>
           {menu.show && (
             <Menu size="md" anchor={menu.anchor} close={menu.close}>
-              <MenuItem onClick={editUser}>Edit</MenuItem>
+              <MenuItem onClick={execRmMember}>Remove</MenuItem>
             </Menu>
           )}
         </Column>
@@ -79,6 +88,17 @@ const MemberRow = ({
 
 const UserSearch = ({list, setUsername, err}) => {
   const ctx = useContext(GovUICtx);
+
+  const snackMemberRemoved = useSnackbarView(
+    <SnackbarSurface>&#x2713; Member removed</SnackbarSurface>,
+  );
+  const snackbar = useSnackbar();
+  const displayErrSnack = useCallback(
+    (_status, err) => {
+      snackbar(<SnackbarSurface>{err.message}</SnackbarSurface>);
+    },
+    [snackbar],
+  );
 
   const form = useForm({
     username: '',
@@ -111,7 +131,7 @@ const UserSearch = ({list, setUsername, err}) => {
     },
     [setAtEnd],
   );
-  const [members, _reexecute] = useResource(
+  const [members, reexecute] = useResource(
     selectAPIListMembers,
     [list.listid, MEMBERS_LIMIT, paginate.index],
     [],
@@ -123,6 +143,11 @@ const UserSearch = ({list, setUsername, err}) => {
     [members.data],
     [],
   );
+
+  const posthookRemove = useCallback(() => {
+    snackMemberRemoved();
+    reexecute();
+  }, [reexecute, snackMemberRemoved]);
 
   return (
     <Fragment>
@@ -149,8 +174,10 @@ const UserSearch = ({list, setUsername, err}) => {
               username={i.username}
               first_name={i.first_name}
               last_name={i.last_name}
+              list={list}
               pathUserProfile={ctx.pathUserProfile}
-              setUsername={setUsername}
+              posthookRemove={posthookRemove}
+              errhookRemove={displayErrSnack}
             />
           ))}
       </ListGroup>
