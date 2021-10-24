@@ -2,12 +2,20 @@ import {Fragment, useState, useCallback, useMemo, useContext} from 'react';
 import {useAPI, useResource, selectAPINull} from '@xorkevin/substation';
 import {useAuthCall} from '@xorkevin/turbine';
 import {
+  Grid,
+  Column,
+  ListGroup,
+  ListItem,
+  useMenu,
+  Menu,
+  MenuItem,
   Form,
   FieldDynSuggest,
   useForm,
   useFormSearch,
   SnackbarSurface,
   useSnackbarView,
+  usePaginate,
   ButtonGroup,
   FaIcon,
   Chip,
@@ -20,14 +28,58 @@ import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
 import {GovUICtx} from '../../middleware';
 import {formatURL} from '../../utility';
 
+const selectAPIListMembers = (api) => api.mailinglist.id.member;
 const selectAPIListMemberIDs = (api) => api.mailinglist.id.member.ids;
 const selectAPIListMemberEdit = (api) => api.mailinglist.group.list.member.edit;
 const selectAPIUser = (api) => api.u.user.name;
+const selectAPIUsers = (api) => api.u.user.ids;
 const selectAPISearch = (api) => api.u.user.search;
 
 const USERS_LIMIT = 8;
+const MEMBERS_LIMIT = 32;
 
-const UserSearch = ({setUsername, err}) => {
+const MemberRow = ({
+  username,
+  first_name,
+  last_name,
+  pathUserProfile,
+  setUsername,
+}) => {
+  const editUser = useCallback(() => {
+    setUsername(username);
+  }, [setUsername, username]);
+
+  const menu = useMenu();
+
+  return (
+    <ListItem>
+      <Grid justify="space-between" align="center" nowrap>
+        <Column className="mailinglist-item-name">
+          <h5 className="mailinglist-item-heading">
+            <AnchorText local href={formatURL(pathUserProfile, username)}>
+              {first_name} {last_name}
+            </AnchorText>{' '}
+            <small>{username}</small>
+          </h5>
+        </Column>
+        <Column shrink="0">
+          <ButtonTertiary forwardedRef={menu.anchorRef} onClick={menu.toggle}>
+            <FaIcon icon="ellipsis-v" />
+          </ButtonTertiary>
+          {menu.show && (
+            <Menu size="md" anchor={menu.anchor} close={menu.close}>
+              <MenuItem onClick={editUser}>Edit</MenuItem>
+            </Menu>
+          )}
+        </Column>
+      </Grid>
+    </ListItem>
+  );
+};
+
+const UserSearch = ({list, setUsername, err}) => {
+  const ctx = useContext(GovUICtx);
+
   const form = useForm({
     username: '',
   });
@@ -50,6 +102,28 @@ const UserSearch = ({setUsername, err}) => {
   );
   const userSuggest = useFormSearch(searchUsers, 256);
 
+  const paginate = usePaginate(MEMBERS_LIMIT);
+
+  const setAtEnd = paginate.setAtEnd;
+  const posthookMembers = useCallback(
+    (_status, members) => {
+      setAtEnd(members.length < MEMBERS_LIMIT);
+    },
+    [setAtEnd],
+  );
+  const [members, _reexecute] = useResource(
+    selectAPIListMembers,
+    [list.listid, MEMBERS_LIMIT, paginate.index],
+    [],
+    {posthook: posthookMembers},
+  );
+
+  const [users] = useResource(
+    members.data.length > 0 ? selectAPIUsers : selectAPINull,
+    [members.data],
+    [],
+  );
+
   return (
     <Fragment>
       <Form formState={form.state} onChange={form.update} onSubmit={search}>
@@ -66,6 +140,31 @@ const UserSearch = ({setUsername, err}) => {
         <ButtonPrimary onClick={search}>Search</ButtonPrimary>
       </ButtonGroup>
       {err && <p>{err.message}</p>}
+      <ListGroup>
+        {Array.isArray(users.data) &&
+          users.data.map((i) => (
+            <MemberRow
+              key={i.userid}
+              userid={i.userid}
+              username={i.username}
+              first_name={i.first_name}
+              last_name={i.last_name}
+              pathUserProfile={ctx.pathUserProfile}
+              setUsername={setUsername}
+            />
+          ))}
+      </ListGroup>
+      <ButtonGroup>
+        <ButtonTertiary disabled={paginate.atFirst} onClick={paginate.prev}>
+          prev
+        </ButtonTertiary>
+        {paginate.page}
+        <ButtonTertiary disabled={paginate.atLast} onClick={paginate.next}>
+          next
+        </ButtonTertiary>
+      </ButtonGroup>
+      {members.err && <p>{members.err.message}</p>}
+      {users.err && <p>{users.err.message}</p>}
     </Fragment>
   );
 };
@@ -168,7 +267,9 @@ const ManageMembers = ({list}) => {
 
   return (
     <div>
-      {!displayUser && <UserSearch setUsername={setUsername} err={user.err} />}
+      {!displayUser && (
+        <UserSearch list={list} setUsername={setUsername} err={user.err} />
+      )}
       {displayUser && (
         <MemberDetails list={list} user={user.data} back={back} />
       )}

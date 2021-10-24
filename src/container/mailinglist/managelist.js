@@ -77,7 +77,7 @@ const ManageList = () => {
 
   return (
     <div>
-      {list.success && (isOrg ? roles.success : true) && (
+      {isOwner && (
         <Fragment>
           <h2>
             {list.data.name}{' '}
@@ -85,44 +85,32 @@ const ManageList = () => {
           </h2>
           <p>{list.data.desc}</p>
           <Tabbar>
-            {isOwner && (
-              <TabItem local link={`${match.url}/msgs`}>
-                Messages
-              </TabItem>
-            )}
-            {isOwner && (
-              <TabItem local link={`${match.url}/members`}>
-                Members
-              </TabItem>
-            )}
-            {isOwner && (
-              <TabItem local link={`${match.url}/settings`}>
-                Settings
-              </TabItem>
-            )}
+            <TabItem local link={`${match.url}/msgs`}>
+              Messages
+            </TabItem>
+            <TabItem local link={`${match.url}/members`}>
+              Members
+            </TabItem>
+            <TabItem local link={`${match.url}/settings`}>
+              Settings
+            </TabItem>
           </Tabbar>
           <Suspense fallback={ctx.fallbackView}>
             <Switch>
-              {isOwner && (
-                <Route path={`${match.path}/msgs`}>
-                  <ManageMsgs list={list.data} />
-                </Route>
-              )}
-              {isOwner && (
-                <Route path={`${match.path}/members`}>
-                  <ManageMembers list={list.data} />
-                </Route>
-              )}
-              {isOwner && (
-                <Route path={`${match.path}/settings`}>
-                  <ManageSettings
-                    list={list.data}
-                    creatorName={creatorName}
-                    refresh={reexecute}
-                  />
-                </Route>
-              )}
-              {isOwner && <Redirect to={`${match.path}/msgs`} />}
+              <Route path={`${match.path}/msgs`}>
+                <ManageMsgs list={list.data} />
+              </Route>
+              <Route path={`${match.path}/members`}>
+                <ManageMembers list={list.data} />
+              </Route>
+              <Route path={`${match.path}/settings`}>
+                <ManageSettings
+                  list={list.data}
+                  creatorName={creatorName}
+                  refresh={reexecute}
+                />
+              </Route>
+              <Redirect to={`${match.path}/msgs`} />
             </Switch>
           </Suspense>
         </Fragment>

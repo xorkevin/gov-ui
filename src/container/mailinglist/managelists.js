@@ -30,6 +30,7 @@ import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
 
 import {GovUICtx} from '../../middleware';
+import {formatURL} from '../../utility';
 import {useOrgOpts} from '../../component/accounts';
 import {senderPolicyOpts, memberPolicyOpts} from './opts';
 
@@ -130,6 +131,7 @@ const ListRow = ({
   lastUpdated,
   creatorName,
   baseurl,
+  listurl,
 }) => {
   const menu = useMenu();
 
@@ -138,7 +140,7 @@ const ListRow = ({
       <Grid justify="space-between" align="center" nowrap>
         <Column className="mailinglist-item-name">
           <h5 className="mailinglist-item-heading">
-            <AnchorText local href="#">
+            <AnchorText local href={formatURL(listurl, listid)}>
               {name}
             </AnchorText>{' '}
             <small>{`${creatorName}.${listname}`}</small>
@@ -163,7 +165,7 @@ const ListRow = ({
   );
 };
 
-const ManageLists = ({baseurl}) => {
+const ManageLists = ({baseurl, listurl}) => {
   const ctx = useContext(GovUICtx);
   const {userid, username} = useAuthValue();
 
@@ -268,6 +270,7 @@ const ManageLists = ({baseurl}) => {
               creationTime={i.creation_time}
               creatorName={creatorName}
               baseurl={baseurl}
+              listurl={listurl}
             />
           ))}
       </ListGroup>

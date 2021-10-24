@@ -74,6 +74,17 @@ export default {
       },
       member: {
         url: '/member',
+        method: 'GET',
+        transformer: (listid, amount, offset) => ({
+          params: [listid],
+          query: {
+            amount,
+            offset,
+          },
+        }),
+        expectdata: true,
+        selector: (_status, data) => data && data.members,
+        err: 'Unable to get list members',
         children: {
           ids: {
             url: '/ids',

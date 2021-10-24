@@ -15,6 +15,7 @@ import {
 import {GovUICtx} from '../../middleware';
 
 const Manage = lazy(() => import('./manage'));
+const List = lazy(() => import('./list'));
 
 const MailingLists = () => {
   const ctx = useContext(GovUICtx);
@@ -41,7 +42,10 @@ const MailingLists = () => {
               <Suspense fallback={ctx.fallbackView}>
                 <Switch>
                   <Route path={`${match.path}/manage`}>
-                    <Manage />
+                    <Manage listurl={`${match.url}/l/{0}`} />
+                  </Route>
+                  <Route path={`${match.path}/l/:listid`}>
+                    <List />
                   </Route>
                   <Redirect to={`${match.url}/manage`} />
                 </Switch>
