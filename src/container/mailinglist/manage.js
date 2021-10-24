@@ -13,7 +13,7 @@ const Manage = () => {
         <ManageLists baseurl={match.url} />
       </Route>
       <Route path={`${match.path}/:listid`}>
-        <ManageList baseurl={match.url} />
+        <ManageList />
       </Route>
       <Redirect to={match.url} />
     </Switch>

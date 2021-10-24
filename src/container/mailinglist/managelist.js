@@ -1,19 +1,25 @@
 import {Fragment, lazy, Suspense, useMemo, useContext} from 'react';
-import {Switch, Route, useRouteMatch, useParams} from 'react-router-dom';
+import {
+  Switch,
+  Route,
+  Redirect,
+  useRouteMatch,
+  useParams,
+} from 'react-router-dom';
 import {useResource, selectAPINull} from '@xorkevin/substation';
 import {useAuthValue, useIntersectRoles} from '@xorkevin/turbine';
-import {Tabbar, TabItem, Anchor, ButtonGroup, FaIcon} from '@xorkevin/nuke';
-import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
+import {Tabbar, TabItem} from '@xorkevin/nuke';
 
 import {GovUICtx} from '../../middleware';
 
-const ManageSettings = lazy(() => import('./managesettings'));
+const ManageMsgs = lazy(() => import('./managemsgs'));
 const ManageMembers = lazy(() => import('./managemembers'));
+const ManageSettings = lazy(() => import('./managesettings'));
 
 const selectAPIList = (api) => api.mailinglist.id.get;
 const selectAPIOrg = (api) => api.orgs.id.get;
 
-const ManageList = ({baseurl}) => {
+const ManageList = () => {
   const ctx = useContext(GovUICtx);
   const {userid, username} = useAuthValue();
 
@@ -71,13 +77,6 @@ const ManageList = ({baseurl}) => {
 
   return (
     <div>
-      <ButtonGroup>
-        <Anchor local href={baseurl}>
-          <ButtonTertiary>
-            <FaIcon icon="chevron-left" /> Back
-          </ButtonTertiary>
-        </Anchor>
-      </ButtonGroup>
       {list.success && (isOrg ? roles.success : true) && (
         <Fragment>
           <h2>
@@ -86,6 +85,11 @@ const ManageList = ({baseurl}) => {
           </h2>
           <p>{list.data.desc}</p>
           <Tabbar>
+            {isOwner && (
+              <TabItem local link={`${match.url}/msgs`}>
+                Messages
+              </TabItem>
+            )}
             {isOwner && (
               <TabItem local link={`${match.url}/members`}>
                 Members
@@ -100,6 +104,11 @@ const ManageList = ({baseurl}) => {
           <Suspense fallback={ctx.fallbackView}>
             <Switch>
               {isOwner && (
+                <Route path={`${match.path}/msgs`}>
+                  <ManageMsgs list={list.data} />
+                </Route>
+              )}
+              {isOwner && (
                 <Route path={`${match.path}/members`}>
                   <ManageMembers list={list.data} />
                 </Route>
@@ -113,6 +122,7 @@ const ManageList = ({baseurl}) => {
                   />
                 </Route>
               )}
+              {isOwner && <Redirect to={`${match.path}/msgs`} />}
             </Switch>
           </Suspense>
         </Fragment>
