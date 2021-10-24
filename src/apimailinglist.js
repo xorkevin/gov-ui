@@ -29,6 +29,16 @@ export default {
       list: {
         url: '/list/{1}',
         children: {
+          edit: {
+            url: '',
+            method: 'PUT',
+            transformer: (creatorid, listname, body) => ({
+              params: [creatorid, listname],
+              body,
+            }),
+            expectdata: false,
+            err: 'Unable to edit list settings',
+          },
           member: {
             url: '/member',
             children: {

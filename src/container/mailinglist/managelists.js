@@ -260,7 +260,7 @@ const ManageLists = ({baseurl}) => {
               creatorid={i.creatorid}
               listname={i.listname}
               name={i.name}
-              description={i.description}
+              desc={i.desc}
               archive={i.archive}
               senderPolicy={i.sender_policy}
               memberPolicy={i.member_policy}

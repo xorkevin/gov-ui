@@ -20,7 +20,7 @@ const ManageList = ({baseurl}) => {
   const match = useRouteMatch();
   const {listid} = useParams();
 
-  const [list, _reexecute] = useResource(
+  const [list, reexecute] = useResource(
     listid.length > 0 ? selectAPIList : selectAPINull,
     [listid],
     {
@@ -28,7 +28,7 @@ const ManageList = ({baseurl}) => {
       creatorid: '',
       listname: '',
       name: '',
-      description: '',
+      desc: '',
       archive: false,
       sender_policy: 'owner',
       member_policy: 'owner',
@@ -84,7 +84,7 @@ const ManageList = ({baseurl}) => {
             {list.data.name}{' '}
             <small>{`${creatorName}.${list.data.listname}`}</small>
           </h2>
-          <p>{list.data.description}</p>
+          <p>{list.data.desc}</p>
           <Tabbar>
             {isOwner && (
               <TabItem local link={`${match.url}/members`}>
@@ -106,7 +106,11 @@ const ManageList = ({baseurl}) => {
               )}
               {isOwner && (
                 <Route path={`${match.path}/settings`}>
-                  <ManageSettings list={list.data} creatorName={creatorName} />
+                  <ManageSettings
+                    list={list.data}
+                    creatorName={creatorName}
+                    refresh={reexecute}
+                  />
                 </Route>
               )}
             </Switch>

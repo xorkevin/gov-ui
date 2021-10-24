@@ -1,4 +1,5 @@
 import {Fragment, useState, useCallback} from 'react';
+import {useAuthCall} from '@xorkevin/turbine';
 import {
   Grid,
   Column,
@@ -8,6 +9,8 @@ import {
   FieldSelect,
   Form,
   useForm,
+  SnackbarSurface,
+  useSnackbarView,
   ButtonGroup,
   FaIcon,
   Time,
@@ -16,6 +19,8 @@ import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 
 import {senderPolicyOpts, memberPolicyOpts} from './opts';
+
+const selectAPIEdit = (api) => api.mailinglist.group.list.edit;
 
 const useFormLock = () => {
   const [locked, setLocked] = useState(true);
@@ -28,21 +33,37 @@ const useFormLock = () => {
   return [locked, lock, unlock];
 };
 
-const ManageSettings = ({list, creatorName}) => {
+const ManageSettings = ({list, creatorName, refresh}) => {
+  const snackUpdate = useSnackbarView(
+    <SnackbarSurface>&#x2713; List settings updated</SnackbarSurface>,
+  );
+
   const [locked, lock, unlock] = useFormLock();
 
   const form = useForm({
     name: list.name,
-    description: list.description,
+    desc: list.desc,
     archive: list.archive,
     sender_policy: list.sender_policy,
     member_policy: list.member_policy,
   });
 
+  const posthookEdit = useCallback(() => {
+    lock();
+    refresh();
+    snackUpdate();
+  }, [refresh, snackUpdate, lock]);
+  const [edit, execEdit] = useAuthCall(
+    selectAPIEdit,
+    [list.creatorid, list.listname, form.state],
+    {},
+    {posthook: posthookEdit},
+  );
+
   return (
     <Grid>
       <Column fullWidth md={16}>
-        <Form formState={form.state} onChange={form.update}>
+        <Form formState={form.state} onChange={form.update} onSubmit={execEdit}>
           <Field
             className="mailinglist-field-disabled-solid"
             name="name"
@@ -53,7 +74,7 @@ const ManageSettings = ({list, creatorName}) => {
           />
           <FieldTextarea
             className="mailinglist-field-disabled-solid"
-            name="description"
+            name="desc"
             label="Description"
             nohint
             disabled={locked}
@@ -97,10 +118,11 @@ const ManageSettings = ({list, creatorName}) => {
             <Fragment>
               <FaIcon icon="unlock-alt" />
               <ButtonTertiary onClick={lock}>Cancel</ButtonTertiary>
-              <ButtonPrimary>Update Settings</ButtonPrimary>
+              <ButtonPrimary onClick={execEdit}>Update Settings</ButtonPrimary>
             </Fragment>
           )}
         </ButtonGroup>
+        {edit.err && <p>{edit.err.message}</p>}
       </Column>
       <Column fullWidth md={8}>
         <h5>Listid</h5>
