@@ -1,6 +1,6 @@
 import {Fragment, useCallback, useContext} from 'react';
 import {useResource, selectAPINull} from '@xorkevin/substation';
-import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
+import {useAuthValue, useAuthCall} from '@xorkevin/turbine';
 import {
   Grid,
   Column,
@@ -134,7 +134,6 @@ const ListRow = ({
   listurl,
 }) => {
   const menu = useMenu();
-
   return (
     <ListItem>
       <Grid justify="space-between" align="center" nowrap>
@@ -201,7 +200,7 @@ const ManageLists = ({baseurl, listurl}) => {
     },
     [setAtEnd],
   );
-  const [lists, reexecute] = useAuthResource(
+  const [lists, reexecute] = useResource(
     selectAPILists,
     [form.state.accountid, LISTS_LIMIT, paginate.index],
     [],

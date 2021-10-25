@@ -14,6 +14,7 @@ import {GovUICtx} from '../../../middleware';
 
 const Lists = lazy(() => import('./lists'));
 const List = lazy(() => import('./list'));
+const Subs = lazy(() => import('./subs'));
 
 const Manage = ({listurl}) => {
   const ctx = useContext(GovUICtx);
@@ -32,6 +33,13 @@ const Manage = ({listurl}) => {
             >
               Manage
             </SidebarItem>
+            <SidebarItem
+              link={`${match.url}/subs`}
+              local
+              icon={<FaIcon icon="newspaper-o" />}
+            >
+              Subscriptions
+            </SidebarItem>
           </Sidebar>
         </Column>
         <Column fullWidth md={18}>
@@ -42,6 +50,9 @@ const Manage = ({listurl}) => {
               </Route>
               <Route path={`${match.path}/admin/:listid`}>
                 <List listurl={listurl} />
+              </Route>
+              <Route path={`${match.path}/subs`}>
+                <Subs listurl={listurl} />
               </Route>
               <Redirect to={`${match.url}/admin`} />
             </Switch>

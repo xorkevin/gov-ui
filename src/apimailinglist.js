@@ -1,4 +1,17 @@
 export default {
+  personal: {
+    url: '/latest',
+    method: 'GET',
+    transformer: (amount, offset) => ({
+      query: {
+        amount,
+        offset,
+      },
+    }),
+    expectdata: true,
+    selector: (_status, data) => data && data.lists,
+    err: 'Unable to get mailing list subscriptions',
+  },
   group: {
     url: '/c/{0}',
     children: {
