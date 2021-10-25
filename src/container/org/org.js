@@ -21,6 +21,7 @@ import {
 
 import {GovUICtx} from '../../middleware';
 
+const OrgOverview = lazy(() => import('./overview'));
 const OrgMembers = lazy(() => import('./members'));
 const OrgManage = lazy(() => import('./manage'));
 const OrgInvitations = lazy(() => import('./invitations'));
@@ -28,7 +29,7 @@ const OrgSettings = lazy(() => import('./settings'));
 
 const selectAPIOrg = (api) => api.orgs.name;
 
-const OrgDetails = ({pathOrg}) => {
+const Org = ({pathOrg}) => {
   const ctx = useContext(GovUICtx);
   const match = useRouteMatch();
   const {name} = useParams();
@@ -72,6 +73,13 @@ const OrgDetails = ({pathOrg}) => {
                 <Sidebar>
                   <SidebarItem
                     local
+                    link={`${match.url}/overview`}
+                    icon={<FaIcon icon="square" />}
+                  >
+                    Overview
+                  </SidebarItem>
+                  <SidebarItem
+                    local
                     link={`${match.url}/members`}
                     icon={<FaIcon icon="users" />}
                   >
@@ -107,10 +115,11 @@ const OrgDetails = ({pathOrg}) => {
                 </Sidebar>
               </Column>
               <Column fullWidth md={18}>
-                <h2>{org.data.display_name}</h2>
-                <p>{org.data.desc}</p>
                 <Suspense fallback={ctx.fallbackView}>
                   <Switch>
+                    <Route path={`${match.path}/overview`}>
+                      <OrgOverview org={org.data} />
+                    </Route>
                     <Route path={`${match.path}/members`}>
                       <OrgMembers org={org.data} />
                     </Route>
@@ -134,7 +143,7 @@ const OrgDetails = ({pathOrg}) => {
                         />
                       </Route>
                     )}
-                    <Redirect to={`${match.path}/members`} />
+                    <Redirect to={`${match.path}/overview`} />
                   </Switch>
                 </Suspense>
               </Column>
@@ -148,4 +157,4 @@ const OrgDetails = ({pathOrg}) => {
   );
 };
 
-export default OrgDetails;
+export default Org;

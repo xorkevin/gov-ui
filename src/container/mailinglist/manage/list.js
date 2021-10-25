@@ -84,10 +84,10 @@ const List = ({listurl}) => {
         <Fragment>
           <Grid justify="space-between" align="flex-end">
             <Column grow="1">
-              <h2>
+              <h3>
                 {list.data.name}{' '}
                 <small>{`${creatorName}.${list.data.listname}`}</small>
-              </h2>
+              </h3>
             </Column>
             <Column>
               <ButtonGroup>
