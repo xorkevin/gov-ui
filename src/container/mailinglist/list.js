@@ -3,8 +3,11 @@ import {useParams} from 'react-router-dom';
 import {useResource, selectAPINull} from '@xorkevin/substation';
 import {useAuthValue, useAuthCall} from '@xorkevin/turbine';
 import {
+  Container,
   Grid,
   Column,
+  Sidebar,
+  SidebarHeader,
   SnackbarSurface,
   useSnackbar,
   useSnackbarView,
@@ -122,17 +125,13 @@ const List = () => {
   );
 
   return (
-    <div>
+    <Container padded narrow>
       {list.success && (
-        <Grid justify="space-between" align="flex-end">
-          <Column grow="1">
-            <h2>
-              {list.data.name}{' '}
-              <small>{`${creatorName}.${list.data.listname}`}</small>
-            </h2>
-            <p>{list.data.desc}</p>
-          </Column>
-          <Column>
+        <Grid>
+          <Column fullWidth md={6}>
+            <Sidebar>
+              <SidebarHeader>Mailing List</SidebarHeader>
+            </Sidebar>
             <ButtonGroup>
               {loggedIn && !isMember && (
                 <ButtonTertiary onClick={execSub}>Subscribe</ButtonTertiary>
@@ -142,10 +141,18 @@ const List = () => {
               )}
             </ButtonGroup>
           </Column>
+          <Column fullWidth md={18}>
+            <h2>
+              {list.data.name}{' '}
+              <small>{`${creatorName}.${list.data.listname}`}</small>
+            </h2>
+            <p>{list.data.desc}</p>
+            <hr />
+          </Column>
         </Grid>
       )}
       {members.err && <p>{members.err.message}</p>}
-    </div>
+    </Container>
   );
 };
 

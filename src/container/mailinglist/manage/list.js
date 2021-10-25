@@ -88,7 +88,6 @@ const List = ({listurl}) => {
                 {list.data.name}{' '}
                 <small>{`${creatorName}.${list.data.listname}`}</small>
               </h2>
-              <p>{list.data.desc}</p>
             </Column>
             <Column>
               <ButtonGroup>
