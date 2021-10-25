@@ -8,9 +8,12 @@ import {
 } from 'react-router-dom';
 import {useResource, selectAPINull} from '@xorkevin/substation';
 import {useAuthValue, useIntersectRoles} from '@xorkevin/turbine';
-import {Tabbar, TabItem} from '@xorkevin/nuke';
+import {Grid, Column, Tabbar, TabItem, ButtonGroup} from '@xorkevin/nuke';
+import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
+import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
 
 import {GovUICtx} from '../../../middleware';
+import {formatURL} from '../../../utility';
 
 const Msgs = lazy(() => import('./msgs'));
 const Members = lazy(() => import('./members'));
@@ -19,7 +22,7 @@ const Settings = lazy(() => import('./settings'));
 const selectAPIList = (api) => api.mailinglist.id.get;
 const selectAPIOrg = (api) => api.orgs.id.get;
 
-const List = () => {
+const List = ({listurl}) => {
   const ctx = useContext(GovUICtx);
   const {userid, username} = useAuthValue();
 
@@ -79,11 +82,23 @@ const List = () => {
     <div>
       {isOwner && (
         <Fragment>
-          <h2>
-            {list.data.name}{' '}
-            <small>{`${creatorName}.${list.data.listname}`}</small>
-          </h2>
-          <p>{list.data.desc}</p>
+          <Grid justify="space-between" align="flex-end">
+            <Column grow="1">
+              <h2>
+                {list.data.name}{' '}
+                <small>{`${creatorName}.${list.data.listname}`}</small>
+              </h2>
+              <p>{list.data.desc}</p>
+            </Column>
+            <Column>
+              <ButtonGroup>
+                <AnchorText local href={formatURL(listurl, listid)}>
+                  <ButtonTertiary>List Profile</ButtonTertiary>
+                </AnchorText>
+              </ButtonGroup>
+            </Column>
+          </Grid>
+          <hr />
           <Tabbar>
             <TabItem local link={`${match.url}/msgs`}>
               Messages
