@@ -29,6 +29,24 @@ export default {
       list: {
         url: '/list/{1}',
         children: {
+          sub: {
+            url: '/sub',
+            method: 'PATCH',
+            transformer: (creatorid, listname) => ({
+              params: [creatorid, listname],
+            }),
+            expectdata: false,
+            err: 'Unable to subscribe to list',
+          },
+          unsub: {
+            url: '/unsub',
+            method: 'PATCH',
+            transformer: (creatorid, listname) => ({
+              params: [creatorid, listname],
+            }),
+            expectdata: false,
+            err: 'Unable to unsubscribe from list',
+          },
           edit: {
             url: '',
             method: 'PUT',

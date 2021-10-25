@@ -1,19 +1,42 @@
-import {useMemo, useContext} from 'react';
+import {useCallback, useMemo, useContext} from 'react';
 import {useParams} from 'react-router-dom';
 import {useResource, selectAPINull} from '@xorkevin/substation';
-import {useAuthValue} from '@xorkevin/turbine';
-import {Grid, Column, ButtonGroup} from '@xorkevin/nuke';
+import {useAuthValue, useAuthCall} from '@xorkevin/turbine';
+import {
+  Grid,
+  Column,
+  SnackbarSurface,
+  useSnackbar,
+  useSnackbarView,
+  ButtonGroup,
+} from '@xorkevin/nuke';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 
 import {GovUICtx} from '../../middleware';
 
 const selectAPIList = (api) => api.mailinglist.id.get;
 const selectAPIListMemberIDs = (api) => api.mailinglist.id.member.ids;
+const selectAPIListSub = (api) => api.mailinglist.group.list.sub;
+const selectAPIListUnsub = (api) => api.mailinglist.group.list.unsub;
 const selectAPIUser = (api) => api.u.user.id;
 const selectAPIOrg = (api) => api.orgs.id.get;
 
 const List = () => {
   const ctx = useContext(GovUICtx);
+
+  const snackSub = useSnackbarView(
+    <SnackbarSurface>&#x2713; Subscribed</SnackbarSurface>,
+  );
+  const snackUnsub = useSnackbarView(
+    <SnackbarSurface>&#x2713; Unsubscribed</SnackbarSurface>,
+  );
+  const snackbar = useSnackbar();
+  const displayErrSnack = useCallback(
+    (_status, err) => {
+      snackbar(<SnackbarSurface>{err.message}</SnackbarSurface>);
+    },
+    [snackbar],
+  );
 
   const {listid} = useParams();
 
@@ -68,13 +91,35 @@ const List = () => {
 
   const {loggedIn, userid} = useAuthValue();
   const useridArr = useMemo(() => [userid], [userid]);
-  const [members, _reexecuteMember] = useResource(
+  const [members, reexecuteMember] = useResource(
     list.success && loggedIn ? selectAPIListMemberIDs : selectAPINull,
     [list.data.listid, useridArr],
     [],
   );
   const isMember =
     Array.isArray(members.data) && members.data.some((i) => i === userid);
+
+  const posthookSub = useCallback(() => {
+    snackSub();
+    reexecuteMember();
+  }, [reexecuteMember, snackSub]);
+  const [_sub, execSub] = useAuthCall(
+    selectAPIListSub,
+    [list.data.creatorid, list.data.listname],
+    {},
+    {posthook: posthookSub, errhook: displayErrSnack},
+  );
+
+  const posthookUnsub = useCallback(() => {
+    snackUnsub();
+    reexecuteMember();
+  }, [reexecuteMember, snackUnsub]);
+  const [_unsub, execUnsub] = useAuthCall(
+    selectAPIListUnsub,
+    [list.data.creatorid, list.data.listname],
+    {},
+    {posthook: posthookUnsub, errhook: displayErrSnack},
+  );
 
   return (
     <div>
@@ -90,10 +135,10 @@ const List = () => {
           <Column>
             <ButtonGroup>
               {loggedIn && !isMember && (
-                <ButtonTertiary>Subscribe</ButtonTertiary>
+                <ButtonTertiary onClick={execSub}>Subscribe</ButtonTertiary>
               )}
               {loggedIn && isMember && (
-                <ButtonTertiary>Unsubscribe</ButtonTertiary>
+                <ButtonTertiary onClick={execUnsub}>Unsubscribe</ButtonTertiary>
               )}
             </ButtonGroup>
           </Column>
