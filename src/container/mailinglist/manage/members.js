@@ -166,7 +166,8 @@ const UserSearch = ({list, setUsername, err}) => {
       </ButtonGroup>
       {err && <p>{err.message}</p>}
       <ListGroup>
-        {Array.isArray(users.data) &&
+        {members.data.length > 0 &&
+          Array.isArray(users.data) &&
           users.data.map((i) => (
             <MemberRow
               key={i.userid}
