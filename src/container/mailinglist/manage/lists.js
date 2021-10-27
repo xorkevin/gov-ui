@@ -134,12 +134,13 @@ const ListRow = ({
   listurl,
 }) => {
   const menu = useMenu();
+  const url = formatURL(listurl, listid);
   return (
     <ListItem>
       <Grid justify="space-between" align="center" nowrap>
         <Column className="mailinglist-item-name">
           <h5 className="mailinglist-item-heading">
-            <AnchorText local href={formatURL(listurl, listid)}>
+            <AnchorText local href={url}>
               {name}
             </AnchorText>{' '}
             <small>{`${creatorName}.${listname}`}</small>
@@ -153,6 +154,9 @@ const ListRow = ({
           </ButtonTertiary>
           {menu.show && (
             <Menu size="md" anchor={menu.anchor} close={menu.close}>
+              <MenuItem local link={url}>
+                View
+              </MenuItem>
               <MenuItem local link={`${baseurl}/${listid}`}>
                 Settings
               </MenuItem>
