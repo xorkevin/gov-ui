@@ -31,14 +31,7 @@ const selectAPIDecline = (api) => api.u.user.roles.invitation.del;
 const selectAPIUsers = (api) => api.u.user.ids;
 const selectAPIOrgs = (api) => api.orgs.get;
 
-const InvitationRow = ({
-  role,
-  invitedBy,
-  creationTime,
-  refresh,
-  userMap,
-  orgMap,
-}) => {
+const InvitationRow = ({role, isOrg, org, inviter, creationTime, refresh}) => {
   const ctx = useContext(GovUICtx);
 
   const snackbar = useSnackbar();
@@ -48,10 +41,6 @@ const InvitationRow = ({
     },
     [snackbar],
   );
-
-  const inviter = userMap[invitedBy];
-  const isOrg = ctx.isOrgRole(role);
-  const org = isOrg ? orgMap[ctx.roleToOrgID(role)] : null;
 
   const posthookRefresh = useCallback(
     (_status, _data, opts) => {
@@ -182,17 +171,20 @@ const RoleInvitations = () => {
       <Grid>
         <Column fullWidth md={24}>
           <ListGroup>
-            {invitations.data.map((i) => (
-              <InvitationRow
-                key={i.role}
-                role={i.role}
-                invitedBy={i.invited_by}
-                creationTime={i.creation_time}
-                refresh={reexecute}
-                userMap={userMap}
-                orgMap={orgMap}
-              />
-            ))}
+            {invitations.data.map((i) => {
+              const isOrg = ctx.isOrgRole(i.role);
+              return (
+                <InvitationRow
+                  key={i.role}
+                  role={i.role}
+                  isOrg={isOrg}
+                  org={isOrg ? orgMap[ctx.roleToOrgID(i.role)] : null}
+                  inviter={userMap[i.invited_by]}
+                  creationTime={i.creation_time}
+                  refresh={reexecute}
+                />
+              );
+            })}
           </ListGroup>
           <ButtonGroup>
             <ButtonTertiary disabled={paginate.atFirst} onClick={paginate.prev}>

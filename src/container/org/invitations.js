@@ -33,12 +33,12 @@ const selectAPIUsers = (api) => api.u.user.ids;
 
 const InvitationRow = ({
   userid,
+  subject,
   role,
-  invitedBy,
+  inviter,
   creationTime,
   isViewMod,
   refresh,
-  userMap,
 }) => {
   const ctx = useContext(GovUICtx);
 
@@ -49,9 +49,6 @@ const InvitationRow = ({
     },
     [snackbar],
   );
-
-  const subject = userMap[userid];
-  const inviter = userMap[invitedBy];
 
   const posthookRefresh = useCallback(
     (_status, _data, opts) => {
@@ -186,12 +183,12 @@ const Invitations = ({org}) => {
               <InvitationRow
                 key={i.userid}
                 userid={i.userid}
+                subject={userMap[i.userid]}
                 role={i.role}
-                invitedBy={i.invited_by}
+                inviter={userMap[i.invited_by]}
                 creationTime={i.creation_time}
                 isViewMod={isViewMod}
                 refresh={reexecute}
-                userMap={userMap}
               />
             ))}
           </ListGroup>
