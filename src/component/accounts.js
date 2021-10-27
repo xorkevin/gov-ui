@@ -18,22 +18,23 @@ const useOrgOpts = () => {
     [ctx.orgUsrPrefix, ORG_LIMIT, 0],
     [],
   );
-  const prefixLen = ctx.orgUsrPrefix.length;
+  const roleToOrgID = ctx.roleToOrgID;
   const orgids = useMemo(
-    () => roles.data.map((i) => i.slice(prefixLen)),
-    [prefixLen, roles],
+    () => roles.data.map((i) => roleToOrgID(i)),
+    [roleToOrgID, roles],
   );
   const [orgs] = useAuthResource(
     orgids.length > 0 ? selectAPIOrgs : selectAPINull,
     [orgids],
     [],
   );
+  const orgName = ctx.orgName;
   return useMemo(
     () =>
       [{display: `${username} (Personal)`, value: userid}].concat(
-        orgs.data.map((i) => ({display: i.name, value: ctx.orgRole(i.orgid)})),
+        orgs.data.map((i) => ({display: i.name, value: orgName(i.orgid)})),
       ),
-    [ctx, userid, username, orgs],
+    [orgName, userid, username, orgs],
   );
 };
 

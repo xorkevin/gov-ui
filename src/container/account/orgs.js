@@ -1,5 +1,5 @@
 import {Fragment, useState, useCallback, useMemo, useContext} from 'react';
-import {selectAPINull} from '@xorkevin/substation';
+import {useResource, selectAPINull} from '@xorkevin/substation';
 import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
   Grid,
@@ -219,14 +219,12 @@ const Orgs = () => {
     {posthook: posthookRoles},
   );
 
-  const prefixLen = isViewMod
-    ? ctx.orgModPrefix.length
-    : ctx.orgUsrPrefix.length;
+  const roleToOrgID = ctx.roleToOrgID;
   const orgids = useMemo(
-    () => roles.data.map((i) => i.slice(prefixLen)),
-    [prefixLen, roles],
+    () => roles.data.map((i) => roleToOrgID(i)),
+    [roleToOrgID, roles],
   );
-  const [orgs] = useAuthResource(
+  const [orgs] = useResource(
     orgids.length > 0 ? selectAPIOrgs : selectAPINull,
     [orgids],
     [],

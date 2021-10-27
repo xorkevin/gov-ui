@@ -21,7 +21,7 @@ const orgPrefix = 'org.';
 const orgUsrPrefix = 'usr.org.';
 const orgModPrefix = 'mod.org.';
 
-const orgRole = (orgid) => orgPrefix + orgid;
+const orgName = (orgid) => orgPrefix + orgid;
 const orgUsrRole = (orgid) => orgUsrPrefix + orgid;
 const orgModRole = (orgid) => orgModPrefix + orgid;
 
@@ -237,7 +237,7 @@ const GovUIDefaultOpts = Object.freeze({
   orgPrefix,
   orgUsrPrefix,
   orgModPrefix,
-  orgRole,
+  orgName,
   orgUsrRole,
   orgModRole,
   isOrgRole,
