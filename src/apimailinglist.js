@@ -132,6 +132,20 @@ export default {
           },
         },
       },
+      msgs: {
+        url: '/msgs',
+        method: 'GET',
+        transformer: (listid, amount, offset) => ({
+          params: [listid],
+          query: {
+            amount,
+            offset,
+          },
+        }),
+        expectdata: true,
+        selector: (_status, data) => data && data.msgs,
+        err: 'Unable to get list msgs',
+      },
     },
   },
 };
