@@ -78,16 +78,20 @@ const List = ({listurl}) => {
   );
   const creatorName = isOrg ? (org.success ? org.data.name : '') : username;
 
+  const emailAddr = `${creatorName}.${list.data.listname}@${
+    isOrg ? ctx.mailinglistOrg : ctx.mailinglistUsr
+  }`;
+
   return (
     <div>
       {isOwner && (
         <Fragment>
           <Grid justify="space-between" align="flex-end">
             <Column grow="1">
-              <h3>
-                {list.data.name}{' '}
-                <small>{`${creatorName}.${list.data.listname}`}</small>
-              </h3>
+              <h3>{list.data.name} </h3>
+              <AnchorText ext href={`mailto:${emailAddr}`}>
+                {emailAddr}
+              </AnchorText>
             </Column>
             <Column>
               <ButtonGroup>

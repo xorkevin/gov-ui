@@ -130,10 +130,12 @@ const ListRow = ({
   archive,
   lastUpdated,
   creatorName,
+  emailDomain,
   baseurl,
   listurl,
 }) => {
   const menu = useMenu();
+  const emailAddr = `${creatorName}.${listname}@${emailDomain}`;
   const url = formatURL(listurl, listid);
   return (
     <ListItem>
@@ -142,9 +144,13 @@ const ListRow = ({
           <h5 className="mailinglist-item-heading">
             <AnchorText local href={url}>
               {name}
-            </AnchorText>{' '}
-            <small>{`${creatorName}.${listname}`}</small>
+            </AnchorText>
           </h5>{' '}
+          <small>
+            <AnchorText ext href={`mailto:${emailAddr}`}>
+              {emailAddr}
+            </AnchorText>
+          </small>{' '}
           <small>{archive && <Chip>Archived</Chip>}</small> Last updated{' '}
           <Time value={lastUpdated} />
         </Column>
@@ -194,6 +200,7 @@ const ManageLists = ({baseurl, listurl}) => {
     },
   );
   const creatorName = isOrg ? (org.success ? org.data.name : '') : username;
+  const emailDomain = isOrg ? ctx.mailinglistOrg : ctx.mailinglistUsr;
 
   const paginate = usePaginate(LISTS_LIMIT);
 
@@ -272,6 +279,7 @@ const ManageLists = ({baseurl, listurl}) => {
               lastUpdated={i.last_updated}
               creationTime={i.creation_time}
               creatorName={creatorName}
+              emailDomain={emailDomain}
               baseurl={baseurl}
               listurl={listurl}
             />

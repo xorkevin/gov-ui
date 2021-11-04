@@ -252,6 +252,9 @@ const GovUIDefaultOpts = Object.freeze({
   enableUserApprovals: false,
   // courier
   courierLinkPath: '/api/courier/link/id',
+  // mailinglist
+  mailinglistUsr: 'lists.governor.dev.localhost',
+  mailinglistOrg: 'org.lists.governor.dev.localhost',
 });
 
 const GovUICtx = createContext(GovUIDefaultOpts);

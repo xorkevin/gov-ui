@@ -27,15 +27,7 @@ const selectAPIOrgs = (api) => api.orgs.get;
 
 const LISTS_LIMIT = 32;
 
-const ListRow = ({
-  listid,
-  listname,
-  name,
-  archive,
-  lastUpdated,
-  creatorName,
-  listurl,
-}) => {
+const ListRow = ({listid, name, archive, lastUpdated, emailAddr, listurl}) => {
   const menu = useMenu();
   return (
     <ListItem>
@@ -44,9 +36,13 @@ const ListRow = ({
           <h5 className="mailinglist-item-heading">
             <AnchorText local href={formatURL(listurl, listid)}>
               {name}
-            </AnchorText>{' '}
-            <small>{`${creatorName}.${listname}`}</small>
+            </AnchorText>
           </h5>{' '}
+          <small>
+            <AnchorText ext href={`mailto:${emailAddr}`}>
+              {emailAddr}
+            </AnchorText>
+          </small>{' '}
           <small>{archive && <Chip>Archived</Chip>}</small> Last updated{' '}
           <Time value={lastUpdated} />
         </Column>
@@ -110,15 +106,20 @@ const Subs = ({listurl}) => {
     [],
   );
 
-  const orgName = ctx.orgName;
+  const {orgName, mailinglistUsr, mailinglistOrg} = ctx;
   const creatorMap = useMemo(
     () =>
       Object.fromEntries(
         users.data
-          .map((i) => [i.userid, i.username])
-          .concat(orgs.data.map((i) => [orgName(i.orgid), i.name])),
+          .map((i) => [i.userid, {name: i.username, suffix: mailinglistUsr}])
+          .concat(
+            orgs.data.map((i) => [
+              orgName(i.orgid),
+              {name: i.name, suffix: mailinglistOrg},
+            ]),
+          ),
       ),
-    [orgName, users, orgs],
+    [orgName, mailinglistUsr, mailinglistOrg, users, orgs],
   );
 
   return (
@@ -127,23 +128,27 @@ const Subs = ({listurl}) => {
       <hr />
       <ListGroup>
         {Array.isArray(lists.data) &&
-          lists.data.map((i) => (
-            <ListRow
-              key={i.listid}
-              listid={i.listid}
-              creatorid={i.creatorid}
-              listname={i.listname}
-              name={i.name}
-              desc={i.desc}
-              archive={i.archive}
-              senderPolicy={i.sender_policy}
-              memberPolicy={i.member_policy}
-              lastUpdated={i.last_updated}
-              creationTime={i.creation_time}
-              creatorName={creatorMap[i.creatorid] || ''}
-              listurl={listurl}
-            />
-          ))}
+          lists.data.map((i) => {
+            const creator = creatorMap[i.creatorid] || {};
+            const {name, suffix} = creator;
+            return (
+              <ListRow
+                key={i.listid}
+                listid={i.listid}
+                creatorid={i.creatorid}
+                listname={i.listname}
+                name={i.name}
+                desc={i.desc}
+                archive={i.archive}
+                senderPolicy={i.sender_policy}
+                memberPolicy={i.member_policy}
+                lastUpdated={i.last_updated}
+                creationTime={i.creation_time}
+                emailAddr={`${name || ''}.${i.listname}@${suffix || ''}`}
+                listurl={listurl}
+              />
+            );
+          })}
       </ListGroup>
       <ButtonGroup>
         <ButtonTertiary disabled={paginate.atFirst} onClick={paginate.prev}>
