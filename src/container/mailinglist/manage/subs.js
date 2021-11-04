@@ -17,6 +17,7 @@ import {
 } from '@xorkevin/nuke';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
+import AnchorSecondary from '@xorkevin/nuke/src/component/anchor/secondary';
 
 import {GovUICtx} from '../../../middleware';
 import {formatURL} from '../../../utility';
@@ -39,9 +40,9 @@ const ListRow = ({listid, name, archive, lastUpdated, emailAddr, listurl}) => {
             </AnchorText>
           </h5>{' '}
           <small>
-            <AnchorText ext href={`mailto:${emailAddr}`}>
+            <AnchorSecondary ext href={`mailto:${emailAddr}`}>
               {emailAddr}
-            </AnchorText>
+            </AnchorSecondary>
           </small>{' '}
           <small>{archive && <Chip>Archived</Chip>}</small> Last updated{' '}
           <Time value={lastUpdated} />

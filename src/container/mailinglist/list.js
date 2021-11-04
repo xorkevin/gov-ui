@@ -14,6 +14,7 @@ import {
   ButtonGroup,
 } from '@xorkevin/nuke';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
+import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
 
 import {GovUICtx} from '../../middleware';
 
@@ -91,6 +92,8 @@ const List = () => {
     : user.success
     ? user.data.username
     : '';
+  const emailDomain = isOrg ? ctx.mailinglistOrg : ctx.mailinglistUsr;
+  const emailAddr = `${creatorName}.${list.data.listname}@${emailDomain}`;
 
   const {loggedIn, userid} = useAuthValue();
   const useridArr = useMemo(() => [userid], [userid]);
@@ -142,10 +145,12 @@ const List = () => {
             </ButtonGroup>
           </Column>
           <Column fullWidth md={18}>
-            <h2>
-              {list.data.name}{' '}
-              <small>{`${creatorName}.${list.data.listname}`}</small>
-            </h2>
+            <h2>{list.data.name} </h2>
+            <div>
+              <AnchorText ext href={emailAddr}>
+                {emailAddr}
+              </AnchorText>
+            </div>
             <p>{list.data.desc}</p>
             <hr />
           </Column>
