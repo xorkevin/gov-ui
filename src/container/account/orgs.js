@@ -188,7 +188,7 @@ const Orgs = () => {
 
   const setAtEnd = paginate.setAtEnd;
   const posthookRoles = useCallback(
-    (_status, roles) => {
+    (_res, roles) => {
       setAtEnd(roles.length < ORG_LIMIT);
     },
     [setAtEnd],

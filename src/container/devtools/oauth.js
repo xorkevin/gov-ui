@@ -168,7 +168,7 @@ const OAuthTool = ({pathCallback}) => {
 
   const formAssign = form.assign;
   const posthookConfig = useCallback(
-    (_status, config) => {
+    (_res, config) => {
       formAssign({
         authendpoint: config.authorization_endpoint,
       });

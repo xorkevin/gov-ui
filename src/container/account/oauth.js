@@ -133,7 +133,7 @@ const Apps = () => {
 
   const setAtEnd = paginate.setAtEnd;
   const posthookConns = useCallback(
-    (_status, conns) => {
+    (_res, conns) => {
       setAtEnd(conns.length < APP_LIMIT);
     },
     [setAtEnd],

@@ -9,7 +9,7 @@ export default {
       },
     }),
     expectdata: true,
-    selector: (_status, data) => data && data.lists,
+    selector: (_res, data) => data && data.lists,
     err: 'Unable to get mailing list subscriptions',
   },
   group: {
@@ -26,7 +26,7 @@ export default {
           },
         }),
         expectdata: true,
-        selector: (_status, data) => data && data.lists,
+        selector: (_res, data) => data && data.lists,
         err: 'Unable to get mailing lists',
       },
       create: {
@@ -114,7 +114,7 @@ export default {
           },
         }),
         expectdata: true,
-        selector: (_status, data) => data && data.members,
+        selector: (_res, data) => data && data.members,
         err: 'Unable to get list members',
         children: {
           ids: {
@@ -127,7 +127,7 @@ export default {
               },
             }),
             expectdata: true,
-            selector: (_status, data) => data && data.members,
+            selector: (_res, data) => data && data.members,
             err: 'Unable to get list members',
           },
         },
@@ -143,7 +143,7 @@ export default {
           },
         }),
         expectdata: true,
-        selector: (_status, data) => data && data.msgs,
+        selector: (_res, data) => data && data.msgs,
         err: 'Unable to get list msgs',
       },
     },

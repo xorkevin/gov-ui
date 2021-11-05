@@ -94,7 +94,7 @@ const UserSearch = ({list, setUsername, err}) => {
   );
   const snackbar = useSnackbar();
   const displayErrSnack = useCallback(
-    (_status, err) => {
+    (_res, err) => {
       snackbar(<SnackbarSurface>{err.message}</SnackbarSurface>);
     },
     [snackbar],
@@ -112,8 +112,8 @@ const UserSearch = ({list, setUsername, err}) => {
   const apiSearch = useAPI(selectAPISearch);
   const searchUsers = useCallback(
     async (search) => {
-      const [data, status, err] = await apiSearch(search, USERS_LIMIT);
-      if (err || status < 200 || status >= 300 || !Array.isArray(data)) {
+      const [data, res, err] = await apiSearch(search, USERS_LIMIT);
+      if (err || !res || !res.ok || !Array.isArray(data)) {
         return [];
       }
       return data.map((i) => i.username);
@@ -126,7 +126,7 @@ const UserSearch = ({list, setUsername, err}) => {
 
   const setAtEnd = paginate.setAtEnd;
   const posthookMembers = useCallback(
-    (_status, members) => {
+    (_res, members) => {
       setAtEnd(members.length < MEMBERS_LIMIT);
     },
     [setAtEnd],

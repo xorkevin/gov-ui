@@ -6,7 +6,7 @@ export default {
       query: {amount, offset},
     }),
     expectdata: true,
-    selector: (_status, data) => data && data.apikeys,
+    selector: (_res, data) => data && data.apikeys,
     err: 'Could not get apikeys',
   },
   check: {

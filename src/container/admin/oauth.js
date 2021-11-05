@@ -407,7 +407,7 @@ const OAuthApps = () => {
   );
   const snackbar = useSnackbar();
   const displayErrSnack = useCallback(
-    (_status, err) => {
+    (_res, err) => {
       snackbar(<SnackbarSurface>{err.message}</SnackbarSurface>);
     },
     [snackbar],
@@ -417,7 +417,7 @@ const OAuthApps = () => {
 
   const setAtEnd = paginate.setAtEnd;
   const posthook = useCallback(
-    (_status, apps) => {
+    (_res, apps) => {
       setAtEnd(apps.length < OAUTHAPP_LIMIT);
     },
     [setAtEnd],

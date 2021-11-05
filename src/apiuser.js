@@ -9,7 +9,7 @@ export default {
           query: {prefix, amount, offset},
         }),
         expectdata: true,
-        selector: (_status, data) => data && data.roles,
+        selector: (_res, data) => data && data.roles,
         err: 'Could not get user roles',
       },
       invitation: {
@@ -22,7 +22,7 @@ export default {
               query: {amount, offset},
             }),
             expectdata: true,
-            selector: (_status, data) => data && data.invitations,
+            selector: (_res, data) => data && data.invitations,
             err: 'Could not get user role invitations',
           },
           accept: {
@@ -55,7 +55,7 @@ export default {
           query: {amount, offset},
         }),
         expectdata: true,
-        selector: (_status, data) => data && data.active_sessions,
+        selector: (_res, data) => data && data.active_sessions,
         err: 'Could not get sessions',
       },
       del: {
@@ -193,7 +193,7 @@ export default {
           query: {prefix, amount, offset},
         }),
         expectdata: true,
-        selector: (_status, data) => data && data.roles,
+        selector: (_res, data) => data && data.roles,
         err: 'Unable to get user roles',
       },
       roleint: {
@@ -206,7 +206,7 @@ export default {
           },
         }),
         expectdata: true,
-        selector: (_status, data) => data && data.roles,
+        selector: (_res, data) => data && data.roles,
         err: 'Could not get user roles',
       },
       edit: {
@@ -255,7 +255,7 @@ export default {
       },
     }),
     expectdata: true,
-    selector: (_status, data) => data && data.users,
+    selector: (_res, data) => data && data.users,
     err: 'Unable to get user info',
   },
   all: {
@@ -265,7 +265,7 @@ export default {
       query: {amount, offset},
     }),
     expectdata: true,
-    selector: (_status, data) => data && data.users,
+    selector: (_res, data) => data && data.users,
     err: 'Unable to get user info',
   },
   search: {
@@ -275,7 +275,7 @@ export default {
       query: {prefix, amount},
     }),
     expectdata: true,
-    selector: (_status, data) => data && data.users,
+    selector: (_res, data) => data && data.users,
     err: 'Unable to get users',
   },
   role: {
@@ -289,7 +289,7 @@ export default {
           query: {amount, offset},
         }),
         expectdata: true,
-        selector: (_status, data) => data && data.users,
+        selector: (_res, data) => data && data.users,
         err: 'Unable to get users for role',
       },
       invitation: {
@@ -303,7 +303,7 @@ export default {
               query: {amount, offset},
             }),
             expectdata: true,
-            selector: (_status, data) => data && data.invitations,
+            selector: (_res, data) => data && data.invitations,
             err: 'Could not get role invitations',
           },
           del: {
@@ -346,7 +346,7 @@ export default {
           query: {amount, offset},
         }),
         expectdata: true,
-        selector: (_status, data) => data && data.approvals,
+        selector: (_res, data) => data && data.approvals,
         err: 'Unable to get approvals',
       },
       id: {

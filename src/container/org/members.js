@@ -89,7 +89,7 @@ const OrgMembers = ({org}) => {
 
   const setAtEnd = paginate.setAtEnd;
   const posthookUserIDs = useCallback(
-    (_status, userids) => {
+    (_res, userids) => {
       setAtEnd(userids.length < MEMBER_LIMIT);
     },
     [setAtEnd],

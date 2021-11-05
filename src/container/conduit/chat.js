@@ -168,7 +168,7 @@ const CreateChat = ({close, invalidateChat}) => {
   });
 
   const posthook = useCallback(
-    (_status, chat) => {
+    (_res, chat) => {
       close();
       // TODO: remove this branch after websockets
       if (chat && chat.chatid) {
@@ -187,8 +187,8 @@ const CreateChat = ({close, invalidateChat}) => {
   const apiSearch = useAPI(selectAPISearch);
   const searchUsers = useCallback(
     async (search) => {
-      const [data, status, err] = await apiSearch(search, USERS_LIMIT);
-      if (err || status < 200 || status >= 300 || !Array.isArray(data)) {
+      const [data, res, err] = await apiSearch(search, USERS_LIMIT);
+      if (err || !res || !res.ok || !Array.isArray(data)) {
         return [];
       }
       return data
@@ -418,7 +418,7 @@ const ConduitChat = () => {
   });
 
   const posthookInit = useCallback(
-    (_status, chats) => {
+    (_res, chats) => {
       dispatchChats(ChatsReset(chats));
     },
     [dispatchChats],
@@ -459,7 +459,7 @@ const ConduitChat = () => {
   }, [endElem, setBefore, before, firstLastUpdated]);
 
   const posthookLoadChats = useCallback(
-    (_status, chats) => {
+    (_res, chats) => {
       dispatchChats(ChatsAppend(chats));
     },
     [dispatchChats],
@@ -472,7 +472,7 @@ const ConduitChat = () => {
   );
 
   const posthookChats = useCallback(
-    (_status, chats) => {
+    (_res, chats) => {
       dispatchChats(ChatsAppend(chats));
     },
     [dispatchChats],
@@ -486,7 +486,7 @@ const ConduitChat = () => {
   );
 
   const posthookUsers = useCallback(
-    (_status, users) => {
+    (_res, users) => {
       dispatchChats(UsersAppend(users));
     },
     [dispatchChats],

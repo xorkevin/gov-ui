@@ -8,7 +8,7 @@ export default {
       },
     }),
     expectdata: true,
-    selector: (_status, data) => data.orgs,
+    selector: (_res, data) => data && data.orgs,
     err: 'Unable to get orgs',
   },
   getall: {
@@ -18,7 +18,7 @@ export default {
       query: {amount, offset},
     }),
     expectdata: true,
-    selector: (_status, data) => data.orgs,
+    selector: (_res, data) => data && data.orgs,
     err: 'Unable to get orgs',
   },
   id: {

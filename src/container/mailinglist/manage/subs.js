@@ -71,7 +71,7 @@ const Subs = ({listurl}) => {
 
   const setAtEnd = paginate.setAtEnd;
   const posthookLists = useCallback(
-    (_status, lists) => {
+    (_res, lists) => {
       setAtEnd(lists.length < LISTS_LIMIT);
     },
     [setAtEnd],

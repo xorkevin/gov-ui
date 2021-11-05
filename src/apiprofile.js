@@ -48,7 +48,7 @@ export default {
       },
     }),
     expectdata: true,
-    selector: (_status, data) => data && data.profiles,
+    selector: (_res, data) => data && data.profiles,
     err: 'Unable to get profiles',
   },
   create: {

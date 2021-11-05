@@ -63,7 +63,7 @@ const Profile = () => {
 
   const formAssign = form.assign;
   const posthook = useCallback(
-    (_status, {contact_email, bio}) => {
+    (_res, {contact_email, bio}) => {
       formAssign({
         contact_email,
         bio,
@@ -115,7 +115,7 @@ const Profile = () => {
     {posthook: posthookCreate},
   );
 
-  const canCreate = profile.status === 404;
+  const canCreate = profile.res && profile.res.status === 404;
 
   const {userid} = useAuthValue();
   const imageURL = useURL(selectAPIProfileImage, [userid]);
@@ -228,7 +228,7 @@ const AccountDetails = () => {
   });
 
   const posthook = useCallback(
-    (_status, _data) => {
+    (_res, _data) => {
       lock();
       refreshUser();
       displaySnackbar();

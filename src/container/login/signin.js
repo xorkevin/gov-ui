@@ -71,7 +71,7 @@ const AddAccountContainer = ({
   }, [setDisplayBackup, formOTPAssign]);
 
   const handleLogin = useCallback(async () => {
-    const [_data, _status, err] = await execLogin();
+    const [_data, _res, err] = await execLogin();
     if (err) {
       if (err.code === 'otp_required') {
         setDisplayOTP(true);
@@ -206,7 +206,7 @@ const AccountRow = ({
   const [_switchState, switchAccount] = useSwitchAccount(userid);
 
   const handleSwitchAccount = useCallback(async () => {
-    const [_data, _status, err] = await switchAccount();
+    const [_data, _res, err] = await switchAccount();
     if (err) {
       displayErrSnack(err);
       return;

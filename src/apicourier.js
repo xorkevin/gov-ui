@@ -10,7 +10,7 @@ export default {
           query: {amount, offset},
         }),
         expectdata: true,
-        selector: (_status, data) => data.links,
+        selector: (_res, data) => data && data.links,
         err: 'Unable to get links',
       },
       id: {
@@ -50,7 +50,7 @@ export default {
           query: {amount, offset},
         }),
         expectdata: true,
-        selector: (_status, data) => data.brands,
+        selector: (_res, data) => data && data.brands,
         err: 'Unable to get brands',
       },
       id: {

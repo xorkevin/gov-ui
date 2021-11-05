@@ -11,7 +11,7 @@ export default {
           },
         }),
         expectdata: true,
-        selector: (_status, data) => data && data.chats,
+        selector: (_res, data) => data && data.chats,
         err: 'Unable to get chats',
       },
       latest: {
@@ -21,7 +21,7 @@ export default {
           query: {kind, before, amount},
         }),
         expectdata: true,
-        selector: (_status, data) => data && data.chats,
+        selector: (_res, data) => data && data.chats,
         err: 'Unable to get latest chats',
       },
       create: {
@@ -57,7 +57,7 @@ export default {
                   query: {kind, before, amount},
                 }),
                 expectdata: true,
-                selector: (_status, data) => data && data.msgs,
+                selector: (_res, data) => data && data.msgs,
                 err: 'Unable to get latest msgs',
               },
             },

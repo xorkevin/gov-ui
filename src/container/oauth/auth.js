@@ -300,9 +300,9 @@ const AuthFlow = ({redirSuccess, redirErr, app, conn, params, reqParams}) => {
     code: '',
   });
   const allowAuth = useCallback(async () => {
-    const [data, status, err] = await execAuth();
+    const [data, res, err] = await execAuth();
     if (err) {
-      if (status >= 500) {
+      if (res && res.status >= 500) {
         redirErr(OID_ERR_SERVER, err.message);
       } else {
         redirErr(err.code || OID_ERR_INVALID_REQ, err.message);

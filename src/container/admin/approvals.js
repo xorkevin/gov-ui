@@ -87,7 +87,7 @@ const ApprovalsRow = ({
 const Approvals = () => {
   const snackbar = useSnackbar();
   const displayErrSnack = useCallback(
-    (_status, err) => {
+    (_res, err) => {
       snackbar(<SnackbarSurface>{err.message}</SnackbarSurface>);
     },
     [snackbar],
@@ -97,7 +97,7 @@ const Approvals = () => {
 
   const setAtEnd = paginate.setAtEnd;
   const posthook = useCallback(
-    (_status, approvals) => {
+    (_res, approvals) => {
       setAtEnd(approvals.length < APPROVALS_LIMIT);
     },
     [setAtEnd],

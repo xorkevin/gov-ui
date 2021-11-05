@@ -57,7 +57,7 @@ const ManageMsgs = ({list}) => {
 
   const setAtEnd = paginate.setAtEnd;
   const posthookMsgs = useCallback(
-    (_status, msgs) => {
+    (_res, msgs) => {
       setAtEnd(msgs.length < MSGS_LIMIT);
     },
     [setAtEnd],

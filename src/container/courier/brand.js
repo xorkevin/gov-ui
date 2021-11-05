@@ -96,7 +96,7 @@ const CourierBrand = ({accountid}) => {
 
   const setAtEnd = paginate.setAtEnd;
   const posthookBrands = useCallback(
-    (_status, brands) => {
+    (_res, brands) => {
       setAtEnd(brands.length < BRAND_LIMIT);
     },
     [setAtEnd],

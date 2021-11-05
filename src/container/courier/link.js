@@ -123,7 +123,7 @@ const LinkRow = ({
 const CourierLink = ({accountid, courierPath}) => {
   const snackbar = useSnackbar();
   const displayErrSnack = useCallback(
-    (_status, err) => {
+    (_res, err) => {
       snackbar(<SnackbarSurface>{err.message}</SnackbarSurface>);
     },
     [snackbar],
@@ -139,7 +139,7 @@ const CourierLink = ({accountid, courierPath}) => {
 
   const setAtEnd = paginate.setAtEnd;
   const posthookLinks = useCallback(
-    (_status, links) => {
+    (_res, links) => {
       setAtEnd(links.length < LINK_LIMIT);
     },
     [setAtEnd],

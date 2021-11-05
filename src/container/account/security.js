@@ -601,7 +601,7 @@ const AccountSessions = () => {
 
   const setAtEnd = paginate.setAtEnd;
   const posthook = useCallback(
-    (_status, sessions) => {
+    (_res, sessions) => {
       setAtEnd(sessions.length < SESSIONS_LIMIT);
     },
     [setAtEnd],

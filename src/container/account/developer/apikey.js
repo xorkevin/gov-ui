@@ -262,7 +262,7 @@ const CheckKey = () => {
   );
   const snackbar = useSnackbar();
   const displayErrSnack = useCallback(
-    (_status, err) => {
+    (_res, err) => {
       snackbar(<SnackbarSurface>{err.message}</SnackbarSurface>);
     },
     [snackbar],
@@ -396,7 +396,7 @@ const Apikeys = () => {
   );
   const snackbar = useSnackbar();
   const displayErrSnack = useCallback(
-    (_status, err) => {
+    (_res, err) => {
       snackbar(<SnackbarSurface>{err.message}</SnackbarSurface>);
     },
     [snackbar],
@@ -406,7 +406,7 @@ const Apikeys = () => {
 
   const setAtEnd = paginate.setAtEnd;
   const posthook = useCallback(
-    (_status, apikeys) => {
+    (_res, apikeys) => {
       setAtEnd(apikeys.length < APIKEY_LIMIT);
     },
     [setAtEnd],

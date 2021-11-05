@@ -9,7 +9,7 @@ export default {
           query: {amount, offset},
         }),
         expectdata: true,
-        selector: (_status, data) => data.apps,
+        selector: (_res, data) => data && data.apps,
         err: 'Unable to get apps',
       },
       ids: {
@@ -21,7 +21,7 @@ export default {
           },
         }),
         expectdata: true,
-        selector: (_status, data) => data.apps,
+        selector: (_res, data) => data && data.apps,
         err: 'Unable to get apps',
       },
       id: {
@@ -111,7 +111,7 @@ export default {
           query: {amount, offset},
         }),
         expectdata: true,
-        selector: (_status, data) => data.connections,
+        selector: (_res, data) => data && data.connections,
         err: 'Unable to get OAuth connections',
       },
       id: {

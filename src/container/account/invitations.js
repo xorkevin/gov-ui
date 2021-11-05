@@ -118,7 +118,7 @@ const RoleInvitations = () => {
 
   const setAtEnd = paginate.setAtEnd;
   const posthookInvitations = useCallback(
-    (_status, invitations) => {
+    (_res, invitations) => {
       setAtEnd(invitations.length < INVITATION_LIMIT);
     },
     [setAtEnd],
