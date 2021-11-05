@@ -152,17 +152,14 @@ const CourierLink = ({accountid, courierPath}) => {
   );
 
   const formAssign = form.assign;
-  const posthookRefresh = useCallback(
-    (_status, _data, opts) => {
-      formAssign({
-        linkid: '',
-        url: '',
-        brandid: '',
-      });
-      reexecute(opts);
-    },
-    [reexecute, formAssign],
-  );
+  const posthookRefresh = useCallback(() => {
+    formAssign({
+      linkid: '',
+      url: '',
+      brandid: '',
+    });
+    reexecute();
+  }, [reexecute, formAssign]);
   const [create, execCreate] = useAuthCall(
     selectAPICreate,
     [accountid, form.state],
@@ -170,12 +167,9 @@ const CourierLink = ({accountid, courierPath}) => {
     {prehook: prehookValidate, posthook: posthookRefresh},
   );
 
-  const posthookDelete = useCallback(
-    (_status, _data, opts) => {
-      reexecute(opts);
-    },
-    [reexecute],
-  );
+  const posthookDelete = useCallback(() => {
+    reexecute();
+  }, [reexecute]);
 
   const [brands] = useAuthResource(
     selectAPIBrands,

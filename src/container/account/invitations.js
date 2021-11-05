@@ -31,7 +31,14 @@ const selectAPIDecline = (api) => api.u.user.roles.invitation.del;
 const selectAPIUsers = (api) => api.u.user.ids;
 const selectAPIOrgs = (api) => api.orgs.get;
 
-const InvitationRow = ({role, isOrg, org, inviter, creationTime, refresh}) => {
+const InvitationRow = ({
+  role,
+  isOrg,
+  org,
+  inviter,
+  creationTime,
+  posthookRefresh,
+}) => {
   const ctx = useContext(GovUICtx);
 
   const snackbar = useSnackbar();
@@ -42,12 +49,6 @@ const InvitationRow = ({role, isOrg, org, inviter, creationTime, refresh}) => {
     [snackbar],
   );
 
-  const posthookRefresh = useCallback(
-    (_status, _data, opts) => {
-      refresh(opts);
-    },
-    [refresh],
-  );
   const [_acceptInv, execAcceptInv] = useAuthCall(
     selectAPIAccept,
     [role],
@@ -164,6 +165,10 @@ const RoleInvitations = () => {
     [orgs],
   );
 
+  const posthookRefresh = useCallback(() => {
+    reexecute();
+  }, [reexecute]);
+
   return (
     <div>
       <h3>Invitations</h3>
@@ -181,7 +186,7 @@ const RoleInvitations = () => {
                   org={isOrg ? orgMap[ctx.roleToOrgID(i.role)] : null}
                   inviter={userMap[i.invited_by]}
                   creationTime={i.creation_time}
-                  refresh={reexecute}
+                  posthookRefresh={posthookRefresh}
                 />
               );
             })}

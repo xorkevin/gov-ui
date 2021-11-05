@@ -105,12 +105,9 @@ const Profile = () => {
     {posthook: snackImageUpdate},
   );
 
-  const posthookCreate = useCallback(
-    (_status, _data, opts) => {
-      reexecute(opts);
-    },
-    [reexecute],
-  );
+  const posthookCreate = useCallback(() => {
+    reexecute();
+  }, [reexecute]);
   const [create, execCreate] = useAuthCall(
     selectAPICreateProfile,
     [],
@@ -221,15 +218,8 @@ const AccountDetails = () => {
 
   const [locked, lock, unlock] = useFormLock();
 
-  const {
-    userid,
-    username,
-    first_name,
-    last_name,
-    email,
-    creation_time,
-    roles,
-  } = useAuthValue();
+  const {userid, username, first_name, last_name, email, creation_time, roles} =
+    useAuthValue();
 
   const form = useForm({
     username,

@@ -64,16 +64,13 @@ const AccountPass = () => {
   });
 
   const formAssign = form.assign;
-  const posthook = useCallback(
-    (_status, _data) => {
-      formAssign({
-        old_password: '',
-        new_password: '',
-      });
-      displaySnackbar();
-    },
-    [formAssign, displaySnackbar],
-  );
+  const posthook = useCallback(() => {
+    formAssign({
+      old_password: '',
+      new_password: '',
+    });
+    displaySnackbar();
+  }, [formAssign, displaySnackbar]);
 
   const [edit, execEdit] = useAuthCall(
     selectAPIEditPass,
@@ -618,13 +615,10 @@ const AccountSessions = () => {
 
   const {sessionid} = useAuthValue();
 
-  const posthookDelete = useCallback(
-    (_status, _data, opts) => {
-      displaySnackbar();
-      reexecute(opts);
-    },
-    [reexecute, displaySnackbar],
-  );
+  const posthookDelete = useCallback(() => {
+    displaySnackbar();
+    reexecute();
+  }, [reexecute, displaySnackbar]);
 
   return (
     <Fragment>

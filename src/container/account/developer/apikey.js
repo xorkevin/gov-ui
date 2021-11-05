@@ -65,9 +65,9 @@ const EditKey = ({
   });
 
   const updateSuccess = useCallback(
-    (status, data, opts) => {
+    (res, data, opts) => {
       close();
-      posthookUpd(status, data, opts);
+      posthookUpd(res, data, opts);
     },
     [close, posthookUpd],
   );
@@ -126,9 +126,9 @@ const ApikeyRow = ({
 
   const modalRotateToggle = modalRotate.toggle;
   const posthookRotate = useCallback(
-    (status, data, opts) => {
+    (res, data, opts) => {
       modalRotateToggle();
-      posthookUpd(status, data, opts);
+      posthookUpd(res, data, opts);
     },
     [modalRotateToggle, posthookUpd],
   );
@@ -322,19 +322,13 @@ const CheckKey = () => {
   );
 };
 
-const CreateKey = ({reexecute, close, scopeOptions}) => {
+const CreateKey = ({posthookCreate, close, scopeOptions}) => {
   const form = useForm({
     name: '',
     desc: '',
     scope: [],
   });
 
-  const posthookCreate = useCallback(
-    (_status, _data, opts) => {
-      reexecute(opts);
-    },
-    [reexecute],
-  );
   const [create, execCreate] = useAuthCall(
     selectAPICreate,
     [form.state.name, form.state.desc, form.state.scope.join(' ')],
@@ -424,21 +418,19 @@ const Apikeys = () => {
     {posthook},
   );
 
-  const posthookDelete = useCallback(
-    (_status, _data, opts) => {
-      displaySnackbarDel();
-      reexecute(opts);
-    },
-    [reexecute, displaySnackbarDel],
-  );
+  const posthookDelete = useCallback(() => {
+    displaySnackbarDel();
+    reexecute();
+  }, [reexecute, displaySnackbarDel]);
 
-  const posthookUpdate = useCallback(
-    (_status, _data, opts) => {
-      displaySnackbarUpd();
-      reexecute(opts);
-    },
-    [reexecute, displaySnackbarUpd],
-  );
+  const posthookUpdate = useCallback(() => {
+    displaySnackbarUpd();
+    reexecute();
+  }, [reexecute, displaySnackbarUpd]);
+
+  const posthookCreate = useCallback(() => {
+    reexecute();
+  }, [reexecute]);
 
   const modal = useModal();
 
@@ -470,7 +462,7 @@ const Apikeys = () => {
           {modal.show && (
             <ModalSurface size="md" anchor={modal.anchor} close={modal.close}>
               <CreateKey
-                reexecute={reexecute}
+                posthookCreate={posthookCreate}
                 close={modal.close}
                 scopeOptions={scopeOptions}
               />

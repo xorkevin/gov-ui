@@ -64,9 +64,9 @@ const EditApp = ({
   });
 
   const updateSuccess = useCallback(
-    (status, data, opts) => {
+    (res, data, opts) => {
       close();
-      posthookUpd(status, data, opts);
+      posthookUpd(res, data, opts);
     },
     [close, posthookUpd],
   );
@@ -106,9 +106,9 @@ const EditImage = ({clientid, name, posthookUpdImage, errhook, close}) => {
   });
 
   const updateImageSuccess = useCallback(
-    (status, data, opts) => {
+    (res, data, opts) => {
       close();
-      posthookUpdImage(status, data, opts);
+      posthookUpdImage(res, data, opts);
     },
     [close, posthookUpdImage],
   );
@@ -171,9 +171,9 @@ const AppRow = ({
 
   const modalRotateToggle = modalRotate.toggle;
   const posthookRotate = useCallback(
-    (status, data, opts) => {
+    (res, data, opts) => {
       modalRotateToggle();
-      posthookUpd(status, data, opts);
+      posthookUpd(res, data, opts);
     },
     [modalRotateToggle, posthookUpd],
   );
@@ -334,19 +334,13 @@ const AppRow = ({
   );
 };
 
-const RegisterApp = ({reexecute, close}) => {
+const RegisterApp = ({posthookCreate, close}) => {
   const form = useForm({
     name: '',
     url: '',
     redirect_uri: '',
   });
 
-  const posthookCreate = useCallback(
-    (_status, _data, opts) => {
-      reexecute(opts);
-    },
-    [reexecute],
-  );
   const [create, execCreate] = useAuthCall(
     selectAPICreate,
     [form.state],
@@ -435,29 +429,24 @@ const OAuthApps = () => {
     {posthook},
   );
 
-  const posthookDelete = useCallback(
-    (_status, _data, opts) => {
-      displaySnackbarDel();
-      reexecute(opts);
-    },
-    [reexecute, displaySnackbarDel],
-  );
+  const posthookDelete = useCallback(() => {
+    displaySnackbarDel();
+    reexecute();
+  }, [reexecute, displaySnackbarDel]);
 
-  const posthookUpdate = useCallback(
-    (_status, _data, opts) => {
-      displaySnackbarUpd();
-      reexecute(opts);
-    },
-    [reexecute, displaySnackbarUpd],
-  );
+  const posthookUpdate = useCallback(() => {
+    displaySnackbarUpd();
+    reexecute();
+  }, [reexecute, displaySnackbarUpd]);
 
-  const posthookUpdateImage = useCallback(
-    (_status, _data, opts) => {
-      snackImageUpdate();
-      reexecute(opts);
-    },
-    [reexecute, snackImageUpdate],
-  );
+  const posthookUpdateImage = useCallback(() => {
+    snackImageUpdate();
+    reexecute();
+  }, [reexecute, snackImageUpdate]);
+
+  const posthookCreate = useCallback(() => {
+    reexecute();
+  }, [reexecute]);
 
   const modal = useModal();
 
@@ -478,7 +467,10 @@ const OAuthApps = () => {
           </ButtonGroup>
           {modal.show && (
             <ModalSurface size="md" anchor={modal.anchor} close={modal.close}>
-              <RegisterApp reexecute={reexecute} close={modal.close} />
+              <RegisterApp
+                posthookCreate={posthookCreate}
+                close={modal.close}
+              />
             </ModalSurface>
           )}
         </Column>

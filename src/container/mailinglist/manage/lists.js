@@ -75,9 +75,9 @@ const CreateList = ({accountid, posthookCreate, close}) => {
   });
 
   const posthook = useCallback(
-    (status, data, opts) => {
+    (res, data, opts) => {
       close();
-      posthookCreate(status, data, opts);
+      posthookCreate(res, data, opts);
     },
     [posthookCreate, close],
   );
@@ -219,13 +219,10 @@ const ManageLists = ({baseurl, listurl}) => {
     {posthook: posthookLists},
   );
 
-  const posthookCreate = useCallback(
-    (_status, _data, opts) => {
-      displaySnackbarCreate();
-      reexecute(opts);
-    },
-    [displaySnackbarCreate, reexecute],
-  );
+  const posthookCreate = useCallback(() => {
+    displaySnackbarCreate();
+    reexecute();
+  }, [displaySnackbarCreate, reexecute]);
 
   const modal = useModal();
 

@@ -60,7 +60,7 @@ const OrgRow = ({
   orgid,
   name,
   display_name,
-  refresh,
+  posthookLeave,
 }) => {
   const {userid: auth_userid} = useAuthValue();
   const ctx = useContext(GovUICtx);
@@ -73,10 +73,6 @@ const OrgRow = ({
     [snackbar],
   );
 
-  const snackLeftOrg = useSnackbarView(
-    <SnackbarSurface>&#x2713; Left organization</SnackbarSurface>,
-  );
-
   const usrRole = ctx.orgUsrRole(orgid);
 
   const memberRole = useMemo(
@@ -87,13 +83,6 @@ const OrgRow = ({
     [usrRole],
   );
 
-  const posthookLeave = useCallback(
-    (_status, _data, opts) => {
-      snackLeftOrg();
-      refresh(opts);
-    },
-    [refresh, snackLeftOrg],
-  );
   const [_leaveOrg, execLeaveOrg] = useAuthCall(
     selectAPIEditRank,
     [auth_userid, memberRole.add, memberRole.remove],
@@ -146,18 +135,11 @@ const CreateOrg = ({posthookCreate, close}) => {
     desc: '',
   });
 
-  const posthook = useCallback(
-    (status, data, opts) => {
-      close();
-      posthookCreate(status, data, opts);
-    },
-    [posthookCreate, close],
-  );
   const [create, execCreate] = useAuthCall(
     selectAPICreate,
     [form.state],
     {},
-    {prehook: prehookValidate, posthook},
+    {prehook: prehookValidate, posthook: posthookCreate},
   );
 
   return (
@@ -185,6 +167,9 @@ const Orgs = () => {
   const ctx = useContext(GovUICtx);
   const displaySnackbarCreate = useSnackbarView(
     <SnackbarSurface>&#x2713; Org created</SnackbarSurface>,
+  );
+  const snackLeftOrg = useSnackbarView(
+    <SnackbarSurface>&#x2713; Left organization</SnackbarSurface>,
   );
 
   const [isViewMod, setViewMod] = useState(false);
@@ -230,15 +215,19 @@ const Orgs = () => {
     [],
   );
 
-  const posthookCreate = useCallback(
-    (_status, _data, opts) => {
-      displaySnackbarCreate();
-      reexecute(opts);
-    },
-    [displaySnackbarCreate, reexecute],
-  );
-
   const modal = useModal();
+
+  const modalClose = modal.close;
+  const posthookCreate = useCallback(() => {
+    modalClose();
+    displaySnackbarCreate();
+    reexecute();
+  }, [modalClose, displaySnackbarCreate, reexecute]);
+
+  const posthookLeave = useCallback(() => {
+    snackLeftOrg();
+    reexecute();
+  }, [reexecute, snackLeftOrg]);
 
   return (
     <div>
@@ -256,8 +245,8 @@ const Orgs = () => {
             </ButtonTertiary>
           </ButtonGroup>
           {modal.show && (
-            <ModalSurface size="md" anchor={modal.anchor} close={modal.close}>
-              <CreateOrg posthookCreate={posthookCreate} close={modal.close} />
+            <ModalSurface size="md" anchor={modal.anchor} close={modalClose}>
+              <CreateOrg posthookCreate={posthookCreate} close={modalClose} />
             </ModalSurface>
           )}
         </Column>
@@ -285,7 +274,7 @@ const Orgs = () => {
               display_name={i.display_name}
               desc={i.desc}
               creation_time={i.creation_time}
-              refresh={reexecute}
+              posthookLeave={posthookLeave}
             />
           ))}
       </ListGroup>

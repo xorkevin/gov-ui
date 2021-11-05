@@ -38,7 +38,7 @@ const InvitationRow = ({
   inviter,
   creationTime,
   isViewMod,
-  refresh,
+  posthookRefresh,
 }) => {
   const ctx = useContext(GovUICtx);
 
@@ -50,12 +50,6 @@ const InvitationRow = ({
     [snackbar],
   );
 
-  const posthookRefresh = useCallback(
-    (_status, _data, opts) => {
-      refresh(opts);
-    },
-    [refresh],
-  );
   const [_withdrawInv, execWithdrawInv] = useAuthCall(
     selectAPIWithdraw,
     [role, userid],
@@ -164,6 +158,10 @@ const Invitations = ({org}) => {
     [users],
   );
 
+  const posthookRefresh = useCallback(() => {
+    reexecute();
+  }, [reexecute]);
+
   return (
     <div>
       <h3>Invitations</h3>
@@ -188,7 +186,7 @@ const Invitations = ({org}) => {
                 inviter={userMap[i.invited_by]}
                 creationTime={i.creation_time}
                 isViewMod={isViewMod}
-                refresh={reexecute}
+                posthookRefresh={posthookRefresh}
               />
             ))}
           </ListGroup>

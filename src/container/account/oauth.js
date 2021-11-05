@@ -39,7 +39,7 @@ const AppRow = ({
   access_time,
   creation_time,
   app,
-  refresh,
+  posthookRemove,
 }) => {
   const ctx = useContext(GovUICtx);
 
@@ -51,22 +51,11 @@ const AppRow = ({
     [snackbar],
   );
 
-  const snackRemovedConn = useSnackbarView(
-    <SnackbarSurface>&#x2713; Removed connected app</SnackbarSurface>,
-  );
-
   const menu = useMenu();
   const {name, url, logo} = app;
   const scopeSet = useMemo(() => new Set(scope.split(' ')), [scope]);
   const imageURL = useURL(selectAPIImage, [clientid]);
 
-  const posthookRemove = useCallback(
-    (_status, _data, opts) => {
-      snackRemovedConn();
-      refresh(opts);
-    },
-    [refresh, snackRemovedConn],
-  );
   const [_removeApp, execRemove] = useAuthCall(
     selectAPIDel,
     [clientid],
@@ -74,9 +63,10 @@ const AppRow = ({
     {posthook: posthookRemove, errhook: displayErrSnack},
   );
 
-  const creationTime = useMemo(() => dateToLocale(creation_time * 1000), [
-    creation_time,
-  ]);
+  const creationTime = useMemo(
+    () => dateToLocale(creation_time * 1000),
+    [creation_time],
+  );
 
   return (
     <ListItem>
@@ -135,6 +125,10 @@ const AppRow = ({
 };
 
 const Apps = () => {
+  const snackRemovedConn = useSnackbarView(
+    <SnackbarSurface>&#x2713; Removed connected app</SnackbarSurface>,
+  );
+
   const paginate = usePaginate(APP_LIMIT);
 
   const setAtEnd = paginate.setAtEnd;
@@ -162,6 +156,11 @@ const Apps = () => {
     [apps],
   );
 
+  const posthookRemove = useCallback(() => {
+    snackRemovedConn();
+    reexecute();
+  }, [reexecute, snackRemovedConn]);
+
   return (
     <div>
       <h3>Connected Apps</h3>
@@ -180,7 +179,7 @@ const Apps = () => {
                   access_time={i.access_time}
                   creation_time={i.creation_time}
                   app={appMap[i.client_id]}
-                  refresh={reexecute}
+                  posthookRemove={posthookRemove}
                 />
               ))}
           </ListGroup>
