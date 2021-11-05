@@ -10,7 +10,7 @@ export default {
             ids: ids.join(','),
           },
         }),
-        expectdata: true,
+        expectjson: true,
         selector: (_res, data) => data && data.chats,
         err: 'Unable to get chats',
       },
@@ -20,7 +20,7 @@ export default {
         transformer: (kind, before, amount) => ({
           query: {kind, before, amount},
         }),
-        expectdata: true,
+        expectjson: true,
         selector: (_res, data) => data && data.chats,
         err: 'Unable to get latest chats',
       },
@@ -30,7 +30,7 @@ export default {
         transformer: (kind, name, theme, userids) => ({
           json: {kind, name, theme, userids},
         }),
-        expectdata: true,
+        expectjson: true,
         err: 'Unable to create chat',
       },
       id: {
@@ -46,7 +46,7 @@ export default {
                   params: [chatid],
                   json: {kind, value},
                 }),
-                expectdata: true,
+                expectjson: true,
                 err: 'Unable to send chat msg',
               },
               latest: {
@@ -56,7 +56,7 @@ export default {
                   params: [chatid],
                   query: {kind, before, amount},
                 }),
-                expectdata: true,
+                expectjson: true,
                 selector: (_res, data) => data && data.msgs,
                 err: 'Unable to get latest msgs',
               },

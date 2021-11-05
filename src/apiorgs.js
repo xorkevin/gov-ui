@@ -7,7 +7,7 @@ export default {
         ids: ids.join(','),
       },
     }),
-    expectdata: true,
+    expectjson: true,
     selector: (_res, data) => data && data.orgs,
     err: 'Unable to get orgs',
   },
@@ -17,7 +17,7 @@ export default {
     transformer: (amount, offset) => ({
       query: {amount, offset},
     }),
-    expectdata: true,
+    expectjson: true,
     selector: (_res, data) => data && data.orgs,
     err: 'Unable to get orgs',
   },
@@ -30,7 +30,7 @@ export default {
         transformer: (id) => ({
           params: [id],
         }),
-        expectdata: true,
+        expectjson: true,
         err: 'Unable to get org',
       },
       edit: {
@@ -40,7 +40,7 @@ export default {
           params: [id],
           json,
         }),
-        expectdata: false,
+        expectjson: false,
         err: 'Unable to edit org',
       },
       del: {
@@ -49,7 +49,7 @@ export default {
         transformer: (id) => ({
           params: [id],
         }),
-        expectdata: false,
+        expectjson: false,
         err: 'Unable to delete org',
       },
     },
@@ -60,14 +60,14 @@ export default {
     transformer: (name) => ({
       params: [name],
     }),
-    expectdata: true,
+    expectjson: true,
     err: 'Unable to get org',
   },
   create: {
     url: '',
     method: 'POST',
     transformer: (json) => ({json}),
-    expectdata: true,
+    expectjson: true,
     err: 'Unable to create org',
   },
 };

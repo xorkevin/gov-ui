@@ -8,7 +8,7 @@ export default {
         transformer: (prefix, amount, offset) => ({
           query: {prefix, amount, offset},
         }),
-        expectdata: true,
+        expectjson: true,
         selector: (_res, data) => data && data.roles,
         err: 'Could not get user roles',
       },
@@ -21,7 +21,7 @@ export default {
             transformer: (amount, offset) => ({
               query: {amount, offset},
             }),
-            expectdata: true,
+            expectjson: true,
             selector: (_res, data) => data && data.invitations,
             err: 'Could not get user role invitations',
           },
@@ -54,7 +54,7 @@ export default {
         transformer: (amount, offset) => ({
           query: {amount, offset},
         }),
-        expectdata: true,
+        expectjson: true,
         selector: (_res, data) => data && data.active_sessions,
         err: 'Could not get sessions',
       },
@@ -64,7 +64,7 @@ export default {
         transformer: (session_ids) => ({
           json: {session_ids},
         }),
-        expectdata: false,
+        expectjson: false,
         err: 'Could not delete sessions',
       },
     },
@@ -73,7 +73,7 @@ export default {
     url: '',
     method: 'PUT',
     transformer: (json) => ({json}),
-    expectdata: false,
+    expectjson: false,
     err: 'Could not edit account',
   },
   email: {
@@ -85,7 +85,7 @@ export default {
         transformer: (email, password) => ({
           json: {email, password},
         }),
-        expectdata: false,
+        expectjson: false,
         err: 'Could not edit email',
         children: {
           confirm: {
@@ -94,7 +94,7 @@ export default {
             transformer: (userid, key, password) => ({
               json: {userid, key, password},
             }),
-            expectdata: false,
+            expectjson: false,
             err: 'Could not edit email',
           },
         },
@@ -110,7 +110,7 @@ export default {
         transformer: (old_password, new_password) => ({
           json: {old_password, new_password},
         }),
-        expectdata: false,
+        expectjson: false,
         err: 'Could not edit password',
       },
       forgot: {
@@ -119,7 +119,7 @@ export default {
         transformer: (username) => ({
           json: {username},
         }),
-        expectdata: false,
+        expectjson: false,
         err: 'Could not reset password',
         children: {
           confirm: {
@@ -128,7 +128,7 @@ export default {
             transformer: (userid, key, new_password) => ({
               json: {userid, key, new_password},
             }),
-            expectdata: false,
+            expectjson: false,
             err: 'Could not reset password',
           },
         },
@@ -144,7 +144,7 @@ export default {
         transformer: (alg, digits, password) => ({
           json: {alg, digits, password},
         }),
-        expectdata: true,
+        expectjson: true,
         err: 'Could not add otp 2fa',
       },
       confirm: {
@@ -153,7 +153,7 @@ export default {
         transformer: (code) => ({
           json: {code},
         }),
-        expectdata: false,
+        expectjson: false,
         err: 'Could not enable otp 2fa',
       },
       remove: {
@@ -162,7 +162,7 @@ export default {
         transformer: (code, backup, password) => ({
           json: {code, backup, password},
         }),
-        expectdata: false,
+        expectjson: false,
         err: 'Could not remove otp 2fa',
       },
     },
@@ -173,7 +173,7 @@ export default {
     transformer: (userid) => ({
       params: [userid],
     }),
-    expectdata: true,
+    expectjson: true,
     err: 'Unable to get user info',
     children: {
       priv: {
@@ -182,7 +182,7 @@ export default {
         transformer: (userid) => ({
           params: [userid],
         }),
-        expectdata: true,
+        expectjson: true,
         err: 'Unable to get user info',
       },
       roles: {
@@ -192,7 +192,7 @@ export default {
           params: [userid],
           query: {prefix, amount, offset},
         }),
-        expectdata: true,
+        expectjson: true,
         selector: (_res, data) => data && data.roles,
         err: 'Unable to get user roles',
       },
@@ -205,7 +205,7 @@ export default {
             roles: roles.join(','),
           },
         }),
-        expectdata: true,
+        expectjson: true,
         selector: (_res, data) => data && data.roles,
         err: 'Could not get user roles',
       },
@@ -219,7 +219,7 @@ export default {
               params: [userid],
               json: {add, remove},
             }),
-            expectdata: false,
+            expectjson: false,
             err: 'Unable to update user permissions',
           },
         },
@@ -232,7 +232,7 @@ export default {
     transformer: (name) => ({
       params: [name],
     }),
-    expectdata: true,
+    expectjson: true,
     err: 'Unable to get user info',
     children: {
       priv: {
@@ -241,7 +241,7 @@ export default {
         transformer: (name) => ({
           params: [name],
         }),
-        expectdata: true,
+        expectjson: true,
         err: 'Unable to get user info',
       },
     },
@@ -254,7 +254,7 @@ export default {
         ids: userids.join(','),
       },
     }),
-    expectdata: true,
+    expectjson: true,
     selector: (_res, data) => data && data.users,
     err: 'Unable to get user info',
   },
@@ -264,7 +264,7 @@ export default {
     transformer: (amount, offset) => ({
       query: {amount, offset},
     }),
-    expectdata: true,
+    expectjson: true,
     selector: (_res, data) => data && data.users,
     err: 'Unable to get user info',
   },
@@ -274,7 +274,7 @@ export default {
     transformer: (prefix, amount) => ({
       query: {prefix, amount},
     }),
-    expectdata: true,
+    expectjson: true,
     selector: (_res, data) => data && data.users,
     err: 'Unable to get users',
   },
@@ -288,7 +288,7 @@ export default {
           params: [role],
           query: {amount, offset},
         }),
-        expectdata: true,
+        expectjson: true,
         selector: (_res, data) => data && data.users,
         err: 'Unable to get users for role',
       },
@@ -302,7 +302,7 @@ export default {
               params: [role],
               query: {amount, offset},
             }),
-            expectdata: true,
+            expectjson: true,
             selector: (_res, data) => data && data.invitations,
             err: 'Could not get role invitations',
           },
@@ -322,7 +322,7 @@ export default {
     url: '',
     method: 'POST',
     transformer: (json) => ({json}),
-    expectdata: true,
+    expectjson: true,
     err: 'Could not create account',
     children: {
       confirm: {
@@ -331,7 +331,7 @@ export default {
         transformer: (userid, key) => ({
           json: {userid, key},
         }),
-        expectdata: true,
+        expectjson: true,
         err: 'Could not create account',
       },
     },
@@ -345,7 +345,7 @@ export default {
         transformer: (amount, offset) => ({
           query: {amount, offset},
         }),
-        expectdata: true,
+        expectjson: true,
         selector: (_res, data) => data && data.approvals,
         err: 'Unable to get approvals',
       },
@@ -358,7 +358,7 @@ export default {
             transformer: (userid) => ({
               params: [userid],
             }),
-            expectdata: false,
+            expectjson: false,
             err: 'Unable to approve request',
           },
           del: {
@@ -367,7 +367,7 @@ export default {
             transformer: (userid) => ({
               params: [userid],
             }),
-            expectdata: false,
+            expectjson: false,
             err: 'Unable to delete request',
           },
         },

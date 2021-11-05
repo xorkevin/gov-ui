@@ -8,7 +8,7 @@ export default {
         offset,
       },
     }),
-    expectdata: true,
+    expectjson: true,
     selector: (_res, data) => data && data.lists,
     err: 'Unable to get mailing list subscriptions',
   },
@@ -25,7 +25,7 @@ export default {
             offset,
           },
         }),
-        expectdata: true,
+        expectjson: true,
         selector: (_res, data) => data && data.lists,
         err: 'Unable to get mailing lists',
       },
@@ -36,7 +36,7 @@ export default {
           params: [creatorid],
           json,
         }),
-        expectdata: true,
+        expectjson: true,
         err: 'Unable to create mailing list',
       },
       list: {
@@ -48,7 +48,7 @@ export default {
             transformer: (creatorid, listname) => ({
               params: [creatorid, listname],
             }),
-            expectdata: false,
+            expectjson: false,
             err: 'Unable to subscribe to list',
           },
           unsub: {
@@ -57,7 +57,7 @@ export default {
             transformer: (creatorid, listname) => ({
               params: [creatorid, listname],
             }),
-            expectdata: false,
+            expectjson: false,
             err: 'Unable to unsubscribe from list',
           },
           edit: {
@@ -67,7 +67,7 @@ export default {
               params: [creatorid, listname],
               json,
             }),
-            expectdata: false,
+            expectjson: false,
             err: 'Unable to edit list settings',
           },
           member: {
@@ -82,7 +82,7 @@ export default {
                     remove,
                   },
                 }),
-                expectdata: false,
+                expectjson: false,
                 err: 'Unable to edit list members',
               },
             },
@@ -100,7 +100,7 @@ export default {
         transformer: (id) => ({
           params: [id],
         }),
-        expectdata: true,
+        expectjson: true,
         err: 'Unable to get mailing list',
       },
       member: {
@@ -113,7 +113,7 @@ export default {
             offset,
           },
         }),
-        expectdata: true,
+        expectjson: true,
         selector: (_res, data) => data && data.members,
         err: 'Unable to get list members',
         children: {
@@ -126,7 +126,7 @@ export default {
                 ids: userids.join(','),
               },
             }),
-            expectdata: true,
+            expectjson: true,
             selector: (_res, data) => data && data.members,
             err: 'Unable to get list members',
           },
@@ -142,7 +142,7 @@ export default {
             offset,
           },
         }),
-        expectdata: true,
+        expectjson: true,
         selector: (_res, data) => data && data.msgs,
         err: 'Unable to get list msgs',
       },

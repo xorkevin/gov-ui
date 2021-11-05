@@ -5,7 +5,7 @@ export default {
     transformer: (amount, offset) => ({
       query: {amount, offset},
     }),
-    expectdata: true,
+    expectjson: true,
     selector: (_res, data) => data && data.apikeys,
     err: 'Could not get apikeys',
   },
@@ -16,7 +16,7 @@ export default {
       query: {roles, scope},
       headers: {Authorization: `Basic ${btoa(keyid + ':' + key)}`},
     }),
-    expectdata: true,
+    expectjson: true,
     err: 'Could not create apikey',
   },
   create: {
@@ -25,7 +25,7 @@ export default {
     transformer: (name, desc, scope) => ({
       json: {name, desc, scope},
     }),
-    expectdata: true,
+    expectjson: true,
     err: 'Could not create apikey',
   },
   id: {
@@ -38,7 +38,7 @@ export default {
           params: [keyid],
           json: {name, desc, scope},
         }),
-        expectdata: false,
+        expectjson: false,
         err: 'Could not edit apikey',
       },
       rotate: {
@@ -47,7 +47,7 @@ export default {
         transformer: (keyid) => ({
           params: [keyid],
         }),
-        expectdata: true,
+        expectjson: true,
         err: 'Could not rotate apikey',
       },
       del: {
@@ -56,7 +56,7 @@ export default {
         transformer: (keyid) => ({
           params: [keyid],
         }),
-        expectdata: false,
+        expectjson: false,
         err: 'Could not delete apikey',
       },
     },

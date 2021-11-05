@@ -59,7 +59,7 @@ const setupz = () => ({
       admin,
     },
   }),
-  expectdata: true,
+  expectjson: true,
   err: 'Could not run server setup',
 });
 
@@ -69,13 +69,13 @@ const healthz = () => ({
     live: {
       url: '/live',
       method: 'GET',
-      expectdata: false,
+      expectjson: false,
       err: 'Could not get health report from api server',
     },
     ready: {
       url: '/ready',
       method: 'GET',
-      expectdata: true,
+      expectjson: true,
       err: 'Could not get health report from api server',
     },
   },
@@ -87,7 +87,7 @@ const wellknown = () => ({
     openidconfig: {
       url: '/openid-configuration',
       method: 'GET',
-      expectdata: true,
+      expectjson: true,
       err: 'Could not get openid configuration',
     },
   },

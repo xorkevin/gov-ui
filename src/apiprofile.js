@@ -2,14 +2,14 @@ export default {
   get: {
     url: '',
     method: 'GET',
-    expectdata: true,
+    expectjson: true,
     err: 'Unable to get profile',
   },
   edit: {
     url: '',
     method: 'PUT',
     transformer: (json) => ({json}),
-    expectdata: false,
+    expectjson: false,
     err: 'Unable to edit profile',
     children: {
       image: {
@@ -20,7 +20,7 @@ export default {
           body.set('image', file);
           return {body};
         },
-        expectdata: false,
+        expectjson: false,
         err: 'Unable to update profile picture',
       },
     },
@@ -31,7 +31,7 @@ export default {
     transformer: (userid) => ({
       params: [userid],
     }),
-    expectdata: true,
+    expectjson: true,
     err: 'Unable to get profile',
     children: {
       image: {
@@ -47,7 +47,7 @@ export default {
         ids: userids.join(','),
       },
     }),
-    expectdata: true,
+    expectjson: true,
     selector: (_res, data) => data && data.profiles,
     err: 'Unable to get profiles',
   },
@@ -55,7 +55,7 @@ export default {
     url: '',
     method: 'POST',
     transformer: () => ({json: {}}),
-    expectdata: false,
+    expectjson: false,
     err: 'Unable to create profile',
   },
 };

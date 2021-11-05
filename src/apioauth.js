@@ -8,7 +8,7 @@ export default {
         transformer: (amount, offset) => ({
           query: {amount, offset},
         }),
-        expectdata: true,
+        expectjson: true,
         selector: (_res, data) => data && data.apps,
         err: 'Unable to get apps',
       },
@@ -20,7 +20,7 @@ export default {
             ids: ids.join(','),
           },
         }),
-        expectdata: true,
+        expectjson: true,
         selector: (_res, data) => data && data.apps,
         err: 'Unable to get apps',
       },
@@ -30,7 +30,7 @@ export default {
         transformer: (clientid) => ({
           params: [clientid],
         }),
-        expectdata: true,
+        expectjson: true,
         err: 'Unable to get client config',
         children: {
           image: {
@@ -43,7 +43,7 @@ export default {
               params: [clientid],
               json,
             }),
-            expectdata: false,
+            expectjson: false,
             err: 'Unable to edit client config',
             children: {
               image: {
@@ -66,7 +66,7 @@ export default {
             transformer: (clientid) => ({
               params: [clientid],
             }),
-            expectdata: true,
+            expectjson: true,
             err: 'Could not rotate client secret',
           },
           del: {
@@ -75,7 +75,7 @@ export default {
             transformer: (clientid) => ({
               params: [clientid],
             }),
-            expectdata: false,
+            expectjson: false,
             err: 'Could not delete client config',
           },
         },
@@ -84,7 +84,7 @@ export default {
         url: '',
         method: 'POST',
         transformer: (json) => ({json}),
-        expectdata: true,
+        expectjson: true,
         err: 'Unable to register app',
       },
     },
@@ -96,7 +96,7 @@ export default {
         url: '/code',
         method: 'POST',
         transformer: (json) => ({json}),
-        expectdata: true,
+        expectjson: true,
         err: 'Could not obtain authorization',
       },
     },
@@ -110,7 +110,7 @@ export default {
         transformer: (amount, offset) => ({
           query: {amount, offset},
         }),
-        expectdata: true,
+        expectjson: true,
         selector: (_res, data) => data && data.connections,
         err: 'Unable to get OAuth connections',
       },
@@ -123,7 +123,7 @@ export default {
             transformer: (id) => ({
               params: [id],
             }),
-            expectdata: true,
+            expectjson: true,
             err: 'Unable to get OAuth connection',
           },
           del: {
@@ -132,7 +132,7 @@ export default {
             transformer: (id) => ({
               params: [id],
             }),
-            expectdata: false,
+            expectjson: false,
             err: 'Unable to remove OAuth connection',
           },
         },

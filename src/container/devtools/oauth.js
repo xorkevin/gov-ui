@@ -555,7 +555,7 @@ const OAuthCB = () => {
     return makeFetch({
       url: oidConfig.data.jwks_uri,
       method: 'GET',
-      expectdata: true,
+      expectjson: true,
       err: 'Failed to get jwks',
     });
   }, [oidConfig]);
@@ -620,7 +620,7 @@ const OAuthCB = () => {
           credentials: 'omit',
         },
       }),
-      expectdata: true,
+      expectjson: true,
       err: 'Failed token request',
     });
   }, [params, req, statesEqual, timeValid, formState, oidConfig]);
@@ -840,7 +840,7 @@ const OAuthCB = () => {
           credentials: 'omit',
         },
       }),
-      expectdata: true,
+      expectjson: true,
       err: 'Failed userinfo request',
     });
   }, [oidConfig, tokenRes]);
