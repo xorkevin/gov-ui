@@ -36,9 +36,9 @@ export default {
       edit: {
         url: '',
         method: 'PUT',
-        transformer: (id, body) => ({
+        transformer: (id, json) => ({
           params: [id],
-          body,
+          json,
         }),
         expectdata: false,
         err: 'Unable to edit org',
@@ -66,7 +66,7 @@ export default {
   create: {
     url: '',
     method: 'POST',
-    transformer: (body) => ({body}),
+    transformer: (json) => ({json}),
     expectdata: true,
     err: 'Unable to create org',
   },

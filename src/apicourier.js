@@ -30,9 +30,9 @@ export default {
       create: {
         url: '/c/{0}',
         method: 'POST',
-        transformer: (creatorid, body) => ({
+        transformer: (creatorid, json) => ({
           params: [creatorid],
-          body,
+          json,
         }),
         expectdata: false,
         err: 'Unable to create link',

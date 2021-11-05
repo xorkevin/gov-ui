@@ -62,7 +62,7 @@ export default {
         url: '',
         method: 'DELETE',
         transformer: (session_ids) => ({
-          body: {session_ids},
+          json: {session_ids},
         }),
         expectdata: false,
         err: 'Could not delete sessions',
@@ -72,7 +72,7 @@ export default {
   edit: {
     url: '',
     method: 'PUT',
-    transformer: (body) => ({body}),
+    transformer: (json) => ({json}),
     expectdata: false,
     err: 'Could not edit account',
   },
@@ -83,7 +83,7 @@ export default {
         url: '',
         method: 'PUT',
         transformer: (email, password) => ({
-          body: {email, password},
+          json: {email, password},
         }),
         expectdata: false,
         err: 'Could not edit email',
@@ -92,7 +92,7 @@ export default {
             url: '/verify',
             method: 'PUT',
             transformer: (userid, key, password) => ({
-              body: {userid, key, password},
+              json: {userid, key, password},
             }),
             expectdata: false,
             err: 'Could not edit email',
@@ -108,7 +108,7 @@ export default {
         url: '',
         method: 'PUT',
         transformer: (old_password, new_password) => ({
-          body: {old_password, new_password},
+          json: {old_password, new_password},
         }),
         expectdata: false,
         err: 'Could not edit password',
@@ -117,7 +117,7 @@ export default {
         url: '/forgot',
         method: 'PUT',
         transformer: (username) => ({
-          body: {username},
+          json: {username},
         }),
         expectdata: false,
         err: 'Could not reset password',
@@ -126,7 +126,7 @@ export default {
             url: '/reset',
             method: 'PUT',
             transformer: (userid, key, new_password) => ({
-              body: {userid, key, new_password},
+              json: {userid, key, new_password},
             }),
             expectdata: false,
             err: 'Could not reset password',
@@ -142,7 +142,7 @@ export default {
         url: '',
         method: 'PUT',
         transformer: (alg, digits, password) => ({
-          body: {alg, digits, password},
+          json: {alg, digits, password},
         }),
         expectdata: true,
         err: 'Could not add otp 2fa',
@@ -151,7 +151,7 @@ export default {
         url: '/verify',
         method: 'PUT',
         transformer: (code) => ({
-          body: {code},
+          json: {code},
         }),
         expectdata: false,
         err: 'Could not enable otp 2fa',
@@ -160,7 +160,7 @@ export default {
         url: '',
         method: 'DELETE',
         transformer: (code, backup, password) => ({
-          body: {code, backup, password},
+          json: {code, backup, password},
         }),
         expectdata: false,
         err: 'Could not remove otp 2fa',
@@ -217,7 +217,7 @@ export default {
             method: 'PATCH',
             transformer: (userid, add, remove) => ({
               params: [userid],
-              body: {add, remove},
+              json: {add, remove},
             }),
             expectdata: false,
             err: 'Unable to update user permissions',
@@ -321,7 +321,7 @@ export default {
   create: {
     url: '',
     method: 'POST',
-    transformer: (body) => ({body}),
+    transformer: (json) => ({json}),
     expectdata: true,
     err: 'Could not create account',
     children: {
@@ -329,7 +329,7 @@ export default {
         url: '/confirm',
         method: 'POST',
         transformer: (userid, key) => ({
-          body: {userid, key},
+          json: {userid, key},
         }),
         expectdata: true,
         err: 'Could not create account',

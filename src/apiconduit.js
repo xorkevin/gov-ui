@@ -28,7 +28,7 @@ export default {
         url: '',
         method: 'POST',
         transformer: (kind, name, theme, userids) => ({
-          body: {kind, name, theme, userids},
+          json: {kind, name, theme, userids},
         }),
         expectdata: true,
         err: 'Unable to create chat',
@@ -44,7 +44,7 @@ export default {
                 method: 'POST',
                 transformer: (chatid, kind, value) => ({
                   params: [chatid],
-                  body: {kind, value},
+                  json: {kind, value},
                 }),
                 expectdata: true,
                 err: 'Unable to send chat msg',

@@ -55,7 +55,7 @@ const setupz = () => ({
   url: '/setupz',
   method: 'POST',
   transformer: (admin) => ({
-    body: {
+    json: {
       admin,
     },
   }),

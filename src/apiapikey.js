@@ -23,7 +23,7 @@ export default {
     url: '',
     method: 'POST',
     transformer: (name, desc, scope) => ({
-      body: {name, desc, scope},
+      json: {name, desc, scope},
     }),
     expectdata: true,
     err: 'Could not create apikey',
@@ -36,7 +36,7 @@ export default {
         method: 'PUT',
         transformer: (keyid, name, desc, scope) => ({
           params: [keyid],
-          body: {name, desc, scope},
+          json: {name, desc, scope},
         }),
         expectdata: false,
         err: 'Could not edit apikey',

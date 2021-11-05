@@ -32,9 +32,9 @@ export default {
       create: {
         url: '',
         method: 'POST',
-        transformer: (creatorid, body) => ({
+        transformer: (creatorid, json) => ({
           params: [creatorid],
-          body,
+          json,
         }),
         expectdata: true,
         err: 'Unable to create mailing list',
@@ -63,9 +63,9 @@ export default {
           edit: {
             url: '',
             method: 'PUT',
-            transformer: (creatorid, listname, body) => ({
+            transformer: (creatorid, listname, json) => ({
               params: [creatorid, listname],
-              body,
+              json,
             }),
             expectdata: false,
             err: 'Unable to edit list settings',
@@ -78,7 +78,7 @@ export default {
                 method: 'PATCH',
                 transformer: (creatorid, listname, remove) => ({
                   params: [creatorid, listname],
-                  body: {
+                  json: {
                     remove,
                   },
                 }),

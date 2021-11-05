@@ -8,7 +8,7 @@ export default {
   edit: {
     url: '',
     method: 'PUT',
-    transformer: (body) => ({body}),
+    transformer: (json) => ({json}),
     expectdata: false,
     err: 'Unable to edit profile',
     children: {
@@ -54,7 +54,7 @@ export default {
   create: {
     url: '',
     method: 'POST',
-    transformer: () => ({body: {}}),
+    transformer: () => ({json: {}}),
     expectdata: false,
     err: 'Unable to create profile',
   },

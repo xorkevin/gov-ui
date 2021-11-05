@@ -39,9 +39,9 @@ export default {
           edit: {
             url: '',
             method: 'PUT',
-            transformer: (clientid, body) => ({
+            transformer: (clientid, json) => ({
               params: [clientid],
-              body,
+              json,
             }),
             expectdata: false,
             err: 'Unable to edit client config',
@@ -83,7 +83,7 @@ export default {
       create: {
         url: '',
         method: 'POST',
-        transformer: (body) => ({body}),
+        transformer: (json) => ({json}),
         expectdata: true,
         err: 'Unable to register app',
       },
@@ -95,7 +95,7 @@ export default {
       code: {
         url: '/code',
         method: 'POST',
-        transformer: (body) => ({body}),
+        transformer: (json) => ({json}),
         expectdata: true,
         err: 'Could not obtain authorization',
       },
