@@ -568,7 +568,7 @@ const OAuthCB = () => {
   useEffect(() => {
     const controller = new AbortController();
     (async () => {
-      const [data, _, err] = await jwksReq();
+      const [data, _, err] = await jwksReq({signal: controller.signal});
       if (controller.signal.aborted) {
         return;
       }

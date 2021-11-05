@@ -39,8 +39,8 @@ const UserSearch = ({setUsername, err}) => {
 
   const apiSearch = useAPI(selectAPISearch);
   const searchUsers = useCallback(
-    async (search) => {
-      const [data, res, err] = await apiSearch(search, USERS_LIMIT);
+    async ({signal}, search) => {
+      const [data, res, err] = await apiSearch({signal}, search, USERS_LIMIT);
       if (err || !res || !res.ok || !Array.isArray(data)) {
         return [];
       }
@@ -209,7 +209,7 @@ const ManageMembers = ({org}) => {
 
   const hasUsername = username.length > 0;
 
-  const [user, _execUser] = useResource(
+  const [user] = useResource(
     hasUsername ? selectAPIUser : selectAPINull,
     [username],
     {

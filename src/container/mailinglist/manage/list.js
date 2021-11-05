@@ -65,7 +65,7 @@ const List = ({listurl}) => {
     ? roleSet.has(ownerOrgRole)
     : list.success && list.data.creatorid === userid;
 
-  const [org, _reexecuteOrg] = useResource(
+  const [org] = useResource(
     isOrg ? selectAPIOrg : selectAPINull,
     [ctx.orgNameToOrgID(list.data.creatorid)],
     {

@@ -60,7 +60,7 @@ const Chat = ({allChatsMap, invalidateChat}) => {
     invalidateChat(chatid);
   }, [invalidateChat, chatid]);
 
-  const [initMsgs, _execInitMsgs] = useAuthResource(
+  const [initMsgs] = useAuthResource(
     selectAPILatestMsgs,
     [chatid, '', '', MSGS_LIMIT],
     [],
@@ -186,8 +186,8 @@ const CreateChat = ({close, invalidateChat}) => {
 
   const apiSearch = useAPI(selectAPISearch);
   const searchUsers = useCallback(
-    async (search) => {
-      const [data, res, err] = await apiSearch(search, USERS_LIMIT);
+    async ({signal}, search) => {
+      const [data, res, err] = await apiSearch({signal}, search, USERS_LIMIT);
       if (err || !res || !res.ok || !Array.isArray(data)) {
         return [];
       }
@@ -423,7 +423,7 @@ const ConduitChat = () => {
     },
     [dispatchChats],
   );
-  const [initChats, _execInitChats] = useAuthResource(
+  const [initChats] = useAuthResource(
     selectAPILatestChats,
     ['dm', 0, CHATS_LIMIT],
     [],
@@ -464,7 +464,7 @@ const ConduitChat = () => {
     },
     [dispatchChats],
   );
-  const [loadChats, _execLoadChats] = useAuthResource(
+  const [loadChats] = useAuthResource(
     before === 0 ? selectAPINull : selectAPILatestChats,
     ['dm', before, CHATS_SCROLL_LIMIT],
     [],
@@ -478,7 +478,7 @@ const ConduitChat = () => {
     [dispatchChats],
   );
   const chatsDiff = chats.chatsDiff;
-  const [getChats, _execGetChats] = useAuthResource(
+  const [getChats] = useAuthResource(
     chatsDiff.length > 0 ? selectAPIChats : selectAPINull,
     [chatsDiff],
     [],
@@ -492,7 +492,7 @@ const ConduitChat = () => {
     [dispatchChats],
   );
   const usersDiff = chats.usersDiff;
-  const [getUsers, _execGetUsers] = useResource(
+  const [getUsers] = useResource(
     usersDiff.length > 0 ? selectAPIUsers : selectAPINull,
     [usersDiff],
     [],

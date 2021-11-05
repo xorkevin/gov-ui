@@ -1,5 +1,5 @@
 import {Fragment, useContext} from 'react';
-import {useURL} from '@xorkevin/substation';
+import {useURL, selectAPINull} from '@xorkevin/substation';
 import {useAuthValue, useAuthResource, useLogout} from '@xorkevin/turbine';
 import {
   useDarkModeValue,
@@ -30,9 +30,13 @@ const Nav = ({closeOnClick, right, menucontent, menuend, children}) => {
   const menu = useMenu();
   const logout = useLogout();
   const {loggedIn, userid, username, first_name, last_name} = useAuthValue();
-  const [profile] = useAuthResource(selectAPIProfile, [], {
-    image: '',
-  });
+  const [profile] = useAuthResource(
+    loggedIn ? selectAPIProfile : selectAPINull,
+    [],
+    {
+      image: '',
+    },
+  );
   const imageURL = useURL(selectAPIProfileImage, [userid]);
 
   return (

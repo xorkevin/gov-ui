@@ -189,7 +189,7 @@ const ManageLists = ({baseurl, listurl}) => {
   const orgOpts = useOrgOpts();
 
   const isOrg = ctx.isOrgName(form.state.accountid);
-  const [org, _reexecuteOrg] = useResource(
+  const [org] = useResource(
     isOrg ? selectAPIOrg : selectAPINull,
     [ctx.orgNameToOrgID(form.state.accountid)],
     {

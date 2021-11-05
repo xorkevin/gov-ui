@@ -44,7 +44,7 @@ const List = () => {
 
   const {listid} = useParams();
 
-  const [list, _reexecute] = useResource(
+  const [list] = useResource(
     listid.length > 0 ? selectAPIList : selectAPINull,
     [listid],
     {
@@ -62,7 +62,7 @@ const List = () => {
   );
 
   const isOrg = list.success && ctx.isOrgName(list.data.creatorid);
-  const [user, _execUser] = useResource(
+  const [user] = useResource(
     list.success && !isOrg ? selectAPIUser : selectAPINull,
     [list.data.creatorid],
     {
@@ -74,7 +74,7 @@ const List = () => {
       creation_time: 0,
     },
   );
-  const [org, _reexecuteOrg] = useResource(
+  const [org] = useResource(
     isOrg ? selectAPIOrg : selectAPINull,
     [ctx.orgNameToOrgID(list.data.creatorid)],
     {

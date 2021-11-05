@@ -29,20 +29,20 @@ const ApprovalsRow = ({
   creation_time,
   approved,
   code_time,
-  posthook,
+  posthookRefresh,
   errhook,
 }) => {
   const [_approveState, execApprove] = useAuthCall(
     selectAPIApprove,
     [userid],
     {},
-    {posthook, errhook},
+    {posthook: posthookRefresh, errhook},
   );
   const [_deleteState, execDelete] = useAuthCall(
     selectAPIDelete,
     [userid],
     {},
-    {posthook, errhook},
+    {posthook: posthookRefresh, errhook},
   );
 
   const menu = useMenu();
@@ -109,6 +109,10 @@ const Approvals = () => {
     {posthook},
   );
 
+  const posthookRefresh = useCallback(() => {
+    reexecute();
+  }, [reexecute]);
+
   return (
     <div>
       <h3>Approvals</h3>
@@ -150,7 +154,7 @@ const Approvals = () => {
                   creation_time={creation_time}
                   approved={approved}
                   code_time={code_time}
-                  posthook={reexecute}
+                  posthookRefresh={posthookRefresh}
                   errhook={displayErrSnack}
                 />
               ),

@@ -62,7 +62,7 @@ const ManageMsgs = ({list}) => {
     },
     [setAtEnd],
   );
-  const [msgs, _reexecute] = useResource(
+  const [msgs] = useResource(
     selectAPIListMsgs,
     [list.listid, MSGS_LIMIT, paginate.index],
     [],

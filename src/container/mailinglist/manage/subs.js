@@ -76,7 +76,7 @@ const Subs = ({listurl}) => {
     },
     [setAtEnd],
   );
-  const [lists, _reexecute] = useAuthResource(
+  const [lists] = useAuthResource(
     selectAPISubs,
     [LISTS_LIMIT, paginate.index],
     [],

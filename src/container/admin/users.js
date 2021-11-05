@@ -38,8 +38,8 @@ const UserSearch = () => {
 
   const apiSearch = useAPI(selectAPISearch);
   const searchUsers = useCallback(
-    async (search) => {
-      const [data, res, err] = await apiSearch(search, USERS_LIMIT);
+    async ({signal}, search) => {
+      const [data, res, err] = await apiSearch({signal}, search, USERS_LIMIT);
       if (err || !res || !res.ok || !Array.isArray(data)) {
         return [];
       }
