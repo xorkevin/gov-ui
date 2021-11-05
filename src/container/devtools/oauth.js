@@ -196,7 +196,7 @@ const OAuthTool = ({pathCallback}) => {
   const formChallenge = form.state.challenge;
   const [codeChallengeValue, setCodeChallengeValue] = useState(formChallenge);
   useEffect(() => {
-    const cancelRef = {current: false};
+    const controller = new AbortController();
     switch (formChallengeMethod) {
       case 'plain':
         setCodeChallengeValue(formChallenge);
@@ -205,7 +205,7 @@ const OAuthTool = ({pathCallback}) => {
         (async () => {
           const data = new TextEncoder().encode(formChallenge);
           const hash = await crypto.subtle.digest('SHA-256', data);
-          if (cancelRef.current) {
+          if (controller.signal.aborted) {
             return;
           }
           const hashstr = btoa(
@@ -224,7 +224,7 @@ const OAuthTool = ({pathCallback}) => {
         setCodeChallengeValue('');
     }
     return () => {
-      cancelRef.current = true;
+      controller.abort();
     };
   }, [formChallengeMethod, formChallenge]);
   const formState = form.state;
@@ -566,10 +566,10 @@ const OAuthCB = () => {
     data: null,
   });
   useEffect(() => {
-    const cancelRef = {current: false};
+    const controller = new AbortController();
     (async () => {
       const [data, _, err] = await jwksReq();
-      if (cancelRef && cancelRef.current) {
+      if (controller.signal.aborted) {
         return;
       }
       if (err) {
@@ -579,7 +579,7 @@ const OAuthCB = () => {
       setJWKSRes({success: true, err: false, data});
     })();
     return () => {
-      cancelRef.current = true;
+      controller.abort();
     };
   }, [jwksReq, setJWKSRes]);
 
@@ -772,7 +772,7 @@ const OAuthCB = () => {
     }
     const {importParams, verifyParams} = params;
 
-    const cancelRef = {current: false};
+    const controller = new AbortController();
     (async () => {
       try {
         const pubkey = await window.crypto.subtle.importKey(
@@ -782,7 +782,7 @@ const OAuthCB = () => {
           false,
           ['verify'],
         );
-        if (cancelRef && cancelRef.current) {
+        if (controller.signal.aborted) {
           return;
         }
         const ok = await window.crypto.subtle.verify(
@@ -791,7 +791,7 @@ const OAuthCB = () => {
           base64ToArrayBuffer(jwtsig),
           textEncoder.encode(jwtpayload),
         );
-        if (cancelRef && cancelRef.current) {
+        if (controller.signal.aborted) {
           return;
         }
         if (!ok) {
@@ -800,14 +800,14 @@ const OAuthCB = () => {
         }
         setJWTSig({kid: jwk.kid, err: false});
       } catch (err) {
-        if (cancelRef && cancelRef.current) {
+        if (controller.signal.aborted) {
           return;
         }
         setJWTSig({kid: jwk.kid, err});
       }
     })();
     return () => {
-      cancelRef.current = true;
+      controller.abort();
     };
   }, [jwksRes, tokenRes, setJWTSig]);
   const jwtSigMessage = jwtSig.err ? '\u00D7 Invalid' : '\u2713 Valid';

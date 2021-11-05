@@ -7,10 +7,10 @@ const QRCode = ({data, level, scale}) => {
   const [datauri, setDataURI] = useState({err: null, uri: ''});
 
   useEffect(() => {
-    const cancelRef = {current: false};
+    const controller = new AbortController();
     (async () => {
       const [uri, err] = await generateQR(data, level, scale);
-      if (cancelRef.current) {
+      if (controller.signal.aborted) {
         return;
       }
       if (err) {
@@ -20,7 +20,7 @@ const QRCode = ({data, level, scale}) => {
       setDataURI({err: null, uri});
     })();
     return () => {
-      cancelRef.current = true;
+      controller.abort();
     };
   }, [data, level, scale]);
 
