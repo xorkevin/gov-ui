@@ -145,6 +145,18 @@ export default {
         expectjson: true,
         selector: (_res, data) => data && data.msgs,
         err: 'Unable to get list msgs',
+        children: {
+          id: {
+            url: '/{1}',
+            method: 'GET',
+            transformer: (listid, msgid) => ({
+              params: [listid, msgid],
+            }),
+            expectjson: false,
+            selector: async (res) => res.text(),
+            err: 'Unable to get mail message',
+          },
+        },
       },
     },
   },
