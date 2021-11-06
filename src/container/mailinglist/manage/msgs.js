@@ -37,6 +37,17 @@ const ViewMsg = ({
   close,
 }) => {
   const [msg] = useResource(selectAPIListMsg, [listid, msgid], '');
+  const [headers, body] = useMemo(() => {
+    if (!msg.success || typeof msg.data !== 'string') {
+      return [null, null];
+    }
+    const k = msg.data.indexOf('\r\n\r\n');
+    if (k < 0) {
+      return [null, msg.data];
+    }
+    return [msg.data.substring(0, k), msg.data.substring(k + 4)];
+  }, [msg]);
+  console.log(headers, body);
   return (
     <Fragment>
       <Grid justify="space-between" align="flex-start">
@@ -65,7 +76,19 @@ const ViewMsg = ({
         </Column>
       </Grid>
       <hr />
-      {msg.success && <pre className="mailinglist-msg-content">{msg.data}</pre>}
+      {headers && (
+        <div className="mailinglist-msg-section">
+          <details>
+            <summary>Headers</summary>
+            <pre className="mailinglist-msg-content">{headers}</pre>
+          </details>
+        </div>
+      )}
+      {body && (
+        <div className="mailinglist-msg-section">
+          <pre className="mailinglist-msg-content">{body}</pre>
+        </div>
+      )}
       {msg.err && <p>{msg.err.message}</p>}
     </Fragment>
   );
