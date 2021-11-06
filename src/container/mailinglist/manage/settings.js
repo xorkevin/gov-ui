@@ -65,7 +65,7 @@ const ManageSettings = ({list, creatorName, refresh}) => {
       <Column fullWidth md={16}>
         <Form formState={form.state} onChange={form.update} onSubmit={execEdit}>
           <Field
-            className="mailinglist-field-disabled-solid"
+            className="field-disabled-solid"
             name="name"
             label="Name"
             nohint
@@ -73,7 +73,7 @@ const ManageSettings = ({list, creatorName, refresh}) => {
             fullWidth
           />
           <FieldTextarea
-            className="mailinglist-field-disabled-solid"
+            className="field-disabled-solid"
             name="desc"
             label="Description"
             nohint
@@ -81,7 +81,7 @@ const ManageSettings = ({list, creatorName, refresh}) => {
             fullWidth
           />
           <FieldSelect
-            className="mailinglist-field-disabled-solid"
+            className="field-disabled-solid"
             name="sender_policy"
             label="Sender policy"
             options={senderPolicyOpts}
@@ -90,7 +90,7 @@ const ManageSettings = ({list, creatorName, refresh}) => {
             fullWidth
           />
           <FieldSelect
-            className="mailinglist-field-disabled-solid"
+            className="field-disabled-solid"
             name="member_policy"
             label="Member policy"
             options={memberPolicyOpts}
@@ -99,7 +99,7 @@ const ManageSettings = ({list, creatorName, refresh}) => {
             fullWidth
           />
           <FieldSwitch
-            className="mailinglist-field-disabled-solid"
+            className="field-disabled-solid"
             name="archive"
             label="Archive"
             danger

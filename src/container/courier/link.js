@@ -80,7 +80,7 @@ const LinkRow = ({
   return (
     <ListItem>
       <Grid justify="space-between" align="center" nowrap>
-        <Column className="courier-link-item-name" grow="1">
+        <Column className="minwidth0" grow="1">
           <h5>
             <Anchor className="courier-link-destination" ext href={url}>
               {url}

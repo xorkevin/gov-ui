@@ -52,7 +52,7 @@ const BrandRow = ({
   return (
     <ListItem>
       <Grid justify="space-between" align="center" nowrap>
-        <Column>
+        <Column className="minwidth0" grow="1">
           <h5>{brandid}</h5>
           <Anchor ext href={imageURL}>
             <Img src={imageURL} ratio={1} />

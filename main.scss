@@ -35,6 +35,18 @@ $color-success-light: lighten($color-success, 12.5%) !default;
 $color-danger: #c62828 !default;
 $color-danger-light: lighten($color-danger, 12.5%) !default;
 
+.minwidth0 {
+  min-width: 0;
+}
+
+.field-disabled-solid.disabled {
+  opacity: 1;
+}
+
+.heading-inline {
+  display: inline;
+}
+
 .navbar-profile-picture {
   width: 24px;
 }
@@ -60,14 +72,6 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
   }
 }
 
-.account-field-disabled-solid.disabled {
-  opacity: 1;
-}
-
-.account-session-item-name {
-  min-width: 0;
-}
-
 .account-session-indicator {
   display: block;
   width: 8px;
@@ -79,26 +83,6 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
     background-color: $color-success-light;
     box-shadow: 0 0 8px 0 rgba($color-success, 0.5);
   }
-}
-
-.account-2fa-item-name {
-  min-width: 0;
-}
-
-.account-apikey-item-name {
-  min-width: 0;
-}
-
-.account-oauth-item-name {
-  min-width: 0;
-}
-
-.account-org-item-name {
-  min-width: 0;
-}
-
-.account-org-item-heading {
-  display: inline;
 }
 
 .oauth-auth-app-logo {
@@ -128,25 +112,9 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
   padding: 4px 4px 4px 8px;
 }
 
-.org-field-disabled-solid.disabled {
-  opacity: 1;
-}
-
-.org-member-item-name {
-  min-width: 0;
-}
-
-.org-member-item-heading {
-  display: inline;
-}
-
 .oauth-app-logo {
   max-width: 64px;
   margin: auto;
-}
-
-.courier-link-item-name {
-  min-width: 0;
 }
 
 .courier-link-destination {
@@ -193,18 +161,6 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
 
 .dark .conduit-chat-list {
   border-color: $color-text-light-3;
-}
-
-.mailinglist-item-name {
-  min-width: 0;
-}
-
-.mailinglist-item-heading {
-  display: inline;
-}
-
-.mailinglist-field-disabled-solid.disabled {
-  opacity: 1;
 }
 
 .mailinglist-msg-section {

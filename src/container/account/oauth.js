@@ -71,7 +71,7 @@ const AppRow = ({
   return (
     <ListItem>
       <Grid justify="space-between" align="center" nowrap>
-        <Column className="account-oauth-item-name" grow="1">
+        <Column className="minwidth0" grow="1">
           <Grid justify="center" align="center">
             <Column fullWidth sm={6}>
               {logo && (

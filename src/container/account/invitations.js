@@ -67,7 +67,7 @@ const InvitationRow = ({
   return (
     <ListItem>
       <Grid justify="space-between" align="center" nowrap>
-        <Column>
+        <Column className="minwidth0" grow="1">
           <h5>
             {inviter && (
               <AnchorText

@@ -142,7 +142,7 @@ const Profile = () => {
               onSubmit={execEdit}
             >
               <Field
-                className="account-field-disabled-solid"
+                className="field-disabled-solid"
                 name="contact_email"
                 label="Contact email"
                 nohint
@@ -151,7 +151,7 @@ const Profile = () => {
                 autoComplete="email"
               />
               <FieldTextarea
-                className="account-field-disabled-solid"
+                className="field-disabled-solid"
                 name="bio"
                 label="Bio"
                 nohint
@@ -254,7 +254,7 @@ const AccountDetails = () => {
             onSubmit={execEdit}
           >
             <Field
-              className="account-field-disabled-solid"
+              className="field-disabled-solid"
               name="username"
               label="Username"
               nohint
@@ -263,7 +263,7 @@ const AccountDetails = () => {
               autoComplete="username"
             />
             <Field
-              className="account-field-disabled-solid"
+              className="field-disabled-solid"
               name="first_name"
               label="First name"
               nohint
@@ -272,7 +272,7 @@ const AccountDetails = () => {
               autoComplete="given-name"
             />
             <Field
-              className="account-field-disabled-solid"
+              className="field-disabled-solid"
               name="last_name"
               label="Last name"
               nohint

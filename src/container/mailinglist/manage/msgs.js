@@ -127,7 +127,7 @@ const MsgRow = ({
   return (
     <ListItem>
       <Grid justify="space-between" align="center" nowrap>
-        <Column className="mailinglist-item-name">
+        <Column className="minwidth0" grow="1">
           <h5>
             <AnchorText ext href={raw}>
               {subject}

@@ -92,7 +92,7 @@ const OrgSettings = ({org, pathOrgSettings, refresh, pathHome}) => {
             onSubmit={execEdit}
           >
             <Field
-              className="org-field-disabled-solid"
+              className="field-disabled-solid"
               name="name"
               label="Name"
               hint="vanity url"
@@ -100,7 +100,7 @@ const OrgSettings = ({org, pathOrgSettings, refresh, pathHome}) => {
               fullWidth
             />
             <Field
-              className="org-field-disabled-solid"
+              className="field-disabled-solid"
               name="display_name"
               label="Display name"
               nohint
@@ -108,7 +108,7 @@ const OrgSettings = ({org, pathOrgSettings, refresh, pathHome}) => {
               fullWidth
             />
             <Field
-              className="org-field-disabled-solid"
+              className="field-disabled-solid"
               name="desc"
               label="Description"
               nohint

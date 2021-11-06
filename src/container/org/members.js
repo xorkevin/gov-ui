@@ -37,8 +37,8 @@ const MemberRow = ({
   return (
     <ListItem>
       <Grid justify="space-between" align="center" nowrap>
-        <Column className="org-member-item-name">
-          <h5 className="org-member-item-heading">
+        <Column className="minwidth0" grow="1">
+          <h5 className="heading-inline">
             <AnchorText local href={formatURL(pathUserProfile, username)}>
               {first_name} {last_name}
             </AnchorText>{' '}

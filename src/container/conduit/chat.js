@@ -121,7 +121,7 @@ const ChatRow = ({chat, usersCache}) => {
   return (
     <ListItem local link={`${match.url}/${chat.chatid}`}>
       <Grid justify="space-between" align="center" nowrap>
-        <Column>
+        <Column className="minwidth0" grow="1">
           <h5>
             {chat.name ||
               chat.members
