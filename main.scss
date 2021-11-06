@@ -191,6 +191,11 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
   opacity: 1;
 }
 
+.mailinglist-msg-content {
+  padding: 8px;
+  overflow: auto;
+}
+
 .devtools-dash-health-indicator {
   display: block;
   width: 8px;

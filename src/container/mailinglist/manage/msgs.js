@@ -1,14 +1,17 @@
-import {useCallback, useMemo} from 'react';
+import {Fragment, useCallback, useMemo} from 'react';
 import {useResource, selectAPINull} from '@xorkevin/substation';
 import {
   Grid,
   Column,
   ListGroup,
   ListItem,
+  ModalSurface,
+  useModal,
   useMenu,
   Menu,
   MenuItem,
   usePaginate,
+  ButtonGroup,
   FaIcon,
   Chip,
   Time,
@@ -17,12 +20,44 @@ import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
 
 const selectAPIListMsgs = (api) => api.mailinglist.id.msgs;
+const selectAPIListMsg = (api) => api.mailinglist.id.msgs.id;
 const selectAPIUsers = (api) => api.u.user.ids;
 
 const MSGS_LIMIT = 32;
 
-const MsgRow = ({user, creation_time, spf_pass, dkim_pass, subject}) => {
+const ViewMsg = ({listid, msgid, user, creation_time, subject, close}) => {
+  const [msg] = useResource(selectAPIListMsg, [listid, msgid], '');
+  return (
+    <Fragment>
+      <Grid justify="space-between" align="flex-start">
+        <Column grow="1">
+          <h4>{subject}</h4>
+          {user && <span>{user.username}</span>} <Time value={creation_time} />{' '}
+        </Column>
+        <Column>
+          <ButtonGroup>
+            <ButtonTertiary onClick={close}>Close</ButtonTertiary>
+          </ButtonGroup>
+        </Column>
+      </Grid>
+      <hr />
+      {msg.success && <pre className="mailinglist-msg-content">{msg.data}</pre>}
+      {msg.err && <p>{msg.err.message}</p>}
+    </Fragment>
+  );
+};
+
+const MsgRow = ({
+  listid,
+  msgid,
+  user,
+  creation_time,
+  spf_pass,
+  dkim_pass,
+  subject,
+}) => {
   const menu = useMenu();
+  const modal = useModal();
 
   return (
     <ListItem>
@@ -38,13 +73,33 @@ const MsgRow = ({user, creation_time, spf_pass, dkim_pass, subject}) => {
           {dkim_pass && <Chip>{dkim_pass}</Chip>}
         </Column>
         <Column shrink="0">
-          <ButtonTertiary forwardedRef={menu.anchorRef} onClick={menu.toggle}>
-            <FaIcon icon="ellipsis-v" />
-          </ButtonTertiary>
+          <ButtonGroup>
+            <ButtonTertiary
+              forwardedRef={modal.anchorRef}
+              onClick={modal.toggle}
+            >
+              View
+            </ButtonTertiary>
+            <ButtonTertiary forwardedRef={menu.anchorRef} onClick={menu.toggle}>
+              <FaIcon icon="ellipsis-v" />
+            </ButtonTertiary>
+          </ButtonGroup>
           {menu.show && (
             <Menu size="md" anchor={menu.anchor} close={menu.close}>
               <MenuItem>Remove</MenuItem>
             </Menu>
+          )}
+          {modal.show && (
+            <ModalSurface size="lg" anchor={modal.anchor} close={modal.close}>
+              <ViewMsg
+                listid={listid}
+                msgid={msgid}
+                user={user}
+                creation_time={creation_time}
+                subject={subject}
+                close={modal.close}
+              />
+            </ModalSurface>
           )}
         </Column>
       </Grid>
