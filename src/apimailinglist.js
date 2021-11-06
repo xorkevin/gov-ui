@@ -87,6 +87,23 @@ export default {
               },
             },
           },
+          msgs: {
+            url: '/msgs',
+            children: {
+              del: {
+                url: '',
+                method: 'DELETE',
+                transformer: (creatorid, listname, msgids) => ({
+                  params: [creatorid, listname],
+                  json: {
+                    msgids,
+                  },
+                }),
+                expectjson: false,
+                err: 'Unable to delete list message',
+              },
+            },
+          },
         },
       },
     },
@@ -154,7 +171,7 @@ export default {
             }),
             expectjson: false,
             selector: async (res) => res.text(),
-            err: 'Unable to get mail message',
+            err: 'Unable to get list message',
           },
         },
       },

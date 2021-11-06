@@ -1,5 +1,6 @@
 import {Fragment, useCallback, useMemo} from 'react';
 import {useResource, useURL, selectAPINull} from '@xorkevin/substation';
+import {useAuthCall} from '@xorkevin/turbine';
 import {
   Grid,
   Column,
@@ -10,6 +11,9 @@ import {
   useMenu,
   Menu,
   MenuItem,
+  SnackbarSurface,
+  useSnackbar,
+  useSnackbarView,
   usePaginate,
   ButtonGroup,
   FaIcon,
@@ -22,6 +26,7 @@ import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
 
 const selectAPIListMsgs = (api) => api.mailinglist.id.msgs;
 const selectAPIListMsg = (api) => api.mailinglist.id.msgs.id;
+const selectAPIListMsgDel = (api) => api.mailinglist.group.list.msgs.del;
 const selectAPIUsers = (api) => api.u.user.ids;
 
 const MSGS_LIMIT = 32;
@@ -102,11 +107,22 @@ const MsgRow = ({
   spf_pass,
   dkim_pass,
   subject,
+  list,
+  posthookDelete,
+  errhook,
 }) => {
   const menu = useMenu();
   const modal = useModal();
 
   const raw = useURL(selectAPIListMsg, [listid, msgid]);
+
+  const msgidArr = useMemo(() => [msgid], [msgid]);
+  const [_delState, execRmMsg] = useAuthCall(
+    selectAPIListMsgDel,
+    [list.creatorid, list.listname, msgidArr],
+    {},
+    {posthook: posthookDelete, errhook: errhook},
+  );
 
   return (
     <ListItem>
@@ -147,7 +163,7 @@ const MsgRow = ({
           </ButtonGroup>
           {menu.show && (
             <Menu size="md" anchor={menu.anchor} close={menu.close}>
-              <MenuItem>Remove</MenuItem>
+              <MenuItem onClick={execRmMsg}>Remove</MenuItem>
             </Menu>
           )}
           {modal.show && (
@@ -171,6 +187,18 @@ const MsgRow = ({
 };
 
 const ManageMsgs = ({list}) => {
+  const snackbar = useSnackbar();
+  const displayErrSnack = useCallback(
+    (_deleteState, err) => {
+      snackbar(<SnackbarSurface>{err.message}</SnackbarSurface>);
+    },
+    [snackbar],
+  );
+
+  const displaySnackDeleted = useSnackbarView(
+    <SnackbarSurface>&#x2713; Message deleted</SnackbarSurface>,
+  );
+
   const paginate = usePaginate(MSGS_LIMIT);
 
   const setAtEnd = paginate.setAtEnd;
@@ -180,7 +208,7 @@ const ManageMsgs = ({list}) => {
     },
     [setAtEnd],
   );
-  const [msgs] = useResource(
+  const [msgs, reexecute] = useResource(
     selectAPIListMsgs,
     [list.listid, MSGS_LIMIT, paginate.index],
     [],
@@ -203,6 +231,11 @@ const ManageMsgs = ({list}) => {
     [users],
   );
 
+  const posthookDelete = useCallback(() => {
+    displaySnackDeleted();
+    reexecute();
+  }, [displaySnackDeleted, reexecute]);
+
   return (
     <div>
       <ListGroup>
@@ -218,6 +251,8 @@ const ManageMsgs = ({list}) => {
               dkim_pass={i.dkim_pass}
               subject={i.subject}
               list={list}
+              posthookDelete={posthookDelete}
+              errhook={displayErrSnack}
             />
           ))}
       </ListGroup>
