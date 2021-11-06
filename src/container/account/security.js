@@ -456,7 +456,7 @@ const Account2FA = () => {
           <ListGroup>
             <ListItem>
               <Grid justify="space-between" align="center" nowrap>
-                <Column>
+                <Column className="account-2fa-item-name" grow="1">
                   <h5>TOTP Authenticator App</h5>
                 </Column>
                 <Column shrink="0">
@@ -545,7 +545,7 @@ const SessionRow = ({
   return (
     <ListItem>
       <Grid justify="space-between" align="center" nowrap>
-        <Column>
+        <Column className="account-session-item-name" grow="1">
           <Grid align="center" nowrap>
             <Column shrink="0">
               <span className={j.join(' ')}></span>

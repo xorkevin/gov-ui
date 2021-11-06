@@ -95,7 +95,7 @@ const OrgRow = ({
   return (
     <ListItem>
       <Grid justify="space-between" align="center" nowrap>
-        <Column className="account-org-item-name">
+        <Column className="account-org-item-name" grow="1">
           <h5 className="account-org-item-heading">
             <AnchorText local href={formatURL(pathOrg, name)}>
               {display_name}

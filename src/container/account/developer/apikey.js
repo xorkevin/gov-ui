@@ -144,7 +144,7 @@ const ApikeyRow = ({
   return (
     <ListItem>
       <Grid justify="space-between" align="center" nowrap>
-        <Column grow="1">
+        <Column className="account-apikey-item-name" grow="1">
           <Container padded>
             <h5>
               {name}

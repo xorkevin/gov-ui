@@ -64,6 +64,10 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
   opacity: 1;
 }
 
+.account-session-item-name {
+  min-width: 0;
+}
+
 .account-session-indicator {
   display: block;
   width: 8px;
@@ -75,6 +79,18 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
     background-color: $color-success-light;
     box-shadow: 0 0 8px 0 rgba($color-success, 0.5);
   }
+}
+
+.account-2fa-item-name {
+  min-width: 0;
+}
+
+.account-apikey-item-name {
+  min-width: 0;
+}
+
+.account-oauth-item-name {
+  min-width: 0;
 }
 
 .account-org-item-name {
