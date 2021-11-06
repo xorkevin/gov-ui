@@ -14,6 +14,7 @@ import {
   ButtonGroup,
   FaIcon,
   Chip,
+  Tooltip,
   Time,
 } from '@xorkevin/nuke';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
@@ -25,7 +26,16 @@ const selectAPIUsers = (api) => api.u.user.ids;
 
 const MSGS_LIMIT = 32;
 
-const ViewMsg = ({listid, msgid, user, creation_time, subject, close}) => {
+const ViewMsg = ({
+  listid,
+  msgid,
+  user,
+  creation_time,
+  spf_pass,
+  dkim_pass,
+  subject,
+  close,
+}) => {
   const [msg] = useResource(selectAPIListMsg, [listid, msgid], '');
   return (
     <Fragment>
@@ -33,6 +43,20 @@ const ViewMsg = ({listid, msgid, user, creation_time, subject, close}) => {
         <Column grow="1">
           <h4>{subject}</h4>
           {user && <span>{user.username}</span>} <Time value={creation_time} />{' '}
+          {spf_pass && (
+            <Tooltip tooltip={spf_pass}>
+              <small>
+                <Chip>&#x2713; SPF</Chip>
+              </small>
+            </Tooltip>
+          )}{' '}
+          {dkim_pass && (
+            <Tooltip tooltip={dkim_pass}>
+              <small>
+                <Chip>{dkim_pass}</Chip>
+              </small>
+            </Tooltip>
+          )}
         </Column>
         <Column>
           <ButtonGroup>
@@ -71,8 +95,20 @@ const MsgRow = ({
             </AnchorText>
           </h5>{' '}
           {user && <span>{user.username}</span>} <Time value={creation_time} />{' '}
-          {spf_pass && <Chip>{spf_pass}</Chip>}{' '}
-          {dkim_pass && <Chip>{dkim_pass}</Chip>}
+          {spf_pass && (
+            <Tooltip tooltip={spf_pass}>
+              <small>
+                <Chip>&#x2713; SPF</Chip>
+              </small>
+            </Tooltip>
+          )}{' '}
+          {dkim_pass && (
+            <Tooltip tooltip={dkim_pass}>
+              <small>
+                <Chip>{dkim_pass}</Chip>
+              </small>
+            </Tooltip>
+          )}
         </Column>
         <Column shrink="0">
           <ButtonGroup>
@@ -98,6 +134,8 @@ const MsgRow = ({
                 msgid={msgid}
                 user={user}
                 creation_time={creation_time}
+                spf_pass={spf_pass}
+                dkim_pass={dkim_pass}
                 subject={subject}
                 close={modal.close}
               />
