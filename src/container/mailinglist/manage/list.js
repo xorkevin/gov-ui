@@ -8,7 +8,14 @@ import {
 } from 'react-router-dom';
 import {useResource, selectAPINull} from '@xorkevin/substation';
 import {useAuthValue, useIntersectRoles} from '@xorkevin/turbine';
-import {Grid, Column, Tabbar, TabItem, ButtonGroup} from '@xorkevin/nuke';
+import {
+  Grid,
+  Column,
+  Tabbar,
+  TabItem,
+  Anchor,
+  ButtonGroup,
+} from '@xorkevin/nuke';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
 
@@ -95,9 +102,9 @@ const List = ({listurl}) => {
             </Column>
             <Column>
               <ButtonGroup>
-                <AnchorText local href={formatURL(listurl, listid)}>
+                <Anchor local href={formatURL(listurl, listid)}>
                   <ButtonTertiary>List Profile</ButtonTertiary>
-                </AnchorText>
+                </Anchor>
               </ButtonGroup>
             </Column>
           </Grid>

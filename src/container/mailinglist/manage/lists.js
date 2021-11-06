@@ -8,9 +8,6 @@ import {
   ListItem,
   ModalSurface,
   useModal,
-  useMenu,
-  Menu,
-  MenuItem,
   Field,
   FieldTextarea,
   FieldSelect,
@@ -20,6 +17,7 @@ import {
   SnackbarSurface,
   useSnackbarView,
   usePaginate,
+  Anchor,
   ButtonGroup,
   FaIcon,
   Chip,
@@ -135,7 +133,6 @@ const ListRow = ({
   baseurl,
   listurl,
 }) => {
-  const menu = useMenu();
   const emailAddr = `${creatorName}.${listname}@${emailDomain}`;
   const url = formatURL(listurl, listid);
   return (
@@ -156,19 +153,9 @@ const ListRow = ({
           <Time value={lastUpdated} />
         </Column>
         <Column shrink="0">
-          <ButtonTertiary forwardedRef={menu.anchorRef} onClick={menu.toggle}>
-            <FaIcon icon="ellipsis-v" />
-          </ButtonTertiary>
-          {menu.show && (
-            <Menu size="md" anchor={menu.anchor} close={menu.close}>
-              <MenuItem local link={url}>
-                View
-              </MenuItem>
-              <MenuItem local link={`${baseurl}/${listid}`}>
-                Settings
-              </MenuItem>
-            </Menu>
-          )}
+          <Anchor local href={`${baseurl}/${listid}`}>
+            <ButtonTertiary>Settings</ButtonTertiary>
+          </Anchor>
         </Column>
       </Grid>
     </ListItem>
