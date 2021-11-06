@@ -1,5 +1,5 @@
 import {Fragment, useCallback, useMemo} from 'react';
-import {useResource, selectAPINull} from '@xorkevin/substation';
+import {useResource, useURL, selectAPINull} from '@xorkevin/substation';
 import {
   Grid,
   Column,
@@ -59,15 +59,17 @@ const MsgRow = ({
   const menu = useMenu();
   const modal = useModal();
 
+  const raw = useURL(selectAPIListMsg, [listid, msgid]);
+
   return (
     <ListItem>
       <Grid justify="space-between" align="center" nowrap>
         <Column className="mailinglist-item-name">
           <h5>
-            <AnchorText local href="#">
+            <AnchorText ext href={raw}>
               {subject}
-            </AnchorText>{' '}
-          </h5>
+            </AnchorText>
+          </h5>{' '}
           {user && <span>{user.username}</span>} <Time value={creation_time} />{' '}
           {spf_pass && <Chip>{spf_pass}</Chip>}{' '}
           {dkim_pass && <Chip>{dkim_pass}</Chip>}
