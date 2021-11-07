@@ -145,7 +145,7 @@ const OrgSettings = ({org, pathOrgSettings, refresh, pathHome}) => {
       <Grid>
         <Column fullWidth>
           <Grid justify="space-between" align="center" nowrap>
-            <Column>
+            <Column className="minwidth0" grow="1">
               <h5>Delete this organization</h5>
               <p>
                 This will delete this organization and remove all its moderator

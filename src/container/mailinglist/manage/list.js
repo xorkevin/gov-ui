@@ -29,7 +29,7 @@ const Settings = lazy(() => import('./settings'));
 const selectAPIList = (api) => api.mailinglist.id.get;
 const selectAPIOrg = (api) => api.orgs.id.get;
 
-const List = ({listurl}) => {
+const List = ({listurl, baseurl}) => {
   const ctx = useContext(GovUICtx);
   const {userid, username} = useAuthValue();
 
@@ -133,6 +133,7 @@ const List = ({listurl}) => {
                   list={list.data}
                   creatorName={creatorName}
                   refresh={reexecute}
+                  baseurl={baseurl}
                 />
               </Route>
               <Redirect to={`${match.path}/msgs`} />

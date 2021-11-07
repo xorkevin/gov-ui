@@ -49,7 +49,7 @@ const Manage = ({listurl}) => {
                 <Lists baseurl={`${match.url}/admin`} listurl={listurl} />
               </Route>
               <Route path={`${match.path}/admin/:listid`}>
-                <List listurl={listurl} />
+                <List listurl={listurl} baseurl={match.url} />
               </Route>
               <Route path={`${match.path}/subs`}>
                 <Subs listurl={listurl} />

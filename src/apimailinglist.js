@@ -70,6 +70,15 @@ export default {
             expectjson: false,
             err: 'Unable to edit list settings',
           },
+          del: {
+            url: '',
+            method: 'DELETE',
+            transformer: (creatorid, listname) => ({
+              params: [creatorid, listname],
+            }),
+            expectjson: false,
+            err: 'Unable to delete list',
+          },
           member: {
             url: '/member',
             children: {
