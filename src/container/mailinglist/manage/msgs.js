@@ -78,7 +78,7 @@ const MsgRow = ({
           {dkim_pass && (
             <Tooltip tooltip={dkim_pass}>
               <small>
-                <Chip>{dkim_pass}</Chip>
+                <Chip>&#x2713; DKIM</Chip>
               </small>
             </Tooltip>
           )}
