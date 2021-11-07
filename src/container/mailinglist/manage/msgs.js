@@ -1,4 +1,4 @@
-import {Fragment, useCallback, useMemo} from 'react';
+import {useCallback, useMemo} from 'react';
 import {useResource, useURL, selectAPINull} from '@xorkevin/substation';
 import {useAuthCall} from '@xorkevin/turbine';
 import {
@@ -24,80 +24,14 @@ import {
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
 
+import {ViewMsg} from '../msgcomponents';
+
 const selectAPIListMsgs = (api) => api.mailinglist.id.msgs;
 const selectAPIListMsg = (api) => api.mailinglist.id.msgs.id;
 const selectAPIListMsgDel = (api) => api.mailinglist.group.list.msgs.del;
 const selectAPIUsers = (api) => api.u.user.ids;
 
 const MSGS_LIMIT = 32;
-
-const ViewMsg = ({
-  listid,
-  msgid,
-  user,
-  creation_time,
-  spf_pass,
-  dkim_pass,
-  subject,
-  close,
-}) => {
-  const [msg] = useResource(selectAPIListMsg, [listid, msgid], '');
-  const [headers, body] = useMemo(() => {
-    if (!msg.success || typeof msg.data !== 'string') {
-      return [null, null];
-    }
-    const k = msg.data.indexOf('\r\n\r\n');
-    if (k < 0) {
-      return [null, msg.data];
-    }
-    return [msg.data.substring(0, k), msg.data.substring(k + 4)];
-  }, [msg]);
-  console.log(headers, body);
-  return (
-    <Fragment>
-      <Grid justify="space-between" align="flex-start">
-        <Column grow="1">
-          <h4>{subject}</h4>
-          {user && <span>{user.username}</span>} <Time value={creation_time} />{' '}
-          {spf_pass && (
-            <Tooltip tooltip={spf_pass}>
-              <small>
-                <Chip>&#x2713; SPF</Chip>
-              </small>
-            </Tooltip>
-          )}{' '}
-          {dkim_pass && (
-            <Tooltip tooltip={dkim_pass}>
-              <small>
-                <Chip>{dkim_pass}</Chip>
-              </small>
-            </Tooltip>
-          )}
-        </Column>
-        <Column>
-          <ButtonGroup>
-            <ButtonTertiary onClick={close}>Close</ButtonTertiary>
-          </ButtonGroup>
-        </Column>
-      </Grid>
-      <hr />
-      {headers && (
-        <div className="mailinglist-msg-section">
-          <details>
-            <summary>Headers</summary>
-            <pre className="mailinglist-msg-content">{headers}</pre>
-          </details>
-        </div>
-      )}
-      {body && (
-        <div className="mailinglist-msg-section">
-          <pre className="mailinglist-msg-content">{body}</pre>
-        </div>
-      )}
-      {msg.err && <p>{msg.err.message}</p>}
-    </Fragment>
-  );
-};
 
 const MsgRow = ({
   listid,
@@ -256,6 +190,16 @@ const ManageMsgs = ({list}) => {
             />
           ))}
       </ListGroup>
+      <ButtonGroup>
+        <ButtonTertiary disabled={paginate.atFirst} onClick={paginate.prev}>
+          prev
+        </ButtonTertiary>
+        {paginate.page}
+        <ButtonTertiary disabled={paginate.atLast} onClick={paginate.next}>
+          next
+        </ButtonTertiary>
+      </ButtonGroup>
+      {msgs.err && <p>{msgs.err.message}</p>}
     </div>
   );
 };
