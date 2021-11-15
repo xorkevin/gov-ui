@@ -47,6 +47,7 @@ const MsgRow = ({
   spf_pass,
   dkim_pass,
   subject,
+  deleted,
 }) => {
   const modal = useModal();
 
@@ -54,54 +55,64 @@ const MsgRow = ({
 
   return (
     <ListItem>
-      <Grid justify="space-between" align="center" nowrap>
-        <Column className="minwidth0" grow="1">
-          <h5>
-            <AnchorText ext href={raw}>
-              {subject}
-            </AnchorText>
-          </h5>{' '}
-          {user && <span>{user.username}</span>} <Time value={creation_time} />{' '}
-          {spf_pass && (
-            <Tooltip tooltip={spf_pass}>
-              <small>
-                <Chip>&#x2713; SPF</Chip>
-              </small>
-            </Tooltip>
-          )}{' '}
-          {dkim_pass && (
-            <Tooltip tooltip={dkim_pass}>
-              <small>
-                <Chip>&#x2713; DKIM</Chip>
-              </small>
-            </Tooltip>
-          )}
-        </Column>
-        <Column shrink="0">
-          <ButtonGroup>
-            <ButtonTertiary
-              forwardedRef={modal.anchorRef}
-              onClick={modal.toggle}
-            >
-              View
-            </ButtonTertiary>
-          </ButtonGroup>
-          {modal.show && (
-            <ModalSurface size="lg" anchor={modal.anchor} close={modal.close}>
-              <ViewMsg
-                listid={listid}
-                msgid={msgid}
-                user={user}
-                creation_time={creation_time}
-                spf_pass={spf_pass}
-                dkim_pass={dkim_pass}
-                subject={subject}
-                close={modal.close}
-              />
-            </ModalSurface>
-          )}
-        </Column>
-      </Grid>
+      {deleted && (
+        <Grid justify="space-between" align="center" nowrap>
+          <Column className="minwidth0" grow="1">
+            <span>[deleted]</span>
+          </Column>
+        </Grid>
+      )}
+      {!deleted && (
+        <Grid justify="space-between" align="center" nowrap>
+          <Column className="minwidth0" grow="1">
+            <h5>
+              <AnchorText ext href={raw}>
+                {subject}
+              </AnchorText>
+            </h5>{' '}
+            {user && <span>{user.username}</span>}{' '}
+            <Time value={creation_time} />{' '}
+            {spf_pass && (
+              <Tooltip tooltip={spf_pass}>
+                <small>
+                  <Chip>&#x2713; SPF</Chip>
+                </small>
+              </Tooltip>
+            )}{' '}
+            {dkim_pass && (
+              <Tooltip tooltip={dkim_pass}>
+                <small>
+                  <Chip>&#x2713; DKIM</Chip>
+                </small>
+              </Tooltip>
+            )}
+          </Column>
+          <Column shrink="0">
+            <ButtonGroup>
+              <ButtonTertiary
+                forwardedRef={modal.anchorRef}
+                onClick={modal.toggle}
+              >
+                View
+              </ButtonTertiary>
+            </ButtonGroup>
+            {modal.show && (
+              <ModalSurface size="lg" anchor={modal.anchor} close={modal.close}>
+                <ViewMsg
+                  listid={listid}
+                  msgid={msgid}
+                  user={user}
+                  creation_time={creation_time}
+                  spf_pass={spf_pass}
+                  dkim_pass={dkim_pass}
+                  subject={subject}
+                  close={modal.close}
+                />
+              </ModalSurface>
+            )}
+          </Column>
+        </Grid>
+      )}
     </ListItem>
   );
 };
@@ -205,7 +216,9 @@ const List = () => {
   const senderIDs = useMemo(
     () =>
       Array.isArray(msgs.data) &&
-      Array.from(new Set(msgs.data.map((i) => i.userid))),
+      Array.from(
+        new Set(msgs.data.flatMap((i) => (i.deleted ? [] : [i.userid]))),
+      ),
     [msgs],
   );
   const [users] = useResource(
@@ -278,6 +291,7 @@ const List = () => {
                     spf_pass={i.spf_pass}
                     dkim_pass={i.dkim_pass}
                     subject={i.subject}
+                    deleted={i.deleted}
                   />
                 ))}
             </ListGroup>
