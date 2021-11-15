@@ -61,15 +61,13 @@ const MsgRow = ({
 
   return (
     <ListItem>
-      {deleted && (
-        <Grid justify="space-between" align="center" nowrap>
+      <Grid justify="space-between" align="center" nowrap>
+        {deleted && (
           <Column className="minwidth0" grow="1">
-            <span>[deleted]</span>
+            [deleted]
           </Column>
-        </Grid>
-      )}
-      {!deleted && (
-        <Grid justify="space-between" align="center" nowrap>
+        )}
+        {!deleted && (
           <Column className="minwidth0" grow="1">
             <h5>
               <AnchorText ext href={raw}>
@@ -93,43 +91,47 @@ const MsgRow = ({
               </Tooltip>
             )}
           </Column>
-          <Column shrink="0">
-            <ButtonGroup>
+        )}
+        <Column shrink="0">
+          <ButtonGroup>
+            {!deleted && (
               <ButtonTertiary
                 forwardedRef={modal.anchorRef}
                 onClick={modal.toggle}
               >
                 View
               </ButtonTertiary>
+            )}
+            {!deleted && (
               <ButtonTertiary
                 forwardedRef={menu.anchorRef}
                 onClick={menu.toggle}
               >
                 <FaIcon icon="ellipsis-v" />
               </ButtonTertiary>
-            </ButtonGroup>
-            {menu.show && (
-              <Menu size="md" anchor={menu.anchor} close={menu.close}>
-                <MenuItem onClick={execRmMsg}>Remove</MenuItem>
-              </Menu>
             )}
-            {modal.show && (
-              <ModalSurface size="lg" anchor={modal.anchor} close={modal.close}>
-                <ViewMsg
-                  listid={listid}
-                  msgid={msgid}
-                  user={user}
-                  creation_time={creation_time}
-                  spf_pass={spf_pass}
-                  dkim_pass={dkim_pass}
-                  subject={subject}
-                  close={modal.close}
-                />
-              </ModalSurface>
-            )}
-          </Column>
-        </Grid>
-      )}
+          </ButtonGroup>
+          {menu.show && (
+            <Menu size="md" anchor={menu.anchor} close={menu.close}>
+              <MenuItem onClick={execRmMsg}>Remove</MenuItem>
+            </Menu>
+          )}
+          {modal.show && (
+            <ModalSurface size="lg" anchor={modal.anchor} close={modal.close}>
+              <ViewMsg
+                listid={listid}
+                msgid={msgid}
+                user={user}
+                creation_time={creation_time}
+                spf_pass={spf_pass}
+                dkim_pass={dkim_pass}
+                subject={subject}
+                close={modal.close}
+              />
+            </ModalSurface>
+          )}
+        </Column>
+      </Grid>
     </ListItem>
   );
 };
