@@ -1,6 +1,5 @@
 import {useCallback, useMemo} from 'react';
 import {useResource, useURL, selectAPINull} from '@xorkevin/substation';
-import {useAuthCall} from '@xorkevin/turbine';
 import {
   Grid,
   Column,
@@ -8,15 +7,9 @@ import {
   ListItem,
   ModalSurface,
   useModal,
-  useMenu,
-  Menu,
-  MenuItem,
-  SnackbarSurface,
-  useSnackbar,
-  useSnackbarView,
   usePaginate,
+  Anchor,
   ButtonGroup,
-  FaIcon,
   Chip,
   Tooltip,
   Time,
@@ -24,16 +17,16 @@ import {
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
 
+import {formatURL} from '../../../utility';
 import {ViewMsg} from '../msgcomponents';
 
-const selectAPIListMsgs = (api) => api.mailinglist.id.msgs;
+const selectAPIListThreads = (api) => api.mailinglist.id.threads;
 const selectAPIListMsgContent = (api) => api.mailinglist.id.msgs.id.content;
-const selectAPIListMsgDel = (api) => api.mailinglist.group.list.msgs.del;
 const selectAPIUsers = (api) => api.u.user.ids;
 
 const MSGS_LIMIT = 32;
 
-const MsgRow = ({
+const ThreadRow = ({
   listid,
   msgid,
   user,
@@ -42,22 +35,11 @@ const MsgRow = ({
   dkim_pass,
   subject,
   deleted,
-  list,
-  posthookDelete,
-  errhook,
+  threadurl,
 }) => {
-  const menu = useMenu();
   const modal = useModal();
 
   const raw = useURL(selectAPIListMsgContent, [listid, msgid]);
-
-  const msgidArr = useMemo(() => [msgid], [msgid]);
-  const [_delState, execRmMsg] = useAuthCall(
-    selectAPIListMsgDel,
-    [list.creatorid, list.listname, msgidArr],
-    {},
-    {posthook: posthookDelete, errhook: errhook},
-  );
 
   return (
     <ListItem>
@@ -102,20 +84,10 @@ const MsgRow = ({
                 View
               </ButtonTertiary>
             )}
-            {!deleted && (
-              <ButtonTertiary
-                forwardedRef={menu.anchorRef}
-                onClick={menu.toggle}
-              >
-                <FaIcon icon="ellipsis-v" />
-              </ButtonTertiary>
-            )}
+            <Anchor local href={formatURL(threadurl, msgid)}>
+              <ButtonTertiary>Thread</ButtonTertiary>
+            </Anchor>
           </ButtonGroup>
-          {menu.show && (
-            <Menu size="md" anchor={menu.anchor} close={menu.close}>
-              <MenuItem onClick={execRmMsg}>Remove</MenuItem>
-            </Menu>
-          )}
           {modal.show && (
             <ModalSurface size="lg" anchor={modal.anchor} close={modal.close}>
               <ViewMsg
@@ -136,19 +108,7 @@ const MsgRow = ({
   );
 };
 
-const ManageMsgs = ({list}) => {
-  const snackbar = useSnackbar();
-  const displayErrSnack = useCallback(
-    (_deleteState, err) => {
-      snackbar(<SnackbarSurface>{err.message}</SnackbarSurface>);
-    },
-    [snackbar],
-  );
-
-  const displaySnackDeleted = useSnackbarView(
-    <SnackbarSurface>&#x2713; Message deleted</SnackbarSurface>,
-  );
-
+const ManageThreads = ({list, threadurl}) => {
   const paginate = usePaginate(MSGS_LIMIT);
 
   const setAtEnd = paginate.setAtEnd;
@@ -158,8 +118,8 @@ const ManageMsgs = ({list}) => {
     },
     [setAtEnd],
   );
-  const [msgs, reexecute] = useResource(
-    selectAPIListMsgs,
+  const [msgs] = useResource(
+    selectAPIListThreads,
     [list.listid, MSGS_LIMIT, paginate.index],
     [],
     {posthook: posthookMsgs},
@@ -183,17 +143,12 @@ const ManageMsgs = ({list}) => {
     [users],
   );
 
-  const posthookDelete = useCallback(() => {
-    displaySnackDeleted();
-    reexecute();
-  }, [displaySnackDeleted, reexecute]);
-
   return (
     <div>
       <ListGroup>
         {Array.isArray(msgs.data) &&
           msgs.data.map((i) => (
-            <MsgRow
+            <ThreadRow
               key={i.msgid}
               listid={i.listid}
               msgid={i.msgid}
@@ -203,9 +158,7 @@ const ManageMsgs = ({list}) => {
               dkim_pass={i.dkim_pass}
               subject={i.subject}
               deleted={i.deleted}
-              list={list}
-              posthookDelete={posthookDelete}
-              errhook={displayErrSnack}
+              threadurl={threadurl}
             />
           ))}
       </ListGroup>
@@ -223,4 +176,4 @@ const ManageMsgs = ({list}) => {
   );
 };
 
-export default ManageMsgs;
+export default ManageThreads;

@@ -173,14 +173,61 @@ export default {
         err: 'Unable to get list msgs',
         children: {
           id: {
-            url: '/{1}',
+            url: '/id/{1}',
             method: 'GET',
             transformer: (listid, msgid) => ({
               params: [listid, msgid],
             }),
-            expectjson: false,
-            selector: async (res) => res.text(),
+            expectjson: true,
+            selector: (_res, data) => data,
             err: 'Unable to get list message',
+            children: {
+              content: {
+                url: '/content',
+                method: 'GET',
+                transformer: (listid, msgid) => ({
+                  params: [listid, msgid],
+                }),
+                expectjson: false,
+                selector: async (res) => res.text(),
+                err: 'Unable to get list messages',
+              },
+            },
+          },
+        },
+      },
+      threads: {
+        url: '/threads',
+        method: 'GET',
+        transformer: (listid, amount, offset) => ({
+          params: [listid],
+          query: {
+            amount,
+            offset,
+          },
+        }),
+        expectjson: true,
+        selector: (_res, data) => data && data.msgs,
+        err: 'Unable to get list threads',
+        children: {
+          id: {
+            url: '/id/{1}',
+            children: {
+              msgs: {
+                url: '/msgs',
+                method: 'GET',
+                transformer: (listid, threadid, amount, offset) => ({
+                  params: [listid, threadid],
+                  query: {
+                    amount,
+                    offset,
+                  },
+                }),
+                expectjson: true,
+                selector: (_res, data) => data && data.msgs,
+                err: 'Unable to get thread messages',
+              },
+            },
           },
         },
       },

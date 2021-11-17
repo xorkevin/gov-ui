@@ -1,11 +1,14 @@
 import {useCallback, useMemo} from 'react';
+import {useParams} from 'react-router-dom';
 import {useResource, useURL, selectAPINull} from '@xorkevin/substation';
 import {useAuthCall} from '@xorkevin/turbine';
 import {
+  Container,
   Grid,
   Column,
   ListGroup,
   ListItem,
+  Card,
   ModalSurface,
   useModal,
   useMenu,
@@ -24,9 +27,10 @@ import {
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
 
-import {ViewMsg} from '../msgcomponents';
+import {ViewMsgContent, ViewMsg} from '../msgcomponents';
 
-const selectAPIListMsgs = (api) => api.mailinglist.id.msgs;
+const selectAPIThreadMsgs = (api) => api.mailinglist.id.threads.id.msgs;
+const selectAPIListMsg = (api) => api.mailinglist.id.msgs.id;
 const selectAPIListMsgContent = (api) => api.mailinglist.id.msgs.id.content;
 const selectAPIListMsgDel = (api) => api.mailinglist.group.list.msgs.del;
 const selectAPIUsers = (api) => api.u.user.ids;
@@ -136,7 +140,88 @@ const MsgRow = ({
   );
 };
 
-const ManageMsgs = ({list}) => {
+const ViewThread = ({msg, user, list, posthookDelete, errhook}) => {
+  const menu = useMenu();
+
+  const raw = useURL(selectAPIListMsgContent, [msg.listid, msg.msgid]);
+
+  const msgid = msg.msgid;
+  const msgidArr = useMemo(() => [msgid], [msgid]);
+  const [_delState, execRmMsg] = useAuthCall(
+    selectAPIListMsgDel,
+    [list.creatorid, list.listname, msgidArr],
+    {},
+    {posthook: posthookDelete, errhook: errhook},
+  );
+
+  return (
+    <Card>
+      <Container padded>
+        <Grid justify="space-between" align="center" nowrap>
+          {msg.deleted && (
+            <Column className="minwidth0" grow="1">
+              [deleted]
+            </Column>
+          )}
+          {!msg.deleted && (
+            <Column className="minwidth0" grow="1">
+              <h4>
+                <AnchorText ext href={raw}>
+                  {msg.subject}
+                </AnchorText>
+              </h4>{' '}
+              {user && <span>{user.username}</span>}{' '}
+              <Time value={msg.creation_time} />{' '}
+              {msg.spf_pass && (
+                <Tooltip tooltip={msg.spf_pass}>
+                  <small>
+                    <Chip>&#x2713; SPF</Chip>
+                  </small>
+                </Tooltip>
+              )}{' '}
+              {msg.dkim_pass && (
+                <Tooltip tooltip={msg.dkim_pass}>
+                  <small>
+                    <Chip>&#x2713; DKIM</Chip>
+                  </small>
+                </Tooltip>
+              )}
+            </Column>
+          )}
+          <Column shrink="0">
+            <ButtonGroup>
+              {!msg.deleted && (
+                <ButtonTertiary
+                  forwardedRef={menu.anchorRef}
+                  onClick={menu.toggle}
+                >
+                  <FaIcon icon="ellipsis-v" />
+                </ButtonTertiary>
+              )}
+            </ButtonGroup>
+            {menu.show && (
+              <Menu
+                size="md"
+                anchor={menu.anchor}
+                close={menu.close}
+                onClick={menu.close}
+              >
+                <MenuItem onClick={execRmMsg}>Remove</MenuItem>
+              </Menu>
+            )}
+          </Column>
+        </Grid>
+        {!msg.deleted && (
+          <ViewMsgContent listid={msg.listid} msgid={msg.msgid} />
+        )}
+      </Container>
+    </Card>
+  );
+};
+
+const ManageThread = ({list}) => {
+  const {threadid} = useParams();
+
   const snackbar = useSnackbar();
   const displayErrSnack = useCallback(
     (_deleteState, err) => {
@@ -149,6 +234,21 @@ const ManageMsgs = ({list}) => {
     <SnackbarSurface>&#x2713; Message deleted</SnackbarSurface>,
   );
 
+  const [msg, reexecuteMsg] = useResource(
+    threadid && threadid.length > 0 ? selectAPIListMsg : selectAPINull,
+    [list.listid, threadid],
+    {
+      listid: '',
+      msgid: '',
+      userid: '',
+      creation_time: 0,
+      spf_pass: '',
+      dkim_pass: '',
+      subject: '',
+      deleted: '',
+    },
+  );
+
   const paginate = usePaginate(MSGS_LIMIT);
 
   const setAtEnd = paginate.setAtEnd;
@@ -159,19 +259,24 @@ const ManageMsgs = ({list}) => {
     [setAtEnd],
   );
   const [msgs, reexecute] = useResource(
-    selectAPIListMsgs,
-    [list.listid, MSGS_LIMIT, paginate.index],
+    threadid && threadid.length > 0 ? selectAPIThreadMsgs : selectAPINull,
+    [list.listid, threadid, MSGS_LIMIT, paginate.index],
     [],
     {posthook: posthookMsgs},
   );
 
+  const threadUserid = msg.success ? msg.data.userid : '';
   const senderIDs = useMemo(
     () =>
       Array.isArray(msgs.data) &&
       Array.from(
-        new Set(msgs.data.flatMap((i) => (i.deleted ? [] : [i.userid]))),
+        new Set(
+          (threadUserid.length > 0 ? [threadUserid] : []).concat(
+            msgs.data.flatMap((i) => (i.deleted ? [] : [i.userid])),
+          ),
+        ),
       ),
-    [msgs],
+    [threadUserid, msgs],
   );
   const [users] = useResource(
     senderIDs.length > 0 ? selectAPIUsers : selectAPINull,
@@ -185,11 +290,22 @@ const ManageMsgs = ({list}) => {
 
   const posthookDelete = useCallback(() => {
     displaySnackDeleted();
+    reexecuteMsg();
     reexecute();
-  }, [displaySnackDeleted, reexecute]);
+  }, [displaySnackDeleted, reexecuteMsg, reexecute]);
 
   return (
     <div>
+      <h5>Thread</h5>
+      {msg.success && (
+        <ViewThread
+          msg={msg.data}
+          user={userMap[msg.data.userid]}
+          list={list}
+          posthookDelete={posthookDelete}
+          errhook={displayErrSnack}
+        />
+      )}
       <ListGroup>
         {Array.isArray(msgs.data) &&
           msgs.data.map((i) => (
@@ -223,4 +339,4 @@ const ManageMsgs = ({list}) => {
   );
 };
 
-export default ManageMsgs;
+export default ManageThread;

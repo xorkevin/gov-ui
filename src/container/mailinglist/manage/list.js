@@ -23,6 +23,8 @@ import {GovUICtx} from '../../../middleware';
 import {formatURL} from '../../../utility';
 
 const Msgs = lazy(() => import('./msgs'));
+const Threads = lazy(() => import('./threads'));
+const Thread = lazy(() => import('./thread'));
 const Members = lazy(() => import('./members'));
 const Settings = lazy(() => import('./settings'));
 
@@ -37,7 +39,7 @@ const List = ({listurl, baseurl}) => {
   const {listid} = useParams();
 
   const [list, reexecute] = useResource(
-    listid.length > 0 ? selectAPIList : selectAPINull,
+    listid && listid.length > 0 ? selectAPIList : selectAPINull,
     [listid],
     {
       listid: '',
@@ -110,6 +112,9 @@ const List = ({listurl, baseurl}) => {
           </Grid>
           <hr />
           <Tabbar>
+            <TabItem local link={`${match.url}/threads`}>
+              Threads
+            </TabItem>
             <TabItem local link={`${match.url}/msgs`}>
               Messages
             </TabItem>
@@ -122,6 +127,15 @@ const List = ({listurl, baseurl}) => {
           </Tabbar>
           <Suspense fallback={ctx.fallbackView}>
             <Switch>
+              <Route exact path={`${match.path}/threads`}>
+                <Threads
+                  list={list.data}
+                  threadurl={`${match.url}/threads/{0}`}
+                />
+              </Route>
+              <Route path={`${match.path}/threads/:threadid`}>
+                <Thread list={list.data} />
+              </Route>
               <Route path={`${match.path}/msgs`}>
                 <Msgs list={list.data} />
               </Route>
@@ -136,7 +150,7 @@ const List = ({listurl, baseurl}) => {
                   baseurl={baseurl}
                 />
               </Route>
-              <Redirect to={`${match.path}/msgs`} />
+              <Redirect to={`${match.path}/threads`} />
             </Switch>
           </Suspense>
         </Fragment>
