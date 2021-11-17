@@ -306,6 +306,7 @@ const ManageThread = ({list}) => {
           errhook={displayErrSnack}
         />
       )}
+      {msg.err && <p>{msg.err.message}</p>}
       <ListGroup>
         {Array.isArray(msgs.data) &&
           msgs.data.map((i) => (
