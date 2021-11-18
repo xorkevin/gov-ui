@@ -1,7 +1,6 @@
 import {useCallback, useMemo} from 'react';
 import {useParams} from 'react-router-dom';
 import {useResource, useURL, selectAPINull} from '@xorkevin/substation';
-import {useAuthCall} from '@xorkevin/turbine';
 import {
   Container,
   Grid,
@@ -11,15 +10,8 @@ import {
   Card,
   ModalSurface,
   useModal,
-  useMenu,
-  Menu,
-  MenuItem,
-  SnackbarSurface,
-  useSnackbar,
-  useSnackbarView,
   usePaginate,
   ButtonGroup,
-  FaIcon,
   Chip,
   Tooltip,
   Time,
@@ -27,12 +19,11 @@ import {
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
 
-import {ViewMsgContent, ViewMsg} from '../msgcomponents';
+import {ViewMsgContent, ViewMsg} from './msgcomponents';
 
 const selectAPIThreadMsgs = (api) => api.mailinglist.id.threads.id.msgs;
 const selectAPIListMsg = (api) => api.mailinglist.id.msgs.id;
 const selectAPIListMsgContent = (api) => api.mailinglist.id.msgs.id.content;
-const selectAPIListMsgDel = (api) => api.mailinglist.group.list.msgs.del;
 const selectAPIUsers = (api) => api.u.user.ids;
 
 const MSGS_LIMIT = 32;
@@ -46,22 +37,10 @@ const MsgRow = ({
   dkim_pass,
   subject,
   deleted,
-  list,
-  posthookDelete,
-  errhook,
 }) => {
-  const menu = useMenu();
   const modal = useModal();
 
   const raw = useURL(selectAPIListMsgContent, [listid, msgid]);
-
-  const msgidArr = useMemo(() => [msgid], [msgid]);
-  const [_delState, execRmMsg] = useAuthCall(
-    selectAPIListMsgDel,
-    [list.creatorid, list.listname, msgidArr],
-    {},
-    {posthook: posthookDelete, errhook: errhook},
-  );
 
   return (
     <ListItem>
@@ -106,20 +85,7 @@ const MsgRow = ({
                 View
               </ButtonTertiary>
             )}
-            {!deleted && (
-              <ButtonTertiary
-                forwardedRef={menu.anchorRef}
-                onClick={menu.toggle}
-              >
-                <FaIcon icon="ellipsis-v" />
-              </ButtonTertiary>
-            )}
           </ButtonGroup>
-          {menu.show && (
-            <Menu size="md" anchor={menu.anchor} close={menu.close}>
-              <MenuItem onClick={execRmMsg}>Remove</MenuItem>
-            </Menu>
-          )}
           {modal.show && (
             <ModalSurface size="lg" anchor={modal.anchor} close={modal.close}>
               <ViewMsg
@@ -140,19 +106,8 @@ const MsgRow = ({
   );
 };
 
-const ViewThread = ({msg, user, list, posthookDelete, errhook}) => {
-  const menu = useMenu();
-
+const ViewThread = ({msg, user}) => {
   const raw = useURL(selectAPIListMsgContent, [msg.listid, msg.msgid]);
-
-  const msgid = msg.msgid;
-  const msgidArr = useMemo(() => [msgid], [msgid]);
-  const [_delState, execRmMsg] = useAuthCall(
-    selectAPIListMsgDel,
-    [list.creatorid, list.listname, msgidArr],
-    {},
-    {posthook: posthookDelete, errhook: errhook},
-  );
 
   return (
     <Card>
@@ -188,28 +143,6 @@ const ViewThread = ({msg, user, list, posthookDelete, errhook}) => {
               )}
             </Column>
           )}
-          <Column shrink="0">
-            <ButtonGroup>
-              {!msg.deleted && (
-                <ButtonTertiary
-                  forwardedRef={menu.anchorRef}
-                  onClick={menu.toggle}
-                >
-                  <FaIcon icon="ellipsis-v" />
-                </ButtonTertiary>
-              )}
-            </ButtonGroup>
-            {menu.show && (
-              <Menu
-                size="md"
-                anchor={menu.anchor}
-                close={menu.close}
-                onClick={menu.close}
-              >
-                <MenuItem onClick={execRmMsg}>Remove</MenuItem>
-              </Menu>
-            )}
-          </Column>
         </Grid>
         {!msg.deleted && (
           <ViewMsgContent listid={msg.listid} msgid={msg.msgid} />
@@ -219,22 +152,10 @@ const ViewThread = ({msg, user, list, posthookDelete, errhook}) => {
   );
 };
 
-const ManageThread = ({list}) => {
+const Thread = ({list}) => {
   const {threadid} = useParams();
 
-  const snackbar = useSnackbar();
-  const displayErrSnack = useCallback(
-    (_deleteState, err) => {
-      snackbar(<SnackbarSurface>{err.message}</SnackbarSurface>);
-    },
-    [snackbar],
-  );
-
-  const displaySnackDeleted = useSnackbarView(
-    <SnackbarSurface>&#x2713; Message deleted</SnackbarSurface>,
-  );
-
-  const [msg, reexecuteMsg] = useResource(
+  const [msg] = useResource(
     threadid && threadid.length > 0 ? selectAPIListMsg : selectAPINull,
     [list.listid, threadid],
     {
@@ -258,7 +179,7 @@ const ManageThread = ({list}) => {
     },
     [setAtEnd],
   );
-  const [msgs, reexecute] = useResource(
+  const [msgs] = useResource(
     threadid && threadid.length > 0 ? selectAPIThreadMsgs : selectAPINull,
     [list.listid, threadid, MSGS_LIMIT, paginate.index],
     [],
@@ -288,23 +209,11 @@ const ManageThread = ({list}) => {
     [users],
   );
 
-  const posthookDelete = useCallback(() => {
-    displaySnackDeleted();
-    reexecuteMsg();
-    reexecute();
-  }, [displaySnackDeleted, reexecuteMsg, reexecute]);
-
   return (
     <div>
       <h5>Thread</h5>
       {msg.success && (
-        <ViewThread
-          msg={msg.data}
-          user={userMap[msg.data.userid]}
-          list={list}
-          posthookDelete={posthookDelete}
-          errhook={displayErrSnack}
-        />
+        <ViewThread msg={msg.data} user={userMap[msg.data.userid]} />
       )}
       {msg.err && <p>{msg.err.message}</p>}
       <h5>Replies</h5>
@@ -321,9 +230,6 @@ const ManageThread = ({list}) => {
               dkim_pass={i.dkim_pass}
               subject={i.subject}
               deleted={i.deleted}
-              list={list}
-              posthookDelete={posthookDelete}
-              errhook={displayErrSnack}
             />
           ))}
       </ListGroup>
@@ -341,4 +247,4 @@ const ManageThread = ({list}) => {
   );
 };
 
-export default ManageThread;
+export default Thread;
