@@ -1,0 +1,41 @@
+routes:
+  - prefix: /api/
+    dir: true
+    path: api
+  - prefix: /static/icon/
+    dir: true
+    path: static/icon
+    cachecontrol:
+      - public
+      - max-age=31536000
+      - no-cache
+    etag: true
+  - prefix: /static/
+    dir: true
+    path: static
+    cachecontrol:
+      - public
+      - max-age=31536000
+      - immutable
+    etag: true
+  - prefix: /favicon.ico
+    path: favicon.ico
+    cachecontrol:
+      - public
+      - max-age=31536000
+      - no-cache
+    etag: true
+  - prefix: /manifest.json
+    path: manifest.json
+    cachecontrol:
+      - public
+      - max-age=31536000
+      - no-cache
+    etag: true
+  - prefix: /
+    path: index.html
+    cachecontrol:
+      - public
+      - max-age=31536000
+      - no-cache
+    etag: true
