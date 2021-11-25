@@ -1,9 +1,11 @@
 const path = require('path');
+const zlib = require('zlib');
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
 const ExtractTextPlugin = require('mini-css-extract-plugin');
 const HtmlPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
+const CompressionPlugin = require('compression-webpack-plugin');
 
 const aliasModules = (names) => {
   return Object.fromEntries(
@@ -100,6 +102,37 @@ const createConfig = (env, argv) => {
       }),
       new CopyPlugin({
         patterns: [{from: 'public'}],
+      }),
+      new CompressionPlugin({
+        test: /\.(html|js|css|json)(\.map)?$/,
+        algorithm: 'gzip',
+        compressionOptions: {level: 9},
+        threshold: 0,
+        minRatio: 0.95,
+        filename: '[path][base].gz',
+        deleteOriginalAssets: false,
+      }),
+      new CompressionPlugin({
+        test: /\.(html|js|css|json)(\.map)?$/,
+        algorithm: (input, _compressionOptions, cb) => {
+          zlib.brotliCompress(
+            input,
+            {
+              params: {
+                [zlib.constants.BROTLI_PARAM_MODE]:
+                  zlib.constants.BROTLI_MODE_TEXT,
+                [zlib.constants.BROTLI_PARAM_QUALITY]: 11,
+                [zlib.constants.BROTLI_PARAM_SIZE_HINT]:
+                  Buffer.byteLength(input),
+              },
+            },
+            cb,
+          );
+        },
+        threshold: 0,
+        minRatio: 0.95,
+        filename: '[path][base].br',
+        deleteOriginalAssets: false,
       }),
     ],
 
