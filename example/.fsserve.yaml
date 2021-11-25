@@ -18,6 +18,13 @@ routes:
       - max-age=31536000
       - immutable
     etag: true
+    compressed:
+      - code: br
+        test: '\.(html|js|css|json)(\.map)?$'
+        suffix: .br
+      - code: gzip
+        test: '\.(html|js|css|json)(\.map)?$'
+        suffix: .gz
   - prefix: /favicon.ico
     path: favicon.ico
     cachecontrol:
@@ -32,6 +39,11 @@ routes:
       - max-age=31536000
       - no-cache
     etag: true
+    compressed:
+      - code: br
+        suffix: .br
+      - code: gzip
+        suffix: .gz
   - prefix: /
     path: index.html
     cachecontrol:
@@ -39,3 +51,8 @@ routes:
       - max-age=31536000
       - no-cache
     etag: true
+    compressed:
+      - code: br
+        suffix: .br
+      - code: gzip
+        suffix: .gz
