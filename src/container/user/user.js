@@ -1,3 +1,4 @@
+import {useContext} from 'react';
 import {useParams} from 'react-router-dom';
 import {useURL, useResource, selectAPINull} from '@xorkevin/substation';
 import {
@@ -11,11 +12,14 @@ import {
 } from '@xorkevin/nuke';
 import Img from '@xorkevin/nuke/src/component/image/rounded';
 
+import {GovUICtx} from '../../middleware';
+
 const selectAPIUser = (api) => api.u.user.name;
 const selectAPIProfile = (api) => api.profile.id;
 const selectAPIImage = (api) => api.profile.id.image;
 
 const UserDetails = () => {
+  const ctx = useContext(GovUICtx);
   const {username} = useParams();
 
   const [account] = useResource(selectAPIUser, [username], {
@@ -28,7 +32,9 @@ const UserDetails = () => {
   const imageURL = useURL(selectAPIImage, [account.data.userid]);
 
   const [profile] = useResource(
-    account.data.userid.length > 0 ? selectAPIProfile : selectAPINull,
+    ctx.enableUserProfile && account.data.userid.length > 0
+      ? selectAPIProfile
+      : selectAPINull,
     [account.data.userid],
     {bio: '', image: ''},
   );
@@ -43,12 +49,14 @@ const UserDetails = () => {
                 <Card
                   width="sm"
                   title={
-                    <Img
-                      className="card-border dark"
-                      src={imageURL}
-                      preview={profile.data.image}
-                      ratio={1}
-                    />
+                    profile.success ? (
+                      <Img
+                        className="card-border dark"
+                        src={imageURL}
+                        preview={profile.data.image}
+                        ratio={1}
+                      />
+                    ) : null
                   }
                 >
                   <Container padded>
@@ -59,7 +67,9 @@ const UserDetails = () => {
                     <h6>
                       joined <Time value={account.data.creation_time * 1000} />
                     </h6>
-                    {profile.data.bio && <p>{profile.data.bio}</p>}
+                    {profile.success && profile.data.bio && (
+                      <p>{profile.data.bio}</p>
+                    )}
                   </Container>
                 </Card>
               )}

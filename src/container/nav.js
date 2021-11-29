@@ -31,7 +31,7 @@ const Nav = ({closeOnClick, right, menucontent, menuend, children}) => {
   const logout = useLogout();
   const {loggedIn, userid, username, first_name, last_name} = useAuthValue();
   const [profile] = useAuthResource(
-    loggedIn ? selectAPIProfile : selectAPINull,
+    ctx.enableUserProfile && loggedIn ? selectAPIProfile : selectAPINull,
     [],
     {
       image: '',

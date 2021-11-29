@@ -1,4 +1,4 @@
-import {Fragment, useState, useCallback, useMemo} from 'react';
+import {Fragment, useState, useCallback, useMemo, useContext} from 'react';
 import {useResource, useURL, selectAPINull} from '@xorkevin/substation';
 import {
   useLogin,
@@ -27,6 +27,8 @@ import {
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 import Img from '@xorkevin/nuke/src/component/image/circle';
+
+import {GovUICtx} from '../../middleware';
 
 const selectAPIUsers = (api) => api.u.user.ids;
 const selectAPIProfiles = (api) => api.profile.ids;
@@ -237,6 +239,7 @@ const AccountRow = ({
 };
 
 const SwitchAccountContainer = ({accounts, displayLogin}) => {
+  const ctx = useContext(GovUICtx);
   const [users] = useResource(
     accounts.length > 0 ? selectAPIUsers : selectAPINull,
     [accounts],
@@ -259,7 +262,9 @@ const SwitchAccountContainer = ({accounts, displayLogin}) => {
   );
 
   const [profiles] = useResource(
-    accounts.length > 0 ? selectAPIProfiles : selectAPINull,
+    ctx.enableUserProfile && accounts.length > 0
+      ? selectAPIProfiles
+      : selectAPINull,
     [accounts],
     [],
   );

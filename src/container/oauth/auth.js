@@ -80,7 +80,7 @@ const CardAccount = ({profile}) => {
   const imageURL = useURL(selectAPIProfileImage, [userid]);
   return (
     <Grid justify="center" align="center">
-      {profile.image && (
+      {profile && profile.image && (
         <ImgCircle
           className="oauth-auth-profile-image"
           src={imageURL}
@@ -276,7 +276,7 @@ const AuthFlow = ({redirSuccess, redirErr, app, conn, params, reqParams}) => {
   }, [performedRelogin, setRelogin]);
 
   const [profile] = useAuthResource(
-    loggedIn ? selectAPIProfile : selectAPINull,
+    ctx.enableUserProfile && loggedIn ? selectAPIProfile : selectAPINull,
     [],
     {
       image: '',
@@ -378,7 +378,7 @@ const AuthFlow = ({redirSuccess, redirErr, app, conn, params, reqParams}) => {
         allowAuth={allowAuth}
         denyAuth={denyAuth}
         app={app}
-        profile={profile.data}
+        profile={profile.success && profile.data}
         scopeSet={scopeSet}
       />
     );
@@ -388,7 +388,7 @@ const AuthFlow = ({redirSuccess, redirErr, app, conn, params, reqParams}) => {
       allowAuth={allowAuth}
       denyAuth={denyAuth}
       app={app}
-      profile={profile.data}
+      profile={profile.success && profile.data}
       scopeSet={scopeSet}
     />
   );
