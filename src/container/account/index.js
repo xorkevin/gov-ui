@@ -58,13 +58,15 @@ const Account = () => {
                 >
                   Connected Apps
                 </SidebarItem>
-                <SidebarItem
-                  link={`${match.url}/orgs`}
-                  local
-                  icon={<FaIcon icon="sitemap" />}
-                >
-                  Organaizations
-                </SidebarItem>
+                {ctx.enableUserOrgs && (
+                  <SidebarItem
+                    link={`${match.url}/orgs`}
+                    local
+                    icon={<FaIcon icon="sitemap" />}
+                  >
+                    Organaizations
+                  </SidebarItem>
+                )}
                 <SidebarItem
                   link={`${match.url}/invitations`}
                   local

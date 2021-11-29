@@ -182,9 +182,11 @@ const App = () => {
           <Route path="/u">
             <UserC />
           </Route>
-          <Route path="/org">
-            <OrgC />
-          </Route>
+          {ctx.enableUserOrgs && (
+            <Route path="/org">
+              <OrgC />
+            </Route>
+          )}
           <Route path="/admin">
             <AdminC />
           </Route>
