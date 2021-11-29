@@ -51,13 +51,15 @@ const Account = () => {
                 >
                   Security
                 </SidebarItem>
-                <SidebarItem
-                  link={`${match.url}/oauth`}
-                  local
-                  icon={<FaIcon icon="openid" />}
-                >
-                  Connected Apps
-                </SidebarItem>
+                {ctx.enableOAuth && (
+                  <SidebarItem
+                    link={`${match.url}/oauth`}
+                    local
+                    icon={<FaIcon icon="openid" />}
+                  >
+                    Connected Apps
+                  </SidebarItem>
+                )}
                 {ctx.enableUserOrgs && (
                   <SidebarItem
                     link={`${match.url}/orgs`}
@@ -97,9 +99,11 @@ const Account = () => {
                   <Route path={`${match.path}/confirm/email`}>
                     <EmailConfirmContainer pathSecurity={pathSecurity} />
                   </Route>
-                  <Route path={`${match.path}/oauth`}>
-                    <OAuthContainer />
-                  </Route>
+                  {ctx.enableOAuth && (
+                    <Route path={`${match.path}/oauth`}>
+                      <OAuthContainer />
+                    </Route>
+                  )}
                   <Route path={`${match.path}/invitations`}>
                     <InvitationsContainer />
                   </Route>

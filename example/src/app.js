@@ -145,18 +145,24 @@ const App = () => {
                 <FaIcon icon="building-o" />
                 <small>Admin</small>
               </NavItem>
-              <NavItem local link="/courier">
-                <FaIcon icon="paper-plane" />
-                <small>Courier</small>
-              </NavItem>
-              <NavItem local link="/conduit">
-                <FaIcon icon="fire" />
-                <small>Conduit</small>
-              </NavItem>
-              <NavItem local link="/lists">
-                <FaIcon icon="envelope" />
-                <small>Lists</small>
-              </NavItem>
+              {ctx.enableCourier && (
+                <NavItem local link="/courier">
+                  <FaIcon icon="paper-plane" />
+                  <small>Courier</small>
+                </NavItem>
+              )}
+              {ctx.enableConduit && (
+                <NavItem local link="/conduit">
+                  <FaIcon icon="fire" />
+                  <small>Conduit</small>
+                </NavItem>
+              )}
+              {ctx.enableMailinglists && (
+                <NavItem local link="/lists">
+                  <FaIcon icon="envelope" />
+                  <small>Lists</small>
+                </NavItem>
+              )}
             </Fragment>
           )}
         </NavContainer>
@@ -173,9 +179,11 @@ const App = () => {
           <Route path="/x">
             <LoginContainer />
           </Route>
-          <Route path="/oauth">
-            <OAuthContainer />
-          </Route>
+          {ctx.enableOAuth && (
+            <Route path="/oauth">
+              <OAuthContainer />
+            </Route>
+          )}
           <Route path="/a">
             <AccountC />
           </Route>
@@ -190,15 +198,21 @@ const App = () => {
           <Route path="/admin">
             <AdminC />
           </Route>
-          <Route path="/courier">
-            <CourierC />
-          </Route>
-          <Route path="/conduit">
-            <ConduitC />
-          </Route>
-          <Route path="/lists">
-            <MailingListsC />
-          </Route>
+          {ctx.enableCourier && (
+            <Route path="/courier">
+              <CourierC />
+            </Route>
+          )}
+          {ctx.enableConduit && (
+            <Route path="/conduit">
+              <ConduitC />
+            </Route>
+          )}
+          {ctx.enableMailinglists && (
+            <Route path="/lists">
+              <MailingListsC />
+            </Route>
+          )}
           <Route path="/setup">
             <SetupContainer />
           </Route>

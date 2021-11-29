@@ -52,13 +52,15 @@ const Admin = () => {
                   Approvals
                 </SidebarItem>
                 <SidebarHeader>Integrations</SidebarHeader>
-                <SidebarItem
-                  link={`${match.url}/oauth`}
-                  local
-                  icon={<FaIcon icon="openid" />}
-                >
-                  OAuth
-                </SidebarItem>
+                {ctx.enableOAuth && (
+                  <SidebarItem
+                    link={`${match.url}/oauth`}
+                    local
+                    icon={<FaIcon icon="openid" />}
+                  >
+                    OAuth
+                  </SidebarItem>
+                )}
               </Sidebar>
             </Column>
             <Column fullWidth md={18}>
@@ -73,9 +75,11 @@ const Admin = () => {
                   <Route path={`${match.path}/approvals`}>
                     <ApprovalsContainer />
                   </Route>
-                  <Route path={`${match.path}/oauth`}>
-                    <OAuthAppContainer />
-                  </Route>
+                  {ctx.enableOAuth && (
+                    <Route path={`${match.path}/oauth`}>
+                      <OAuthAppContainer />
+                    </Route>
+                  )}
                   <Redirect to={`${match.url}/users`} />
                 </Switch>
               </Suspense>

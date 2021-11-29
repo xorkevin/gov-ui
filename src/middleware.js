@@ -248,11 +248,17 @@ const GovUIDefaultOpts = Object.freeze({
   orgNameToOrgID,
   pathOrg: '/org/{0}',
   pathOrgSettings: '/org/{0}/settings',
+  // oauth
+  enableOAuth: true,
   // user approvals
   enableUserApprovals: false,
   // courier
+  enableCourier: true,
   courierLinkPath: '/api/courier/link/id',
+  // conduit
+  enableConduit: true,
   // mailinglist
+  enableMailinglists: true,
   mailinglistUsr: 'lists.governor.dev.localhost',
   mailinglistOrg: 'org.lists.governor.dev.localhost',
 });
