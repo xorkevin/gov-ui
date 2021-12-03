@@ -1,5 +1,4 @@
 import {Fragment} from 'react';
-import {Link} from 'react-router-dom';
 import {useAPICall} from '@xorkevin/substation';
 import {
   MainContent,
@@ -9,6 +8,7 @@ import {
   Field,
   Form,
   useForm,
+  Anchor,
   ButtonGroup,
 } from '@xorkevin/nuke';
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
@@ -41,14 +41,14 @@ const ForgotPassContainer = ({pathLogin, pathResetPass}) => {
             bar={
               <ButtonGroup>
                 {forgot.success ? (
-                  <Link to={pathResetPass}>
+                  <Anchor local href={pathResetPass}>
                     <ButtonSecondary>Reset</ButtonSecondary>
-                  </Link>
+                  </Anchor>
                 ) : (
                   <Fragment>
-                    <Link to={pathLogin}>
+                    <Anchor local href={pathLogin}>
                       <ButtonTertiary>Cancel</ButtonTertiary>
-                    </Link>
+                    </Anchor>
                     <ButtonPrimary onClick={execForgot}>
                       Forgot Password
                     </ButtonPrimary>

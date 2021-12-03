@@ -1,5 +1,5 @@
 import {Fragment, useState, useCallback, useRef} from 'react';
-import {useHistory} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import {useAuthCall} from '@xorkevin/turbine';
 import {
   Grid,
@@ -33,7 +33,7 @@ const useFormLock = () => {
 };
 
 const OrgSettings = ({org, pathOrgSettings, refresh, pathHome}) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const snackUpdate = useSnackbarView(
     <SnackbarSurface>&#x2713; Org updated</SnackbarSurface>,
   );
@@ -57,11 +57,11 @@ const OrgSettings = ({org, pathOrgSettings, refresh, pathHome}) => {
     lock();
     snackUpdate();
     if (formNameRef.current !== org.name) {
-      history.push(formatURL(pathOrgSettings, formNameRef.current));
+      navigate(formatURL(pathOrgSettings, formNameRef.current));
     } else {
       refresh();
     }
-  }, [history, pathOrgSettings, org, formNameRef, refresh, snackUpdate, lock]);
+  }, [navigate, pathOrgSettings, org, formNameRef, refresh, snackUpdate, lock]);
   const [edit, execEdit] = useAuthCall(
     selectAPIEdit,
     [org.orgid, form.state],
@@ -71,8 +71,8 @@ const OrgSettings = ({org, pathOrgSettings, refresh, pathHome}) => {
 
   const posthookDel = useCallback(() => {
     snackDel();
-    history.push(pathHome);
-  }, [history, pathHome, snackDel]);
+    navigate(pathHome);
+  }, [navigate, pathHome, snackDel]);
   const [delOrg, execDel] = useAuthCall(
     selectAPIDel,
     [org.orgid],

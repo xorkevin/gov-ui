@@ -1,5 +1,4 @@
 import {Fragment, useContext} from 'react';
-import {Link} from 'react-router-dom';
 import {emailRegex} from '../utility';
 import {useAPICall} from '@xorkevin/substation';
 import {
@@ -77,14 +76,14 @@ const Setup = () => {
             bar={
               <ButtonGroup>
                 {setup.success ? (
-                  <Link to={ctx.pathHome}>
+                  <Anchor local href={ctx.pathHome}>
                     <ButtonPrimary>Finish</ButtonPrimary>
-                  </Link>
+                  </Anchor>
                 ) : (
                   <Fragment>
-                    <Link to={ctx.pathHome}>
+                    <Anchor local href={ctx.pathHome}>
                       <ButtonTertiary>Cancel</ButtonTertiary>
-                    </Link>
+                    </Anchor>
                     <ButtonPrimary onClick={execSetup}>Setup</ButtonPrimary>
                   </Fragment>
                 )}

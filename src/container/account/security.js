@@ -1,5 +1,4 @@
 import {Fragment, useState, useCallback, useMemo, useContext} from 'react';
-import {Link} from 'react-router-dom';
 import {
   useAuthValue,
   useAuthCall,
@@ -21,6 +20,7 @@ import {
   ListGroup,
   ListItem,
   usePaginate,
+  Anchor,
   ButtonGroup,
   FaIcon,
   Time,
@@ -187,9 +187,9 @@ const AccountEmail = ({pathConfirm}) => {
           </Form>
           <ButtonGroup>
             {edit.success ? (
-              <Link to={pathConfirm}>
+              <Anchor local href={pathConfirm}>
                 <ButtonSecondary>Confirm</ButtonSecondary>
-              </Link>
+              </Anchor>
             ) : (
               <ButtonPrimary onClick={execEdit}>Update Email</ButtonPrimary>
             )}

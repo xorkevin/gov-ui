@@ -1,5 +1,5 @@
 import {Fragment} from 'react';
-import {Link, useLocation} from 'react-router-dom';
+import {useLocation} from 'react-router-dom';
 import {getSearchParams} from '../../utility';
 import {useAPICall} from '@xorkevin/substation';
 import {
@@ -10,6 +10,7 @@ import {
   Field,
   Form,
   useForm,
+  Anchor,
   ButtonGroup,
 } from '@xorkevin/nuke';
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
@@ -64,14 +65,14 @@ const ResetPass = ({pathLogin}) => {
             bar={
               <ButtonGroup>
                 {reset.success ? (
-                  <Link to={pathLogin}>
+                  <Anchor local href={pathLogin}>
                     <ButtonSecondary>Sign in</ButtonSecondary>
-                  </Link>
+                  </Anchor>
                 ) : (
                   <Fragment>
-                    <Link to={pathLogin}>
+                    <Anchor local href={pathLogin}>
                       <ButtonTertiary>Cancel</ButtonTertiary>
-                    </Link>
+                    </Anchor>
                     <ButtonPrimary onClick={execReset}>
                       Reset Password
                     </ButtonPrimary>

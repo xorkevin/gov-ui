@@ -1,8 +1,16 @@
 import {Fragment} from 'react';
-import {Link, useLocation} from 'react-router-dom';
+import {useLocation} from 'react-router-dom';
 import {getSearchParams} from '../../utility';
 import {useAuthCall, useRefreshUser} from '@xorkevin/turbine';
-import {Grid, Column, Field, Form, useForm, ButtonGroup} from '@xorkevin/nuke';
+import {
+  Grid,
+  Column,
+  Field,
+  Form,
+  useForm,
+  Anchor,
+  ButtonGroup,
+} from '@xorkevin/nuke';
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonSecondary from '@xorkevin/nuke/src/component/button/secondary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
@@ -55,14 +63,14 @@ const AccountEmailConfirm = ({pathSecurity}) => {
           </Form>
           <ButtonGroup>
             {confirmState.success ? (
-              <Link to={pathSecurity}>
+              <Anchor local href={pathSecurity}>
                 <ButtonSecondary>Back</ButtonSecondary>
-              </Link>
+              </Anchor>
             ) : (
               <Fragment>
-                <Link to={pathSecurity}>
+                <Anchor local href={pathSecurity}>
                   <ButtonTertiary>Cancel</ButtonTertiary>
-                </Link>
+                </Anchor>
                 <ButtonPrimary onClick={execConfirm}>
                   Confirm Email
                 </ButtonPrimary>

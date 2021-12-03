@@ -1,5 +1,5 @@
 import {Fragment, useState, useCallback} from 'react';
-import {useHistory} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import {useAuthCall} from '@xorkevin/turbine';
 import {
   Grid,
@@ -37,7 +37,7 @@ const useFormLock = () => {
 };
 
 const ManageSettings = ({list, creatorName, refresh, baseurl}) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const snackUpdate = useSnackbarView(
     <SnackbarSurface>&#x2713; List settings updated</SnackbarSurface>,
   );
@@ -70,8 +70,8 @@ const ManageSettings = ({list, creatorName, refresh, baseurl}) => {
 
   const posthookDel = useCallback(() => {
     snackDel();
-    history.push(baseurl);
-  }, [history, baseurl, snackDel]);
+    navigate(baseurl);
+  }, [navigate, baseurl, snackDel]);
   const [delList, execDel] = useAuthCall(
     selectAPIDel,
     [list.creatorid, list.listname],

@@ -1,5 +1,4 @@
 import {Fragment, useContext} from 'react';
-import {Link} from 'react-router-dom';
 import {useAPICall} from '@xorkevin/substation';
 import {
   MainContent,
@@ -9,6 +8,7 @@ import {
   Field,
   Form,
   useForm,
+  Anchor,
   ButtonGroup,
 } from '@xorkevin/nuke';
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
@@ -85,19 +85,22 @@ const CreateAccount = ({pathLogin, pathConfirm}) => {
               <ButtonGroup>
                 {create.success ? (
                   ctx.enableUserApprovals ? (
-                    <Link to={pathLogin}>
+                    <Anchor local href={pathLogin}>
                       <ButtonSecondary>Finish</ButtonSecondary>
-                    </Link>
+                    </Anchor>
                   ) : (
-                    <Link to={formatURL(pathConfirmTpl, create.data.userid)}>
+                    <Anchor
+                      local
+                      href={formatURL(pathConfirmTpl, create.data.userid)}
+                    >
                       <ButtonSecondary>Confirm</ButtonSecondary>
-                    </Link>
+                    </Anchor>
                   )
                 ) : (
                   <Fragment>
-                    <Link to={pathLogin}>
+                    <Anchor local href={pathLogin}>
                       <ButtonTertiary>Cancel</ButtonTertiary>
-                    </Link>
+                    </Anchor>
                     <ButtonPrimary onClick={execCreate}>Create</ButtonPrimary>
                   </Fragment>
                 )}
