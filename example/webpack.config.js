@@ -2,6 +2,7 @@ const path = require('path');
 const zlib = require('zlib');
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
 const ExtractTextPlugin = require('mini-css-extract-plugin');
 const HtmlPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
@@ -61,7 +62,7 @@ const createConfig = (env, argv) => {
             path.resolve(__dirname, '../index.js'),
             path.resolve(__dirname, 'src'),
           ],
-          use: ['babel-loader', 'eslint-loader'],
+          use: ['babel-loader'],
         },
         {
           test: /\.s?css$/,
@@ -91,6 +92,7 @@ const createConfig = (env, argv) => {
     },
 
     plugins: [
+      new ESLintPlugin(),
       new HtmlPlugin({
         title: 'Nuke',
         filename: 'index.html',
@@ -151,11 +153,14 @@ const createConfig = (env, argv) => {
     devtool: 'source-map',
 
     devServer: {
-      contentBase: path.resolve(__dirname, 'public'),
+      static: {
+        directory: 'public',
+        watch: true,
+      },
       compress: true,
       host: '0.0.0.0',
       port: 3000,
-      disableHostCheck: true,
+      allowedHosts: 'all',
       historyApiFallback: {
         disableDotRule: true,
       },
