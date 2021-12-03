@@ -1,5 +1,5 @@
 import {lazy, Suspense, useContext} from 'react';
-import {Switch, Route, Redirect, useRouteMatch} from 'react-router-dom';
+import {Routes, Route, Navigate} from 'react-router-dom';
 import {useAuthValue, useLogout} from '@xorkevin/turbine';
 import {
   useDarkModeValue,
@@ -30,7 +30,6 @@ const Conduit = () => {
   const menu = useMenu();
   const logout = useLogout();
   const {username, first_name, last_name} = useAuthValue();
-  const match = useRouteMatch();
 
   return (
     <MainContent>
@@ -40,11 +39,7 @@ const Conduit = () => {
             <SidebarHeader>
               <h3>Conduit</h3>
             </SidebarHeader>
-            <SidebarItem
-              link={`${match.url}/chat`}
-              local
-              icon={<FaIcon icon="commenting" />}
-            >
+            <SidebarItem link="chat" local icon={<FaIcon icon="commenting" />}>
               DMs
             </SidebarItem>
             <SidebarItem
@@ -102,12 +97,10 @@ const Conduit = () => {
         </Column>
         <Column fullWidth lg={22} sm={20}>
           <Suspense fallback={ctx.fallbackView}>
-            <Switch>
-              <Route path={`${match.path}/chat`}>
-                <ConduitChat />
-              </Route>
-              <Redirect to={`${match.url}/chat`} />
-            </Switch>
+            <Routes>
+              <Route path="chat/*" element={<ConduitChat />} />
+              <Route path="*" element={<Navigate to="chat" replace />} />
+            </Routes>
           </Suspense>
         </Column>
       </Grid>

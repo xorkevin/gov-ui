@@ -1,5 +1,5 @@
 import {lazy, Suspense, useContext} from 'react';
-import {Switch, Route, Redirect, useRouteMatch} from 'react-router-dom';
+import {Routes, Route, Navigate, useHref} from 'react-router-dom';
 import {
   MainContent,
   Section,
@@ -26,9 +26,9 @@ const DevApikeyContainer = lazy(() => import('./developer/apikey'));
 
 const Account = () => {
   const ctx = useContext(GovUICtx);
-  const match = useRouteMatch();
-  const pathConfirmEmail = `${match.url}/confirm/email`;
-  const pathSecurity = `${match.url}/security`;
+  const matchURL = useHref('');
+  const pathConfirmEmail = `${matchURL}/confirm/email`;
+  const pathSecurity = `${matchURL}/security`;
   return (
     <MainContent>
       <Section>
@@ -38,14 +38,14 @@ const Account = () => {
               <Sidebar>
                 <SidebarHeader>Settings</SidebarHeader>
                 <SidebarItem
-                  link={`${match.url}/account`}
+                  link="account"
                   local
                   icon={<FaIcon icon="id-card-o" />}
                 >
                   Account
                 </SidebarItem>
                 <SidebarItem
-                  link={`${match.url}/security`}
+                  link="security"
                   local
                   icon={<FaIcon icon="lock" />}
                 >
@@ -53,7 +53,7 @@ const Account = () => {
                 </SidebarItem>
                 {ctx.enableOAuth && (
                   <SidebarItem
-                    link={`${match.url}/oauth`}
+                    link="oauth"
                     local
                     icon={<FaIcon icon="openid" />}
                   >
@@ -62,7 +62,7 @@ const Account = () => {
                 )}
                 {ctx.enableUserOrgs && (
                   <SidebarItem
-                    link={`${match.url}/orgs`}
+                    link="orgs"
                     local
                     icon={<FaIcon icon="sitemap" />}
                   >
@@ -70,7 +70,7 @@ const Account = () => {
                   </SidebarItem>
                 )}
                 <SidebarItem
-                  link={`${match.url}/invitations`}
+                  link="invitations"
                   local
                   icon={<FaIcon icon="envelope-o" />}
                 >
@@ -79,7 +79,7 @@ const Account = () => {
                 <SidebarDivider />
                 <SidebarHeader>Developer</SidebarHeader>
                 <SidebarItem
-                  link={`${match.url}/dev/apikey`}
+                  link="dev/apikey"
                   local
                   icon={<FaIcon icon="code" />}
                 >
@@ -89,34 +89,33 @@ const Account = () => {
             </Column>
             <Column fullWidth md={18}>
               <Suspense fallback={ctx.fallbackView}>
-                <Switch>
-                  <Route path={`${match.path}/account`}>
-                    <AccountDetailsContainer />
-                  </Route>
-                  <Route path={`${match.path}/security`}>
-                    <SecurityContainer pathConfirm={pathConfirmEmail} />
-                  </Route>
-                  <Route path={`${match.path}/confirm/email`}>
-                    <EmailConfirmContainer pathSecurity={pathSecurity} />
-                  </Route>
+                <Routes>
+                  <Route path="account" element={<AccountDetailsContainer />} />
+                  <Route
+                    path="security"
+                    element={
+                      <SecurityContainer pathConfirm={pathConfirmEmail} />
+                    }
+                  />
+                  <Route
+                    path="confirm/email"
+                    element={
+                      <EmailConfirmContainer pathSecurity={pathSecurity} />
+                    }
+                  />
                   {ctx.enableOAuth && (
-                    <Route path={`${match.path}/oauth`}>
-                      <OAuthContainer />
-                    </Route>
+                    <Route path="oauth" element={<OAuthContainer />} />
                   )}
-                  <Route path={`${match.path}/invitations`}>
-                    <InvitationsContainer />
-                  </Route>
+                  <Route
+                    path="invitations"
+                    element={<InvitationsContainer />}
+                  />
                   {ctx.enableUserOrgs && (
-                    <Route path={`${match.path}/orgs`}>
-                      <OrgsContainer />
-                    </Route>
+                    <Route path="orgs" element={<OrgsContainer />} />
                   )}
-                  <Route path={`${match.path}/dev/apikey`}>
-                    <DevApikeyContainer />
-                  </Route>
-                  <Redirect to={`${match.url}/account`} />
-                </Switch>
+                  <Route path="dev/apikey" element={<DevApikeyContainer />} />
+                  <Route path="*" element={<Navigate to="account" replace />} />
+                </Routes>
               </Suspense>
             </Column>
           </Grid>

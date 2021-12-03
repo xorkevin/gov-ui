@@ -1,5 +1,5 @@
 import {lazy, Suspense, useContext} from 'react';
-import {Switch, Route, Redirect, useRouteMatch} from 'react-router-dom';
+import {Routes, Route, Navigate} from 'react-router-dom';
 import {
   MainContent,
   Section,
@@ -21,7 +21,6 @@ const ApprovalsContainer = lazy(() => import('./approvals'));
 
 const Admin = () => {
   const ctx = useContext(GovUICtx);
-  const match = useRouteMatch();
   return (
     <MainContent>
       <Section>
@@ -30,22 +29,18 @@ const Admin = () => {
             <Column fullWidth md={6}>
               <Sidebar>
                 <SidebarHeader>Users</SidebarHeader>
-                <SidebarItem
-                  link={`${match.url}/users`}
-                  local
-                  icon={<FaIcon icon="users" />}
-                >
+                <SidebarItem link="users" local icon={<FaIcon icon="users" />}>
                   Users
                 </SidebarItem>
                 <SidebarItem
-                  link={`${match.url}/invitations`}
+                  link="invitations"
                   local
                   icon={<FaIcon icon="envelope-o" />}
                 >
                   Invitations
                 </SidebarItem>
                 <SidebarItem
-                  link={`${match.url}/approvals`}
+                  link="approvals"
                   local
                   icon={<FaIcon icon="inbox" />}
                 >
@@ -54,7 +49,7 @@ const Admin = () => {
                 <SidebarHeader>Integrations</SidebarHeader>
                 {ctx.enableOAuth && (
                   <SidebarItem
-                    link={`${match.url}/oauth`}
+                    link="oauth"
                     local
                     icon={<FaIcon icon="openid" />}
                   >
@@ -65,23 +60,18 @@ const Admin = () => {
             </Column>
             <Column fullWidth md={18}>
               <Suspense fallback={ctx.fallbackView}>
-                <Switch>
-                  <Route path={`${match.path}/users`}>
-                    <UsersContainer />
-                  </Route>
-                  <Route path={`${match.path}/invitations`}>
-                    <InvitationsContainer />
-                  </Route>
-                  <Route path={`${match.path}/approvals`}>
-                    <ApprovalsContainer />
-                  </Route>
+                <Routes>
+                  <Route path="users/*" element={<UsersContainer />} />
+                  <Route
+                    path="invitations"
+                    element={<InvitationsContainer />}
+                  />
+                  <Route path="approvals" element={<ApprovalsContainer />} />
                   {ctx.enableOAuth && (
-                    <Route path={`${match.path}/oauth`}>
-                      <OAuthAppContainer />
-                    </Route>
+                    <Route path="oauth" element={<OAuthAppContainer />} />
                   )}
-                  <Redirect to={`${match.url}/users`} />
-                </Switch>
+                  <Route path="*" element={<Navigate to="users" replace />} />
+                </Routes>
               </Suspense>
             </Column>
           </Grid>

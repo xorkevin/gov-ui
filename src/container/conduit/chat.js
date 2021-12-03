@@ -6,13 +6,7 @@ import {
   useCallback,
   useRef,
 } from 'react';
-import {
-  Switch,
-  Route,
-  Redirect,
-  useRouteMatch,
-  useParams,
-} from 'react-router-dom';
+import {Routes, Route, Navigate, useParams} from 'react-router-dom';
 import {useAPI, useResource, selectAPINull} from '@xorkevin/substation';
 import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
@@ -100,7 +94,6 @@ const Chat = ({allChatsMap, invalidateChat}) => {
 const ChatRow = ({chat, usersCache}) => {
   const {userid} = useAuthValue();
 
-  const match = useRouteMatch();
   const menu = useMenu();
 
   const menuToggle = menu.toggle;
@@ -119,7 +112,7 @@ const ChatRow = ({chat, usersCache}) => {
   }, []);
 
   return (
-    <ListItem local link={`${match.url}/${chat.chatid}`}>
+    <ListItem local link={chat.chatid}>
       <Grid justify="space-between" align="center" nowrap>
         <Column className="minwidth0" grow="1">
           <h5>
@@ -403,8 +396,6 @@ const chatsReducer = (state, action) => {
 };
 
 const ConduitChat = () => {
-  const match = useRouteMatch();
-
   const [chats, dispatchChats] = useReducer(chatsReducer, {
     chats: [],
     users: {},
@@ -556,18 +547,19 @@ const ConduitChat = () => {
         </Grid>
       </Column>
       <Column fullWidth sm={18}>
-        <Switch>
-          <Route exact path={`${match.path}`}>
-            <SelectAChat />
-          </Route>
-          <Route path={`${match.path}/:chatid`}>
-            <Chat
-              allChatsMap={chats.allChatsMap}
-              invalidateChat={invalidateChat}
-            />
-          </Route>
-          <Redirect to={`${match.url}`} />
-        </Switch>
+        <Routes>
+          <Route index element={<SelectAChat />} />
+          <Route
+            path=":chatid"
+            element={
+              <Chat
+                allChatsMap={chats.allChatsMap}
+                invalidateChat={invalidateChat}
+              />
+            }
+          />
+          <Route path="*" element={<Navigate to="" replace />} />
+        </Routes>
       </Column>
     </Grid>
   );

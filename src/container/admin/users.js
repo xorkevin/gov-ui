@@ -1,5 +1,5 @@
 import {Fragment, useCallback, useMemo, useContext} from 'react';
-import {Switch, Route, useRouteMatch, useParams} from 'react-router-dom';
+import {Routes, Route, useHref, useParams} from 'react-router-dom';
 import {useAPI, useResource, selectAPINull} from '@xorkevin/substation';
 import {AuthCtx, useAuthValue, useAuthCall} from '@xorkevin/turbine';
 import {
@@ -30,8 +30,6 @@ const selectAPIEditRank = (api) => api.u.user.id.edit.rank;
 const selectAPISearch = (api) => api.u.user.search;
 
 const UserSearch = () => {
-  const match = useRouteMatch();
-
   const form = useForm({
     username: '',
   });
@@ -63,7 +61,7 @@ const UserSearch = () => {
           />
         </Form>
         <ButtonGroup>
-          <Anchor local href={`${match.url}/${form.state.username}`}>
+          <Anchor local href={form.state.username}>
             <ButtonPrimary>Search</ButtonPrimary>
           </Anchor>
         </ButtonGroup>
@@ -195,20 +193,15 @@ const UserDetails = ({back}) => {
 };
 
 const Users = () => {
-  const match = useRouteMatch();
-
+  const matchURL = useHref('');
   return (
     <div>
       <h3>Manage Roles</h3>
       <hr />
-      <Switch>
-        <Route exact path={match.path}>
-          <UserSearch />
-        </Route>
-        <Route path={`${match.path}/:username`}>
-          <UserDetails back={match.url} />
-        </Route>
-      </Switch>
+      <Routes>
+        <Route index element={<UserSearch />} />
+        <Route path=":username" element={<UserDetails back={matchURL} />} />
+      </Routes>
     </div>
   );
 };
