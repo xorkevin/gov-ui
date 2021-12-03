@@ -1,5 +1,5 @@
 import {lazy, Suspense, useContext} from 'react';
-import {Switch, Route, Redirect, useRouteMatch} from 'react-router-dom';
+import {Routes, Route, Navigate} from 'react-router-dom';
 import {
   MainContent,
   Section,
@@ -20,7 +20,6 @@ const QRCode = lazy(() => import('./qrcode'));
 
 const DevtoolsContainer = () => {
   const ctx = useContext(GovUICtx);
-  const match = useRouteMatch();
   return (
     <MainContent>
       <Section>
@@ -31,21 +30,17 @@ const DevtoolsContainer = () => {
                 <SidebarHeader>Devtools</SidebarHeader>
                 <SidebarItem
                   local
-                  link={`${match.url}/dash`}
+                  link="dash"
                   icon={<FaIcon icon="television" />}
                 >
                   Dashboard
                 </SidebarItem>
-                <SidebarItem
-                  local
-                  link={`${match.url}/oauth`}
-                  icon={<FaIcon icon="openid" />}
-                >
+                <SidebarItem local link="oauth" icon={<FaIcon icon="openid" />}>
                   OAuth
                 </SidebarItem>
                 <SidebarItem
                   local
-                  link={`${match.url}/qrcode`}
+                  link="qrcode"
                   icon={<FaIcon icon="qrcode" />}
                 >
                   QRCode
@@ -54,18 +49,12 @@ const DevtoolsContainer = () => {
             </Column>
             <Column fullWidth md={18} lg={20}>
               <Suspense fallback={ctx.fallbackView}>
-                <Switch>
-                  <Route path={`${match.path}/dash`}>
-                    <Dash />
-                  </Route>
-                  <Route path={`${match.path}/oauth`}>
-                    <OAuth />
-                  </Route>
-                  <Route path={`${match.path}/qrcode`}>
-                    <QRCode />
-                  </Route>
-                  <Redirect to={`${match.url}/dash`} />
-                </Switch>
+                <Routes>
+                  <Route path="dash" element={<Dash />} />
+                  <Route path="oauth/*" element={<OAuth />} />
+                  <Route path="qrcode" element={<QRCode />} />
+                  <Route path="*" element={<Navigate to="dash" replace />} />
+                </Routes>
               </Suspense>
             </Column>
           </Grid>

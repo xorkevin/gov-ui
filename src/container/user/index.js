@@ -1,5 +1,5 @@
 import {lazy, useContext} from 'react';
-import {Switch, Route, Redirect, useRouteMatch} from 'react-router-dom';
+import {Routes, Route, Navigate} from 'react-router-dom';
 
 import {GovUICtx} from '../../middleware';
 
@@ -7,14 +7,11 @@ const UserDetailsContainer = lazy(() => import('./user'));
 
 const User = () => {
   const ctx = useContext(GovUICtx);
-  const match = useRouteMatch();
   return (
-    <Switch>
-      <Route path={`${match.path}/:username`}>
-        <UserDetailsContainer />
-      </Route>
-      <Redirect to={ctx.pathHome} />
-    </Switch>
+    <Routes>
+      <Route path=":username" element={<UserDetailsContainer />} />
+      <Route path="*" element={<Navigate to={ctx.pathHome} replace />} />
+    </Routes>
   );
 };
 

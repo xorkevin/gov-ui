@@ -6,13 +6,7 @@ import {
   useMemo,
   useContext,
 } from 'react';
-import {
-  Switch,
-  Route,
-  Redirect,
-  useRouteMatch,
-  useLocation,
-} from 'react-router-dom';
+import {Routes, Route, Navigate, useHref, useLocation} from 'react-router-dom';
 import {useResource, makeFetch} from '@xorkevin/substation';
 import {useAuthResource} from '@xorkevin/turbine';
 import {
@@ -1097,17 +1091,13 @@ const OAuthCB = () => {
 };
 
 const OAuth = () => {
-  const match = useRouteMatch();
+  const matchURL = useHref('');
   return (
-    <Switch>
-      <Route exact path={`${match.path}`}>
-        <OAuthTool pathCallback={`${match.url}/cb`} />
-      </Route>
-      <Route path={`${match.path}/cb`}>
-        <OAuthCB />
-      </Route>
-      <Redirect to={`${match.url}`} />
-    </Switch>
+    <Routes>
+      <Route index element={<OAuthTool pathCallback={`${matchURL}/cb`} />} />
+      <Route path="cb" element={<OAuthCB />} />
+      <Route path="*" element={<Navigate to="" replace />} />
+    </Routes>
   );
 };
 

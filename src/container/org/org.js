@@ -1,11 +1,5 @@
 import {lazy, Suspense, useMemo, useContext} from 'react';
-import {
-  Switch,
-  Route,
-  Redirect,
-  useRouteMatch,
-  useParams,
-} from 'react-router-dom';
+import {Routes, Route, Navigate, useParams} from 'react-router-dom';
 import {useResource} from '@xorkevin/substation';
 import {useIntersectRoles} from '@xorkevin/turbine';
 import {
@@ -31,7 +25,6 @@ const selectAPIOrg = (api) => api.orgs.name;
 
 const Org = ({pathOrg}) => {
   const ctx = useContext(GovUICtx);
-  const match = useRouteMatch();
   const {name} = useParams();
 
   const [org, reexecute] = useResource(selectAPIOrg, [name], {
@@ -73,14 +66,14 @@ const Org = ({pathOrg}) => {
                 <Sidebar>
                   <SidebarItem
                     local
-                    link={`${match.url}/overview`}
+                    link="overview"
                     icon={<FaIcon icon="square" />}
                   >
                     Overview
                   </SidebarItem>
                   <SidebarItem
                     local
-                    link={`${match.url}/members`}
+                    link="members"
                     icon={<FaIcon icon="users" />}
                   >
                     Members
@@ -88,7 +81,7 @@ const Org = ({pathOrg}) => {
                   {isMod && (
                     <SidebarItem
                       local
-                      link={`${match.url}/manage`}
+                      link="manage"
                       icon={<FaIcon icon="th-list" />}
                     >
                       Manage
@@ -97,7 +90,7 @@ const Org = ({pathOrg}) => {
                   {isMod && (
                     <SidebarItem
                       local
-                      link={`${match.url}/invitations`}
+                      link="invitations"
                       icon={<FaIcon icon="envelope-o" />}
                     >
                       Invitations
@@ -106,7 +99,7 @@ const Org = ({pathOrg}) => {
                   {isMod && (
                     <SidebarItem
                       local
-                      link={`${match.url}/settings`}
+                      link="settings"
                       icon={<FaIcon icon="cog" />}
                     >
                       Settings
@@ -116,35 +109,45 @@ const Org = ({pathOrg}) => {
               </Column>
               <Column fullWidth md={18}>
                 <Suspense fallback={ctx.fallbackView}>
-                  <Switch>
-                    <Route path={`${match.path}/overview`}>
-                      <OrgOverview org={org.data} />
-                    </Route>
-                    <Route path={`${match.path}/members`}>
-                      <OrgMembers org={org.data} />
-                    </Route>
+                  <Routes>
+                    <Route
+                      path="overview"
+                      element={<OrgOverview org={org.data} />}
+                    />
+                    <Route
+                      path="members"
+                      element={<OrgMembers org={org.data} />}
+                    />
                     {isMod && (
-                      <Route path={`${match.path}/manage`}>
-                        <OrgManage org={org.data} />
-                      </Route>
+                      <Route
+                        path="manage"
+                        element={<OrgManage org={org.data} />}
+                      />
                     )}
                     {isMod && (
-                      <Route path={`${match.path}/invitations`}>
-                        <OrgInvitations org={org.data} />
-                      </Route>
+                      <Route
+                        path="invitations"
+                        element={<OrgInvitations org={org.data} />}
+                      />
                     )}
                     {isMod && (
-                      <Route path={`${match.path}/settings`}>
-                        <OrgSettings
-                          org={org.data}
-                          pathOrgSettings={`${pathOrg}/settings`}
-                          refresh={reexecute}
-                          pathHome={ctx.pathHome}
-                        />
-                      </Route>
+                      <Route
+                        path="settings"
+                        element={
+                          <OrgSettings
+                            org={org.data}
+                            pathOrgSettings={`${pathOrg}/settings`}
+                            refresh={reexecute}
+                            pathHome={ctx.pathHome}
+                          />
+                        }
+                      />
                     )}
-                    <Redirect to={`${match.path}/overview`} />
-                  </Switch>
+                    <Route
+                      path="*"
+                      element={<Navigate to="overview" replace />}
+                    />
+                  </Routes>
                 </Suspense>
               </Column>
             </Grid>
