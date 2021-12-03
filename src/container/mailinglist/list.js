@@ -1,11 +1,5 @@
 import {lazy, Suspense, useCallback, useMemo, useContext} from 'react';
-import {
-  Switch,
-  Route,
-  Redirect,
-  useRouteMatch,
-  useParams,
-} from 'react-router-dom';
+import {Routes, Route, Navigate, useHref, useParams} from 'react-router-dom';
 import {useResource, selectAPINull} from '@xorkevin/substation';
 import {useAuthValue, useAuthCall} from '@xorkevin/turbine';
 import {
@@ -36,7 +30,7 @@ const selectAPIOrg = (api) => api.orgs.id.get;
 
 const List = () => {
   const ctx = useContext(GovUICtx);
-  const match = useRouteMatch();
+  const matchURL = useHref('');
 
   const snackSub = useSnackbarView(
     <SnackbarSurface>&#x2713; Subscribed</SnackbarSurface>,
@@ -164,18 +158,22 @@ const List = () => {
             <p>{list.data.desc}</p>
             <hr />
             <Suspense fallback={ctx.fallbackView}>
-              <Switch>
-                <Route exact path={`${match.path}`}>
-                  <Threads
-                    list={list.data}
-                    threadurl={`${match.url}/threads/{0}`}
-                  />
-                </Route>
-                <Route exact path={`${match.path}/threads/:threadid`}>
-                  <Thread list={list.data} />
-                </Route>
-                <Redirect to={match.url} />
-              </Switch>
+              <Routes>
+                <Route
+                  index
+                  element={
+                    <Threads
+                      list={list.data}
+                      threadurl={`${matchURL}/threads/{0}`}
+                    />
+                  }
+                />
+                <Route
+                  path="threads/:threadid"
+                  element={<Thread list={list.data} />}
+                />
+                <Route path="*" element={<Navigate to="" replace />} />
+              </Routes>
             </Suspense>
           </Column>
         </Grid>

@@ -1,11 +1,5 @@
 import {Fragment, lazy, Suspense, useMemo, useContext} from 'react';
-import {
-  Switch,
-  Route,
-  Redirect,
-  useRouteMatch,
-  useParams,
-} from 'react-router-dom';
+import {Routes, Route, Navigate, useHref, useParams} from 'react-router-dom';
 import {useResource, selectAPINull} from '@xorkevin/substation';
 import {useAuthValue, useIntersectRoles} from '@xorkevin/turbine';
 import {
@@ -35,7 +29,7 @@ const List = ({listurl, baseurl}) => {
   const ctx = useContext(GovUICtx);
   const {userid, username} = useAuthValue();
 
-  const match = useRouteMatch();
+  const matchURL = useHref('');
   const {listid} = useParams();
 
   const [list, reexecute] = useResource(
@@ -112,46 +106,49 @@ const List = ({listurl, baseurl}) => {
           </Grid>
           <hr />
           <Tabbar>
-            <TabItem local link={`${match.url}/threads`}>
+            <TabItem local link="threads">
               Threads
             </TabItem>
-            <TabItem local link={`${match.url}/msgs`}>
+            <TabItem local link="msgs">
               Messages
             </TabItem>
-            <TabItem local link={`${match.url}/members`}>
+            <TabItem local link="members">
               Members
             </TabItem>
-            <TabItem local link={`${match.url}/settings`}>
+            <TabItem local link="settings">
               Settings
             </TabItem>
           </Tabbar>
           <Suspense fallback={ctx.fallbackView}>
-            <Switch>
-              <Route exact path={`${match.path}/threads`}>
-                <Threads
-                  list={list.data}
-                  threadurl={`${match.url}/threads/{0}`}
-                />
-              </Route>
-              <Route path={`${match.path}/threads/:threadid`}>
-                <Thread list={list.data} />
-              </Route>
-              <Route path={`${match.path}/msgs`}>
-                <Msgs list={list.data} />
-              </Route>
-              <Route path={`${match.path}/members`}>
-                <Members list={list.data} />
-              </Route>
-              <Route path={`${match.path}/settings`}>
-                <Settings
-                  list={list.data}
-                  creatorName={creatorName}
-                  refresh={reexecute}
-                  baseurl={baseurl}
-                />
-              </Route>
-              <Redirect to={`${match.path}/threads`} />
-            </Switch>
+            <Routes>
+              <Route
+                path="threads"
+                element={
+                  <Threads
+                    list={list.data}
+                    threadurl={`${matchURL}/threads/{0}`}
+                  />
+                }
+              />
+              <Route
+                path="threads/:threadid"
+                element={<Thread list={list.data} />}
+              />
+              <Route path="msgs" element={<Msgs list={list.data} />} />
+              <Route path="members" element={<Members list={list.data} />} />
+              <Route
+                path="settings"
+                element={
+                  <Settings
+                    list={list.data}
+                    creatorName={creatorName}
+                    refresh={reexecute}
+                    baseurl={baseurl}
+                  />
+                }
+              />
+              <Route path="*" element={<Navigate to="threads" replace />} />
+            </Routes>
           </Suspense>
         </Fragment>
       )}
