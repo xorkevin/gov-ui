@@ -8,7 +8,7 @@ const ForgotPassContainer = lazy(() => import('./forgotpassword'));
 const ResetPassContainer = lazy(() => import('./resetpassword'));
 
 const Login = () => {
-  const matchURL = useHref();
+  const matchURL = useHref('');
   const pathLogin = `${matchURL}/login`;
   const pathCreate = `${matchURL}/create`;
   const pathConfirm = `${matchURL}/confirm`;
