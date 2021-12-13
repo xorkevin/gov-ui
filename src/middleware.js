@@ -78,11 +78,13 @@ const allScopes = Object.freeze([
   // user.approval
   'gov.user.approval:read',
   'gov.user.approval:write',
-  // user.oauth
-  'gov.user.oauth.app:read',
-  'gov.user.oauth.app:write',
-  'gov.user.oauth.connection:read',
-  'gov.user.oauth.connection:write',
+  // oauth
+  'gov.oauth.app:read',
+  'gov.oauth.app:write',
+  'gov.oauth.connection:read',
+  'gov.oauth.connection:write',
+  // org
+  'gov.org:write',
   // profile
   'gov.profile:read',
   'gov.profile:write',
@@ -91,6 +93,14 @@ const allScopes = Object.freeze([
   'gov.courier.link:write',
   'gov.courier.brand:read',
   'gov.courier.brand:write',
+  // conduit.chat
+  'gov.conduit.chat:read',
+  'gov.conduit.chat:write',
+  'gov.conduit.chat.admin:write',
+  // mailinglist
+  'gov.mailinglist:read',
+  'gov.mailinglist:write',
+  'gov.mailinglist.sub:write',
 ]);
 
 const allScopeDesc = Object.freeze({
@@ -110,11 +120,13 @@ const allScopeDesc = Object.freeze({
   // user.approval
   'gov.user.approval:read': 'Read new user requests',
   'gov.user.approval:write': 'Delete new user requests',
-  // user.oauth
-  'gov.user.oauth.app:read': 'Read all oauth apps',
-  'gov.user.oauth.app:write': 'Edit oauth apps',
-  'gov.user.oauth.connection:read': 'Read user oauth app connections',
-  'gov.user.oauth.connection:write': 'Edit user oauth app connections',
+  // oauth
+  'gov.oauth.app:read': 'Read all oauth apps',
+  'gov.oauth.app:write': 'Edit oauth apps',
+  'gov.oauth.connection:read': 'Read user oauth app connections',
+  'gov.oauth.connection:write': 'Edit user oauth app connections',
+  // org
+  'gov.org:write': 'Edit org settings',
   // profile
   'gov.profile:read': 'Read user profile',
   'gov.profile:write': 'Edit user profile',
@@ -123,6 +135,14 @@ const allScopeDesc = Object.freeze({
   'gov.courier.link:write': 'Edit courier links',
   'gov.courier.brand:read': 'Read all courier brands',
   'gov.courier.brand:write': 'Edit courier brands',
+  // conduit.chat
+  'gov.conduit.chat:read': 'Read conduit chats',
+  'gov.conduit.chat:write': 'Send conduit chats',
+  'gov.conduit.chat.admin:write': 'Manage conduit chats',
+  // mailinglist
+  'gov.mailinglist:read': 'Read mailing lists',
+  'gov.mailinglist:write': 'Edit mailing list settings',
+  'gov.mailinglist.sub:write': 'Manage mailing list subscriptions',
 });
 
 const rolesToScopes = Object.freeze({
