@@ -170,7 +170,7 @@ const List = () => {
                 />
                 <Route
                   path="threads/:threadid"
-                  element={<Thread list={list.data} />}
+                  element={<Thread list={list.data} back={matchURL} />}
                 />
                 <Route path="*" element={<Navigate to="" replace />} />
               </Routes>

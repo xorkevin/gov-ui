@@ -11,8 +11,10 @@ import {
   ModalSurface,
   useModal,
   usePaginate,
+  Anchor,
   ButtonGroup,
   Chip,
+  FaIcon,
   Tooltip,
   Time,
 } from '@xorkevin/nuke';
@@ -152,7 +154,7 @@ const ViewThread = ({msg, user}) => {
   );
 };
 
-const Thread = ({list}) => {
+const Thread = ({list, back}) => {
   const {threadid} = useParams();
 
   const [msg] = useResource(
@@ -211,6 +213,13 @@ const Thread = ({list}) => {
 
   return (
     <div>
+      <ButtonGroup>
+        <Anchor local href={back}>
+          <ButtonTertiary>
+            <FaIcon icon="chevron-left" /> Back
+          </ButtonTertiary>
+        </Anchor>
+      </ButtonGroup>
       <h5>Thread</h5>
       {msg.success && (
         <ViewThread msg={msg.data} user={userMap[msg.data.userid]} />
