@@ -50,7 +50,7 @@ const Nav = ({closeOnClick, right, menucontent, menuend, children}) => {
             </NavItem>
           )}
           <NavItem forwardedRef={menu.anchorRef} onClick={menu.toggle}>
-            {profile.success && profile.data.image && (
+            {loggedIn && profile.success && profile.data.image && (
               <Img
                 className="navbar-profile-picture"
                 src={imageURL}
