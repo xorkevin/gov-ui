@@ -1,4 +1,4 @@
-import {Fragment, useContext} from 'react';
+import {Fragment, useState, useCallback, useContext} from 'react';
 import {emailRegex} from '../utility';
 import {useAPICall} from '@xorkevin/substation';
 import {
@@ -7,6 +7,7 @@ import {
   Container,
   Card,
   Field,
+  FieldSwitch,
   Form,
   useForm,
   Anchor,
@@ -52,6 +53,22 @@ const formValidCheck = ({username, password, email, first_name, last_name}) => {
 
 const Setup = () => {
   const ctx = useContext(GovUICtx);
+
+  const [firstSetup, setFirstSetup] = useState(true);
+  const updateFirstSetup = useCallback(
+    (_, v) => {
+      setFirstSetup(v);
+    },
+    [setFirstSetup],
+  );
+  const [setupSecret, setSetupSecret] = useState('');
+  const updateSetupSecret = useCallback(
+    (_, v) => {
+      setSetupSecret(v);
+    },
+    [setSetupSecret],
+  );
+
   const form = useForm({
     username: '',
     password: '',
@@ -60,7 +77,11 @@ const Setup = () => {
     last_name: '',
   });
 
-  const [setup, execSetup] = useAPICall(selectAPISetup, [form.state], {});
+  const [setup, execSetup] = useAPICall(
+    selectAPISetup,
+    [firstSetup, firstSetup ? '' : setupSecret, form.state],
+    {},
+  );
 
   return (
     <MainContent>
@@ -140,7 +161,32 @@ const Setup = () => {
                   fullWidth
                   autoComplete="email"
                 />
+                <Field
+                  name="email"
+                  type="email"
+                  label="email"
+                  fullWidth
+                  autoComplete="email"
+                />
               </Form>
+              <FieldSwitch
+                name="toggle"
+                value={firstSetup}
+                onChange={updateFirstSetup}
+                label="First setup"
+                hint="Running setup for the first time"
+                fullWidth
+              />
+              {!firstSetup && (
+                <Field
+                  name="setupsecret"
+                  value={setupSecret}
+                  onChange={updateSetupSecret}
+                  type="password"
+                  label="Setup secret"
+                  fullWidth
+                />
+              )}
               {setup.err && <p>{setup.err.message}</p>}
               {setup.success && <p>Server successfully setup</p>}
             </Container>

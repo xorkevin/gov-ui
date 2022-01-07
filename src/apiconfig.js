@@ -54,8 +54,10 @@ const mailinglist = (url = '/mailinglist') => ({
 const setupz = () => ({
   url: '/setupz',
   method: 'POST',
-  transformer: (admin) => ({
+  transformer: (first, secret, admin) => ({
     json: {
+      first,
+      secret,
       admin,
     },
   }),
