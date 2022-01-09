@@ -132,7 +132,7 @@ const List = ({listurl, baseurl}) => {
               />
               <Route
                 path="threads/:threadid"
-                element={<Thread list={list.data} />}
+                element={<Thread list={list.data} back={matchURL} />}
               />
               <Route path="msgs" element={<Msgs list={list.data} />} />
               <Route path="members" element={<Members list={list.data} />} />

@@ -18,6 +18,7 @@ import {
   useSnackbar,
   useSnackbarView,
   usePaginate,
+  Anchor,
   ButtonGroup,
   FaIcon,
   Chip,
@@ -219,7 +220,7 @@ const ViewThread = ({msg, user, list, posthookDelete, errhook}) => {
   );
 };
 
-const ManageThread = ({list}) => {
+const ManageThread = ({list, back}) => {
   const {threadid} = useParams();
 
   const snackbar = useSnackbar();
@@ -296,7 +297,13 @@ const ManageThread = ({list}) => {
 
   return (
     <div>
-      <h5>Thread</h5>
+      <ButtonGroup>
+        <Anchor local href={back}>
+          <ButtonTertiary>
+            <FaIcon icon="chevron-left" /> Back
+          </ButtonTertiary>
+        </Anchor>
+      </ButtonGroup>
       {msg.success && (
         <ViewThread
           msg={msg.data}
@@ -307,7 +314,6 @@ const ManageThread = ({list}) => {
         />
       )}
       {msg.err && <p>{msg.err.message}</p>}
-      <h5>Replies</h5>
       <ListGroup>
         {Array.isArray(msgs.data) &&
           msgs.data.map((i) => (

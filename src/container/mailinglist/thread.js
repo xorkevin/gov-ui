@@ -220,12 +220,10 @@ const Thread = ({list, back}) => {
           </ButtonTertiary>
         </Anchor>
       </ButtonGroup>
-      <h5>Thread</h5>
       {msg.success && (
         <ViewThread msg={msg.data} user={userMap[msg.data.userid]} />
       )}
       {msg.err && <p>{msg.err.message}</p>}
-      <h5>Replies</h5>
       <ListGroup>
         {Array.isArray(msgs.data) &&
           msgs.data.map((i) => (
