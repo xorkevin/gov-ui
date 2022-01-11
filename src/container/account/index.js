@@ -66,7 +66,7 @@ const Account = () => {
                     local
                     icon={<FaIcon icon="sitemap" />}
                   >
-                    Organaizations
+                    Organizations
                   </SidebarItem>
                 )}
                 <SidebarItem
