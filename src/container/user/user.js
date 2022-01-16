@@ -1,6 +1,7 @@
-import {useContext} from 'react';
+import {useCallback, useContext} from 'react';
 import {useParams} from 'react-router-dom';
 import {useURL, useResource, selectAPINull} from '@xorkevin/substation';
+import {useAuthValue, useAuthCall} from '@xorkevin/turbine';
 import {
   MainContent,
   Section,
@@ -8,8 +9,13 @@ import {
   Grid,
   Column,
   Card,
+  SnackbarSurface,
+  useSnackbar,
+  useSnackbarView,
+  ButtonGroup,
   Time,
 } from '@xorkevin/nuke';
+import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 import Img from '@xorkevin/nuke/src/component/image/rounded';
 
 import {GovUICtx} from '../../middleware';
@@ -17,10 +23,23 @@ import {GovUICtx} from '../../middleware';
 const selectAPIUser = (api) => api.u.user.name;
 const selectAPIProfile = (api) => api.profile.id;
 const selectAPIImage = (api) => api.profile.id.image;
+const selectAPISendInvite = (api) => api.conduit.friend.invitation.id.send;
 
 const UserDetails = () => {
   const ctx = useContext(GovUICtx);
+  const {loggedIn, username: loggedInUsername} = useAuthValue();
   const {username} = useParams();
+
+  const snackInviteSent = useSnackbarView(
+    <SnackbarSurface>&#x2713; Request sent</SnackbarSurface>,
+  );
+  const snackbar = useSnackbar();
+  const posthookErr = useCallback(
+    (_deleteState, err) => {
+      snackbar(<SnackbarSurface>{err.message}</SnackbarSurface>);
+    },
+    [snackbar],
+  );
 
   const [account] = useResource(selectAPIUser, [username], {
     userid: '',
@@ -39,6 +58,15 @@ const UserDetails = () => {
     {bio: '', image: ''},
   );
 
+  const [_sendInv, execSendInv] = useAuthCall(
+    loggedIn && ctx.enableConduit && account.data.userid.length > 0
+      ? selectAPISendInvite
+      : selectAPINull,
+    [account.data.userid],
+    {},
+    {posthook: snackInviteSent, errhook: posthookErr},
+  );
+
   return (
     <MainContent>
       <Section>
@@ -49,7 +77,7 @@ const UserDetails = () => {
                 <Card
                   width="sm"
                   title={
-                    profile.success ? (
+                    profile.success && profile.data.image ? (
                       <Img
                         className="card-border dark"
                         src={imageURL}
@@ -69,6 +97,13 @@ const UserDetails = () => {
                     </h6>
                     {profile.success && profile.data.bio && (
                       <p>{profile.data.bio}</p>
+                    )}
+                    {loggedIn && username !== loggedInUsername && (
+                      <ButtonGroup>
+                        <ButtonTertiary onClick={execSendInv}>
+                          Send Friend Request
+                        </ButtonTertiary>
+                      </ButtonGroup>
                     )}
                   </Container>
                 </Card>

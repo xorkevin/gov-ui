@@ -38,28 +38,21 @@ const InvitationRow = ({
   inviter,
   creationTime,
   posthookRefresh,
+  posthookErr,
 }) => {
   const ctx = useContext(GovUICtx);
-
-  const snackbar = useSnackbar();
-  const displayErrSnack = useCallback(
-    (_deleteState, err) => {
-      snackbar(<SnackbarSurface>{err.message}</SnackbarSurface>);
-    },
-    [snackbar],
-  );
 
   const [_acceptInv, execAcceptInv] = useAuthCall(
     selectAPIAccept,
     [role],
     {},
-    {posthook: posthookRefresh, errhook: displayErrSnack},
+    {posthook: posthookRefresh, errhook: posthookErr},
   );
   const [_declineInv, execDeclineInv] = useAuthCall(
     selectAPIDecline,
     [role],
     {},
-    {posthook: posthookRefresh, errhook: displayErrSnack},
+    {posthook: posthookRefresh, errhook: posthookErr},
   );
 
   const menu = useMenu();
@@ -114,8 +107,16 @@ const InvitationRow = ({
 
 const RoleInvitations = () => {
   const ctx = useContext(GovUICtx);
-  const paginate = usePaginate(INVITATION_LIMIT);
 
+  const snackbar = useSnackbar();
+  const posthookErr = useCallback(
+    (_deleteState, err) => {
+      snackbar(<SnackbarSurface>{err.message}</SnackbarSurface>);
+    },
+    [snackbar],
+  );
+
+  const paginate = usePaginate(INVITATION_LIMIT);
   const setAtEnd = paginate.setAtEnd;
   const posthookInvitations = useCallback(
     (_res, invitations) => {
@@ -187,6 +188,7 @@ const RoleInvitations = () => {
                   inviter={userMap[i.invited_by]}
                   creationTime={i.creation_time}
                   posthookRefresh={posthookRefresh}
+                  posthookErr={posthookErr}
                 />
               );
             })}
