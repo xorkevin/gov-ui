@@ -85,6 +85,16 @@ export default {
       },
     },
   },
+  dm: {
+    url: '/dm',
+    method: 'GET',
+    transformer: (before, amount) => ({
+      query: {before, amount},
+    }),
+    expectjson: true,
+    selector: (_res, data) => data && data.dms,
+    err: 'Failed to get dms',
+  },
   chat: {
     url: '/chat',
     children: {
