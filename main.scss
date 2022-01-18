@@ -135,6 +135,8 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
 
 .conduit-chat-sidebar {
   height: 100%;
+  padding: 8px;
+  border-right: 1px solid $color-text-dark-3;
 }
 
 .conduit-chat-list-outer {
@@ -143,7 +145,6 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
 
 .conduit-chat-list {
   max-height: 100%;
-  border: 1px solid $color-text-dark-3;
   overflow: auto;
 
   & > .listgroup-items {
@@ -159,8 +160,12 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
   visibility: hidden;
 }
 
-.dark .conduit-chat-list {
+.dark .conduit-chat-sidebar {
   border-color: $color-text-light-3;
+}
+
+.conduit-chat {
+  padding: 8px;
 }
 
 .mailinglist-msg-section {

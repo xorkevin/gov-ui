@@ -21,8 +21,8 @@ import {
 import {GovUICtx} from '../../middleware';
 import {formatURL} from '../../utility';
 
-const ConduitChat = lazy(() => import('./chat'));
 const ConduitFriends = lazy(() => import('./friends'));
+const ConduitDMs = lazy(() => import('./dms'));
 
 const Conduit = () => {
   const ctx = useContext(GovUICtx);
@@ -34,13 +34,13 @@ const Conduit = () => {
 
   return (
     <MainContent>
-      <Grid className="conduit-root">
+      <Grid className="conduit-root" strict>
         <Column fullWidth lg={2} sm={4}>
           <Sidebar>
             <SidebarHeader>
               <h3>Conduit</h3>
             </SidebarHeader>
-            <SidebarItem link="chat" local icon={<FaIcon icon="commenting" />}>
+            <SidebarItem link="dms" local icon={<FaIcon icon="commenting" />}>
               DMs
             </SidebarItem>
             <SidebarItem link="friends" local icon={<FaIcon icon="users" />}>
@@ -102,9 +102,9 @@ const Conduit = () => {
         <Column fullWidth lg={22} sm={20}>
           <Suspense fallback={ctx.fallbackView}>
             <Routes>
-              <Route path="chat/*" element={<ConduitChat />} />
+              <Route path="dms/*" element={<ConduitDMs />} />
               <Route path="friends/*" element={<ConduitFriends />} />
-              <Route path="*" element={<Navigate to="chat" replace />} />
+              <Route path="*" element={<Navigate to="dms" replace />} />
             </Routes>
           </Suspense>
         </Column>

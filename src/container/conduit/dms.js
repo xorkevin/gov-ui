@@ -1,21 +1,16 @@
-import {Fragment, useCallback, useMemo, useContext} from 'react';
-import {Routes, Route, Navigate} from 'react-router-dom';
+import {useReducer, useEffect, useCallback, useContext} from 'react';
+import {Routes, Route, Navigate, useParams} from 'react-router-dom';
 import {useResource, selectAPINull} from '@xorkevin/substation';
 import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
-  Container,
   Grid,
   Column,
   ListGroup,
   ListItem,
-  Tabbar,
-  TabItem,
   useMenu,
   Menu,
   MenuItem,
-  SnackbarSurface,
-  useSnackbar,
-  usePaginate,
+  Anchor,
   ButtonGroup,
   FaIcon,
   Time,
@@ -27,8 +22,80 @@ import {GovUICtx} from '../../middleware';
 import {formatURL} from '../../utility';
 
 const CHATS_LIMIT = 32;
+const CHATS_SCROLL_LIMIT = 16;
 
-const selectAPIDMs = (api) => api.conduit.dm;
+const selectAPILatestDMs = (api) => api.conduit.dm;
+const selectAPIDMs = (api) => api.conduit.dm.ids;
+const selectAPIUsers = (api) => api.u.user.ids;
+
+const SelectAChat = () => {
+  return <div>Select a chat</div>;
+};
+
+const Chat = ({chatsMap, users, invalidateChat}) => {
+  const ctx = useContext(GovUICtx);
+
+  const {chatid} = useParams();
+  const chat = chatid ? chatsMap.value.get(chatid) : null;
+  const user = chat ? users.value.get(chat.userid) : null;
+
+  useEffect(() => {
+    if (chatid) {
+      invalidateChat(chatid);
+    }
+  }, [invalidateChat, chatid]);
+
+  if (!chat) {
+    return <div>Chat not found</div>;
+  }
+
+  return (
+    <div>
+      <h5>
+        {user && (
+          <AnchorText
+            local
+            href={formatURL(ctx.pathUserProfile, user.username)}
+          >
+            {user.first_name} {user.last_name}
+          </AnchorText>
+        )}
+      </h5>
+      <pre>{JSON.stringify(chat, null, '  ')}</pre>
+    </div>
+  );
+};
+
+const ChatRow = ({chat, users}) => {
+  const menu = useMenu();
+  const user = users.value.get(chat.userid);
+  return (
+    <ListItem>
+      <Grid justify="space-between" align="center" nowrap>
+        <Column className="minwidth0" grow="1">
+          <Anchor local href={chat.chatid}>
+            <div>
+              <h5>{chat.name || (user && user.username)}</h5>
+              <Time value={chat.last_updated} />
+            </div>
+          </Anchor>
+        </Column>
+        <Column shrink="0">
+          <ButtonGroup>
+            <ButtonTertiary forwardedRef={menu.anchorRef} onClick={menu.toggle}>
+              <FaIcon icon="ellipsis-v" />
+            </ButtonTertiary>
+          </ButtonGroup>
+          {menu.show && (
+            <Menu size="md" anchor={menu.anchor} close={menu.close}>
+              <MenuItem icon={<FaIcon icon="bars" />}>Action</MenuItem>
+            </Menu>
+          )}
+        </Column>
+      </Grid>
+    </ListItem>
+  );
+};
 
 const CHATS_RESET = Symbol('CHATS_RESET');
 const CHATS_APPEND = Symbol('CHATS_APPEND');
@@ -82,7 +149,7 @@ const chatsReducer = (state, action) => {
       const usersDiff = Array.from(allUsersSet);
       return {
         chats,
-        chatsMap: new Map(chats.map((i) => [i.chatid, i])),
+        chatsMap: {value: new Map(chats.map((i) => [i.chatid, i]))},
         allChatsSet: new Set(chatids),
         validChatsSet: new Set(chatids),
         chatsDiff: [],
@@ -97,10 +164,12 @@ const chatsReducer = (state, action) => {
         return state;
       }
       const addedChats = action.chats.filter((i) => {
-        if (!state.chatsMap.has(i.chatid)) {
+        if (!state.chatsMap.value.has(i.chatid)) {
           return true;
         }
-        return i.last_updated >= state.chatsMap.get(i.chatid).last_updated;
+        return (
+          i.last_updated >= state.chatsMap.value.get(i.chatid).last_updated
+        );
       });
       if (addedChats.length === 0) {
         return state;
@@ -114,10 +183,12 @@ const chatsReducer = (state, action) => {
         // reverse sort
         return b.last_updated - a.last_updated;
       });
-      const {chatsMap, allChatsSet, validChatsSet, allUsersSet, validUsersSet} =
-        state;
+      const chatsMap = {
+        value: state.chatsMap.value,
+      };
+      const {allChatsSet, validChatsSet, allUsersSet, validUsersSet} = state;
       addedChats.forEach((i) => {
-        chatsMap.set(i.chatid, i);
+        chatsMap.value.set(i.chatid, i);
         allChatsSet.add(i.chatid);
         validChatsSet.add(i.chatid);
         allUsersSet.add(i.userid);
@@ -192,7 +263,7 @@ const chatsReducer = (state, action) => {
 const DMs = () => {
   const [chats, dispatchChats] = useReducer(chatsReducer, {
     chats: [],
-    chatsMap: new Map(),
+    chatsMap: {value: new Map()},
     allChatsSet: new Set(),
     validChatsSet: new Set(),
     chatsDiff: [],
@@ -201,8 +272,73 @@ const DMs = () => {
     validUsersSet: new Set(),
     usersDiff: [],
   });
+
+  const posthookInit = useCallback(
+    (_res, chats) => {
+      dispatchChats(ChatsReset(chats));
+    },
+    [dispatchChats],
+  );
+  const [initChats] = useAuthResource(
+    selectAPILatestDMs,
+    [0, CHATS_LIMIT],
+    [],
+    {posthook: posthookInit},
+  );
+
+  const firstLastUpdated =
+    chats.chats.length === 0
+      ? 0
+      : chats.chats[chats.chats.length - 1].last_updated;
+
+  const posthookLoadChats = useCallback(
+    (_res, chats) => {
+      dispatchChats(ChatsAppend(chats));
+    },
+    [dispatchChats],
+  );
+  const [loadChats, _execLoadChats] = useAuthCall(
+    selectAPILatestDMs,
+    [firstLastUpdated, CHATS_SCROLL_LIMIT],
+    [],
+    {posthook: posthookLoadChats},
+  );
+
+  const posthookChats = useCallback(
+    (_res, chats) => {
+      dispatchChats(ChatsAppend(chats));
+    },
+    [dispatchChats],
+  );
+  const [getChats] = useAuthResource(
+    chats.chatsDiff.length > 0 ? selectAPIDMs : selectAPINull,
+    [chats.chatsDiff],
+    [],
+    {posthook: posthookChats},
+  );
+
+  const posthookUsers = useCallback(
+    (_res, users) => {
+      dispatchChats(UsersAppend(users));
+    },
+    [dispatchChats],
+  );
+  const [getUsers] = useResource(
+    chats.usersDiff.length > 0 ? selectAPIUsers : selectAPINull,
+    [chats.usersDiff],
+    [],
+    {posthook: posthookUsers},
+  );
+
+  const invalidateChat = useCallback(
+    (chatid) => {
+      dispatchChats(ChatsInvalidate([chatid]));
+    },
+    [dispatchChats],
+  );
+
   return (
-    <Grid className="conduit-chat-root">
+    <Grid className="conduit-chat-root" strict>
       <Column fullWidth sm={6}>
         <Grid className="conduit-chat-sidebar" direction="column" nowrap strict>
           <Column>
@@ -215,27 +351,29 @@ const DMs = () => {
           <Column className="conduit-chat-list-outer" grow="1" basis="0">
             <ListGroup className="conduit-chat-list">
               {chats.chats.map((i) => (
-                <ChatRow key={i.chatid} chat={i} usersCache={chats.users} />
+                <ChatRow key={i.chatid} chat={i} users={chats.users} />
               ))}
-              <div className="conduit-chat-list-end-marker" ref={endElem} />
             </ListGroup>
           </Column>
         </Grid>
       </Column>
       <Column fullWidth sm={18}>
-        <Routes>
-          <Route index element={<SelectAChat />} />
-          <Route
-            path=":chatid"
-            element={
-              <Chat
-                allChatsMap={chats.allChatsMap}
-                invalidateChat={invalidateChat}
-              />
-            }
-          />
-          <Route path="*" element={<Navigate to="" replace />} />
-        </Routes>
+        <div className="conduit-chat">
+          <Routes>
+            <Route index element={<SelectAChat />} />
+            <Route
+              path=":chatid"
+              element={
+                <Chat
+                  chatsMap={chats.chatsMap}
+                  users={chats.users}
+                  invalidateChat={invalidateChat}
+                />
+              }
+            />
+            <Route path="*" element={<Navigate to="" replace />} />
+          </Routes>
+        </div>
       </Column>
     </Grid>
   );

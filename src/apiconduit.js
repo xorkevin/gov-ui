@@ -94,6 +94,18 @@ export default {
     expectjson: true,
     selector: (_res, data) => data && data.dms,
     err: 'Failed to get dms',
+    children: {
+      ids: {
+        url: '/ids',
+        method: 'GET',
+        transformer: (ids) => ({
+          query: {ids},
+        }),
+        expectjson: true,
+        selector: (_res, data) => data && data.dms,
+        err: 'Failed to get dms',
+      },
+    },
   },
   chat: {
     url: '/chat',
