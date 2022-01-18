@@ -163,6 +163,17 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
   padding: 8px;
 }
 
+.conduit-bg-msg {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: $color-text-dark-3;
+}
+
+.dark .conduit-bg-msg {
+  color: $color-text-light-3;
+}
+
 .mailinglist-msg-section {
   padding: 8px 0;
 }

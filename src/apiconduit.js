@@ -105,6 +105,16 @@ export default {
         selector: (_res, data) => data && data.dms,
         err: 'Failed to get dms',
       },
+      search: {
+        url: '/search',
+        method: 'GET',
+        transformer: (prefix, amount) => ({
+          query: {prefix, amount},
+        }),
+        expectjson: true,
+        selector: (_res, data) => data && data.dms,
+        err: 'Failed to search dms',
+      },
     },
   },
   chat: {

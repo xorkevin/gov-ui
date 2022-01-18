@@ -1,8 +1,15 @@
 import {useReducer, useEffect, useCallback, useRef, useContext} from 'react';
-import {Routes, Route, Navigate, useParams} from 'react-router-dom';
-import {useResource, selectAPINull} from '@xorkevin/substation';
+import {
+  Routes,
+  Route,
+  Navigate,
+  useParams,
+  useNavigate,
+} from 'react-router-dom';
+import {useAPI, useResource, selectAPINull} from '@xorkevin/substation';
 import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
+  Container,
   Grid,
   Column,
   ListGroup,
@@ -10,6 +17,10 @@ import {
   useMenu,
   Menu,
   MenuItem,
+  FieldDynSearchSelect,
+  Form,
+  useForm,
+  useFormSearch,
   Anchor,
   ButtonGroup,
   FaIcon,
@@ -23,13 +34,23 @@ import {formatURL} from '../../utility';
 
 const CHATS_LIMIT = 32;
 const CHATS_SCROLL_LIMIT = 16;
+const CHATS_SEARCH_LIMIT = 16;
 
 const selectAPILatestDMs = (api) => api.conduit.dm;
 const selectAPIDMs = (api) => api.conduit.dm.ids;
+const selectAPISearch = (api) => api.conduit.dm.search;
 const selectAPIUsers = (api) => api.u.user.ids;
 
 const SelectAChat = () => {
-  return <div>Select a chat</div>;
+  return (
+    <Container padded narrow>
+      <div className="conduit-bg-msg">
+        <FaIcon icon="commenting" />
+        <br />
+        Select a chat
+      </div>
+    </Container>
+  );
 };
 
 const Chat = ({chatsMap, users, invalidateChat}) => {
@@ -337,6 +358,43 @@ const DMs = () => {
     [dispatchChats],
   );
 
+  const form = useForm({
+    chatid: '',
+  });
+
+  const apiSearch = useAPI(selectAPISearch);
+  const searchUsers = useCallback(
+    async ({signal}, search) => {
+      const [data, res, err] = await apiSearch(
+        {signal},
+        search,
+        CHATS_SEARCH_LIMIT,
+      );
+      if (err || !res || !res.ok || !Array.isArray(data)) {
+        return [];
+      }
+      return data.map((i) => ({
+        display: i.name || i.username,
+        value: i.chatid,
+      }));
+    },
+    [apiSearch],
+  );
+  const userSuggest = useFormSearch(searchUsers, 256);
+
+  const navigate = useNavigate();
+
+  const formAssign = form.assign;
+  const searchChatid = form.state.chatid;
+  const goToDM = useCallback(() => {
+    if (searchChatid) {
+      navigate(searchChatid);
+    }
+    formAssign({
+      chatid: '',
+    });
+  }, [formAssign, navigate, searchChatid]);
+
   return (
     <Grid className="conduit-chat-root" strict>
       <Column fullWidth sm={6}>
@@ -347,6 +405,28 @@ const DMs = () => {
             {loadChats.err && <p>{loadChats.err.message}</p>}
             {getChats.err && <p>{getChats.err.message}</p>}
             {getUsers.err && <p>{getUsers.err.message}</p>}
+            <Form
+              formState={form.state}
+              onChange={form.update}
+              displays={form.displays}
+              putDisplays={form.putDisplays}
+              addDisplay={form.addDisplay}
+              compactDisplays={form.compactDisplays}
+            >
+              <FieldDynSearchSelect
+                name="chatid"
+                placeholder="Search"
+                onSearch={userSuggest.setSearch}
+                options={userSuggest.opts}
+                nohint
+                fullWidth
+                iconRight={
+                  <ButtonTertiary onClick={goToDM}>
+                    <FaIcon icon="search" />
+                  </ButtonTertiary>
+                }
+              />
+            </Form>
           </Column>
           <Column className="conduit-chat-list-outer" grow="1" basis="0">
             <ListGroup className="conduit-chat-list">
