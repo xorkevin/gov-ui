@@ -1,4 +1,4 @@
-import {useReducer, useEffect, useCallback, useContext} from 'react';
+import {useReducer, useEffect, useCallback, useRef, useContext} from 'react';
 import {Routes, Route, Navigate, useParams} from 'react-router-dom';
 import {useResource, selectAPINull} from '@xorkevin/substation';
 import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
@@ -286,6 +286,8 @@ const DMs = () => {
     {posthook: posthookInit},
   );
 
+  const endElem = useRef(null);
+
   const firstLastUpdated =
     chats.chats.length === 0
       ? 0
@@ -353,6 +355,7 @@ const DMs = () => {
               {chats.chats.map((i) => (
                 <ChatRow key={i.chatid} chat={i} users={chats.users} />
               ))}
+              <div className="conduit-chat-list-end-marker" ref={endElem} />
             </ListGroup>
           </Column>
         </Grid>
