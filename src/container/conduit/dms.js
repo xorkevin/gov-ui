@@ -45,20 +45,18 @@ const Chat = ({chatsMap, users, invalidateChat}) => {
     }
   }, [invalidateChat, chatid]);
 
-  if (!chat) {
-    return <div>Chat not found</div>;
-  }
-
   return (
     <div>
       <h5>
-        {user && (
+        {user ? (
           <AnchorText
             local
             href={formatURL(ctx.pathUserProfile, user.username)}
           >
-            {user.first_name} {user.last_name}
+            {chat.name || `${user.first_name} ${user.last_name}`}
           </AnchorText>
+        ) : (
+          chat && chat.name
         )}
       </h5>
       <pre>{JSON.stringify(chat, null, '  ')}</pre>
