@@ -7,7 +7,7 @@ import {
   useNavigate,
 } from 'react-router-dom';
 import {useAPI, useResource, selectAPINull} from '@xorkevin/substation';
-import {useAuthCall, useAuthResource} from '@xorkevin/turbine';
+import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
   Container,
   Grid,
@@ -64,6 +64,7 @@ const SelectAChat = () => {
 
 const Chat = ({chatsMap, users, invalidateChat}) => {
   const ctx = useContext(GovUICtx);
+  const {userid: loggedInUserid, username: loggedInUsername} = useAuthValue();
 
   const snackbar = useSnackbar();
   const displayErrSnack = useCallback(
@@ -122,14 +123,32 @@ const Chat = ({chatsMap, users, invalidateChat}) => {
           chat && chat.name
         )}
       </h5>
-      <pre>{JSON.stringify(chat, null, '  ')}</pre>
-      <pre>{JSON.stringify(initMsgs, null, '  ')}</pre>
+      {initMsgs.err && <p>{initMsgs.err.message}</p>}
+      {initMsgs.success && (
+        <div className="conduit-chat-msgs-outer">
+          <div className="conduit-chat-msgs">
+            {Array.isArray(initMsgs.data) &&
+              initMsgs.data.map((i) => (
+                <div key={i.msgid}>
+                  <Time value={i.time_ms} />{' '}
+                  {i.userid === loggedInUserid
+                    ? loggedInUsername
+                    : users.value.get(i.userid)
+                    ? users.value.get(i.userid).username
+                    : ''}{' '}
+                  {i.value}
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
       <Form formState={form.state} onChange={form.update} onSubmit={execCreate}>
         <Field
           name="value"
           placeholder="Message"
           nohint
           fullWidth
+          autoFocus
           iconRight={
             <ButtonPrimary onClick={execCreate}>
               <FaIcon icon="arrow-right" />
