@@ -115,6 +115,52 @@ export default {
         selector: (_res, data) => data && data.dms,
         err: 'Failed to search dms',
       },
+      id: {
+        url: '/id/{0}',
+        children: {
+          edit: {
+            url: '',
+            method: 'PUT',
+            transformer: (chatid, json) => ({
+              params: [chatid],
+              json,
+            }),
+            expectjson: true,
+            err: 'Failed to update dm settings',
+          },
+          msg: {
+            url: '/msg',
+            method: 'GET',
+            transformer: (chatid, kind, before, amount) => ({
+              params: [chatid],
+              query: {kind, before, amount},
+            }),
+            expectjson: true,
+            selector: (_res, data) => data && data.msgs,
+            err: 'Failed to get messages',
+            children: {
+              create: {
+                url: '',
+                method: 'POST',
+                transformer: (chatid, json) => ({
+                  params: [chatid],
+                  json,
+                }),
+                expectjson: true,
+                err: 'Failed to send chat message',
+              },
+              del: {
+                url: '/id/{1}',
+                method: 'POST',
+                transformer: (chatid, msgid) => ({
+                  params: [chatid, msgid],
+                }),
+                err: 'Failed to delete chat message',
+              },
+            },
+          },
+        },
+      },
     },
   },
   chat: {

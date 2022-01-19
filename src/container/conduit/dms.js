@@ -18,28 +18,37 @@ import {
   Menu,
   MenuItem,
   FieldDynSearchSelect,
+  Field,
   Form,
   useForm,
   useFormSearch,
+  SnackbarSurface,
+  useSnackbar,
   Anchor,
   ButtonGroup,
   FaIcon,
   Time,
 } from '@xorkevin/nuke';
+import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
 
 import {GovUICtx} from '../../middleware';
 import {formatURL} from '../../utility';
 
+const CHAT_MSG_KIND_TXT = 't';
+
 const CHATS_LIMIT = 32;
 const CHATS_SCROLL_LIMIT = 16;
 const CHATS_SEARCH_LIMIT = 16;
+const MSGS_LIMIT = 32;
 
 const selectAPILatestDMs = (api) => api.conduit.dm;
 const selectAPIDMs = (api) => api.conduit.dm.ids;
 const selectAPISearch = (api) => api.conduit.dm.search;
 const selectAPIUsers = (api) => api.u.user.ids;
+const selectAPIMsgs = (api) => api.conduit.dm.id.msg;
+const selectAPICreateMsg = (api) => api.conduit.dm.id.msg.create;
 
 const SelectAChat = () => {
   return (
@@ -56,6 +65,14 @@ const SelectAChat = () => {
 const Chat = ({chatsMap, users, invalidateChat}) => {
   const ctx = useContext(GovUICtx);
 
+  const snackbar = useSnackbar();
+  const displayErrSnack = useCallback(
+    (_res, err) => {
+      snackbar(<SnackbarSurface>{err.message}</SnackbarSurface>);
+    },
+    [snackbar],
+  );
+
   const {chatid} = useParams();
   const chat = chatid ? chatsMap.value.get(chatid) : null;
   const user = chat ? users.value.get(chat.userid) : null;
@@ -65,6 +82,31 @@ const Chat = ({chatsMap, users, invalidateChat}) => {
       invalidateChat(chatid);
     }
   }, [invalidateChat, chatid]);
+
+  const [initMsgs] = useAuthResource(
+    chatid ? selectAPIMsgs : selectAPINull,
+    [chatid, '', '', MSGS_LIMIT],
+    [],
+  );
+
+  const form = useForm({
+    kind: CHAT_MSG_KIND_TXT,
+    value: '',
+  });
+
+  const formAssign = form.assign;
+  const posthookCreate = useCallback(() => {
+    formAssign({
+      kind: CHAT_MSG_KIND_TXT,
+      value: '',
+    });
+  }, [formAssign]);
+  const [_create, execCreate] = useAuthCall(
+    selectAPICreateMsg,
+    [chatid, form.state],
+    {},
+    {posthook: posthookCreate, errhook: displayErrSnack},
+  );
 
   return (
     <div>
@@ -81,6 +123,20 @@ const Chat = ({chatsMap, users, invalidateChat}) => {
         )}
       </h5>
       <pre>{JSON.stringify(chat, null, '  ')}</pre>
+      <pre>{JSON.stringify(initMsgs, null, '  ')}</pre>
+      <Form formState={form.state} onChange={form.update} onSubmit={execCreate}>
+        <Field
+          name="value"
+          placeholder="Message"
+          nohint
+          fullWidth
+          iconRight={
+            <ButtonPrimary onClick={execCreate}>
+              <FaIcon icon="arrow-right" />
+            </ButtonPrimary>
+          }
+        />
+      </Form>
     </div>
   );
 };
