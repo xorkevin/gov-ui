@@ -6,7 +6,7 @@ import {
   useParams,
   useNavigate,
 } from 'react-router-dom';
-import {useAPI, useResource, selectAPINull} from '@xorkevin/substation';
+import {useAPI, useURL, useResource, selectAPINull} from '@xorkevin/substation';
 import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
   Container,
@@ -32,6 +32,7 @@ import {
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
+import Img from '@xorkevin/nuke/src/component/image/circle';
 
 import {GovUICtx} from '../../middleware';
 import {formatURL} from '../../utility';
@@ -47,6 +48,8 @@ const selectAPILatestDMs = (api) => api.conduit.dm;
 const selectAPIDMs = (api) => api.conduit.dm.ids;
 const selectAPISearch = (api) => api.conduit.dm.search;
 const selectAPIUsers = (api) => api.u.user.ids;
+const selectAPIProfiles = (api) => api.profile.ids;
+const selectAPIImage = (api) => api.profile.id.image;
 const selectAPIMsgs = (api) => api.conduit.dm.id.msg;
 const selectAPICreateMsg = (api) => api.conduit.dm.id.msg.create;
 
@@ -62,9 +65,77 @@ const SelectAChat = () => {
   );
 };
 
-const Chat = ({chatsMap, users, invalidateChat}) => {
+const noop = () => {};
+
+const MsgRow = ({
+  loggedInUserid,
+  users,
+  profiles,
+  msgid,
+  userid,
+  time_ms,
+  value,
+  first,
+  last,
+}) => {
+  const isSelf = userid === loggedInUserid;
+  const username =
+    isSelf || !users.value.get(userid) ? '' : users.value.get(userid).username;
+  const k = ['conduit-chat-msg'];
+  if (isSelf) {
+    k.push('self');
+  }
+  const profile = profiles.value.get(userid);
+  const imageURL = useURL(selectAPIImage, [userid]);
+  return (
+    <div className={k.join(' ')}>
+      {last && (
+        <Grid
+          className="base"
+          direction={isSelf ? 'row-reverse' : 'row'}
+          align="center"
+          nowrap
+          strict
+        >
+          <Column className="profile-spacer" align="flex-end" shrink="0">
+            {!isSelf && first && profile && profile.image && (
+              <Img src={imageURL} preview={profile.image} ratio={1} />
+            )}
+          </Column>
+          <Column className="info minwidth0">
+            {!isSelf && username}{' '}
+            <span className="time">
+              <Time value={time_ms} />
+            </span>
+          </Column>
+        </Grid>
+      )}
+      <Grid
+        className="base"
+        direction={isSelf ? 'row-reverse' : 'row'}
+        align="center"
+        nowrap
+        strict
+      >
+        <Column className="profile" align="flex-end" shrink="0">
+          {!isSelf && first && profile && profile.image && (
+            <Img src={imageURL} preview={profile.image} ratio={1} />
+          )}
+        </Column>
+        <Column className="value minwidth0">{value}</Column>
+        {!last && (
+          <Column className="time" shrink="0">
+            {<Time value={time_ms} />}
+          </Column>
+        )}
+      </Grid>
+    </div>
+  );
+};
+
+const Chat = ({chatsMap, users, profiles, invalidateChat}) => {
   const ctx = useContext(GovUICtx);
-  const {userid: loggedInUserid, username: loggedInUsername} = useAuthValue();
+  const {userid: loggedInUserid} = useAuthValue();
 
   const snackbar = useSnackbar();
   const displayErrSnack = useCallback(
@@ -108,55 +179,64 @@ const Chat = ({chatsMap, users, invalidateChat}) => {
     {},
     {posthook: posthookCreate, errhook: displayErrSnack},
   );
+  const sendMsg = form.state.value ? execCreate : noop;
 
   return (
-    <div>
-      <h5>
-        {user ? (
-          <AnchorText
-            local
-            href={formatURL(ctx.pathUserProfile, user.username)}
-          >
-            {chat.name || `${user.first_name} ${user.last_name}`}
-          </AnchorText>
-        ) : (
-          chat && chat.name
-        )}
-      </h5>
-      {initMsgs.err && <p>{initMsgs.err.message}</p>}
-      {initMsgs.success && (
-        <div className="conduit-chat-msgs-outer">
+    <Grid className="conduit-chat-msgs-root" direction="column" nowrap strict>
+      <Column>
+        <h5>
+          {user ? (
+            <AnchorText
+              local
+              href={formatURL(ctx.pathUserProfile, user.username)}
+            >
+              {chat.name || `${user.first_name} ${user.last_name}`}
+            </AnchorText>
+          ) : (
+            chat && chat.name
+          )}
+        </h5>
+      </Column>
+      <Column className="minheight0" grow="1" basis="0">
+        {initMsgs.err && <p>{initMsgs.err.message}</p>}
+        {initMsgs.success && (
           <div className="conduit-chat-msgs">
             {Array.isArray(initMsgs.data) &&
-              initMsgs.data.map((i) => (
-                <div key={i.msgid}>
-                  <Time value={i.time_ms} />{' '}
-                  {i.userid === loggedInUserid
-                    ? loggedInUsername
-                    : users.value.get(i.userid)
-                    ? users.value.get(i.userid).username
-                    : ''}{' '}
-                  {i.value}
-                </div>
+              initMsgs.data.map((i, n, arr) => (
+                <MsgRow
+                  key={i.msgid}
+                  loggedInUserid={loggedInUserid}
+                  users={users}
+                  profiles={profiles}
+                  msgid={i.msgid}
+                  userid={i.userid}
+                  kind={i.kind}
+                  time_ms={i.time_ms}
+                  value={i.value}
+                  first={n === 0 || arr[n - 1].userid !== i.userid}
+                  last={n === arr.length - 1 || arr[n + 1].userid !== i.userid}
+                />
               ))}
           </div>
-        </div>
-      )}
-      <Form formState={form.state} onChange={form.update} onSubmit={execCreate}>
-        <Field
-          name="value"
-          placeholder="Message"
-          nohint
-          fullWidth
-          autoFocus
-          iconRight={
-            <ButtonPrimary onClick={execCreate}>
-              <FaIcon icon="arrow-right" />
-            </ButtonPrimary>
-          }
-        />
-      </Form>
-    </div>
+        )}
+      </Column>
+      <Column>
+        <Form formState={form.state} onChange={form.update} onSubmit={sendMsg}>
+          <Field
+            name="value"
+            placeholder="Message"
+            nohint
+            fullWidth
+            autoFocus
+            iconRight={
+              <ButtonPrimary onClick={sendMsg}>
+                <FaIcon icon="arrow-right" />
+              </ButtonPrimary>
+            }
+          />
+        </Form>
+      </Column>
+    </Grid>
   );
 };
 
@@ -197,6 +277,7 @@ const CHATS_INVALIDATE = Symbol('CHATS_INVALIDATE');
 
 const USERS_APPEND = Symbol('USERS_APPEND');
 const USERS_INVALIDATE = Symbol('USERS_INVALIDATE');
+const PROFILES_APPEND = Symbol('PROFILES_APPEND');
 
 const ChatsReset = (chats) => ({
   type: CHATS_RESET,
@@ -216,6 +297,11 @@ const ChatsInvalidate = (chatids) => ({
 const UsersAppend = (users) => ({
   type: USERS_APPEND,
   users,
+});
+
+const ProfilesAppend = (profiles) => ({
+  type: PROFILES_APPEND,
+  profiles,
 });
 
 const iterDiff = (it, s) => {
@@ -241,6 +327,7 @@ const chatsReducer = (state, action) => {
         allUsersSet.add(i.userid);
       });
       const usersDiff = Array.from(allUsersSet);
+      const profilesDiff = Array.from(allUsersSet);
       return {
         chats,
         chatsMap: {value: new Map(chats.map((i) => [i.chatid, i]))},
@@ -251,6 +338,9 @@ const chatsReducer = (state, action) => {
         allUsersSet,
         validUsersSet: new Set(),
         usersDiff,
+        profiles: {value: new Map()},
+        validProfilesSet: new Set(),
+        profilesDiff,
       };
     }
     case CHATS_APPEND: {
@@ -280,13 +370,20 @@ const chatsReducer = (state, action) => {
       const chatsMap = {
         value: state.chatsMap.value,
       };
-      const {allChatsSet, validChatsSet, allUsersSet, validUsersSet} = state;
+      const {
+        allChatsSet,
+        validChatsSet,
+        allUsersSet,
+        validUsersSet,
+        validProfilesSet,
+      } = state;
       addedChats.forEach((i) => {
         chatsMap.value.set(i.chatid, i);
         allChatsSet.add(i.chatid);
         validChatsSet.add(i.chatid);
         allUsersSet.add(i.userid);
         validUsersSet.delete(i.userid);
+        validProfilesSet.delete(i.userid);
       });
       return Object.assign({}, state, {
         chats,
@@ -297,6 +394,8 @@ const chatsReducer = (state, action) => {
         allUsersSet,
         validUsersSet,
         usersDiff: iterDiff(allUsersSet.values(), validUsersSet),
+        validProfilesSet,
+        profilesDiff: iterDiff(allUsersSet.values(), validProfilesSet),
       });
     }
     case CHATS_INVALIDATE: {
@@ -349,6 +448,24 @@ const chatsReducer = (state, action) => {
         usersDiff: iterDiff(allUsersSet.values(), validUsersSet),
       });
     }
+    case PROFILES_APPEND: {
+      if (!Array.isArray(action.profiles) || action.profiles.length === 0) {
+        return state;
+      }
+      const profiles = {
+        value: state.profiles.value,
+      };
+      const {validProfilesSet} = state;
+      action.profiles.forEach((i) => {
+        profiles.value.set(i.userid, i);
+        validProfilesSet.add(i.userid);
+      });
+      return Object.assign({}, state, {
+        profiles,
+        validProfilesSet,
+        profilesDiff: iterDiff(state.allUsersSet.values(), validProfilesSet),
+      });
+    }
     default:
       return state;
   }
@@ -365,6 +482,9 @@ const DMs = () => {
     allUsersSet: new Set(),
     validUsersSet: new Set(),
     usersDiff: [],
+    profiles: {value: new Map()},
+    validProfilesSet: new Set(),
+    profilesDiff: [],
   });
 
   const posthookInit = useCallback(
@@ -426,6 +546,19 @@ const DMs = () => {
     {posthook: posthookUsers},
   );
 
+  const posthookProfiles = useCallback(
+    (_res, profiles) => {
+      dispatchChats(ProfilesAppend(profiles));
+    },
+    [dispatchChats],
+  );
+  const [getProfiles] = useResource(
+    chats.profilesDiff.length > 0 ? selectAPIProfiles : selectAPINull,
+    [chats.profilesDiff],
+    [],
+    {posthook: posthookProfiles},
+  );
+
   const invalidateChat = useCallback(
     (chatid) => {
       dispatchChats(ChatsInvalidate([chatid]));
@@ -480,6 +613,7 @@ const DMs = () => {
             {loadChats.err && <p>{loadChats.err.message}</p>}
             {getChats.err && <p>{getChats.err.message}</p>}
             {getUsers.err && <p>{getUsers.err.message}</p>}
+            {getProfiles.err && <p>{getProfiles.err.message}</p>}
             <Form
               formState={form.state}
               onChange={form.update}
@@ -503,7 +637,7 @@ const DMs = () => {
               />
             </Form>
           </Column>
-          <Column className="conduit-chat-list-outer" grow="1" basis="0">
+          <Column className="minheight0" grow="1" basis="0">
             <ListGroup className="conduit-chat-list">
               {chats.chats.map((i) => (
                 <ChatRow key={i.chatid} chat={i} users={chats.users} />
@@ -514,22 +648,21 @@ const DMs = () => {
         </Grid>
       </Column>
       <Column fullWidth sm={18}>
-        <div className="conduit-chat">
-          <Routes>
-            <Route index element={<SelectAChat />} />
-            <Route
-              path=":chatid"
-              element={
-                <Chat
-                  chatsMap={chats.chatsMap}
-                  users={chats.users}
-                  invalidateChat={invalidateChat}
-                />
-              }
-            />
-            <Route path="*" element={<Navigate to="" replace />} />
-          </Routes>
-        </div>
+        <Routes>
+          <Route index element={<SelectAChat />} />
+          <Route
+            path=":chatid"
+            element={
+              <Chat
+                chatsMap={chats.chatsMap}
+                users={chats.users}
+                profiles={chats.profiles}
+                invalidateChat={invalidateChat}
+              />
+            }
+          />
+          <Route path="*" element={<Navigate to="" replace />} />
+        </Routes>
       </Column>
     </Grid>
   );
