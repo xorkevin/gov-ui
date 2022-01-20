@@ -85,6 +85,12 @@ const MsgRow = ({
   if (isSelf) {
     k.push('self');
   }
+  if (first) {
+    k.push('first');
+  }
+  if (last) {
+    k.push('last');
+  }
   const profile = profiles.value.get(userid);
   const imageURL = useURL(selectAPIImage, [userid]);
   return (
@@ -245,9 +251,9 @@ const ChatRow = ({chat, users}) => {
   const user = users.value.get(chat.userid);
   return (
     <ListItem>
-      <Grid justify="space-between" align="center" nowrap>
+      <Grid justify="space-between" align="center" nowrap strict>
         <Column className="minwidth0" grow="1">
-          <Anchor local href={chat.chatid}>
+          <Anchor className="conduit-chat-row-link" local href={chat.chatid}>
             <div>
               <h5>{chat.name || (user && user.username)}</h5>
               <Time value={chat.last_updated} />
