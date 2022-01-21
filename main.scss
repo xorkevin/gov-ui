@@ -151,11 +151,17 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
 
 .conduit-chat-row-link {
   display: block;
-  padding: 8px 16px;
+  padding: 8px;
+  border-radius: 8px;
 
   &.active {
-    border-left: 2px solid $color-primary-1;
+    background-color: $color-back-light-3;
   }
+}
+
+.conduit-chat-row-profile-picture {
+  width: 32px;
+  margin: 0 8px;
 }
 
 .conduit-chat-list-end-marker {
@@ -186,6 +192,17 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
 .conduit-chat-msgs-root {
   height: 100%;
   padding: 8px;
+}
+
+.conduit-chat-header {
+  & > .profile-picture {
+    width: 32px;
+    margin: 0 16px;
+  }
+
+  & > .profile-name {
+    padding: 8px;
+  }
 }
 
 .conduit-chat-msgs {
@@ -219,14 +236,14 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
       transition: opacity $transition-normal;
     }
 
-    & > .profile {
+    & > .profile-picture {
       width: 2rem;
       height: 2rem;
       margin: 0 8px;
       overflow: hidden;
     }
 
-    & > .profile-spacer {
+    & > .picture-spacer {
       width: 2rem;
       height: 2rem;
       margin: 0 8px;

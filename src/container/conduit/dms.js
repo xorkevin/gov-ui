@@ -67,6 +67,15 @@ const SelectAChat = () => {
 
 const noop = () => {};
 
+const ProfileImg = ({userid, profiles}) => {
+  const profile = profiles.value.get(userid);
+  const imageURL = useURL(selectAPIImage, [userid]);
+  if (!profile || !profile.image) {
+    return null;
+  }
+  return <Img src={imageURL} preview={profile.image} ratio={1} />;
+};
+
 const MsgRow = ({
   loggedInUserid,
   users,
@@ -91,8 +100,6 @@ const MsgRow = ({
   if (last) {
     k.push('last');
   }
-  const profile = profiles.value.get(userid);
-  const imageURL = useURL(selectAPIImage, [userid]);
   return (
     <div className={k.join(' ')}>
       {last && (
@@ -103,11 +110,7 @@ const MsgRow = ({
           nowrap
           strict
         >
-          <Column className="profile-spacer" align="flex-end" shrink="0">
-            {!isSelf && first && profile && profile.image && (
-              <Img src={imageURL} preview={profile.image} ratio={1} />
-            )}
-          </Column>
+          <Column className="picture-spacer" align="flex-end" shrink="0" />
           <Column className="info minwidth0">
             {!isSelf && username}{' '}
             <span className="time">
@@ -123,15 +126,15 @@ const MsgRow = ({
         nowrap
         strict
       >
-        <Column className="profile" align="flex-end" shrink="0">
-          {!isSelf && first && profile && profile.image && (
-            <Img src={imageURL} preview={profile.image} ratio={1} />
+        <Column className="profile-picture" align="flex-end" shrink="0">
+          {!isSelf && first && (
+            <ProfileImg profiles={profiles} userid={userid} />
           )}
         </Column>
         <Column className="value minwidth0">{value}</Column>
         {!last && (
           <Column className="time" shrink="0">
-            {<Time value={time_ms} />}
+            <Time value={time_ms} />
           </Column>
         )}
       </Grid>
@@ -154,6 +157,7 @@ const Chat = ({chatsMap, users, profiles, invalidateChat}) => {
   const {chatid} = useParams();
   const chat = chatid ? chatsMap.value.get(chatid) : null;
   const user = chat ? users.value.get(chat.userid) : null;
+  const profile = chat ? profiles.value.get(chat.userid) : null;
 
   useEffect(() => {
     if (chatid) {
@@ -190,18 +194,25 @@ const Chat = ({chatsMap, users, profiles, invalidateChat}) => {
   return (
     <Grid className="conduit-chat-msgs-root" direction="column" nowrap strict>
       <Column>
-        <h5>
-          {user ? (
-            <AnchorText
-              local
-              href={formatURL(ctx.pathUserProfile, user.username)}
-            >
-              {chat.name || `${user.first_name} ${user.last_name}`}
-            </AnchorText>
-          ) : (
-            chat && chat.name
+        <Grid className="conduit-chat-header" align="center" nowrap strict>
+          {profile && (
+            <Column className="profile-picture" shrink="0">
+              <ProfileImg profiles={profiles} userid={profile.userid} />
+            </Column>
           )}
-        </h5>
+          <Column className="minwidth0 profile-name" grow="1">
+            {user ? (
+              <AnchorText
+                local
+                href={formatURL(ctx.pathUserProfile, user.username)}
+              >
+                <h5>{chat.name || `${user.first_name} ${user.last_name}`}</h5>
+              </AnchorText>
+            ) : (
+              <h5>{chat && chat.name}</h5>
+            )}
+          </Column>
+        </Grid>
       </Column>
       <Column className="minheight0" grow="1" basis="0">
         {initMsgs.err && <p>{initMsgs.err.message}</p>}
@@ -219,8 +230,16 @@ const Chat = ({chatsMap, users, profiles, invalidateChat}) => {
                   kind={i.kind}
                   time_ms={i.time_ms}
                   value={i.value}
-                  first={n === 0 || arr[n - 1].userid !== i.userid}
-                  last={n === arr.length - 1 || arr[n + 1].userid !== i.userid}
+                  first={
+                    n === 0 ||
+                    arr[n - 1].userid !== i.userid ||
+                    arr[n - 1].time_ms - i.time_ms > 300000
+                  }
+                  last={
+                    n === arr.length - 1 ||
+                    arr[n + 1].userid !== i.userid ||
+                    i.time_ms - arr[n + 1].time_ms > 300000
+                  }
                 />
               ))}
           </div>
@@ -246,12 +265,15 @@ const Chat = ({chatsMap, users, profiles, invalidateChat}) => {
   );
 };
 
-const ChatRow = ({chat, users}) => {
+const ChatRow = ({chat, users, profiles}) => {
   const menu = useMenu();
   const user = users.value.get(chat.userid);
   return (
     <ListItem>
       <Grid justify="space-between" align="center" nowrap strict>
+        <Column className="conduit-chat-row-profile-picture" shrink="0">
+          <ProfileImg profiles={profiles} userid={chat.userid} />
+        </Column>
         <Column className="minwidth0" grow="1">
           <Anchor className="conduit-chat-row-link" local href={chat.chatid}>
             <div>
@@ -646,7 +668,12 @@ const DMs = () => {
           <Column className="minheight0" grow="1" basis="0">
             <ListGroup className="conduit-chat-list">
               {chats.chats.map((i) => (
-                <ChatRow key={i.chatid} chat={i} users={chats.users} />
+                <ChatRow
+                  key={i.chatid}
+                  chat={i}
+                  users={chats.users}
+                  profiles={chats.profiles}
+                />
               ))}
               <div className="conduit-chat-list-end-marker" ref={endElem} />
             </ListGroup>
