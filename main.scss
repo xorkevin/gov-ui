@@ -216,6 +216,12 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
   scrollbar-width: thin;
 }
 
+.conduit-chat-msgs-end-marker {
+  width: 100%;
+  height: 128px;
+  visibility: hidden;
+}
+
 .conduit-chat-msg {
   max-width: 48rem;
 

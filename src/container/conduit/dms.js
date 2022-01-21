@@ -175,6 +175,8 @@ const Chat = ({chatsMap, users, profiles, invalidateChat}) => {
     [],
   );
 
+  const endElem = useRef(null);
+
   const form = useForm({
     kind: CHAT_MSG_KIND_TXT,
     value: '',
@@ -205,16 +207,18 @@ const Chat = ({chatsMap, users, profiles, invalidateChat}) => {
             </Column>
           )}
           <Column className="minwidth0 profile-name" grow="1">
-            {user ? (
-              <AnchorText
-                local
-                href={formatURL(ctx.pathUserProfile, user.username)}
-              >
-                <h5>{chat.name || `${user.first_name} ${user.last_name}`}</h5>
-              </AnchorText>
-            ) : (
-              <h5>{chat && chat.name}</h5>
-            )}
+            <h5>
+              {user ? (
+                <AnchorText
+                  local
+                  href={formatURL(ctx.pathUserProfile, user.username)}
+                >
+                  {chat.name || `${user.first_name} ${user.last_name}`}
+                </AnchorText>
+              ) : (
+                chat && chat.name
+              )}
+            </h5>
           </Column>
         </Grid>
       </Column>
@@ -246,6 +250,7 @@ const Chat = ({chatsMap, users, profiles, invalidateChat}) => {
                   }
                 />
               ))}
+            <div className="conduit-chat-msgs-end-marker" ref={endElem} />
           </div>
         )}
       </Column>
