@@ -114,7 +114,9 @@ const MsgRow = ({
           <Column className="info minwidth0">
             {!isSelf && username}{' '}
             <span className="time">
-              <Time value={time_ms} />
+              <small>
+                <Time value={time_ms} />
+              </small>
             </span>
           </Column>
         </Grid>
@@ -134,7 +136,9 @@ const MsgRow = ({
         <Column className="value minwidth0">{value}</Column>
         {!last && (
           <Column className="time" shrink="0">
-            <Time value={time_ms} />
+            <small>
+              <Time value={time_ms} />
+            </small>
           </Column>
         )}
       </Grid>
@@ -278,7 +282,9 @@ const ChatRow = ({chat, users, profiles}) => {
           <Anchor className="conduit-chat-row-link" local href={chat.chatid}>
             <div>
               <h5>{chat.name || (user && user.username)}</h5>
-              <Time value={chat.last_updated} />
+              <small>
+                <Time value={chat.last_updated} />
+              </small>
             </div>
           </Anchor>
         </Column>
