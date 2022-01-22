@@ -226,7 +226,7 @@ const AccountRow = ({
     >
       <Column className="signin-account-image text-center" shrink="0">
         {img && <Img src={imageURL} preview={img} ratio="1 / 1" />}
-        {!img && <FaIcon icon="user" />}
+        {!img && <FaIcon icon="user fa-lg" />}
       </Column>
       <Column>
         <h4>

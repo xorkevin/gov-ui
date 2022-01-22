@@ -72,7 +72,7 @@ const ProfileImg = ({userid, profiles}) => {
   const profile = profiles.value.get(userid);
   const imageURL = useURL(selectAPIImage, [userid]);
   if (!profile || !profile.image) {
-    return null;
+    return <FaIcon icon="user fa-lg" />;
   }
   return <Img src={imageURL} preview={profile.image} ratio="1 / 1" />;
 };
@@ -133,7 +133,11 @@ const MsgRow = ({
         nowrap
         strict
       >
-        <Column className="profile-picture" align="flex-end" shrink="0">
+        <Column
+          className="profile-picture text-center"
+          align="flex-end"
+          shrink="0"
+        >
           {!isSelf && first && (
             <ProfileImg profiles={profiles} userid={userid} />
           )}
@@ -211,7 +215,7 @@ const Chat = ({chatsMap, users, profiles, invalidateChat}) => {
       <Column>
         <Grid className="conduit-chat-header" align="center" nowrap strict>
           {profile && (
-            <Column className="profile-picture" shrink="0">
+            <Column className="profile-picture text-center" shrink="0">
               <ProfileImg profiles={profiles} userid={profile.userid} />
             </Column>
           )}
@@ -289,7 +293,10 @@ const ChatRow = ({chat, users, profiles}) => {
   return (
     <ListItem>
       <Grid justify="space-between" align="center" nowrap strict>
-        <Column className="conduit-chat-row-profile-picture" shrink="0">
+        <Column
+          className="conduit-chat-row-profile-picture text-center"
+          shrink="0"
+        >
           <ProfileImg profiles={profiles} userid={chat.userid} />
         </Column>
         <Column className="minwidth0" grow="1">
