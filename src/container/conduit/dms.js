@@ -689,7 +689,7 @@ const DMs = () => {
                 fullWidth
                 iconRight={
                   <ButtonTertiary onClick={goToDM}>
-                    <FaIcon icon="search" />
+                    <FaIcon icon={searchChatid ? 'arrow-right' : 'search'} />
                   </ButtonTertiary>
                 }
               />
