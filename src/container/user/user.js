@@ -82,7 +82,7 @@ const UserDetails = () => {
                         className="card-border dark"
                         src={imageURL}
                         preview={profile.data.image}
-                        ratio={1}
+                        ratio="1 / 1"
                       />
                     ) : null
                   }

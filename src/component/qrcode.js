@@ -26,7 +26,7 @@ const QRCode = ({data, level, scale}) => {
 
   return (
     <Fragment>
-      {datauri.uri && <Img src={datauri.uri} ratio={1} />}
+      {datauri.uri && <Img src={datauri.uri} ratio="1 / 1" />}
       {datauri.err && <p>{datauri.err.message}</p>}
     </Fragment>
   );

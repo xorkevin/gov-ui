@@ -62,7 +62,7 @@ const CardLogo = ({app}) => {
       className="oauth-auth-app-logo"
       src={imageURL}
       preview={app.logo}
-      ratio={1}
+      ratio="1 / 1"
     />
   );
 };
@@ -85,7 +85,7 @@ const CardAccount = ({profile}) => {
           className="oauth-auth-profile-image"
           src={imageURL}
           preview={profile.image}
-          ratio={1}
+          ratio="1 / 1"
         />
       )}
       <h5 className="oauth-auth-account-name">{username}</h5>

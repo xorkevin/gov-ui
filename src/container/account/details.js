@@ -180,7 +180,7 @@ const Profile = () => {
           <Column fullWidth md={8}>
             <h4>Profile picture</h4>
             {profile.data.image && (
-              <Img src={imageURL} preview={profile.data.image} ratio={1} />
+              <Img src={imageURL} preview={profile.data.image} ratio="1 / 1" />
             )}
             <FieldFile
               name="image"

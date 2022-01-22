@@ -55,7 +55,7 @@ const BrandRow = ({
         <Column className="minwidth0" grow="1">
           <h5>{brandid}</h5>
           <Anchor ext href={imageURL}>
-            <Img src={imageURL} ratio={1} />
+            <Img className="courier-brand-img" src={imageURL} ratio="1 / 1" />
           </Anchor>
           <div>
             Created <Time value={creation_time * 1000} />

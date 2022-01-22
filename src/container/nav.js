@@ -55,7 +55,7 @@ const Nav = ({closeOnClick, right, menucontent, menuend, children}) => {
                 className="navbar-profile-picture"
                 src={imageURL}
                 preview={profile.data.image}
-                ratio={1}
+                ratio="1 / 1"
               />
             )}
             <FaIcon icon="caret-down" />

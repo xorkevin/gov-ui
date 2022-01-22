@@ -79,7 +79,7 @@ const AppRow = ({
                   className="oauth-app-logo"
                   src={imageURL}
                   preview={logo}
-                  ratio={1}
+                  ratio="1 / 1"
                 />
               )}
               <h5 className="text-center">

@@ -52,7 +52,7 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
 }
 
 .navbar-profile-picture {
-  width: 24px;
+  width: 32px;
 }
 
 .signin-account-item {
@@ -66,7 +66,7 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
 }
 
 .signin-account-image {
-  width: 48px;
+  width: 64px;
   max-width: 100%;
 }
 
@@ -95,7 +95,7 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
 }
 
 .oauth-auth-profile-image {
-  width: 24px;
+  width: 32px;
   max-width: 100%;
 }
 
@@ -129,6 +129,10 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
   text-overflow: ellipsis;
 }
 
+.courier-brand-img {
+  max-width: 256px;
+}
+
 .conduit-root {
   height: 100vh;
 }
@@ -160,7 +164,7 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
 }
 
 .conduit-chat-row-profile-picture {
-  width: 32px;
+  width: 48px;
   margin: 0 8px;
 }
 

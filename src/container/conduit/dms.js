@@ -43,6 +43,7 @@ const CHATS_LIMIT = 32;
 const CHATS_SCROLL_LIMIT = 16;
 const CHATS_SEARCH_LIMIT = 16;
 const MSGS_LIMIT = 32;
+const MSG_TIME_REL_DURATION = 604800000;
 
 const selectAPILatestDMs = (api) => api.conduit.dm;
 const selectAPIDMs = (api) => api.conduit.dm.ids;
@@ -73,7 +74,7 @@ const ProfileImg = ({userid, profiles}) => {
   if (!profile || !profile.image) {
     return null;
   }
-  return <Img src={imageURL} preview={profile.image} ratio={1} />;
+  return <Img src={imageURL} preview={profile.image} ratio="1 / 1" />;
 };
 
 const MsgRow = ({
@@ -115,7 +116,11 @@ const MsgRow = ({
             {!isSelf && username}{' '}
             <span className="time">
               <small>
-                <Time value={time_ms} />
+                <Time
+                  position={isSelf ? 'left' : 'right'}
+                  value={time_ms}
+                  relDuration={MSG_TIME_REL_DURATION}
+                />
               </small>
             </span>
           </Column>
@@ -137,7 +142,11 @@ const MsgRow = ({
         {!last && (
           <Column className="time" shrink="0">
             <small>
-              <Time value={time_ms} />
+              <Time
+                position={isSelf ? 'left' : 'right'}
+                value={time_ms}
+                relDuration={MSG_TIME_REL_DURATION}
+              />
             </small>
           </Column>
         )}
@@ -288,7 +297,10 @@ const ChatRow = ({chat, users, profiles}) => {
             <div>
               <h5>{chat.name || (user && user.username)}</h5>
               <small>
-                <Time value={chat.last_updated} />
+                <Time
+                  value={chat.last_updated}
+                  relDuration={MSG_TIME_REL_DURATION}
+                />
               </small>
             </div>
           </Anchor>
