@@ -10,6 +10,7 @@ import {
   ButtonGroup,
 } from '@xorkevin/nuke';
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
+import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 
 import {randomID} from '../../utility';
 
@@ -88,10 +89,23 @@ const WSEchoContainer = () => {
   const relogin = useRelogin();
   const url = useURL(selectAPIEcho);
 
+  const [shouldConnect, setShouldConnect] = useState(true);
+  const toggleShouldConnect = useCallback(() => {
+    setShouldConnect((i) => !i);
+  }, [setShouldConnect]);
+
   useEffect(() => {
     const id = randomID();
     const controller = new AbortController();
     (async () => {
+      if (!shouldConnect) {
+        if (!controller.signal.aborted) {
+          dispatchMsgs(
+            MsgAppend(STATE_CLOSED, '', 'close', 'connection closed'),
+          );
+        }
+        return;
+      }
       while (true) {
         const [_data, res, err] = await relogin();
         if (controller.signal.aborted) {
@@ -166,7 +180,7 @@ const WSEchoContainer = () => {
     return () => {
       controller.abort();
     };
-  }, [relogin, displayErrSnack, ws, dispatchMsgs, url]);
+  }, [relogin, displayErrSnack, ws, dispatchMsgs, url, shouldConnect]);
 
   const form = useForm({
     data: '',
@@ -192,7 +206,8 @@ const WSEchoContainer = () => {
   const notReady = useCallback(() => {
     displayErrSnack(null, {message: 'Not connected'});
   }, [displayErrSnack]);
-  const send = msgs.readyState === STATE_OPEN ? sendMsg : notReady;
+  const send =
+    shouldConnect && msgs.readyState === STATE_OPEN ? sendMsg : notReady;
 
   return (
     <div>
@@ -202,6 +217,9 @@ const WSEchoContainer = () => {
       </Form>
       <ButtonGroup>
         <ButtonPrimary onClick={send}>Send</ButtonPrimary>
+        <ButtonTertiary onClick={toggleShouldConnect}>
+          {shouldConnect ? 'Disconnect' : 'Connect'}
+        </ButtonTertiary>
       </ButtonGroup>
       <pre>{msgs.readyState.description}</pre>
       <pre>{JSON.stringify(msgs.msgs, null, '  ')}</pre>
