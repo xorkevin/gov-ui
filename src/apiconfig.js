@@ -95,10 +95,20 @@ const wellknown = () => ({
   },
 });
 
+const ws = (url = '/ws') => ({
+  url,
+  children: {
+    echo: {
+      url: '/echo',
+    },
+  },
+});
+
 const GovAPI = Object.freeze({
   setupz,
   healthz,
   wellknown,
+  ws,
   user,
   profile,
   orgs,

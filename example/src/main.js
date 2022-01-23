@@ -58,6 +58,10 @@ const WELL_KNOWN = {
   wellknown: GovAPI.wellknown(),
 };
 
+const WS_API = {
+  ws: GovAPI.ws('/ws'),
+};
+
 const apiCredentialsMiddleware =
   (transform) =>
   (...args) => {
@@ -68,6 +72,10 @@ const apiCredentialsMiddleware =
 
 // eslint-disable-next-line no-undef
 const baseUrl = window.location.origin + APIBASE_URL;
+
+const wsprotocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+// eslint-disable-next-line no-undef
+const wsbaseUrl = wsprotocol + window.location.host + APIBASE_URL;
 
 const apiMiddleware = APIMiddleware(
   Object.freeze(
@@ -80,6 +88,7 @@ const apiMiddleware = APIMiddleware(
         ],
       }),
       makeAPIClient(window.location.origin, WELL_KNOWN),
+      makeAPIClient(wsbaseUrl, WS_API),
     ),
   ),
 );

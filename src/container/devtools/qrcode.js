@@ -26,7 +26,7 @@ const QRCodeContainer = () => {
     <div>
       <h3>QRCode tester</h3>
       <Grid>
-        <Column fullWidth md={16}>
+        <Column fullWidth md={12}>
           <Card
             title={
               <Container padded>

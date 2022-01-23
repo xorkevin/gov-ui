@@ -7,6 +7,8 @@ const permissionedRoles = Object.freeze([
   'mod.gov.user',
   'usr.gov.oauth',
   'mod.gov.oauth',
+  'usr.gov.ws',
+  'mod.gov.ws',
 ]);
 
 const allRoles = Object.freeze(['user'].concat(permissionedRoles));

@@ -166,6 +166,10 @@ const createConfig = (env, argv) => {
       },
       hot: false,
       proxy: {
+        '/api/ws': {
+          target: 'http://governor.dev.localhost:8080',
+          ws: true,
+        },
         '/api': {
           target: 'http://governor.dev.localhost:8080',
           changeOrigin: true,

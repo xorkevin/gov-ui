@@ -17,6 +17,7 @@ import {GovUICtx} from '../../middleware';
 const Dash = lazy(() => import('./dash'));
 const OAuth = lazy(() => import('./oauth'));
 const QRCode = lazy(() => import('./qrcode'));
+const WSEcho = lazy(() => import('./ws'));
 
 const DevtoolsContainer = () => {
   const ctx = useContext(GovUICtx);
@@ -45,6 +46,13 @@ const DevtoolsContainer = () => {
                 >
                   QRCode
                 </SidebarItem>
+                <SidebarItem
+                  local
+                  link="ws"
+                  icon={<FaIcon icon="space-shuttle" />}
+                >
+                  Websocket
+                </SidebarItem>
               </Sidebar>
             </Column>
             <Column fullWidth md={18} lg={20}>
@@ -53,6 +61,7 @@ const DevtoolsContainer = () => {
                   <Route path="dash" element={<Dash />} />
                   <Route path="oauth/*" element={<OAuth />} />
                   <Route path="qrcode" element={<QRCode />} />
+                  <Route path="ws" element={<WSEcho />} />
                   <Route path="*" element={<Navigate to="dash" replace />} />
                 </Routes>
               </Suspense>
