@@ -25,6 +25,7 @@ const govuiDeps = [
   'core-js',
   'react',
   'react-router-dom',
+  'recoil',
   '@xorkevin/substation',
   '@xorkevin/turbine',
   '@xorkevin/nuke',

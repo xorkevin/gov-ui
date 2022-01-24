@@ -1,8 +1,8 @@
 import {
   createContext,
-  useState,
   useEffect,
   useCallback,
+  useMemo,
   useRef,
   useContext,
 } from 'react';
@@ -206,19 +206,17 @@ const useWS = (
   );
 
   const res = useMemo(
-    () => (
-      {
-        name,
-        send,
-        sub,
-      },
-      [name, send, sub]
-    ),
+    () => ({
+      name,
+      send,
+      sub,
+    }),
+    [name, send, sub],
   );
   return res;
 };
 
-const useSub = (sub, {onopen, onmessage, onerror, onclose} = {}) => {
+const useWSSub = (sub, {onopen, onmessage, onerror, onclose} = {}) => {
   useEffect(() => {
     const controller = new AbortController();
     sub({onopen, onmessage, onerror, onclose}, controller.signal);
@@ -237,5 +235,5 @@ export {
   useWSValue,
   useWSValueCtx,
   useWS,
-  useSub,
+  useWSSub,
 };

@@ -20,6 +20,8 @@ const selectAPIApprovals = (api) => api.u.user.approvals.get;
 const selectAPIApprove = (api) => api.u.user.approvals.id.approve;
 const selectAPIDelete = (api) => api.u.user.approvals.id.del;
 
+const TIME_REL_DURATION = 604800000;
+
 const ApprovalsRow = ({
   userid,
   username,
@@ -54,12 +56,13 @@ const ApprovalsRow = ({
       <td>{`${first_name} ${last_name}`}</td>
       <td>{email}</td>
       <td>
-        <Time value={creation_time * 1000} />
+        <Time value={creation_time * 1000} relDuration={TIME_REL_DURATION} />
       </td>
       <td>
         {approved ? (
           <Fragment>
-            Yes, <Time value={code_time * 1000} />
+            Yes,{' '}
+            <Time value={code_time * 1000} relDuration={TIME_REL_DURATION} />
           </Fragment>
         ) : (
           'No'
