@@ -139,6 +139,14 @@ const generateQR = async (data, ecLevel, scale) => {
   }
 };
 
+const sleep = async (ms) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, ms);
+  });
+};
+
 export {
   formatURL,
   formatURLArgs,
@@ -153,4 +161,5 @@ export {
   dateToLocale,
   QRECLevel,
   generateQR,
+  sleep,
 };
