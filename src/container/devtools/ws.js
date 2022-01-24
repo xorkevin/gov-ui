@@ -158,12 +158,7 @@ const WSEchoContainer = () => {
     if (!formVal.current) {
       return;
     }
-    ws.send(
-      JSON.stringify({
-        channel: WS_CHANNEL,
-        value: formVal.current,
-      }),
-    );
+    ws.sendChan(WS_CHANNEL, formVal.current);
     formAssign({
       data: '',
     });

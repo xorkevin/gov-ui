@@ -188,6 +188,22 @@ const useWS = (
     [ws, errhook],
   );
 
+  const sendChan = useCallback(
+    (channel, value) => {
+      if (!ws.current.open) {
+        errhook('send', {message: 'Not connected'});
+        return;
+      }
+      ws.current.socket.send(
+        JSON.stringify({
+          channel,
+          value,
+        }),
+      );
+    },
+    [ws, errhook],
+  );
+
   const sub = useCallback(
     (f, signal) => {
       if (!f || signal.aborted) {
@@ -209,9 +225,10 @@ const useWS = (
     () => ({
       name,
       send,
+      sendChan,
       sub,
     }),
-    [name, send, sub],
+    [name, send, sendChan, sub],
   );
   return res;
 };
