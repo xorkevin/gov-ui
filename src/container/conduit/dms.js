@@ -81,7 +81,6 @@ const MsgRow = ({
   loggedInUserid,
   users,
   profiles,
-  msgid,
   userid,
   time_ms,
   value,
@@ -428,20 +427,12 @@ const chatsReducer = (state, action) => {
       const chatsMap = {
         value: state.chatsMap.value,
       };
-      const {
-        allChatsSet,
-        validChatsSet,
-        allUsersSet,
-        validUsersSet,
-        validProfilesSet,
-      } = state;
+      const {allChatsSet, validChatsSet, allUsersSet} = state;
       addedChats.forEach((i) => {
         chatsMap.value.set(i.chatid, i);
         allChatsSet.add(i.chatid);
         validChatsSet.add(i.chatid);
         allUsersSet.add(i.userid);
-        validUsersSet.delete(i.userid);
-        validProfilesSet.delete(i.userid);
       });
       return Object.assign({}, state, {
         chats,
@@ -450,10 +441,8 @@ const chatsReducer = (state, action) => {
         validChatsSet,
         chatsDiff: iterDiff(allChatsSet.values(), validChatsSet),
         allUsersSet,
-        validUsersSet,
-        usersDiff: iterDiff(allUsersSet.values(), validUsersSet),
-        validProfilesSet,
-        profilesDiff: iterDiff(allUsersSet.values(), validProfilesSet),
+        usersDiff: iterDiff(allUsersSet.values(), state.validUsersSet),
+        profilesDiff: iterDiff(allUsersSet.values(), state.validProfilesSet),
       });
     }
     case CHATS_INVALIDATE: {
@@ -495,15 +484,18 @@ const chatsReducer = (state, action) => {
       if (!Array.isArray(action.userids) || action.userids.length === 0) {
         return state;
       }
-      const {allUsersSet, validUsersSet} = state;
+      const {allUsersSet, validUsersSet, validProfilesSet} = state;
       action.userids.forEach((i) => {
         allUsersSet.add(i);
         validUsersSet.delete(i);
+        validProfilesSet.delete(i);
       });
       return Object.assign({}, state, {
         allUsersSet,
         validUsersSet,
         usersDiff: iterDiff(allUsersSet.values(), validUsersSet),
+        validProfilesSet,
+        profilesDiff: iterDiff(allUsersSet.values(), validProfilesSet),
       });
     }
     case PROFILES_APPEND: {

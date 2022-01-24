@@ -106,6 +106,7 @@ const WSEchoContainer = () => {
         }
         return;
       }
+      // eslint-disable-next-line no-constant-condition
       while (true) {
         const [_data, res, err] = await relogin();
         if (controller.signal.aborted) {
