@@ -14,6 +14,14 @@ const WS_PROTOCOL = 'xorkevin.dev/governor/ws/v1alpha1';
 
 const noop = Object.freeze(() => {});
 
+const parseJSON = (s) => {
+  try {
+    return JSON.parse(s);
+  } catch (_err) {
+    return {};
+  }
+};
+
 const WSDefaultOpts = Object.freeze({
   name: '__DEFAULT__',
   send: noop,
@@ -221,14 +229,56 @@ const useWS = (
     [ws],
   );
 
+  const subChan = useCallback(
+    (chan, f, signal) => {
+      if (!f || signal.aborted) {
+        return;
+      }
+      let onmessage = f.onmessage;
+      if (f.onmessage) {
+        const isChanPrefix = typeof chan === 'string';
+        onmessage = (e) => {
+          const data = parseJSON(e.data);
+          if (data === undefined || data === null) {
+            return;
+          }
+          const {channel, value} = data;
+          if (typeof channel !== 'string') {
+            return;
+          }
+          if (isChanPrefix) {
+            if (!channel.startsWith(chan)) {
+              return;
+            }
+          } else {
+            if (!chan.test(channel)) {
+              return;
+            }
+          }
+          f.onmessage(channel, value, e);
+        };
+      }
+      const sub = Object.assign({}, f, {onmessage, signal});
+      ws.current.subs.add(sub);
+      signal.addEventListener('abort', () => {
+        ws.current.subs.delete(sub);
+      });
+      if (ws.current.loaded) {
+        registerHandlers(ws.current.socket, sub);
+      }
+    },
+    [ws],
+  );
+
   const res = useMemo(
     () => ({
       name,
       send,
       sendChan,
       sub,
+      subChan,
     }),
-    [name, send, sendChan, sub],
+    [name, send, sendChan, sub, subChan],
   );
   return res;
 };
@@ -243,6 +293,20 @@ const useWSSub = (sub, {onopen, onmessage, onerror, onclose} = {}) => {
   }, [sub, onopen, onmessage, onerror, onclose]);
 };
 
+const useWSSubChan = (
+  sub,
+  chan,
+  {onopen, onmessage, onerror, onclose} = {},
+) => {
+  useEffect(() => {
+    const controller = new AbortController();
+    sub(chan, {onopen, onmessage, onerror, onclose}, controller.signal);
+    return () => {
+      controller.abort();
+    };
+  }, [sub, chan, onopen, onmessage, onerror, onclose]);
+};
+
 export {
   WS_PROTOCOL,
   WSDefaultOpts,
@@ -253,4 +317,5 @@ export {
   useWSValueCtx,
   useWS,
   useWSSub,
+  useWSSubChan,
 };

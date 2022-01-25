@@ -14,7 +14,7 @@ import {
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 
-import {useWSValue, useWS, useWSSub} from '../../component/ws';
+import {useWSValue, useWS, useWSSubChan} from '../../component/ws';
 
 const selectAPIEcho = (api) => api.ws.echo;
 
@@ -40,18 +40,10 @@ const Formatter = () => {
 
 const timeFormatter = Formatter();
 
-const parseJSON = (s) => {
-  try {
-    return JSON.parse(s);
-  } catch (_err) {
-    return {};
-  }
-};
-
 const MsgRow = ({timems, kind, data}) => {
   const isMsg = kind === 'msg';
   const log = !isMsg ? data : '';
-  const {channel, value} = isMsg ? parseJSON(data) : {};
+  const {channel, value} = isMsg ? data : {};
   return (
     <tr>
       <td>{timeFormatter.format(timems)}</td>
@@ -121,8 +113,8 @@ const WSEchoContainer = () => {
     dispatchMsgs(MsgAppend('open', 'connection opened'));
   }, [dispatchMsgs]);
   const onmessageWS = useCallback(
-    (e) => {
-      dispatchMsgs(MsgAppend('msg', e.data));
+    (channel, value) => {
+      dispatchMsgs(MsgAppend('msg', {channel, value}));
     },
     [dispatchMsgs],
   );
@@ -140,7 +132,7 @@ const WSEchoContainer = () => {
     },
     [dispatchMsgs],
   );
-  useWSSub(ws.sub, {
+  useWSSubChan(ws.subChan, 'echo', {
     onopen: onopenWS,
     onmessage: onmessageWS,
     onerror: onerrorWS,
