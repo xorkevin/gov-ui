@@ -7,7 +7,12 @@ import {
   useNavigate,
 } from 'react-router-dom';
 import {useAPI, useURL, useResource, selectAPINull} from '@xorkevin/substation';
-import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
+import {
+  useAuthValue,
+  useRelogin,
+  useAuthCall,
+  useAuthResource,
+} from '@xorkevin/turbine';
 import {
   Container,
   Grid,
@@ -27,6 +32,7 @@ import {
   Anchor,
   ButtonGroup,
   FaIcon,
+  Tooltip,
   Time,
 } from '@xorkevin/nuke';
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
@@ -36,6 +42,7 @@ import Img from '@xorkevin/nuke/src/component/image/circle';
 
 import {GovUICtx} from '../../middleware';
 import {formatURL} from '../../utility';
+import {useWSValue, useWS, useWSSubChan} from '../../component/ws';
 
 const CHAT_MSG_KIND_TXT = 't';
 
@@ -45,6 +52,9 @@ const CHATS_SEARCH_LIMIT = 16;
 const MSGS_LIMIT = 32;
 const MSG_TIME_REL_DURATION = 604800000;
 
+const DM_WS_STATE = 'conduit:chat:dms';
+const DM_WS_CHANNEL = 'conduit.chat.dm';
+
 const selectAPILatestDMs = (api) => api.conduit.dm;
 const selectAPIDMs = (api) => api.conduit.dm.ids;
 const selectAPISearch = (api) => api.conduit.dm.search;
@@ -53,6 +63,7 @@ const selectAPIProfiles = (api) => api.profile.ids;
 const selectAPIImage = (api) => api.profile.id.image;
 const selectAPIMsgs = (api) => api.conduit.dm.id.msg;
 const selectAPICreateMsg = (api) => api.conduit.dm.id.msg.create;
+const selectAPIWS = (api) => api.ws;
 
 const SelectAChat = () => {
   return (
@@ -653,12 +664,48 @@ const DMs = () => {
     });
   }, [formAssign, navigate, searchChatid]);
 
+  const wsurl = useURL(selectAPIWS);
+
+  const relogin = useRelogin();
+  const prehookWS = useCallback(async () => {
+    const [_data, _res, err] = await relogin();
+    return err;
+  }, [relogin]);
+  const ws = useWS(DM_WS_STATE, wsurl, {
+    prehook: prehookWS,
+  });
+
+  const onmessageWS = useCallback((channel, value) => {
+    console.log('msg', {channel, value});
+  }, []);
+  useWSSubChan(ws.subChan, DM_WS_CHANNEL, {
+    onmessage: onmessageWS,
+  });
+
+  const {open: wsopen} = useWSValue(DM_WS_STATE);
+  const j = ['conduit-chat-connection-indicator'];
+  if (wsopen) {
+    j.push('connected');
+  }
+
   return (
     <Grid className="conduit-chat-root" strict>
       <Column fullWidth sm={6}>
         <Grid className="conduit-chat-sidebar" direction="column" nowrap strict>
           <Column>
-            <h4>Direct Messages</h4>
+            <Grid align="center" nowrap>
+              <Column>
+                <h4>Direct Messages</h4>
+              </Column>
+              <Column shrink="0">
+                <Tooltip
+                  position="right"
+                  tooltip={wsopen ? 'CONNECTED' : 'DISCONNECTED'}
+                >
+                  <span className={j.join(' ')}></span>
+                </Tooltip>
+              </Column>
+            </Grid>
             {initChats.err && <p>{initChats.err.message}</p>}
             {loadChats.err && <p>{loadChats.err.message}</p>}
             {getChats.err && <p>{getChats.err.message}</p>}
