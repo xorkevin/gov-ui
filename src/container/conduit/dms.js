@@ -42,7 +42,13 @@ import Img from '@xorkevin/nuke/src/component/image/circle';
 
 import {GovUICtx} from '../../middleware';
 import {formatURL} from '../../utility';
-import {useWSValue, useWS, useWSSubChan} from '../../component/ws';
+import {
+  WSCtx,
+  WSProvider,
+  useWSValue,
+  useWS,
+  useWSSubChan,
+} from '../../component/ws';
 
 const CHAT_MSG_KIND_TXT = 't';
 
@@ -170,6 +176,62 @@ const MsgRow = ({
   );
 };
 
+const MSGS_RESET = Symbol('MSGS_RESET');
+const MSGS_RCV = Symbol('MSGS_RCV');
+
+const MsgsReset = (msgs) => ({
+  type: MSGS_RESET,
+  msgs,
+});
+
+const MsgsRcv = (msg) => ({
+  type: MSGS_RCV,
+  msg,
+});
+
+const msgsReducer = (state, action) => {
+  switch (action.type) {
+    case MSGS_RESET: {
+      if (!Array.isArray(action.msgs)) {
+        return state;
+      }
+      const {msgs} = action;
+      return {
+        msgs,
+      };
+    }
+    case MSGS_RCV: {
+      const {msg} = action;
+      const {msgs} = state;
+      if (msgs.length === 0 || msg.msgid > msgs[0].msgid) {
+        msgs.unshift(msg);
+        return {
+          msgs,
+        };
+      }
+      const idx = msgs.findIndex((i) => msg.msgid === i.msgid);
+      if (idx >= 0) {
+        return state;
+      }
+      msgs.push(msg);
+      msgs.sort((a, b) => {
+        // reverse sort
+        if (b > a) {
+          return 1;
+        } else if (b < a) {
+          return -1;
+        }
+        return 0;
+      });
+      return {
+        msgs,
+      };
+    }
+    default:
+      return state;
+  }
+};
+
 const Chat = ({chatsMap, users, profiles, invalidateChat}) => {
   const ctx = useContext(GovUICtx);
   const {userid: loggedInUserid} = useAuthValue();
@@ -193,10 +255,21 @@ const Chat = ({chatsMap, users, profiles, invalidateChat}) => {
     }
   }, [invalidateChat, chatid]);
 
+  const [msgs, dispatchMsgs] = useReducer(msgsReducer, {
+    msgs: [],
+  });
+
+  const posthookInit = useCallback(
+    (_res, msgs) => {
+      dispatchMsgs(MsgsReset(msgs));
+    },
+    [dispatchMsgs],
+  );
   const [initMsgs] = useAuthResource(
     chatid ? selectAPIMsgs : selectAPINull,
     [chatid, '', '', MSGS_LIMIT],
     [],
+    {posthook: posthookInit},
   );
 
   const endElem = useRef(null);
@@ -220,6 +293,21 @@ const Chat = ({chatsMap, users, profiles, invalidateChat}) => {
     {posthook: posthookCreate, errhook: displayErrSnack},
   );
   const sendMsg = form.state.value ? execCreate : noop;
+
+  const ws = useContext(WSCtx);
+
+  const onmessageWS = useCallback(
+    (channel, value) => {
+      if (!value || value.chatid !== chatid) {
+        return;
+      }
+      dispatchMsgs(MsgsRcv(value));
+    },
+    [dispatchMsgs, chatid],
+  );
+  useWSSubChan(ws.subChan, DM_WS_CHANNEL_MSG, {
+    onmessage: onmessageWS,
+  });
 
   return (
     <Grid className="conduit-chat-msgs-root" direction="column" nowrap strict>
@@ -718,7 +806,6 @@ const DMs = () => {
 
   const onmessageWS = useCallback(
     (channel, value) => {
-      console.log('msg', {channel, value});
       switch (channel) {
         case DM_WS_CHANNEL_MSG: {
           if (!value) {
@@ -742,84 +829,91 @@ const DMs = () => {
   }
 
   return (
-    <Grid className="conduit-chat-root" strict>
-      <Column fullWidth sm={6}>
-        <Grid className="conduit-chat-sidebar" direction="column" nowrap strict>
-          <Column>
-            <Grid align="center" nowrap>
-              <Column>
-                <h4>Direct Messages</h4>
-              </Column>
-              <Column shrink="0">
-                <Tooltip
-                  position="right"
-                  tooltip={wsopen ? 'CONNECTED' : 'DISCONNECTED'}
-                >
-                  <span className={j.join(' ')}></span>
-                </Tooltip>
-              </Column>
-            </Grid>
-            {initChats.err && <p>{initChats.err.message}</p>}
-            {loadChats.err && <p>{loadChats.err.message}</p>}
-            {getChats.err && <p>{getChats.err.message}</p>}
-            {getUsers.err && <p>{getUsers.err.message}</p>}
-            {getProfiles.err && <p>{getProfiles.err.message}</p>}
-            <Form
-              formState={form.state}
-              onChange={form.update}
-              displays={form.displays}
-              putDisplays={form.putDisplays}
-              addDisplay={form.addDisplay}
-              compactDisplays={form.compactDisplays}
-            >
-              <FieldDynSearchSelect
-                name="chatid"
-                placeholder="Search"
-                onSearch={userSuggest.setSearch}
-                options={userSuggest.opts}
-                nohint
-                fullWidth
-                iconRight={
-                  <ButtonTertiary onClick={goToDM}>
-                    <FaIcon icon={searchChatid ? 'arrow-right' : 'search'} />
-                  </ButtonTertiary>
-                }
-              />
-            </Form>
-          </Column>
-          <Column className="minheight0" grow="1" basis="0">
-            <ListGroup className="conduit-chat-list">
-              {chats.chats.map((i) => (
-                <ChatRow
-                  key={i.chatid}
-                  chat={i}
+    <WSProvider value={ws}>
+      <Grid className="conduit-chat-root" strict>
+        <Column fullWidth sm={6}>
+          <Grid
+            className="conduit-chat-sidebar"
+            direction="column"
+            nowrap
+            strict
+          >
+            <Column>
+              <Grid align="center" nowrap>
+                <Column>
+                  <h4>Direct Messages</h4>
+                </Column>
+                <Column shrink="0">
+                  <Tooltip
+                    position="right"
+                    tooltip={wsopen ? 'CONNECTED' : 'DISCONNECTED'}
+                  >
+                    <span className={j.join(' ')}></span>
+                  </Tooltip>
+                </Column>
+              </Grid>
+              {initChats.err && <p>{initChats.err.message}</p>}
+              {loadChats.err && <p>{loadChats.err.message}</p>}
+              {getChats.err && <p>{getChats.err.message}</p>}
+              {getUsers.err && <p>{getUsers.err.message}</p>}
+              {getProfiles.err && <p>{getProfiles.err.message}</p>}
+              <Form
+                formState={form.state}
+                onChange={form.update}
+                displays={form.displays}
+                putDisplays={form.putDisplays}
+                addDisplay={form.addDisplay}
+                compactDisplays={form.compactDisplays}
+              >
+                <FieldDynSearchSelect
+                  name="chatid"
+                  placeholder="Search"
+                  onSearch={userSuggest.setSearch}
+                  options={userSuggest.opts}
+                  nohint
+                  fullWidth
+                  iconRight={
+                    <ButtonTertiary onClick={goToDM}>
+                      <FaIcon icon={searchChatid ? 'arrow-right' : 'search'} />
+                    </ButtonTertiary>
+                  }
+                />
+              </Form>
+            </Column>
+            <Column className="minheight0" grow="1" basis="0">
+              <ListGroup className="conduit-chat-list">
+                {chats.chats.map((i) => (
+                  <ChatRow
+                    key={i.chatid}
+                    chat={i}
+                    users={chats.users}
+                    profiles={chats.profiles}
+                  />
+                ))}
+                <div className="conduit-chat-list-end-marker" ref={endElem} />
+              </ListGroup>
+            </Column>
+          </Grid>
+        </Column>
+        <Column fullWidth sm={18}>
+          <Routes>
+            <Route index element={<SelectAChat />} />
+            <Route
+              path=":chatid"
+              element={
+                <Chat
+                  chatsMap={chats.chatsMap}
                   users={chats.users}
                   profiles={chats.profiles}
+                  invalidateChat={invalidateChat}
                 />
-              ))}
-              <div className="conduit-chat-list-end-marker" ref={endElem} />
-            </ListGroup>
-          </Column>
-        </Grid>
-      </Column>
-      <Column fullWidth sm={18}>
-        <Routes>
-          <Route index element={<SelectAChat />} />
-          <Route
-            path=":chatid"
-            element={
-              <Chat
-                chatsMap={chats.chatsMap}
-                users={chats.users}
-                profiles={chats.profiles}
-                invalidateChat={invalidateChat}
-              />
-            }
-          />
-          <Route path="*" element={<Navigate to="" replace />} />
-        </Routes>
-      </Column>
-    </Grid>
+              }
+            />
+            <Route path="*" element={<Navigate to="" replace />} />
+          </Routes>
+        </Column>
+      </Grid>
+    </WSProvider>
   );
 };
 
