@@ -180,12 +180,12 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
   height: 8px;
   border-radius: 50%;
   background-color: $color-primary-2;
-  box-shadow: 0 0 8px 0 rgba($color-primary-2, 0.5);
+  box-shadow: 0 0 8px 0 $color-primary-2;
   transition: background-color $transition-normal, box-shadow $transition-normal;
 
   &.connected {
     background-color: $color-success-light;
-    box-shadow: 0 0 8px 0 rgba($color-success, 0.5);
+    box-shadow: 0 0 8px 0 $color-success;
   }
 }
 

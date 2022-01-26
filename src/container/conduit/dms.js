@@ -53,7 +53,8 @@ const MSGS_LIMIT = 32;
 const MSG_TIME_REL_DURATION = 604800000;
 
 const DM_WS_STATE = 'conduit:chat:dms';
-const DM_WS_CHANNEL = 'conduit.chat.dm';
+const DM_WS_CHANNELS = 'conduit.chat.dm';
+const DM_WS_CHANNEL_MSG = 'conduit.chat.dm.msg';
 
 const selectAPILatestDMs = (api) => api.conduit.dm;
 const selectAPIDMs = (api) => api.conduit.dm.ids;
@@ -341,6 +342,7 @@ const ChatRow = ({chat, users, profiles}) => {
 
 const CHATS_RESET = Symbol('CHATS_RESET');
 const CHATS_APPEND = Symbol('CHATS_APPEND');
+const CHATS_LAST_UPDATED = Symbol('CHATS_LAST_UPDATED');
 const CHATS_INVALIDATE = Symbol('CHATS_INVALIDATE');
 
 const USERS_APPEND = Symbol('USERS_APPEND');
@@ -355,6 +357,12 @@ const ChatsReset = (chats) => ({
 const ChatsAppend = (chats) => ({
   type: CHATS_APPEND,
   chats,
+});
+
+const ChatsLastUpdated = (chatid, last_updated) => ({
+  type: CHATS_LAST_UPDATED,
+  chatid,
+  last_updated,
 });
 
 const ChatsInvalidate = (chatids) => ({
@@ -454,6 +462,39 @@ const chatsReducer = (state, action) => {
         allUsersSet,
         usersDiff: iterDiff(allUsersSet.values(), state.validUsersSet),
         profilesDiff: iterDiff(allUsersSet.values(), state.validProfilesSet),
+      });
+    }
+    case CHATS_LAST_UPDATED: {
+      const {allChatsSet, validChatsSet} = state;
+      const {chatid} = action;
+      if (!allChatsSet.has(chatid)) {
+        allChatsSet.add(chatid);
+        validChatsSet.delete(chatid);
+        return Object.assign({}, state, {
+          allChatsSet,
+          validChatsSet,
+          chatsDiff: iterDiff(allChatsSet.values(), validChatsSet),
+        });
+      }
+      const {chats} = state;
+      const {last_updated} = action;
+      const idx = chats.findIndex((i) => chatid === i.chatid);
+      if (idx < 0 || last_updated <= chats[idx].last_updated) {
+        return state;
+      }
+      const chat = Object.assign({}, chats[idx], {last_updated});
+      chats[idx] = chat;
+      chats.sort((a, b) => {
+        // reverse sort
+        return b.last_updated - a.last_updated;
+      });
+      const chatsMap = {
+        value: state.chatsMap.value,
+      };
+      chatsMap.value.set(chat.chatid, chat);
+      return Object.assign({}, state, {
+        chats,
+        chatsMap,
       });
     }
     case CHATS_INVALIDATE: {
@@ -675,10 +716,22 @@ const DMs = () => {
     prehook: prehookWS,
   });
 
-  const onmessageWS = useCallback((channel, value) => {
-    console.log('msg', {channel, value});
-  }, []);
-  useWSSubChan(ws.subChan, DM_WS_CHANNEL, {
+  const onmessageWS = useCallback(
+    (channel, value) => {
+      console.log('msg', {channel, value});
+      switch (channel) {
+        case DM_WS_CHANNEL_MSG: {
+          if (!value) {
+            return;
+          }
+          const {chatid, time_ms} = value;
+          dispatchChats(ChatsLastUpdated(chatid, time_ms));
+        }
+      }
+    },
+    [dispatchChats],
+  );
+  useWSSubChan(ws.subChan, DM_WS_CHANNELS, {
     onmessage: onmessageWS,
   });
 
