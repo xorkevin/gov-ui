@@ -10,7 +10,7 @@ import {atomFamily, useRecoilValue, useSetRecoilState} from 'recoil';
 
 import {sleep} from '../utility';
 
-const WS_PROTOCOL = 'xorkevin.dev/governor/ws/v1alpha1';
+const WS_PROTOCOL = 'xorkevin.dev-governor_ws_v1alpha1';
 
 const noop = Object.freeze(() => {});
 

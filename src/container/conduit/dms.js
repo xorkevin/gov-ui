@@ -56,7 +56,9 @@ const CHATS_LIMIT = 32;
 const CHATS_SCROLL_LIMIT = 16;
 const CHATS_SEARCH_LIMIT = 16;
 const MSGS_LIMIT = 32;
+const MSGS_SCROLL_LIMIT = 16;
 const MSG_TIME_REL_DURATION = 604800000;
+const MSGS_BREAK_DURATION = 1800000;
 
 const DM_WS_STATE = 'conduit:chat:dms';
 const DM_WS_CHANNELS = 'conduit.chat.dm';
@@ -178,6 +180,7 @@ const MsgRow = ({
 
 const MSGS_RESET = Symbol('MSGS_RESET');
 const MSGS_RCV = Symbol('MSGS_RCV');
+const MSGS_APPEND = Symbol('MSGS_APPEND');
 
 const MsgsReset = (msgs) => ({
   type: MSGS_RESET,
@@ -187,6 +190,11 @@ const MsgsReset = (msgs) => ({
 const MsgsRcv = (msg) => ({
   type: MSGS_RCV,
   msg,
+});
+
+const MsgsAppend = (msgs) => ({
+  type: MSGS_RCV,
+  msgs,
 });
 
 const msgsReducer = (state, action) => {
@@ -209,7 +217,7 @@ const msgsReducer = (state, action) => {
           msgs,
         };
       }
-      const idx = msgs.findIndex((i) => msg.msgid === i.msgid);
+      const idx = msgs.findIndex((i) => i.msgid === msg.msgid);
       if (idx >= 0) {
         return state;
       }
@@ -223,6 +231,32 @@ const msgsReducer = (state, action) => {
         }
         return 0;
       });
+      return {
+        msgs,
+      };
+    }
+    case MSGS_APPEND: {
+      if (!Array.isArray(action.msgs) || action.msgs.length === 0) {
+        return state;
+      }
+      const {msgs} = state;
+      if (msgs.length === 0) {
+        return {
+          msgs: action.msgs,
+        };
+      }
+      const last = msgs[msgs.length - 1].msgid;
+      const idx = msgs.findIndex((i) => i.msgid < last);
+      if (idx < 0) {
+        return state;
+      }
+      if (idx === 0) {
+        msgs.push(...action.msgs);
+        return {
+          msgs,
+        };
+      }
+      msgs.push(...action.msgs.slice(idx));
       return {
         msgs,
       };
@@ -274,6 +308,22 @@ const Chat = ({chatsMap, users, profiles, invalidateChat}) => {
 
   const endElem = useRef(null);
 
+  const firstLastUpdated =
+    msgs.msgs.length === 0 ? 0 : msgs.msgs[msgs.msgs.length - 1].msgid;
+
+  const posthookLoadMsgs = useCallback(
+    (_res, msgs) => {
+      dispatchMsgs(MsgsAppend(msgs));
+    },
+    [dispatchMsgs],
+  );
+  const [loadMsgs, _execLoadMsgs] = useAuthCall(
+    selectAPIMsgs,
+    [firstLastUpdated, MSGS_SCROLL_LIMIT],
+    [],
+    {posthook: posthookLoadMsgs},
+  );
+
   const form = useForm({
     kind: CHAT_MSG_KIND_TXT,
     value: '',
@@ -297,7 +347,7 @@ const Chat = ({chatsMap, users, profiles, invalidateChat}) => {
   const ws = useContext(WSCtx);
 
   const onmessageWS = useCallback(
-    (channel, value) => {
+    (_channel, value) => {
       if (!value || value.chatid !== chatid) {
         return;
       }
@@ -336,35 +386,33 @@ const Chat = ({chatsMap, users, profiles, invalidateChat}) => {
       </Column>
       <Column className="minheight0" grow="1" basis="0">
         {initMsgs.err && <p>{initMsgs.err.message}</p>}
-        {initMsgs.success && (
-          <div className="conduit-chat-msgs">
-            {Array.isArray(initMsgs.data) &&
-              initMsgs.data.map((i, n, arr) => (
-                <MsgRow
-                  key={i.msgid}
-                  loggedInUserid={loggedInUserid}
-                  users={users}
-                  profiles={profiles}
-                  msgid={i.msgid}
-                  userid={i.userid}
-                  kind={i.kind}
-                  time_ms={i.time_ms}
-                  value={i.value}
-                  first={
-                    n === 0 ||
-                    arr[n - 1].userid !== i.userid ||
-                    arr[n - 1].time_ms - i.time_ms > 300000
-                  }
-                  last={
-                    n === arr.length - 1 ||
-                    arr[n + 1].userid !== i.userid ||
-                    i.time_ms - arr[n + 1].time_ms > 300000
-                  }
-                />
-              ))}
-            <div className="conduit-chat-msgs-end-marker" ref={endElem} />
-          </div>
-        )}
+        {loadMsgs.err && <p>{loadMsgs.err.message}</p>}
+        <div className="conduit-chat-msgs">
+          {msgs.msgs.map((i, n, arr) => (
+            <MsgRow
+              key={i.msgid}
+              loggedInUserid={loggedInUserid}
+              users={users}
+              profiles={profiles}
+              msgid={i.msgid}
+              userid={i.userid}
+              kind={i.kind}
+              time_ms={i.time_ms}
+              value={i.value}
+              first={
+                n === 0 ||
+                arr[n - 1].userid !== i.userid ||
+                arr[n - 1].time_ms - i.time_ms > MSGS_BREAK_DURATION
+              }
+              last={
+                n === arr.length - 1 ||
+                arr[n + 1].userid !== i.userid ||
+                i.time_ms - arr[n + 1].time_ms > MSGS_BREAK_DURATION
+              }
+            />
+          ))}
+          <div className="conduit-chat-msgs-end-marker" ref={endElem} />
+        </div>
       </Column>
       <Column>
         <Form formState={form.state} onChange={form.update} onSubmit={sendMsg}>
