@@ -323,6 +323,21 @@ const Chat = ({chatsMap, users, profiles, invalidateChat}) => {
     {posthook: posthookLoadMsgs, errhook: displayErrSnack},
   );
 
+  useEffect(() => {
+    if (!endElem.current) {
+      return;
+    }
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.some((i) => i.isIntersecting)) {
+        execLoadMsgs();
+      }
+    });
+    observer.observe(endElem.current);
+    return () => {
+      observer.disconnect();
+    };
+  }, [endElem, execLoadMsgs]);
+
   const form = useForm({
     kind: CHAT_MSG_KIND_TXT,
     value: '',
@@ -335,7 +350,7 @@ const Chat = ({chatsMap, users, profiles, invalidateChat}) => {
       value: '',
     });
     if (startElem.current) {
-      startElem.current.scrollIntoView();
+      startElem.current.scrollIntoView({behavior: 'smooth'});
     }
   }, [formAssign, startElem]);
   const [_create, execCreate] = useAuthCall(
@@ -346,7 +361,7 @@ const Chat = ({chatsMap, users, profiles, invalidateChat}) => {
   );
   const scrollTop = useCallback(() => {
     if (startElem.current) {
-      startElem.current.scrollIntoView();
+      startElem.current.scrollIntoView({behavior: 'smooth'});
     }
   }, [startElem]);
   const sendMsg = form.state.value ? execCreate : scrollTop;
