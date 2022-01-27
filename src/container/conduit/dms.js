@@ -86,8 +86,6 @@ const SelectAChat = () => {
   );
 };
 
-const noop = () => {};
-
 const ProfileImg = ({userid, profiles}) => {
   const profile = profiles.value.get(userid);
   const imageURL = useURL(selectAPIImage, [userid]);
@@ -193,7 +191,7 @@ const MsgsRcv = (msg) => ({
 });
 
 const MsgsAppend = (msgs) => ({
-  type: MSGS_RCV,
+  type: MSGS_APPEND,
   msgs,
 });
 
@@ -246,7 +244,7 @@ const msgsReducer = (state, action) => {
         };
       }
       const last = msgs[msgs.length - 1].msgid;
-      const idx = msgs.findIndex((i) => i.msgid < last);
+      const idx = action.msgs.findIndex((i) => i.msgid < last);
       if (idx < 0) {
         return state;
       }
@@ -306,6 +304,7 @@ const Chat = ({chatsMap, users, profiles, invalidateChat}) => {
     {posthook: posthookInit},
   );
 
+  const startElem = useRef(null);
   const endElem = useRef(null);
 
   const firstLastUpdated =
@@ -317,11 +316,11 @@ const Chat = ({chatsMap, users, profiles, invalidateChat}) => {
     },
     [dispatchMsgs],
   );
-  const [loadMsgs, _execLoadMsgs] = useAuthCall(
+  const [_loadMsgs, execLoadMsgs] = useAuthCall(
     selectAPIMsgs,
-    [firstLastUpdated, MSGS_SCROLL_LIMIT],
+    [chatid, '', firstLastUpdated, MSGS_SCROLL_LIMIT],
     [],
-    {posthook: posthookLoadMsgs},
+    {posthook: posthookLoadMsgs, errhook: displayErrSnack},
   );
 
   const form = useForm({
@@ -335,14 +334,22 @@ const Chat = ({chatsMap, users, profiles, invalidateChat}) => {
       kind: CHAT_MSG_KIND_TXT,
       value: '',
     });
-  }, [formAssign]);
+    if (startElem.current) {
+      startElem.current.scrollIntoView();
+    }
+  }, [formAssign, startElem]);
   const [_create, execCreate] = useAuthCall(
     selectAPICreateMsg,
     [chatid, form.state],
     {},
     {posthook: posthookCreate, errhook: displayErrSnack},
   );
-  const sendMsg = form.state.value ? execCreate : noop;
+  const scrollTop = useCallback(() => {
+    if (startElem.current) {
+      startElem.current.scrollIntoView();
+    }
+  }, [startElem]);
+  const sendMsg = form.state.value ? execCreate : scrollTop;
 
   const ws = useContext(WSCtx);
 
@@ -386,8 +393,8 @@ const Chat = ({chatsMap, users, profiles, invalidateChat}) => {
       </Column>
       <Column className="minheight0" grow="1" basis="0">
         {initMsgs.err && <p>{initMsgs.err.message}</p>}
-        {loadMsgs.err && <p>{loadMsgs.err.message}</p>}
         <div className="conduit-chat-msgs">
+          <div className="conduit-chat-msgs-start-marker" ref={startElem} />
           {msgs.msgs.map((i, n, arr) => (
             <MsgRow
               key={i.msgid}
@@ -411,7 +418,11 @@ const Chat = ({chatsMap, users, profiles, invalidateChat}) => {
               }
             />
           ))}
-          <div className="conduit-chat-msgs-end-marker" ref={endElem} />
+          <div className="conduit-chat-msgs-end-marker" ref={endElem}>
+            <ButtonGroup>
+              <ButtonTertiary onClick={execLoadMsgs}>Load more</ButtonTertiary>
+            </ButtonGroup>
+          </div>
         </div>
       </Column>
       <Column>
@@ -710,6 +721,14 @@ const chatsReducer = (state, action) => {
 };
 
 const DMs = () => {
+  const snackbar = useSnackbar();
+  const displayErrSnack = useCallback(
+    (_res, err) => {
+      snackbar(<SnackbarSurface>{err.message}</SnackbarSurface>);
+    },
+    [snackbar],
+  );
+
   const [chats, dispatchChats] = useReducer(chatsReducer, {
     chats: [],
     chatsMap: {value: new Map()},
@@ -751,11 +770,11 @@ const DMs = () => {
     },
     [dispatchChats],
   );
-  const [loadChats, _execLoadChats] = useAuthCall(
+  const [_loadChats, _execLoadChats] = useAuthCall(
     selectAPILatestDMs,
     [firstLastUpdated, CHATS_SCROLL_LIMIT],
     [],
-    {posthook: posthookLoadChats},
+    {posthook: posthookLoadChats, errhook: displayErrSnack},
   );
 
   const posthookChats = useCallback(
@@ -764,11 +783,11 @@ const DMs = () => {
     },
     [dispatchChats],
   );
-  const [getChats] = useAuthResource(
+  useAuthResource(
     chats.chatsDiff.length > 0 ? selectAPIDMs : selectAPINull,
     [chats.chatsDiff],
     [],
-    {posthook: posthookChats},
+    {posthook: posthookChats, errhook: displayErrSnack},
   );
 
   const posthookUsers = useCallback(
@@ -777,11 +796,11 @@ const DMs = () => {
     },
     [dispatchChats],
   );
-  const [getUsers] = useResource(
+  useResource(
     chats.usersDiff.length > 0 ? selectAPIUsers : selectAPINull,
     [chats.usersDiff],
     [],
-    {posthook: posthookUsers},
+    {posthook: posthookUsers, errhook: displayErrSnack},
   );
 
   const posthookProfiles = useCallback(
@@ -790,11 +809,11 @@ const DMs = () => {
     },
     [dispatchChats],
   );
-  const [getProfiles] = useResource(
+  useResource(
     chats.profilesDiff.length > 0 ? selectAPIProfiles : selectAPINull,
     [chats.profilesDiff],
     [],
-    {posthook: posthookProfiles},
+    {posthook: posthookProfiles, errhook: displayErrSnack},
   );
 
   const invalidateChat = useCallback(
@@ -901,10 +920,6 @@ const DMs = () => {
                 </Column>
               </Grid>
               {initChats.err && <p>{initChats.err.message}</p>}
-              {loadChats.err && <p>{loadChats.err.message}</p>}
-              {getChats.err && <p>{getChats.err.message}</p>}
-              {getUsers.err && <p>{getUsers.err.message}</p>}
-              {getProfiles.err && <p>{getProfiles.err.message}</p>}
               <Form
                 formState={form.state}
                 onChange={form.update}
