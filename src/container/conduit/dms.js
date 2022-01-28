@@ -291,11 +291,14 @@ const Chat = ({chatsMap, users, profiles, invalidateChat}) => {
     msgs: [],
   });
 
+  const msgsEnd = useRef(false);
+
   const posthookInit = useCallback(
     (_res, msgs) => {
       dispatchMsgs(MsgsReset(msgs));
+      msgsEnd.current = false;
     },
-    [dispatchMsgs],
+    [dispatchMsgs, msgsEnd],
   );
   const [initMsgs] = useAuthResource(
     chatid ? selectAPIMsgs : selectAPINull,
@@ -307,18 +310,21 @@ const Chat = ({chatsMap, users, profiles, invalidateChat}) => {
   const startElem = useRef(null);
   const endElem = useRef(null);
 
-  const firstLastUpdated =
-    msgs.msgs.length === 0 ? 0 : msgs.msgs[msgs.msgs.length - 1].msgid;
+  const firstMsgid =
+    msgs.msgs.length === 0 ? '' : msgs.msgs[msgs.msgs.length - 1].msgid;
 
   const posthookLoadMsgs = useCallback(
     (_res, msgs) => {
       dispatchMsgs(MsgsAppend(msgs));
+      if (Array.isArray(msgs) && msgs.length === 0) {
+        msgsEnd.current = true;
+      }
     },
-    [dispatchMsgs],
+    [dispatchMsgs, msgsEnd],
   );
   const [_loadMsgs, execLoadMsgs] = useAuthCall(
     selectAPIMsgs,
-    [chatid, '', firstLastUpdated, MSGS_SCROLL_LIMIT],
+    [chatid, '', firstMsgid, MSGS_SCROLL_LIMIT],
     [],
     {posthook: posthookLoadMsgs, errhook: displayErrSnack},
   );
@@ -328,6 +334,9 @@ const Chat = ({chatsMap, users, profiles, invalidateChat}) => {
       return;
     }
     const observer = new IntersectionObserver((entries) => {
+      if (msgsEnd.current) {
+        return;
+      }
       if (entries.some((i) => i.isIntersecting)) {
         execLoadMsgs();
       }
@@ -336,7 +345,7 @@ const Chat = ({chatsMap, users, profiles, invalidateChat}) => {
     return () => {
       observer.disconnect();
     };
-  }, [endElem, execLoadMsgs]);
+  }, [endElem, execLoadMsgs, msgsEnd]);
 
   const form = useForm({
     kind: CHAT_MSG_KIND_TXT,
