@@ -1,4 +1,11 @@
-import {useReducer, useEffect, useCallback, useRef, useContext} from 'react';
+import {
+  useReducer,
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+  useContext,
+} from 'react';
 import {
   Routes,
   Route,
@@ -59,10 +66,12 @@ const MSGS_LIMIT = 32;
 const MSGS_SCROLL_LIMIT = 16;
 const MSG_TIME_REL_DURATION = 604800000;
 const MSGS_BREAK_DURATION = 1800000;
+const PRESENCE_INTERVAL = 30000;
 
 const DM_WS_STATE = 'conduit:chat:dms';
 const DM_WS_CHANNELS = 'conduit.chat.dm';
 const DM_WS_CHANNEL_MSG = 'conduit.chat.dm.msg';
+const DM_WS_CHANNEL_PRESENCE = 'conduit.chat.presence';
 
 const selectAPILatestDMs = (api) => api.conduit.dm;
 const selectAPIDMs = (api) => api.conduit.dm.ids;
@@ -561,6 +570,22 @@ const iterDiff = (it, s) => {
   return diff;
 };
 
+const iterTake = (it, f, n) => {
+  const s = new Set();
+  let c = 0;
+  for (const i of it) {
+    const k = f(i);
+    if (k) {
+      s.add(k);
+    }
+    c++;
+    if (c >= n) {
+      break;
+    }
+  }
+  return s;
+};
+
 const chatsReducer = (state, action) => {
   switch (action.type) {
     case CHATS_RESET: {
@@ -573,10 +598,12 @@ const chatsReducer = (state, action) => {
       chats.forEach((i) => {
         allUsersSet.add(i.userid);
       });
+      const latestUserids = iterTake(chats, (i) => i.userid, 255);
       const usersDiff = Array.from(allUsersSet);
       const profilesDiff = Array.from(allUsersSet);
       return {
         chats,
+        latestUserids,
         chatsMap: {value: new Map(chats.map((i) => [i.chatid, i]))},
         allChatsSet: new Set(chatids),
         validChatsSet: new Set(chatids),
@@ -614,6 +641,7 @@ const chatsReducer = (state, action) => {
         // reverse sort
         return b.last_updated - a.last_updated;
       });
+      const latestUserids = iterTake(chats, (i) => i.userid, 255);
       const chatsMap = {
         value: state.chatsMap.value,
       };
@@ -626,6 +654,7 @@ const chatsReducer = (state, action) => {
       });
       return Object.assign({}, state, {
         chats,
+        latestUserids,
         chatsMap,
         allChatsSet,
         validChatsSet,
@@ -659,12 +688,14 @@ const chatsReducer = (state, action) => {
         // reverse sort
         return b.last_updated - a.last_updated;
       });
+      const latestUserids = iterTake(chats, (i) => i.userid, 255);
       const chatsMap = {
         value: state.chatsMap.value,
       };
       chatsMap.value.set(chat.chatid, chat);
       return Object.assign({}, state, {
         chats,
+        latestUserids,
         chatsMap,
       });
     }
@@ -755,6 +786,7 @@ const DMs = () => {
 
   const [chats, dispatchChats] = useReducer(chatsReducer, {
     chats: [],
+    latestUserids: new Set(),
     chatsMap: {value: new Map()},
     allChatsSet: new Set(),
     validChatsSet: new Set(),
@@ -919,10 +951,36 @@ const DMs = () => {
     j.push('connected');
   }
 
+  const params = useParams();
+  const currentChatid = params['*'];
+  const currentChat = currentChatid
+    ? chats.chatsMap.value.get(currentChatid)
+    : null;
+  const chatUserid = currentChat ? currentChat.userid : null;
+  const latestUserids = chats.latestUserids;
+  const wsSendChan = ws.sendChan;
+  useEffect(() => {
+    if (!wsopen) {
+      return;
+    }
+    const userids = Array.from(latestUserids);
+    if (chatUserid && !latestUserids.has(chatUserid)) {
+      userids.push(chatUserid);
+    }
+    const interval = setInterval(() => {
+      wsSendChan(DM_WS_CHANNEL_PRESENCE, {
+        userids,
+      });
+    }, PRESENCE_INTERVAL);
+    return () => {
+      clearInterval(interval);
+    };
+  }, [wsopen, wsSendChan, chatUserid, latestUserids]);
+
   return (
     <WSProvider value={ws}>
       <Grid className="conduit-chat-root" strict>
-        <Column fullWidth sm={6}>
+        <Column fullWidth md={6}>
           <Grid
             className="conduit-chat-sidebar"
             direction="column"
@@ -982,7 +1040,7 @@ const DMs = () => {
             </Column>
           </Grid>
         </Column>
-        <Column fullWidth sm={18}>
+        <Column fullWidth md={18}>
           <Routes>
             <Route index element={<SelectAChat />} />
             <Route
