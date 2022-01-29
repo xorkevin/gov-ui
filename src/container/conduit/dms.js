@@ -71,7 +71,9 @@ const PRESENCE_INTERVAL = 30000;
 const DM_WS_STATE = 'conduit:chat:dms';
 const DM_WS_CHANNELS = 'conduit.chat.dm';
 const DM_WS_CHANNEL_MSG = 'conduit.chat.dm.msg';
-const DM_WS_CHANNEL_PRESENCE = 'conduit.chat.presence';
+const DM_WS_CHANNEL_PRESENCE = 'conduit.presence';
+
+const PRESENCE_LIMIT = 255;
 
 const selectAPILatestDMs = (api) => api.conduit.dm;
 const selectAPIDMs = (api) => api.conduit.dm.ids;
@@ -598,7 +600,11 @@ const chatsReducer = (state, action) => {
       chats.forEach((i) => {
         allUsersSet.add(i.userid);
       });
-      const latestUserids = iterTake(chats, (i) => i.userid, 255);
+      const latestUserids = iterTake(
+        chats,
+        (i) => i.userid,
+        PRESENCE_LIMIT - 1,
+      );
       const usersDiff = Array.from(allUsersSet);
       const profilesDiff = Array.from(allUsersSet);
       return {
@@ -641,7 +647,11 @@ const chatsReducer = (state, action) => {
         // reverse sort
         return b.last_updated - a.last_updated;
       });
-      const latestUserids = iterTake(chats, (i) => i.userid, 255);
+      const latestUserids = iterTake(
+        chats,
+        (i) => i.userid,
+        PRESENCE_LIMIT - 1,
+      );
       const chatsMap = {
         value: state.chatsMap.value,
       };
@@ -688,7 +698,11 @@ const chatsReducer = (state, action) => {
         // reverse sort
         return b.last_updated - a.last_updated;
       });
-      const latestUserids = iterTake(chats, (i) => i.userid, 255);
+      const latestUserids = iterTake(
+        chats,
+        (i) => i.userid,
+        PRESENCE_LIMIT - 1,
+      );
       const chatsMap = {
         value: state.chatsMap.value,
       };
