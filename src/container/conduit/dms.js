@@ -1,4 +1,5 @@
 import {
+  useState,
   useReducer,
   useEffect,
   useCallback,
@@ -44,7 +45,7 @@ import {
 } from '@xorkevin/nuke';
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
-import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
+import AnchorText from '@xorkevin/nuke/src/component/anchor/nocolor';
 import Img from '@xorkevin/nuke/src/component/image/circle';
 
 import {GovUICtx} from '../../middleware';
@@ -67,9 +68,10 @@ const MSGS_SCROLL_LIMIT = 16;
 const MSG_TIME_REL_DURATION = 604800000;
 const MSGS_BREAK_DURATION = 1800000;
 const PRESENCE_INTERVAL = 30000;
+const PRESENCE_INIT_INTERVAL = 5000;
 
 const DM_WS_STATE = 'conduit:chat:dms';
-const DM_WS_CHANNELS = 'conduit.chat.dm';
+const DM_WS_CHANNELS = 'conduit.';
 const DM_WS_CHANNEL_MSG = 'conduit.chat.dm.msg';
 const DM_WS_CHANNEL_PRESENCE = 'conduit.presence';
 
@@ -275,7 +277,7 @@ const msgsReducer = (state, action) => {
   }
 };
 
-const Chat = ({chatsMap, users, profiles, invalidateChat}) => {
+const Chat = ({chatsMap, users, profiles, presence, invalidateChat}) => {
   const ctx = useContext(GovUICtx);
   const {userid: loggedInUserid} = useAuthValue();
 
@@ -401,15 +403,30 @@ const Chat = ({chatsMap, users, profiles, invalidateChat}) => {
     onmessage: onmessageWS,
   });
 
+  const present = presence && chat && presence.has(chat.userid);
+  const j = ['conduit-chat-presence-indicator'];
+  if (present) {
+    j.push('connected');
+  }
+
   return (
     <Grid className="conduit-chat-msgs-root" direction="column" nowrap strict>
       <Column>
         <Grid className="conduit-chat-header" align="center" nowrap strict>
-          {profile && (
-            <Column className="profile-picture text-center" shrink="0">
+          <Column className="profile-picture text-center" shrink="0">
+            {profile && (
               <ProfileImg profiles={profiles} userid={profile.userid} />
-            </Column>
-          )}
+            )}
+            {user && (
+              <Tooltip
+                className="conduit-chat-presence-indicator-outer"
+                position="right"
+                tooltip={present ? 'ONLINE' : 'OFFLINE'}
+              >
+                <span className={j.join(' ')}></span>
+              </Tooltip>
+            )}
+          </Column>
           <Column className="minwidth0 profile-name" grow="1">
             <h5>
               {user ? (
@@ -480,9 +497,14 @@ const Chat = ({chatsMap, users, profiles, invalidateChat}) => {
   );
 };
 
-const ChatRow = ({chat, users, profiles}) => {
+const ChatRow = ({chat, users, profiles, presence}) => {
   const menu = useMenu();
   const user = users.value.get(chat.userid);
+  const present = presence && chat && presence.has(chat.userid);
+  const j = ['conduit-chat-presence-indicator'];
+  if (present) {
+    j.push('connected');
+  }
   return (
     <ListItem>
       <Grid justify="space-between" align="center" nowrap strict>
@@ -491,6 +513,15 @@ const ChatRow = ({chat, users, profiles}) => {
           shrink="0"
         >
           <ProfileImg profiles={profiles} userid={chat.userid} />
+          {user && (
+            <Tooltip
+              className="conduit-chat-presence-indicator-outer"
+              position="right"
+              tooltip={present ? 'ONLINE' : 'OFFLINE'}
+            >
+              <span className={j.join(' ')}></span>
+            </Tooltip>
+          )}
         </Column>
         <Column className="minwidth0" grow="1">
           <Anchor className="conduit-chat-row-link" local href={chat.chatid}>
@@ -930,6 +961,8 @@ const DMs = () => {
     });
   }, [formAssign, navigate, searchChatid]);
 
+  const [presence, setPresence] = useState(null);
+
   const wsurl = useURL(selectAPIWS);
 
   const relogin = useRelogin();
@@ -951,9 +984,19 @@ const DMs = () => {
           const {chatid, time_ms} = value;
           dispatchChats(ChatsLastUpdated(chatid, time_ms));
         }
+        case DM_WS_CHANNEL_PRESENCE: {
+          if (!value) {
+            return;
+          }
+          const {userids} = value;
+          if (!Array.isArray(userids)) {
+            return;
+          }
+          setPresence(new Set(userids));
+        }
       }
     },
-    [dispatchChats],
+    [dispatchChats, setPresence],
   );
   useWSSubChan(ws.subChan, DM_WS_CHANNELS, {
     onmessage: onmessageWS,
@@ -975,21 +1018,38 @@ const DMs = () => {
   const wsSendChan = ws.sendChan;
   useEffect(() => {
     if (!wsopen) {
+      setPresence(null);
       return;
     }
     const userids = Array.from(latestUserids);
     if (chatUserid && !latestUserids.has(chatUserid)) {
       userids.push(chatUserid);
     }
+    if (userids.length === 0) {
+      setPresence(null);
+      return;
+    }
     const interval = setInterval(() => {
       wsSendChan(DM_WS_CHANNEL_PRESENCE, {
         userids,
       });
     }, PRESENCE_INTERVAL);
+    const timeout = setTimeout(() => {
+      wsSendChan(DM_WS_CHANNEL_PRESENCE, {
+        userids,
+      });
+    }, PRESENCE_INIT_INTERVAL);
+    const timeout2 = setTimeout(() => {
+      wsSendChan(DM_WS_CHANNEL_PRESENCE, {
+        userids,
+      });
+    }, PRESENCE_INIT_INTERVAL / 2);
     return () => {
       clearInterval(interval);
+      clearTimeout(timeout);
+      clearTimeout(timeout2);
     };
-  }, [wsopen, wsSendChan, chatUserid, latestUserids]);
+  }, [wsopen, wsSendChan, setPresence, chatUserid, latestUserids]);
 
   return (
     <WSProvider value={ws}>
@@ -1008,6 +1068,7 @@ const DMs = () => {
                 </Column>
                 <Column shrink="0">
                   <Tooltip
+                    className="conduit-chat-connection-indicator-outer"
                     position="right"
                     tooltip={wsopen ? 'CONNECTED' : 'DISCONNECTED'}
                   >
@@ -1047,6 +1108,7 @@ const DMs = () => {
                     chat={i}
                     users={chats.users}
                     profiles={chats.profiles}
+                    presence={presence}
                   />
                 ))}
                 <div className="conduit-chat-list-end-marker" ref={endElem} />
@@ -1064,6 +1126,7 @@ const DMs = () => {
                   chatsMap={chats.chatsMap}
                   users={chats.users}
                   profiles={chats.profiles}
+                  presence={presence}
                   invalidateChat={invalidateChat}
                 />
               }

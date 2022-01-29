@@ -3,6 +3,8 @@ $transition-normal: 0.125s cubic-bezier(0.375, 0, 0.25, 1) !default;
 $black: #000000;
 $white: #ffffff;
 
+$color-body-background: #fdfdfd !default;
+
 $color-text-dark-1: rgba($black, 0.9375) !default; // primary
 $color-text-dark-2: rgba($black, 0.75) !default; // secondary
 $color-text-dark-3: rgba($black, 0.375) !default; // disabled/hint/icons
@@ -23,6 +25,12 @@ $color-primary: #0d47a1 !default;
 $color-primary-1: lighten($color-primary, 25%) !default;
 $color-primary-2: lighten($color-primary, 12.5%) !default;
 $color-primary-3: $color-primary !default;
+
+$color-primary-dark: #29313d !default;
+
+$color-primary-dark-1: $color-primary-dark !default;
+$color-primary-dark-2: darken($color-primary-dark, 6.25%) !default;
+$color-primary-dark-3: darken($color-primary-dark, 12.5%) !default;
 
 $color-back-primary: lighten($color-primary, 12.5%) !default;
 
@@ -147,6 +155,10 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
   border-right: 1px solid $color-text-dark-3;
 }
 
+.dark .conduit-chat-sidebar {
+  border-color: $color-text-light-3;
+}
+
 .conduit-chat-list {
   height: 100%;
   overflow: auto;
@@ -164,6 +176,7 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
 }
 
 .conduit-chat-row-profile-picture {
+  position: relative;
   width: 48px;
   margin: 0 8px;
 }
@@ -174,8 +187,13 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
   visibility: hidden;
 }
 
+.conduit-chat-connection-indicator-outer {
+  display: block;
+  position: relative;
+}
+
 .conduit-chat-connection-indicator {
-  display: inline-block;
+  display: block;
   width: 8px;
   height: 8px;
   border-radius: 50%;
@@ -189,8 +207,33 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
   }
 }
 
-.dark .conduit-chat-sidebar {
-  border-color: $color-text-light-3;
+.conduit-chat-presence-indicator-outer {
+  display: block;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 1;
+}
+
+.conduit-chat-presence-indicator {
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: $color-primary-2;
+  box-shadow: 0 0 8px 0 $color-primary-2;
+  border: 1px solid $color-body-background;
+  transition: background-color $transition-normal, box-shadow $transition-normal,
+    border-color $transition-normal;
+
+  &.connected {
+    background-color: $color-success-light;
+    box-shadow: 0 0 8px 0 $color-success;
+  }
+}
+
+.dark .conduit-chat-presence-indicator {
+  border-color: $color-primary-dark-3;
 }
 
 .conduit-chat {
@@ -215,6 +258,7 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
 
 .conduit-chat-header {
   & > .profile-picture {
+    position: relative;
     width: 32px;
     margin: 0 16px;
   }
