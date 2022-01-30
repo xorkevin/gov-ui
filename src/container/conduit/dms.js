@@ -68,7 +68,6 @@ const MSGS_SCROLL_LIMIT = 16;
 const MSG_TIME_REL_DURATION = 604800000;
 const MSGS_BREAK_DURATION = 1800000;
 const PRESENCE_INTERVAL = 30000;
-const PRESENCE_INIT_INTERVAL = 5000;
 
 const DM_WS_STATE = 'conduit:chat:dms';
 const DM_WS_CHANNELS = 'conduit.';
@@ -1034,20 +1033,11 @@ const DMs = () => {
         userids,
       });
     }, PRESENCE_INTERVAL);
-    const timeout = setTimeout(() => {
-      wsSendChan(DM_WS_CHANNEL_PRESENCE, {
-        userids,
-      });
-    }, PRESENCE_INIT_INTERVAL);
-    const timeout2 = setTimeout(() => {
-      wsSendChan(DM_WS_CHANNEL_PRESENCE, {
-        userids,
-      });
-    }, PRESENCE_INIT_INTERVAL / 2);
+    wsSendChan(DM_WS_CHANNEL_PRESENCE, {
+      userids,
+    });
     return () => {
       clearInterval(interval);
-      clearTimeout(timeout);
-      clearTimeout(timeout2);
     };
   }, [wsopen, wsSendChan, setPresence, chatUserid, latestUserids]);
 
