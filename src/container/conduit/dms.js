@@ -3,7 +3,6 @@ import {
   useReducer,
   useEffect,
   useCallback,
-  useMemo,
   useRef,
   useContext,
 } from 'react';
@@ -837,9 +836,7 @@ const chatsReducer = (state, action) => {
   }
 };
 
-const DMs = () => {
-  const ctx = useContext(GovUICtx);
-
+const DMs = ({isMobile}) => {
   const snackbar = useSnackbar();
   const displayErrSnack = useCallback(
     (_res, err) => {
@@ -1002,6 +999,7 @@ const DMs = () => {
           }
           const {chatid, time_ms} = value;
           dispatchChats(ChatsLastUpdated(chatid, time_ms));
+          break;
         }
         case DM_WS_CHANNEL_PRESENCE: {
           if (!value) {
@@ -1012,6 +1010,7 @@ const DMs = () => {
             return;
           }
           setPresence(new Set(userids));
+          break;
         }
       }
     },
@@ -1060,22 +1059,6 @@ const DMs = () => {
       clearInterval(interval);
     };
   }, [wsopen, wsSendChan, setPresence, chatUserid, latestUserids]);
-
-  const [isMobile, setIsMobile] = useState(false);
-  const {conduitMobileBreakpoint} = ctx;
-  useEffect(() => {
-    const observer = new ResizeObserver((entries) => {
-      if (entries.length < 0 || entries[0].borderBoxSize.length < 0) {
-        return;
-      }
-      const width = entries[0].borderBoxSize[0].inlineSize;
-      setIsMobile(width < conduitMobileBreakpoint);
-    });
-    observer.observe(document.body);
-    return () => {
-      observer.disconnect();
-    };
-  }, [conduitMobileBreakpoint, setIsMobile]);
 
   const sidebar = (
     <Grid className="conduit-chat-sidebar" direction="column" nowrap strict>
