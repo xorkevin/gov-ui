@@ -11,6 +11,7 @@ import {
   Routes,
   Route,
   Navigate,
+  useHref,
   useParams,
   useNavigate,
 } from 'react-router-dom';
@@ -276,7 +277,15 @@ const msgsReducer = (state, action) => {
   }
 };
 
-const Chat = ({chatsMap, users, profiles, presence, invalidateChat}) => {
+const Chat = ({
+  chatsMap,
+  users,
+  profiles,
+  presence,
+  invalidateChat,
+  isMobile,
+  back,
+}) => {
   const ctx = useContext(GovUICtx);
   const {userid: loggedInUserid} = useAuthValue();
 
@@ -412,6 +421,15 @@ const Chat = ({chatsMap, users, profiles, presence, invalidateChat}) => {
     <Grid className="conduit-chat-msgs-root" direction="column" nowrap strict>
       <Column>
         <Grid className="conduit-chat-header" align="center" nowrap strict>
+          {isMobile && (
+            <Column shrink="0">
+              <Anchor local href={back}>
+                <ButtonTertiary>
+                  <FaIcon icon="arrow-left" />
+                </ButtonTertiary>
+              </Anchor>
+            </Column>
+          )}
           <Column className="profile-picture text-center" shrink="0">
             {profile && (
               <ProfileImg profiles={profiles} userid={profile.userid} />
@@ -820,6 +838,8 @@ const chatsReducer = (state, action) => {
 };
 
 const DMs = () => {
+  const ctx = useContext(GovUICtx);
+
   const snackbar = useSnackbar();
   const displayErrSnack = useCallback(
     (_res, err) => {
@@ -1041,74 +1061,93 @@ const DMs = () => {
     };
   }, [wsopen, wsSendChan, setPresence, chatUserid, latestUserids]);
 
+  const [isMobile, setIsMobile] = useState(false);
+  const {conduitMobileBreakpoint} = ctx;
+  useEffect(() => {
+    const observer = new ResizeObserver((entries) => {
+      if (entries.length < 0 || entries[0].borderBoxSize.length < 0) {
+        return;
+      }
+      const width = entries[0].borderBoxSize[0].inlineSize;
+      setIsMobile(width < conduitMobileBreakpoint);
+    });
+    observer.observe(document.body);
+    return () => {
+      observer.disconnect();
+    };
+  }, [conduitMobileBreakpoint, setIsMobile]);
+
+  const sidebar = (
+    <Grid className="conduit-chat-sidebar" direction="column" nowrap strict>
+      <Column>
+        <Grid align="center" nowrap>
+          <Column>
+            <h4>Direct Messages</h4>
+          </Column>
+          <Column shrink="0">
+            <Tooltip
+              className="conduit-chat-connection-indicator-outer"
+              position="right"
+              tooltip={wsopen ? 'CONNECTED' : 'DISCONNECTED'}
+            >
+              <span className={j.join(' ')}></span>
+            </Tooltip>
+          </Column>
+        </Grid>
+        {initChats.err && <p>{initChats.err.message}</p>}
+        <Form
+          formState={form.state}
+          onChange={form.update}
+          displays={form.displays}
+          putDisplays={form.putDisplays}
+          addDisplay={form.addDisplay}
+          compactDisplays={form.compactDisplays}
+        >
+          <FieldDynSearchSelect
+            name="chatid"
+            placeholder="Search"
+            onSearch={userSuggest.setSearch}
+            options={userSuggest.opts}
+            nohint
+            fullWidth
+            iconRight={
+              <ButtonTertiary onClick={goToDM}>
+                <FaIcon icon={searchChatid ? 'arrow-right' : 'search'} />
+              </ButtonTertiary>
+            }
+          />
+        </Form>
+      </Column>
+      <Column className="minheight0" grow="1" basis="0">
+        <ListGroup className="conduit-chat-list">
+          {chats.chats.map((i) => (
+            <ChatRow
+              key={i.chatid}
+              chat={i}
+              users={chats.users}
+              profiles={chats.profiles}
+              presence={presence}
+            />
+          ))}
+          <div className="conduit-chat-list-end-marker" ref={endElem} />
+        </ListGroup>
+      </Column>
+    </Grid>
+  );
+
+  const matchURL = useHref('');
+
   return (
     <WSProvider value={ws}>
       <Grid className="conduit-chat-root" strict>
-        <Column fullWidth md={6}>
-          <Grid
-            className="conduit-chat-sidebar"
-            direction="column"
-            nowrap
-            strict
-          >
-            <Column>
-              <Grid align="center" nowrap>
-                <Column>
-                  <h4>Direct Messages</h4>
-                </Column>
-                <Column shrink="0">
-                  <Tooltip
-                    className="conduit-chat-connection-indicator-outer"
-                    position="right"
-                    tooltip={wsopen ? 'CONNECTED' : 'DISCONNECTED'}
-                  >
-                    <span className={j.join(' ')}></span>
-                  </Tooltip>
-                </Column>
-              </Grid>
-              {initChats.err && <p>{initChats.err.message}</p>}
-              <Form
-                formState={form.state}
-                onChange={form.update}
-                displays={form.displays}
-                putDisplays={form.putDisplays}
-                addDisplay={form.addDisplay}
-                compactDisplays={form.compactDisplays}
-              >
-                <FieldDynSearchSelect
-                  name="chatid"
-                  placeholder="Search"
-                  onSearch={userSuggest.setSearch}
-                  options={userSuggest.opts}
-                  nohint
-                  fullWidth
-                  iconRight={
-                    <ButtonTertiary onClick={goToDM}>
-                      <FaIcon icon={searchChatid ? 'arrow-right' : 'search'} />
-                    </ButtonTertiary>
-                  }
-                />
-              </Form>
-            </Column>
-            <Column className="minheight0" grow="1" basis="0">
-              <ListGroup className="conduit-chat-list">
-                {chats.chats.map((i) => (
-                  <ChatRow
-                    key={i.chatid}
-                    chat={i}
-                    users={chats.users}
-                    profiles={chats.profiles}
-                    presence={presence}
-                  />
-                ))}
-                <div className="conduit-chat-list-end-marker" ref={endElem} />
-              </ListGroup>
-            </Column>
-          </Grid>
-        </Column>
+        {!isMobile && (
+          <Column fullWidth md={6}>
+            {sidebar}
+          </Column>
+        )}
         <Column fullWidth md={18}>
           <Routes>
-            <Route index element={<SelectAChat />} />
+            <Route index element={isMobile ? sidebar : <SelectAChat />} />
             <Route
               path=":chatid"
               element={
@@ -1118,6 +1157,8 @@ const DMs = () => {
                   profiles={chats.profiles}
                   presence={presence}
                   invalidateChat={invalidateChat}
+                  isMobile={isMobile}
+                  back={matchURL}
                 />
               }
             />

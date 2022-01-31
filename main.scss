@@ -1,3 +1,7 @@
+$grid-sm-breakpoint: 512px * 1.5 !default;
+$grid-md-breakpoint: $grid-sm-breakpoint * 1.5 !default;
+$grid-lg-breakpoint: $grid-md-breakpoint * 1.5 !default;
+
 $transition-normal: 0.125s cubic-bezier(0.375, 0, 0.25, 1) !default;
 
 $black: #000000;
@@ -152,7 +156,10 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
 .conduit-chat-sidebar {
   height: 100%;
   padding: 8px;
-  border-right: 1px solid $color-text-dark-3;
+
+  @media (min-width: $grid-md-breakpoint) {
+    border-right: 1px solid $color-text-dark-3;
+  }
 }
 
 .dark .conduit-chat-sidebar {
@@ -257,6 +264,8 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
 }
 
 .conduit-chat-header {
+  padding: 8px 0;
+
   & > .profile-picture {
     position: relative;
     width: 32px;

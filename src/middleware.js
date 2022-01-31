@@ -279,6 +279,7 @@ const GovUIDefaultOpts = Object.freeze({
   courierLinkPath: '/api/courier/link/id',
   // conduit
   enableConduit: true,
+  conduitMobileBreakpoint: 512 * 1.5 * 1.5,
   // mailinglist
   enableMailinglists: true,
   mailinglistUsr: 'lists.governor.dev.localhost',
