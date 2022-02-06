@@ -307,6 +307,20 @@ const useWSSubChan = (
   }, [sub, chan, onopen, onmessage, onerror, onclose]);
 };
 
+const CTL_CHANNEL = '_ctl_';
+
+const useWSPresenceLocation = (name, send, loc) => {
+  const {open} = useWSValue(name);
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+    send(CTL_CHANNEL, {
+      ops: [{op: 'location', args: {location: loc}}],
+    });
+  }, [open, send, loc]);
+};
+
 export {
   WS_PROTOCOL,
   WSDefaultOpts,
@@ -318,4 +332,5 @@ export {
   useWS,
   useWSSub,
   useWSSubChan,
+  useWSPresenceLocation,
 };

@@ -56,6 +56,7 @@ import {
   useWSValue,
   useWS,
   useWSSubChan,
+  useWSPresenceLocation,
 } from '../../component/ws';
 
 const CHAT_MSG_KIND_TXT = 't';
@@ -73,6 +74,7 @@ const DM_WS_STATE = 'conduit:chat:dms';
 const DM_WS_CHANNELS = 'conduit.';
 const DM_WS_CHANNEL_MSG = 'conduit.chat.dm.msg';
 const DM_WS_CHANNEL_PRESENCE = 'conduit.presence';
+const DM_WS_LOC = 'conduit.dm';
 
 const PRESENCE_LIMIT = 255;
 
@@ -990,6 +992,9 @@ const DMs = ({isMobile}) => {
     prehook: prehookWS,
   });
 
+  const wsSendChan = ws.sendChan;
+  useWSPresenceLocation(DM_WS_STATE, wsSendChan, DM_WS_LOC);
+
   const onmessageWS = useCallback(
     (channel, value) => {
       switch (channel) {
@@ -1033,7 +1038,6 @@ const DMs = ({isMobile}) => {
     : null;
   const chatUserid = currentChat ? currentChat.userid : null;
   const latestUserids = chats.latestUserids;
-  const wsSendChan = ws.sendChan;
   useEffect(() => {
     if (!wsopen) {
       setPresence(null);
