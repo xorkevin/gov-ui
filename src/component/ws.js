@@ -151,7 +151,6 @@ const useWS = (
           if (signal.aborted) {
             return;
           }
-          delay = delayMin;
           ws.current.open = true;
           setWSState({open: true});
         });
@@ -168,7 +167,11 @@ const useWS = (
         }
         ws.current.socket = socket;
         ws.current.loaded = true;
+        const interval = setInterval(() => {
+          delay = delayMin;
+        }, delayMax + delayMin);
         await socketClosed;
+        clearInterval(interval);
         if (signal.aborted) {
           return;
         }
