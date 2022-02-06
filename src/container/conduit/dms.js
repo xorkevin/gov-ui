@@ -15,12 +15,7 @@ import {
   useNavigate,
 } from 'react-router-dom';
 import {useAPI, useURL, useResource, selectAPINull} from '@xorkevin/substation';
-import {
-  useAuthValue,
-  useRelogin,
-  useAuthCall,
-  useAuthResource,
-} from '@xorkevin/turbine';
+import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
   Container,
   Grid,
@@ -52,11 +47,9 @@ import {GovUICtx} from '../../middleware';
 import {formatURL} from '../../utility';
 import {
   WSCtx,
-  WSProvider,
-  useWSValue,
-  useWS,
+  useWSValueCtx,
   useWSSubChan,
-  useWSPresenceLocation,
+  useWSPresenceLocationCtx,
 } from '../../component/ws';
 
 const CHAT_MSG_KIND_TXT = 't';
@@ -70,7 +63,6 @@ const MSG_TIME_REL_DURATION = 604800000;
 const MSGS_BREAK_DURATION = 1800000;
 const PRESENCE_INTERVAL = 30000;
 
-const DM_WS_STATE = 'conduit:chat:dms';
 const DM_WS_CHANNELS = 'conduit.';
 const DM_WS_CHANNEL_MSG = 'conduit.chat.dm.msg';
 const DM_WS_CHANNEL_PRESENCE = 'conduit.presence';
@@ -86,7 +78,6 @@ const selectAPIProfiles = (api) => api.profile.ids;
 const selectAPIImage = (api) => api.profile.id.image;
 const selectAPIMsgs = (api) => api.conduit.dm.id.msg;
 const selectAPICreateMsg = (api) => api.conduit.dm.id.msg.create;
-const selectAPIWS = (api) => api.ws;
 
 const SelectAChat = () => {
   return (
@@ -979,21 +970,11 @@ const DMs = ({isMobile}) => {
     });
   }, [formAssign, navigate, searchChatid]);
 
+  const ws = useContext(WSCtx);
+
+  useWSPresenceLocationCtx(ws.sendChan, DM_WS_LOC);
+
   const [presence, setPresence] = useState(null);
-
-  const wsurl = useURL(selectAPIWS);
-
-  const relogin = useRelogin();
-  const prehookWS = useCallback(async () => {
-    const [_data, _res, err] = await relogin();
-    return err;
-  }, [relogin]);
-  const ws = useWS(DM_WS_STATE, wsurl, {
-    prehook: prehookWS,
-  });
-
-  const wsSendChan = ws.sendChan;
-  useWSPresenceLocation(DM_WS_STATE, wsSendChan, DM_WS_LOC);
 
   const onmessageWS = useCallback(
     (channel, value) => {
@@ -1025,7 +1006,7 @@ const DMs = ({isMobile}) => {
     onmessage: onmessageWS,
   });
 
-  const {open: wsopen} = useWSValue(DM_WS_STATE);
+  const {open: wsopen} = useWSValueCtx();
   const j = ['conduit-chat-connection-indicator'];
   if (wsopen) {
     j.push('connected');
@@ -1038,6 +1019,7 @@ const DMs = ({isMobile}) => {
     : null;
   const chatUserid = currentChat ? currentChat.userid : null;
   const latestUserids = chats.latestUserids;
+  const wsSendChan = ws.sendChan;
   useEffect(() => {
     if (!wsopen) {
       setPresence(null);
@@ -1125,35 +1107,33 @@ const DMs = ({isMobile}) => {
   const matchURL = useHref('');
 
   return (
-    <WSProvider value={ws}>
-      <Grid className="conduit-chat-root" strict>
-        {!isMobile && (
-          <Column fullWidth md={6}>
-            {sidebar}
-          </Column>
-        )}
-        <Column fullWidth md={18}>
-          <Routes>
-            <Route index element={isMobile ? sidebar : <SelectAChat />} />
-            <Route
-              path=":chatid"
-              element={
-                <Chat
-                  chatsMap={chats.chatsMap}
-                  users={chats.users}
-                  profiles={chats.profiles}
-                  presence={presence}
-                  invalidateChat={invalidateChat}
-                  isMobile={isMobile}
-                  back={matchURL}
-                />
-              }
-            />
-            <Route path="*" element={<Navigate to="" replace />} />
-          </Routes>
+    <Grid className="conduit-chat-root" strict>
+      {!isMobile && (
+        <Column fullWidth md={6}>
+          {sidebar}
         </Column>
-      </Grid>
-    </WSProvider>
+      )}
+      <Column fullWidth md={18}>
+        <Routes>
+          <Route index element={isMobile ? sidebar : <SelectAChat />} />
+          <Route
+            path=":chatid"
+            element={
+              <Chat
+                chatsMap={chats.chatsMap}
+                users={chats.users}
+                profiles={chats.profiles}
+                presence={presence}
+                invalidateChat={invalidateChat}
+                isMobile={isMobile}
+                back={matchURL}
+              />
+            }
+          />
+          <Route path="*" element={<Navigate to="" replace />} />
+        </Routes>
+      </Column>
+    </Grid>
   );
 };
 

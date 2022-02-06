@@ -324,6 +324,18 @@ const useWSPresenceLocation = (name, send, loc) => {
   }, [open, send, loc]);
 };
 
+const useWSPresenceLocationCtx = (send, loc) => {
+  const {open} = useWSValueCtx();
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+    send(CTL_CHANNEL, {
+      ops: [{op: 'location', args: {location: loc}}],
+    });
+  }, [open, send, loc]);
+};
+
 export {
   WS_PROTOCOL,
   WSDefaultOpts,
@@ -336,4 +348,5 @@ export {
   useWSSub,
   useWSSubChan,
   useWSPresenceLocation,
+  useWSPresenceLocationCtx,
 };
