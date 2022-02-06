@@ -170,6 +170,12 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
   height: 100%;
   overflow: auto;
   scrollbar-width: thin;
+
+  & > .end-marker {
+    width: 100%;
+    height: 128px;
+    visibility: hidden;
+  }
 }
 
 .conduit-chat-row-link {
@@ -188,63 +194,59 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
   margin: 0 8px;
 }
 
-.conduit-chat-list-end-marker {
-  width: 100%;
-  height: 128px;
-  visibility: hidden;
-}
-
-.conduit-chat-connection-indicator-outer {
-  display: block;
-  position: relative;
-}
-
 .conduit-chat-connection-indicator {
   display: block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: $color-primary-2;
-  box-shadow: 0 0 8px 0 $color-primary-2;
-  transition: background-color $transition-normal, box-shadow $transition-normal;
+  position: relative;
 
-  &.connected {
-    background-color: $color-success-light;
-    box-shadow: 0 0 8px 0 $color-success;
+  & > .indicator {
+    display: block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: $color-primary-2;
+    box-shadow: 0 0 8px 0 $color-primary-2;
+    border: 1px solid $color-body-background;
+    transition: background-color $transition-normal,
+      box-shadow $transition-normal, border-color $transition-normal;
+
+    &.connected {
+      background-color: $color-success-light;
+      box-shadow: 0 0 8px 0 $color-success;
+    }
   }
 }
 
-.conduit-chat-presence-indicator-outer {
+.dark .conduit-chat-connection-indicator > .indicator {
+  border-color: $color-primary-dark-3;
+}
+
+.conduit-chat-presence-indicator {
   display: block;
   position: absolute;
   bottom: 0;
   right: 0;
   z-index: 1;
-}
 
-.conduit-chat-presence-indicator {
-  display: block;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background-color: $color-primary-2;
-  box-shadow: 0 0 8px 0 $color-primary-2;
-  border: 1px solid $color-body-background;
-  transition: background-color $transition-normal, box-shadow $transition-normal,
-    border-color $transition-normal;
+  & > .indicator {
+    display: block;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background-color: $color-primary-2;
+    box-shadow: 0 0 8px 0 $color-primary-2;
+    border: 1px solid $color-body-background;
+    transition: background-color $transition-normal,
+      box-shadow $transition-normal, border-color $transition-normal;
 
-  &.connected {
-    background-color: $color-success-light;
-    box-shadow: 0 0 8px 0 $color-success;
+    &.connected {
+      background-color: $color-success-light;
+      box-shadow: 0 0 8px 0 $color-success;
+    }
   }
 }
 
-.dark .conduit-chat-presence-indicator {
+.dark .conduit-chat-presence-indicator > .indicator {
   border-color: $color-primary-dark-3;
-}
-
-.conduit-chat {
-  padding: 8px;
 }
 
 .conduit-bg-msg {
@@ -286,20 +288,20 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
   overflow-x: hidden;
   overflow-y: scroll;
   scrollbar-width: thin;
-}
 
-.conduit-chat-msgs-start-marker {
-  width: 100%;
-  flex-shrink: 0;
-}
+  & > .start-marker {
+    width: 100%;
+    flex-shrink: 0;
+  }
 
-.conduit-chat-msgs-end-marker {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 128px;
-  flex-shrink: 0;
+  & > .end-marker {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 128px;
+    flex-shrink: 0;
+  }
 }
 
 .conduit-chat-msg {
