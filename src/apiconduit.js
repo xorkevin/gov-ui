@@ -163,6 +163,129 @@ export default {
       },
     },
   },
+  gdm: {
+    url: '/gdm',
+    method: 'GET',
+    transformer: (before, amount) => ({
+      query: {before, amount},
+    }),
+    expectjson: true,
+    selector: (_res, data) => data && data.dms,
+    err: 'Failed to get group chats',
+    children: {
+      ids: {
+        url: '/ids',
+        method: 'GET',
+        transformer: (ids) => ({
+          query: {ids},
+        }),
+        expectjson: true,
+        selector: (_res, data) => data && data.dms,
+        err: 'Failed to get group chats',
+      },
+      search: {
+        url: '/search',
+        method: 'GET',
+        transformer: (id, amount, offset) => ({
+          query: {id, amount, offset},
+        }),
+        expectjson: true,
+        selector: (_res, data) => data && data.dms,
+        err: 'Failed to search dms',
+      },
+      create: {
+        url: '',
+        method: 'POST',
+        transformer: (json) => ({
+          json,
+        }),
+        expectjson: true,
+        err: 'Unable to create group chat',
+      },
+      id: {
+        url: '/id/{0}',
+        children: {
+          edit: {
+            url: '',
+            method: 'PUT',
+            transformer: (chatid, json) => ({
+              params: [chatid],
+              json,
+            }),
+            expectjson: true,
+            err: 'Failed to update group chat settings',
+          },
+          del: {
+            url: '',
+            method: 'DELETE',
+            transformer: (chatid) => ({
+              params: [chatid],
+            }),
+            expectjson: true,
+            err: 'Failed to delete group chat',
+          },
+          member: {
+            url: '/member',
+            children: {
+              add: {
+                url: '/add',
+                method: 'PATCH',
+                transformer: (members) => ({
+                  json: {
+                    members,
+                  },
+                }),
+                expectjson: false,
+                err: 'Unable to add members to group chat',
+              },
+              rm: {
+                url: '/rm',
+                method: 'PATCH',
+                transformer: (members) => ({
+                  json: {
+                    members,
+                  },
+                }),
+                expectjson: false,
+                err: 'Unable to remove members from group chat',
+              },
+            },
+          },
+          msg: {
+            url: '/msg',
+            method: 'GET',
+            transformer: (chatid, kind, before, amount) => ({
+              params: [chatid],
+              query: {kind, before, amount},
+            }),
+            expectjson: true,
+            selector: (_res, data) => data && data.msgs,
+            err: 'Failed to get messages',
+            children: {
+              create: {
+                url: '',
+                method: 'POST',
+                transformer: (chatid, json) => ({
+                  params: [chatid],
+                  json,
+                }),
+                expectjson: true,
+                err: 'Failed to send chat message',
+              },
+              del: {
+                url: '/id/{1}',
+                method: 'POST',
+                transformer: (chatid, msgid) => ({
+                  params: [chatid, msgid],
+                }),
+                err: 'Failed to delete chat message',
+              },
+            },
+          },
+        },
+      },
+    },
+  },
   chat: {
     url: '/chat',
     children: {
