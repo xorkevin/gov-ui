@@ -15,7 +15,12 @@ import {
   useNavigate,
 } from 'react-router-dom';
 import {useAPI, useResource, selectAPINull} from '@xorkevin/substation';
-import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
+import {
+  useAuthValue,
+  useRelogin,
+  useAuthCall,
+  useAuthResource,
+} from '@xorkevin/turbine';
 import {
   Grid,
   Column,
@@ -660,9 +665,14 @@ const DMs = ({isMobile}) => {
     chatid: '',
   });
 
+  const relogin = useRelogin();
   const apiSearch = useAPI(selectAPISearch);
   const searchUsers = useCallback(
     async ({signal}, search) => {
+      const [_data, _res, errLogin] = await relogin();
+      if (errLogin) {
+        return [];
+      }
       const [data, res, err] = await apiSearch(
         {signal},
         search,
@@ -676,7 +686,7 @@ const DMs = ({isMobile}) => {
         value: i.chatid,
       }));
     },
-    [apiSearch],
+    [apiSearch, relogin],
   );
   const userSuggest = useFormSearch(searchUsers, 256);
 

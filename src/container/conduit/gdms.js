@@ -9,7 +9,12 @@ import {
 } from 'react';
 import {Routes, Route, Navigate, useHref, useParams} from 'react-router-dom';
 import {useAPI, useResource, selectAPINull} from '@xorkevin/substation';
-import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
+import {
+  useAuthValue,
+  useRelogin,
+  useAuthCall,
+  useAuthResource,
+} from '@xorkevin/turbine';
 import {
   Grid,
   Column,
@@ -243,9 +248,14 @@ const Chat = ({chatsMap, users, profiles, invalidateChat, isMobile, back}) => {
 };
 
 const useSearchFriends = () => {
+  const relogin = useRelogin();
   const apiSearch = useAPI(selectAPISearch);
   const searchUsers = useCallback(
     async ({signal}, search) => {
+      const [_data, _res, errLogin] = await relogin();
+      if (errLogin) {
+        return [];
+      }
       const [data, res, err] = await apiSearch(
         {signal},
         search,
@@ -259,7 +269,7 @@ const useSearchFriends = () => {
         value: i.userid,
       }));
     },
-    [apiSearch],
+    [apiSearch, relogin],
   );
   return useFormSearch(searchUsers, 256);
 };
