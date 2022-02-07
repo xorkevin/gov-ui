@@ -191,7 +191,9 @@ const useWS = (
   const send = useCallback(
     (data) => {
       if (!ws.current.open) {
-        errhook('send', {message: 'Not connected'});
+        if (errhook) {
+          errhook('send', {message: 'Not connected'});
+        }
         return;
       }
       ws.current.socket.send(data);
@@ -202,7 +204,9 @@ const useWS = (
   const sendChan = useCallback(
     (channel, value) => {
       if (!ws.current.open) {
-        errhook('send', {message: 'Not connected'});
+        if (errhook) {
+          errhook('send', {message: 'Not connected'});
+        }
         return;
       }
       ws.current.socket.send(

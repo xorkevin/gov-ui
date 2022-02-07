@@ -7,14 +7,7 @@ import {
   useRef,
   useContext,
 } from 'react';
-import {
-  Routes,
-  Route,
-  Navigate,
-  useHref,
-  useParams,
-  useNavigate,
-} from 'react-router-dom';
+import {Routes, Route, Navigate, useHref, useParams} from 'react-router-dom';
 import {useAPI, useURL, useResource, selectAPINull} from '@xorkevin/substation';
 import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
@@ -44,11 +37,8 @@ import {
 } from '@xorkevin/nuke';
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
-import AnchorText from '@xorkevin/nuke/src/component/anchor/nocolor';
 import Img from '@xorkevin/nuke/src/component/image/circle';
 
-import {GovUICtx} from '../../middleware';
-import {formatURL} from '../../utility';
 import {
   WSCtx,
   useWSValueCtx,
@@ -77,8 +67,8 @@ const selectAPISearch = (api) => api.conduit.friend.search;
 const selectAPIUsers = (api) => api.u.user.ids;
 const selectAPIProfiles = (api) => api.profile.ids;
 const selectAPIImage = (api) => api.profile.id.image;
-const selectAPIMsgs = (api) => api.conduit.dm.id.msg;
-const selectAPICreateMsg = (api) => api.conduit.dm.id.msg.create;
+const selectAPIMsgs = (api) => api.conduit.gdm.id.msg;
+const selectAPICreateMsg = (api) => api.conduit.gdm.id.msg.create;
 
 const SelectAChat = () => {
   return (
@@ -182,26 +172,46 @@ const MsgRow = ({
   );
 };
 
-const useChatTitle = (chatName, chatMembers, users) => {
+const iterTake = (it, f, n) => {
+  const s = [];
+  let c = 0;
+  for (const i of it) {
+    const k = f(i);
+    if (k) {
+      s.push(k);
+      c++;
+    }
+    if (c >= n) {
+      break;
+    }
+  }
+  return s;
+};
+
+const useChatTitle = (loggedInUserid, chatName, chatMembers, users) => {
   return useMemo(() => {
     if (chatName) {
       return chatName;
     }
-    const s = chatMembers
-      .slice(0, 3)
-      .flatMap((i) => {
+    const s = iterTake(
+      chatMembers,
+      (i) => {
+        if (i === loggedInUserid) {
+          return null;
+        }
         const k = users.value.get(i);
         if (!k) {
-          return [];
+          return null;
         }
-        return [k.username];
-      })
-      .join(', ');
+        return k.username;
+      },
+      3,
+    ).join(', ');
     if (chatMembers.length > 3) {
       return s + ',...';
     }
     return s;
-  }, [chatName, chatMembers, users]);
+  }, [loggedInUserid, chatName, chatMembers, users]);
 };
 
 const MSGS_RESET = Symbol('MSGS_RESET');
@@ -293,7 +303,6 @@ const msgsReducer = (state, action) => {
 };
 
 const Chat = ({chatsMap, users, profiles, invalidateChat, isMobile, back}) => {
-  const ctx = useContext(GovUICtx);
   const {userid: loggedInUserid} = useAuthValue();
 
   const snackbar = useSnackbar();
@@ -308,6 +317,7 @@ const Chat = ({chatsMap, users, profiles, invalidateChat, isMobile, back}) => {
   const chat = chatid ? chatsMap.value.get(chatid) : null;
 
   const chatTitle = useChatTitle(
+    loggedInUserid,
     chat ? chat.name : '',
     chat ? chat.members : [],
     users,
@@ -517,8 +527,6 @@ const useSearchFriends = () => {
 };
 
 const CreateChat = ({posthookCreate, close}) => {
-  const {userid} = useAuthValue();
-
   const form = useForm({
     name: '',
     theme: '{}',
@@ -568,9 +576,14 @@ const CreateChat = ({posthookCreate, close}) => {
   );
 };
 
-const ChatRow = ({chat, users}) => {
+const ChatRow = ({chat, users, loggedInUserid}) => {
   const menu = useMenu();
-  const chatTitle = useChatTitle(chat.name, chat.members, users);
+  const chatTitle = useChatTitle(
+    loggedInUserid,
+    chat.name,
+    chat.members,
+    users,
+  );
   return (
     <ListItem className="conduit-chat-item">
       <Grid
@@ -851,6 +864,8 @@ const chatsReducer = (state, action) => {
 };
 
 const GDMs = ({isMobile}) => {
+  const {userid: loggedInUserid} = useAuthValue();
+
   const snackbar = useSnackbar();
   const displayErrSnack = useCallback(
     (_res, err) => {
@@ -1006,7 +1021,7 @@ const GDMs = ({isMobile}) => {
       <Column>
         <Grid align="center" nowrap>
           <Column>
-            <h4>Direct Messages</h4>
+            <h4>Group Messages</h4>
           </Column>
           <Column shrink="0">
             <Tooltip
@@ -1069,6 +1084,7 @@ const GDMs = ({isMobile}) => {
               chat={i}
               users={chats.users}
               profiles={chats.profiles}
+              loggedInUserid={loggedInUserid}
             />
           ))}
           <div className="end-marker" ref={endElem} />

@@ -180,7 +180,7 @@ export default {
       query: {before, amount},
     }),
     expectjson: true,
-    selector: (_res, data) => data && data.dms,
+    selector: (_res, data) => data && data.gdms,
     err: 'Failed to get group chats',
     children: {
       ids: {
@@ -190,7 +190,7 @@ export default {
           query: {ids},
         }),
         expectjson: true,
-        selector: (_res, data) => data && data.dms,
+        selector: (_res, data) => data && data.gdms,
         err: 'Failed to get group chats',
       },
       search: {
@@ -200,7 +200,7 @@ export default {
           query: {id, amount, offset},
         }),
         expectjson: true,
-        selector: (_res, data) => data && data.dms,
+        selector: (_res, data) => data && data.gdms,
         err: 'Failed to search dms',
       },
       create: {
