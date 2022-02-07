@@ -102,7 +102,7 @@ const Nav = ({closeOnClick, right, menucontent, menuend, children}) => {
               <MenuItem
                 onClick={toggleDark}
                 icon={<FaIcon icon="bolt" />}
-                label="Ctrl+B"
+                label={<kbd>^B</kbd>}
               >
                 {dark ? 'Light' : 'Dark'} Mode
               </MenuItem>

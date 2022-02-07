@@ -114,6 +114,13 @@ const Conduit = () => {
                           DMs
                         </MenuItem>
                         <MenuItem
+                          link="gdms"
+                          local
+                          icon={<FaIcon icon="commenting" />}
+                        >
+                          Group Chats
+                        </MenuItem>
+                        <MenuItem
                           link="friends"
                           local
                           icon={<FaIcon icon="users" />}
@@ -148,7 +155,7 @@ const Conduit = () => {
                   local
                   icon={<FaIcon icon="commenting" />}
                 >
-                  GDMs
+                  Group Chats
                 </SidebarItem>
                 <SidebarItem
                   link="friends"
@@ -218,7 +225,7 @@ const Conduit = () => {
             <MenuItem
               onClick={toggleDark}
               icon={<FaIcon icon="bolt" />}
-              label="Ctrl+B"
+              label={<kbd>^B</kbd>}
             >
               {dark ? 'Light' : 'Dark'} Mode
             </MenuItem>
