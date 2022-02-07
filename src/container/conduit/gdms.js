@@ -32,6 +32,7 @@ import {
   useFormSearch,
   SnackbarSurface,
   useSnackbar,
+  usePaginate,
   Anchor,
   ButtonGroup,
   FaIcon,
@@ -72,7 +73,8 @@ const GDM_WS_LOC = 'conduit.gdm';
 const selectAPILatestGDMs = (api) => api.conduit.gdm;
 const selectAPIGDMs = (api) => api.conduit.gdm.ids;
 const selectAPICreate = (api) => api.conduit.gdm.create;
-const selectAPISearch = (api) => api.conduit.friend.search;
+const selectAPISearch = (api) => api.conduit.gdm.search;
+const selectAPISearchFriends = (api) => api.conduit.friend.search;
 const selectAPIUsers = (api) => api.u.user.ids;
 const selectAPIProfiles = (api) => api.profile.ids;
 const selectAPIMsgs = (api) => api.conduit.gdm.id.msg;
@@ -249,7 +251,7 @@ const Chat = ({chatsMap, users, profiles, invalidateChat, isMobile, back}) => {
 
 const useSearchFriends = () => {
   const relogin = useRelogin();
-  const apiSearch = useAPI(selectAPISearch);
+  const apiSearch = useAPI(selectAPISearchFriends);
   const searchUsers = useCallback(
     async ({signal}, search) => {
       const [_data, _res, errLogin] = await relogin();
@@ -320,6 +322,143 @@ const CreateChat = ({posthookCreate, close}) => {
         <ButtonPrimary onClick={execCreate}>Create</ButtonPrimary>
       </ButtonGroup>
       {create.err && <p>{create.err.message}</p>}
+    </Fragment>
+  );
+};
+
+const ChatSearchRow = ({chat, users, loggedInUserid}) => {
+  const chatTitle = useChatTitle(
+    loggedInUserid,
+    chat.name,
+    chat.members,
+    users,
+  );
+  return (
+    <ListItem className="conduit-chat-item">
+      <Grid
+        className="chat-row"
+        justify="space-between"
+        align="center"
+        nowrap
+        strict
+      >
+        <Column className="minwidth0 info" grow="1">
+          <Anchor className="link" local href={chat.chatid}>
+            <div>
+              <h5>{chatTitle}</h5>
+              <small>
+                <Time
+                  value={chat.last_updated}
+                  relDuration={MSG_TIME_REL_DURATION}
+                />
+              </small>
+            </div>
+          </Anchor>
+        </Column>
+      </Grid>
+    </ListItem>
+  );
+};
+
+const SearchChat = ({close, loggedInUserid}) => {
+  const form = useForm({
+    friendid: '',
+  });
+
+  const userSuggest = useSearchFriends();
+
+  const searchFriendid = form.state.friendid;
+
+  const paginate = usePaginate(CHATS_LIMIT);
+
+  const setAtEnd = paginate.setAtEnd;
+  const posthookChats = useCallback(
+    (_res, chats) => {
+      setAtEnd(chats.length < CHATS_LIMIT);
+    },
+    [setAtEnd],
+  );
+  const [chats] = useAuthResource(
+    searchFriendid.length > 0 ? selectAPISearch : selectAPINull,
+    [searchFriendid, CHATS_LIMIT, paginate.index],
+    [],
+    {posthook: posthookChats},
+  );
+
+  const userids = useMemo(
+    () =>
+      Array.isArray(chats.data) &&
+      Array.from(
+        new Set(
+          chats.data.flatMap((i) =>
+            i.members.filter((j) => j !== loggedInUserid),
+          ),
+        ),
+      ),
+    [chats, loggedInUserid],
+  );
+  const [users] = useResource(
+    userids.length > 0 ? selectAPIUsers : selectAPINull,
+    [userids],
+    [],
+  );
+  const userMap = useMemo(
+    () => ({value: new Map(users.data.map((i) => [i.userid, i]))}),
+    [users],
+  );
+
+  return (
+    <Fragment>
+      <Grid>
+        <Column className="minwidth0" grow="1">
+          <h4>Search Group Chats</h4>
+        </Column>
+        <Column shrink="0">
+          <ButtonGroup>
+            <ButtonTertiary onClick={close}>
+              <FaIcon icon="times" />
+            </ButtonTertiary>
+          </ButtonGroup>
+        </Column>
+      </Grid>
+      <Form
+        formState={form.state}
+        onChange={form.update}
+        displays={form.displays}
+        putDisplays={form.putDisplays}
+        addDisplay={form.addDisplay}
+        compactDisplays={form.compactDisplays}
+      >
+        <FieldDynSearchSelect
+          name="friendid"
+          placeholder="Search"
+          onSearch={userSuggest.setSearch}
+          options={userSuggest.opts}
+          nohint
+          fullWidth
+        />
+      </Form>
+      <ListGroup>
+        {Array.isArray(chats.data) &&
+          chats.data.map((i) => (
+            <ChatSearchRow
+              key={i.chatid}
+              chat={i}
+              users={userMap}
+              loggedInUserid={loggedInUserid}
+            />
+          ))}
+      </ListGroup>
+      <ButtonGroup>
+        <ButtonTertiary disabled={paginate.atFirst} onClick={paginate.prev}>
+          prev
+        </ButtonTertiary>
+        {paginate.page}
+        <ButtonTertiary disabled={paginate.atLast} onClick={paginate.next}>
+          next
+        </ButtonTertiary>
+      </ButtonGroup>
+      {chats.err && <p>{chats.err.message}</p>}
     </Fragment>
   );
 };
@@ -714,21 +853,14 @@ const GDMs = ({isMobile}) => {
     [dispatchChats],
   );
 
-  const form = useForm({
-    friendid: '',
-  });
-
-  const userSuggest = useSearchFriends();
-
-  const searchFriendid = form.state.friendid;
-
-  const modal = useModal();
+  const modalCreate = useModal();
   const posthookCreate = useCallback(() => {
     reinitChats();
     if (startElem.current) {
       startElem.current.scrollIntoView({behavior: 'smooth'});
     }
   }, [reinitChats, startElem]);
+  const modalSearch = useModal();
 
   const ws = useContext(WSCtx);
 
@@ -764,61 +896,62 @@ const GDMs = ({isMobile}) => {
   const sidebar = (
     <Grid className="conduit-chat-sidebar" direction="column" nowrap strict>
       <Column>
-        <Grid align="center" nowrap>
-          <Column>
-            <h4>Group Messages</h4>
-          </Column>
-          <Column shrink="0">
-            <Tooltip
-              className="conduit-chat-connection-indicator"
-              position="right"
-              tooltip={wsopen ? 'CONNECTED' : 'DISCONNECTED'}
-            >
-              <span className={j.join(' ')}></span>
-            </Tooltip>
+        <Grid align="center" nowrap strict>
+          <Column grow="1">
+            <Grid align="center" nowrap>
+              <Column>
+                <h4>Group Messages</h4>
+              </Column>
+              <Column shrink="0">
+                <Tooltip
+                  className="conduit-chat-connection-indicator"
+                  position="right"
+                  tooltip={wsopen ? 'CONNECTED' : 'DISCONNECTED'}
+                >
+                  <span className={j.join(' ')}></span>
+                </Tooltip>
+              </Column>
+            </Grid>
           </Column>
           <Column shrink="0">
             <ButtonGroup>
               <ButtonTertiary
-                forwardedRef={modal.anchorRef}
-                onClick={modal.toggle}
+                forwardedRef={modalCreate.anchorRef}
+                onClick={modalCreate.toggle}
               >
                 <FaIcon icon="plus" />
               </ButtonTertiary>
+              <ButtonTertiary
+                forwardedRef={modalSearch.anchorRef}
+                onClick={modalSearch.toggle}
+              >
+                <FaIcon icon="search" />
+              </ButtonTertiary>
             </ButtonGroup>
-            {modal.show && (
-              <ModalSurface size="md" anchor={modal.anchor} close={modal.close}>
+            {modalCreate.show && (
+              <ModalSurface
+                size="md"
+                anchor={modalCreate.anchor}
+                close={modalCreate.close}
+              >
                 <CreateChat
                   posthookCreate={posthookCreate}
-                  close={modal.close}
+                  close={modalCreate.close}
                 />
+              </ModalSurface>
+            )}
+            {modalSearch.show && (
+              <ModalSurface
+                size="md"
+                anchor={modalSearch.anchor}
+                close={modalSearch.close}
+              >
+                <SearchChat close={modalSearch.close} />
               </ModalSurface>
             )}
           </Column>
         </Grid>
         {initChats.err && <p>{initChats.err.message}</p>}
-        <Form
-          formState={form.state}
-          onChange={form.update}
-          displays={form.displays}
-          putDisplays={form.putDisplays}
-          addDisplay={form.addDisplay}
-          compactDisplays={form.compactDisplays}
-        >
-          <FieldDynSearchSelect
-            name="friendid"
-            placeholder="Search"
-            onSearch={userSuggest.setSearch}
-            options={userSuggest.opts}
-            nohint
-            fullWidth
-            iconRight={
-              <ButtonTertiary>
-                <FaIcon icon={searchFriendid ? 'arrow-right' : 'search'} />
-              </ButtonTertiary>
-            }
-          />
-        </Form>
       </Column>
       <Column className="minheight0 chat-col" grow="1" basis="0">
         <ListGroup className="chat-list">
