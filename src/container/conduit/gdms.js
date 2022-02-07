@@ -1,11 +1,4 @@
-import {
-  useState,
-  useReducer,
-  useEffect,
-  useCallback,
-  useRef,
-  useContext,
-} from 'react';
+import {useReducer, useEffect, useCallback, useRef, useContext} from 'react';
 import {
   Routes,
   Route,
@@ -61,12 +54,10 @@ const MSGS_LIMIT = 32;
 const MSGS_SCROLL_LIMIT = 16;
 const MSG_TIME_REL_DURATION = 604800000;
 const MSGS_BREAK_DURATION = 1800000;
-const PRESENCE_INTERVAL = 30000;
 
-const DM_WS_CHANNELS = 'conduit.';
-const DM_WS_CHANNEL_MSG = 'conduit.chat.dm.msg';
-const DM_WS_CHANNEL_PRESENCE = 'conduit.presence';
-const DM_WS_LOC = 'conduit.dm';
+const GDM_WS_CHANNELS = 'conduit.chat.gdm.';
+const GDM_WS_CHANNEL_MSG = 'conduit.chat.gdm.msg';
+const GDM_WS_LOC = 'conduit.gdm';
 
 const PRESENCE_LIMIT = 255;
 
@@ -269,15 +260,7 @@ const msgsReducer = (state, action) => {
   }
 };
 
-const Chat = ({
-  chatsMap,
-  users,
-  profiles,
-  presence,
-  invalidateChat,
-  isMobile,
-  back,
-}) => {
+const Chat = ({chatsMap, users, profiles, invalidateChat, isMobile, back}) => {
   const ctx = useContext(GovUICtx);
   const {userid: loggedInUserid} = useAuthValue();
 
@@ -291,8 +274,6 @@ const Chat = ({
 
   const {chatid} = useParams();
   const chat = chatid ? chatsMap.value.get(chatid) : null;
-  const user = chat ? users.value.get(chat.userid) : null;
-  const profile = chat ? profiles.value.get(chat.userid) : null;
 
   useEffect(() => {
     if (chatid) {
@@ -399,15 +380,9 @@ const Chat = ({
     },
     [dispatchMsgs, chatid],
   );
-  useWSSubChan(ws.subChan, DM_WS_CHANNEL_MSG, {
+  useWSSubChan(ws.subChan, GDM_WS_CHANNEL_MSG, {
     onmessage: onmessageWS,
   });
-
-  const present = presence && chat && presence.has(chat.userid);
-  const j = ['indicator'];
-  if (present) {
-    j.push('connected');
-  }
 
   return (
     <Grid className="conduit-chat-msgs-root" direction="column" nowrap strict>
@@ -423,32 +398,10 @@ const Chat = ({
             </Column>
           )}
           <Column className="profile-picture text-center" shrink="0">
-            {profile && (
-              <ProfileImg profiles={profiles} userid={profile.userid} />
-            )}
-            {user && (
-              <Tooltip
-                className="conduit-chat-presence-indicator"
-                position="right"
-                tooltip={present ? 'ONLINE' : 'OFFLINE'}
-              >
-                <span className={j.join(' ')}></span>
-              </Tooltip>
-            )}
+            <FaIcon icon="user fa-lg" />
           </Column>
           <Column className="minwidth0 profile-name" grow="1">
-            <h5>
-              {user ? (
-                <AnchorText
-                  local
-                  href={formatURL(ctx.pathUserProfile, user.username)}
-                >
-                  {chat.name || `${user.first_name} ${user.last_name}`}
-                </AnchorText>
-              ) : (
-                chat && chat.name
-              )}
-            </h5>
+            <h5>{chat && chat.name}</h5>
           </Column>
         </Grid>
       </Column>
@@ -506,14 +459,9 @@ const Chat = ({
   );
 };
 
-const ChatRow = ({chat, users, profiles, presence}) => {
+const ChatRow = ({chat, users}) => {
   const menu = useMenu();
   const user = users.value.get(chat.userid);
-  const present = presence && chat && presence.has(chat.userid);
-  const j = ['indicator'];
-  if (present) {
-    j.push('connected');
-  }
   return (
     <ListItem>
       <Grid justify="space-between" align="center" nowrap strict>
@@ -521,16 +469,7 @@ const ChatRow = ({chat, users, profiles, presence}) => {
           className="conduit-chat-row-profile-picture text-center"
           shrink="0"
         >
-          <ProfileImg profiles={profiles} userid={chat.userid} />
-          {user && (
-            <Tooltip
-              className="conduit-chat-presence-indicator"
-              position="right"
-              tooltip={present ? 'ONLINE' : 'OFFLINE'}
-            >
-              <span className={j.join(' ')}></span>
-            </Tooltip>
-          )}
+          <FaIcon icon="user fa-lg" />
         </Column>
         <Column className="minwidth0" grow="1">
           <Anchor className="conduit-chat-row-link" local href={chat.chatid}>
@@ -829,7 +768,7 @@ const chatsReducer = (state, action) => {
   }
 };
 
-const DMs = ({isMobile}) => {
+const GDMs = ({isMobile}) => {
   const snackbar = useSnackbar();
   const displayErrSnack = useCallback(
     (_res, err) => {
@@ -972,14 +911,12 @@ const DMs = ({isMobile}) => {
 
   const ws = useContext(WSCtx);
 
-  useWSPresenceLocationCtx(ws.sendChan, DM_WS_LOC);
-
-  const [presence, setPresence] = useState(null);
+  useWSPresenceLocationCtx(ws.sendChan, GDM_WS_LOC);
 
   const onmessageWS = useCallback(
     (channel, value) => {
       switch (channel) {
-        case DM_WS_CHANNEL_MSG: {
+        case GDM_WS_CHANNEL_MSG: {
           if (!value) {
             return;
           }
@@ -987,22 +924,11 @@ const DMs = ({isMobile}) => {
           dispatchChats(ChatsLastUpdated(chatid, time_ms));
           break;
         }
-        case DM_WS_CHANNEL_PRESENCE: {
-          if (!value) {
-            return;
-          }
-          const {userids} = value;
-          if (!Array.isArray(userids)) {
-            return;
-          }
-          setPresence(new Set(userids));
-          break;
-        }
       }
     },
-    [dispatchChats, setPresence],
+    [dispatchChats],
   );
-  useWSSubChan(ws.subChan, DM_WS_CHANNELS, {
+  useWSSubChan(ws.subChan, GDM_WS_CHANNELS, {
     onmessage: onmessageWS,
   });
 
@@ -1011,40 +937,6 @@ const DMs = ({isMobile}) => {
   if (wsopen) {
     j.push('connected');
   }
-
-  const params = useParams();
-  const currentChatid = params['*'];
-  const currentChat = currentChatid
-    ? chats.chatsMap.value.get(currentChatid)
-    : null;
-  const chatUserid = currentChat ? currentChat.userid : null;
-  const latestUserids = chats.latestUserids;
-  const wsSendChan = ws.sendChan;
-  useEffect(() => {
-    if (!wsopen) {
-      setPresence(null);
-      return;
-    }
-    const userids = Array.from(latestUserids);
-    if (chatUserid && !latestUserids.has(chatUserid)) {
-      userids.push(chatUserid);
-    }
-    if (userids.length === 0) {
-      setPresence(null);
-      return;
-    }
-    const interval = setInterval(() => {
-      wsSendChan(DM_WS_CHANNEL_PRESENCE, {
-        userids,
-      });
-    }, PRESENCE_INTERVAL);
-    wsSendChan(DM_WS_CHANNEL_PRESENCE, {
-      userids,
-    });
-    return () => {
-      clearInterval(interval);
-    };
-  }, [wsopen, wsSendChan, setPresence, chatUserid, latestUserids]);
 
   const sidebar = (
     <Grid className="conduit-chat-sidebar" direction="column" nowrap strict>
@@ -1095,7 +987,6 @@ const DMs = ({isMobile}) => {
               chat={i}
               users={chats.users}
               profiles={chats.profiles}
-              presence={presence}
             />
           ))}
           <div className="end-marker" ref={endElem} />
@@ -1123,7 +1014,6 @@ const DMs = ({isMobile}) => {
                 chatsMap={chats.chatsMap}
                 users={chats.users}
                 profiles={chats.profiles}
-                presence={presence}
                 invalidateChat={invalidateChat}
                 isMobile={isMobile}
                 back={matchURL}
@@ -1137,4 +1027,4 @@ const DMs = ({isMobile}) => {
   );
 };
 
-export default DMs;
+export default GDMs;
