@@ -47,7 +47,15 @@ import {
   useWSSubChan,
   useWSPresenceLocationCtx,
 } from '../../component/ws';
-import {SelectAChat, ProfileImg, ChatMsgs} from './chat';
+import {
+  SelectAChat,
+  ProfileImg,
+  ChatMsgs,
+  msgsReducer,
+  MsgsReset,
+  MsgsRcv,
+  MsgsAppend,
+} from './chat';
 
 const CHAT_MSG_KIND_TXT = 't';
 
@@ -74,94 +82,6 @@ const selectAPIProfiles = (api) => api.profile.ids;
 const selectAPIMsgs = (api) => api.conduit.dm.id.msg;
 const selectAPICreateMsg = (api) => api.conduit.dm.id.msg.create;
 
-const MSGS_RESET = Symbol('MSGS_RESET');
-const MSGS_RCV = Symbol('MSGS_RCV');
-const MSGS_APPEND = Symbol('MSGS_APPEND');
-
-const MsgsReset = (msgs) => ({
-  type: MSGS_RESET,
-  msgs,
-});
-
-const MsgsRcv = (msg) => ({
-  type: MSGS_RCV,
-  msg,
-});
-
-const MsgsAppend = (msgs) => ({
-  type: MSGS_APPEND,
-  msgs,
-});
-
-const msgsReducer = (state, action) => {
-  switch (action.type) {
-    case MSGS_RESET: {
-      if (!Array.isArray(action.msgs)) {
-        return state;
-      }
-      const {msgs} = action;
-      return {
-        msgs,
-      };
-    }
-    case MSGS_RCV: {
-      const {msg} = action;
-      const {msgs} = state;
-      if (msgs.length === 0 || msg.msgid > msgs[0].msgid) {
-        msgs.unshift(msg);
-        return {
-          msgs,
-        };
-      }
-      const idx = msgs.findIndex((i) => i.msgid === msg.msgid);
-      if (idx >= 0) {
-        return state;
-      }
-      msgs.push(msg);
-      msgs.sort((a, b) => {
-        // reverse sort
-        if (b > a) {
-          return 1;
-        } else if (b < a) {
-          return -1;
-        }
-        return 0;
-      });
-      return {
-        msgs,
-      };
-    }
-    case MSGS_APPEND: {
-      if (!Array.isArray(action.msgs) || action.msgs.length === 0) {
-        return state;
-      }
-      const {msgs} = state;
-      if (msgs.length === 0) {
-        return {
-          msgs: action.msgs,
-        };
-      }
-      const last = msgs[msgs.length - 1].msgid;
-      const idx = action.msgs.findIndex((i) => i.msgid < last);
-      if (idx < 0) {
-        return state;
-      }
-      if (idx === 0) {
-        msgs.push(...action.msgs);
-        return {
-          msgs,
-        };
-      }
-      msgs.push(...action.msgs.slice(idx));
-      return {
-        msgs,
-      };
-    }
-    default:
-      return state;
-  }
-};
-
 const Chat = ({
   chatsMap,
   users,
@@ -183,9 +103,6 @@ const Chat = ({
   );
 
   const {chatid} = useParams();
-  const chat = chatid ? chatsMap.value.get(chatid) : null;
-  const user = chat ? users.value.get(chat.userid) : null;
-  const profile = chat ? profiles.value.get(chat.userid) : null;
 
   useEffect(() => {
     if (chatid) {
@@ -235,24 +152,6 @@ const Chat = ({
     {posthook: posthookLoadMsgs, errhook: displayErrSnack},
   );
 
-  useEffect(() => {
-    if (!endElem.current) {
-      return;
-    }
-    const observer = new IntersectionObserver((entries) => {
-      if (msgsEnd.current) {
-        return;
-      }
-      if (entries.some((i) => i.isIntersecting)) {
-        execLoadMsgs();
-      }
-    });
-    observer.observe(endElem.current);
-    return () => {
-      observer.disconnect();
-    };
-  }, [endElem, execLoadMsgs, msgsEnd]);
-
   const form = useForm({
     kind: CHAT_MSG_KIND_TXT,
     value: '',
@@ -274,12 +173,6 @@ const Chat = ({
     {},
     {posthook: posthookCreate, errhook: displayErrSnack},
   );
-  const scrollTop = useCallback(() => {
-    if (startElem.current) {
-      startElem.current.scrollIntoView({behavior: 'smooth'});
-    }
-  }, [startElem]);
-  const sendMsg = form.state.value ? execCreate : scrollTop;
 
   const ws = useContext(WSCtx);
 
@@ -295,6 +188,10 @@ const Chat = ({
   useWSSubChan(ws.subChan, DM_WS_CHANNEL_MSG, {
     onmessage: onmessageWS,
   });
+
+  const chat = chatid ? chatsMap.value.get(chatid) : null;
+  const user = chat ? users.value.get(chat.userid) : null;
+  const profile = chat ? profiles.value.get(chat.userid) : null;
 
   const present = presence && chat && presence.has(chat.userid);
 
@@ -315,11 +212,12 @@ const Chat = ({
       profile={profile}
       present={present}
       err={initMsgs.err}
+      msgsEnd={msgsEnd}
       startElem={startElem}
       endElem={endElem}
       msgs={msgs}
       execLoadMsgs={execLoadMsgs}
-      sendMsg={sendMsg}
+      execCreate={execCreate}
       formState={form.state}
       formUpdate={form.update}
       isMobile={isMobile}

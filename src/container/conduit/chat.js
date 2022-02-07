@@ -1,3 +1,4 @@
+import {useEffect, useCallback} from 'react';
 import {useURL} from '@xorkevin/substation';
 import {
   Container,
@@ -122,6 +123,94 @@ const MsgRow = ({
   );
 };
 
+const MSGS_RESET = Symbol('MSGS_RESET');
+const MSGS_RCV = Symbol('MSGS_RCV');
+const MSGS_APPEND = Symbol('MSGS_APPEND');
+
+const MsgsReset = (msgs) => ({
+  type: MSGS_RESET,
+  msgs,
+});
+
+const MsgsRcv = (msg) => ({
+  type: MSGS_RCV,
+  msg,
+});
+
+const MsgsAppend = (msgs) => ({
+  type: MSGS_APPEND,
+  msgs,
+});
+
+const msgsReducer = (state, action) => {
+  switch (action.type) {
+    case MSGS_RESET: {
+      if (!Array.isArray(action.msgs)) {
+        return state;
+      }
+      const {msgs} = action;
+      return {
+        msgs,
+      };
+    }
+    case MSGS_RCV: {
+      const {msg} = action;
+      const {msgs} = state;
+      if (msgs.length === 0 || msg.msgid > msgs[0].msgid) {
+        msgs.unshift(msg);
+        return {
+          msgs,
+        };
+      }
+      const idx = msgs.findIndex((i) => i.msgid === msg.msgid);
+      if (idx >= 0) {
+        return state;
+      }
+      msgs.push(msg);
+      msgs.sort((a, b) => {
+        // reverse sort
+        if (b > a) {
+          return 1;
+        } else if (b < a) {
+          return -1;
+        }
+        return 0;
+      });
+      return {
+        msgs,
+      };
+    }
+    case MSGS_APPEND: {
+      if (!Array.isArray(action.msgs) || action.msgs.length === 0) {
+        return state;
+      }
+      const {msgs} = state;
+      if (msgs.length === 0) {
+        return {
+          msgs: action.msgs,
+        };
+      }
+      const last = msgs[msgs.length - 1].msgid;
+      const idx = action.msgs.findIndex((i) => i.msgid < last);
+      if (idx < 0) {
+        return state;
+      }
+      if (idx === 0) {
+        msgs.push(...action.msgs);
+        return {
+          msgs,
+        };
+      }
+      msgs.push(...action.msgs.slice(idx));
+      return {
+        msgs,
+      };
+    }
+    default:
+      return state;
+  }
+};
+
 const ChatMsgs = ({
   loggedInUserid,
   users,
@@ -130,16 +219,42 @@ const ChatMsgs = ({
   profile,
   present,
   err,
+  msgsEnd,
   startElem,
   endElem,
   msgs,
   execLoadMsgs,
-  sendMsg,
+  execCreate,
   formState,
   formUpdate,
   isMobile,
   back,
 }) => {
+  useEffect(() => {
+    if (!endElem.current) {
+      return;
+    }
+    const observer = new IntersectionObserver((entries) => {
+      if (msgsEnd.current) {
+        return;
+      }
+      if (entries.some((i) => i.isIntersecting)) {
+        execLoadMsgs();
+      }
+    });
+    observer.observe(endElem.current);
+    return () => {
+      observer.disconnect();
+    };
+  }, [endElem, execLoadMsgs, msgsEnd]);
+
+  const scrollTop = useCallback(() => {
+    if (startElem.current) {
+      startElem.current.scrollIntoView({behavior: 'smooth'});
+    }
+  }, [startElem]);
+  const sendMsg = formState.value ? execCreate : scrollTop;
+
   const j = ['indicator'];
   if (present) {
     j.push('connected');
@@ -228,4 +343,13 @@ const ChatMsgs = ({
   );
 };
 
-export {SelectAChat, ProfileImg, MsgRow, ChatMsgs};
+export {
+  SelectAChat,
+  ProfileImg,
+  MsgRow,
+  ChatMsgs,
+  msgsReducer,
+  MsgsReset,
+  MsgsRcv,
+  MsgsAppend,
+};
