@@ -34,6 +34,7 @@ import {WSProvider, useWS} from '../../component/ws';
 
 const ConduitFriends = lazy(() => import('./friends'));
 const ConduitDMs = lazy(() => import('./dms'));
+const ConduitGDMs = lazy(() => import('./gdms'));
 
 const WS_STATE = 'conduit:chat';
 
@@ -143,6 +144,13 @@ const Conduit = () => {
                   DMs
                 </SidebarItem>
                 <SidebarItem
+                  link="gdms"
+                  local
+                  icon={<FaIcon icon="commenting" />}
+                >
+                  GDMs
+                </SidebarItem>
+                <SidebarItem
                   link="friends"
                   local
                   icon={<FaIcon icon="users" />}
@@ -165,6 +173,10 @@ const Conduit = () => {
                 <Route
                   path="dms/*"
                   element={<ConduitDMs isMobile={isMobile} />}
+                />
+                <Route
+                  path="gdms/*"
+                  element={<ConduitGDMs isMobile={isMobile} />}
                 />
                 <Route path="friends/*" element={<ConduitFriends />} />
                 <Route path="*" element={<Navigate to="dms" replace />} />

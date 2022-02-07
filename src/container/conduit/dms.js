@@ -411,8 +411,8 @@ const Chat = ({
 
   return (
     <Grid className="conduit-chat-msgs-root" direction="column" nowrap strict>
-      <Column>
-        <Grid className="conduit-chat-header" align="center" nowrap strict>
+      <Column className="header">
+        <Grid className="header-row" align="center" nowrap strict>
           {isMobile && (
             <Column shrink="0">
               <Anchor local href={back}>
@@ -436,7 +436,7 @@ const Chat = ({
               </Tooltip>
             )}
           </Column>
-          <Column className="minwidth0 profile-name" grow="1">
+          <Column className="minwidth0 chat-name" grow="1">
             <h5>
               {user ? (
                 <AnchorText
@@ -452,9 +452,9 @@ const Chat = ({
           </Column>
         </Grid>
       </Column>
-      <Column className="minheight0" grow="1" basis="0">
+      <Column className="minheight0 msgs-outer" grow="1" basis="0">
         {initMsgs.err && <p>{initMsgs.err.message}</p>}
-        <div className="conduit-chat-msgs">
+        <div className="msgs">
           <div className="start-marker" ref={startElem} />
           {msgs.msgs.map((i, n, arr) => (
             <MsgRow
@@ -515,12 +515,15 @@ const ChatRow = ({chat, users, profiles, presence}) => {
     j.push('connected');
   }
   return (
-    <ListItem>
-      <Grid justify="space-between" align="center" nowrap strict>
-        <Column
-          className="conduit-chat-row-profile-picture text-center"
-          shrink="0"
-        >
+    <ListItem className="conduit-chat-item">
+      <Grid
+        className="chat-row"
+        justify="space-between"
+        align="center"
+        nowrap
+        strict
+      >
+        <Column className="profile-picture text-center" shrink="0">
           <ProfileImg profiles={profiles} userid={chat.userid} />
           {user && (
             <Tooltip
@@ -532,8 +535,8 @@ const ChatRow = ({chat, users, profiles, presence}) => {
             </Tooltip>
           )}
         </Column>
-        <Column className="minwidth0" grow="1">
-          <Anchor className="conduit-chat-row-link" local href={chat.chatid}>
+        <Column className="minwidth0 info" grow="1">
+          <Anchor className="link" local href={chat.chatid}>
             <div>
               <h5>{chat.name || (user && user.username)}</h5>
               <small>
@@ -1046,6 +1049,8 @@ const DMs = ({isMobile}) => {
     };
   }, [wsopen, wsSendChan, setPresence, chatUserid, latestUserids]);
 
+  const matchURL = useHref('');
+
   const sidebar = (
     <Grid className="conduit-chat-sidebar" direction="column" nowrap strict>
       <Column>
@@ -1087,8 +1092,8 @@ const DMs = ({isMobile}) => {
           />
         </Form>
       </Column>
-      <Column className="minheight0" grow="1" basis="0">
-        <ListGroup className="conduit-chat-list">
+      <Column className="minheight0 chat-col" grow="1" basis="0">
+        <ListGroup className="chat-list">
           {chats.chats.map((i) => (
             <ChatRow
               key={i.chatid}
@@ -1103,8 +1108,6 @@ const DMs = ({isMobile}) => {
       </Column>
     </Grid>
   );
-
-  const matchURL = useHref('');
 
   return (
     <Grid className="conduit-chat-root" strict>

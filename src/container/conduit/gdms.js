@@ -1,4 +1,12 @@
-import {useReducer, useEffect, useCallback, useRef, useContext} from 'react';
+import {
+  Fragment,
+  useReducer,
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+  useContext,
+} from 'react';
 import {
   Routes,
   Route,
@@ -15,10 +23,13 @@ import {
   Column,
   ListGroup,
   ListItem,
+  ModalSurface,
+  useModal,
   useMenu,
   Menu,
   MenuItem,
   FieldDynSearchSelect,
+  FieldDynMultiSelect,
   Field,
   Form,
   useForm,
@@ -59,11 +70,10 @@ const GDM_WS_CHANNELS = 'conduit.chat.gdm.';
 const GDM_WS_CHANNEL_MSG = 'conduit.chat.gdm.msg';
 const GDM_WS_LOC = 'conduit.gdm';
 
-const PRESENCE_LIMIT = 255;
-
-const selectAPILatestDMs = (api) => api.conduit.dm;
-const selectAPIDMs = (api) => api.conduit.dm.ids;
-const selectAPISearch = (api) => api.conduit.dm.search;
+const selectAPILatestGDMs = (api) => api.conduit.gdm;
+const selectAPIGDMs = (api) => api.conduit.gdm.ids;
+const selectAPICreate = (api) => api.conduit.gdm.create;
+const selectAPISearch = (api) => api.conduit.friend.search;
 const selectAPIUsers = (api) => api.u.user.ids;
 const selectAPIProfiles = (api) => api.profile.ids;
 const selectAPIImage = (api) => api.profile.id.image;
@@ -172,6 +182,28 @@ const MsgRow = ({
   );
 };
 
+const useChatTitle = (chatName, chatMembers, users) => {
+  return useMemo(() => {
+    if (chatName) {
+      return chatName;
+    }
+    const s = chatMembers
+      .slice(0, 3)
+      .flatMap((i) => {
+        const k = users.value.get(i);
+        if (!k) {
+          return [];
+        }
+        return [k.username];
+      })
+      .join(', ');
+    if (chatMembers.length > 3) {
+      return s + ',...';
+    }
+    return s;
+  }, [chatName, chatMembers, users]);
+};
+
 const MSGS_RESET = Symbol('MSGS_RESET');
 const MSGS_RCV = Symbol('MSGS_RCV');
 const MSGS_APPEND = Symbol('MSGS_APPEND');
@@ -274,6 +306,12 @@ const Chat = ({chatsMap, users, profiles, invalidateChat, isMobile, back}) => {
 
   const {chatid} = useParams();
   const chat = chatid ? chatsMap.value.get(chatid) : null;
+
+  const chatTitle = useChatTitle(
+    chat ? chat.name : '',
+    chat ? chat.members : [],
+    users,
+  );
 
   useEffect(() => {
     if (chatid) {
@@ -386,8 +424,8 @@ const Chat = ({chatsMap, users, profiles, invalidateChat, isMobile, back}) => {
 
   return (
     <Grid className="conduit-chat-msgs-root" direction="column" nowrap strict>
-      <Column>
-        <Grid className="conduit-chat-header" align="center" nowrap strict>
+      <Column className="header">
+        <Grid className="header-row" align="center" nowrap strict>
           {isMobile && (
             <Column shrink="0">
               <Anchor local href={back}>
@@ -397,17 +435,14 @@ const Chat = ({chatsMap, users, profiles, invalidateChat, isMobile, back}) => {
               </Anchor>
             </Column>
           )}
-          <Column className="profile-picture text-center" shrink="0">
-            <FaIcon icon="user fa-lg" />
-          </Column>
-          <Column className="minwidth0 profile-name" grow="1">
-            <h5>{chat && chat.name}</h5>
+          <Column className="minwidth0 chat-name" grow="1">
+            <h5>{chatTitle}</h5>
           </Column>
         </Grid>
       </Column>
-      <Column className="minheight0" grow="1" basis="0">
+      <Column className="minheight0 msgs-outer" grow="1" basis="0">
         {initMsgs.err && <p>{initMsgs.err.message}</p>}
-        <div className="conduit-chat-msgs">
+        <div className="msgs">
           <div className="start-marker" ref={startElem} />
           {msgs.msgs.map((i, n, arr) => (
             <MsgRow
@@ -459,22 +494,99 @@ const Chat = ({chatsMap, users, profiles, invalidateChat, isMobile, back}) => {
   );
 };
 
+const useSearchFriends = () => {
+  const apiSearch = useAPI(selectAPISearch);
+  const searchUsers = useCallback(
+    async ({signal}, search) => {
+      const [data, res, err] = await apiSearch(
+        {signal},
+        search,
+        CHATS_SEARCH_LIMIT,
+      );
+      if (err || !res || !res.ok || !Array.isArray(data)) {
+        return [];
+      }
+      return data.map((i) => ({
+        display: i.username,
+        value: i.userid,
+      }));
+    },
+    [apiSearch],
+  );
+  return useFormSearch(searchUsers, 256);
+};
+
+const CreateChat = ({posthookCreate, close}) => {
+  const {userid} = useAuthValue();
+
+  const form = useForm({
+    name: '',
+    theme: '{}',
+    members: [],
+  });
+
+  const userSuggest = useSearchFriends();
+
+  const posthook = useCallback(() => {
+    close();
+    posthookCreate();
+  }, [posthookCreate, close]);
+  const [create, execCreate] = useAuthCall(
+    selectAPICreate,
+    [form.state],
+    {},
+    {posthook},
+  );
+
+  return (
+    <Fragment>
+      <h4>New Group Chat</h4>
+      <Form
+        formState={form.state}
+        onChange={form.update}
+        onSubmit={execCreate}
+        displays={form.displays}
+        putDisplays={form.putDisplays}
+        addDisplay={form.addDisplay}
+        compactDisplays={form.compactDisplays}
+      >
+        <FieldDynMultiSelect
+          name="members"
+          label="Users"
+          onSearch={userSuggest.setSearch}
+          options={userSuggest.opts}
+          nohint
+          fullWidth
+        />
+      </Form>
+      <ButtonGroup>
+        <ButtonTertiary onClick={close}>Cancel</ButtonTertiary>
+        <ButtonPrimary onClick={execCreate}>Create</ButtonPrimary>
+      </ButtonGroup>
+      {create.err && <p>{create.err.message}</p>}
+    </Fragment>
+  );
+};
+
 const ChatRow = ({chat, users}) => {
   const menu = useMenu();
-  const user = users.value.get(chat.userid);
+  const chatTitle = useChatTitle(chat.name, chat.members, users);
   return (
-    <ListItem>
-      <Grid justify="space-between" align="center" nowrap strict>
-        <Column
-          className="conduit-chat-row-profile-picture text-center"
-          shrink="0"
-        >
+    <ListItem className="conduit-chat-item">
+      <Grid
+        className="chat-row"
+        justify="space-between"
+        align="center"
+        nowrap
+        strict
+      >
+        <Column className="profile-picture text-center" shrink="0">
           <FaIcon icon="user fa-lg" />
         </Column>
-        <Column className="minwidth0" grow="1">
-          <Anchor className="conduit-chat-row-link" local href={chat.chatid}>
+        <Column className="minwidth0 info" grow="1">
+          <Anchor className="link" local href={chat.chatid}>
             <div>
-              <h5>{chat.name || (user && user.username)}</h5>
+              <h5>{chatTitle}</h5>
               <small>
                 <Time
                   value={chat.last_updated}
@@ -551,22 +663,6 @@ const iterDiff = (it, s) => {
   return diff;
 };
 
-const iterTake = (it, f, n) => {
-  const s = new Set();
-  let c = 0;
-  for (const i of it) {
-    const k = f(i);
-    if (k) {
-      s.add(k);
-    }
-    c++;
-    if (c >= n) {
-      break;
-    }
-  }
-  return s;
-};
-
 const chatsReducer = (state, action) => {
   switch (action.type) {
     case CHATS_RESET: {
@@ -577,18 +673,14 @@ const chatsReducer = (state, action) => {
       const chatids = chats.map((i) => i.chatid);
       const allUsersSet = new Set();
       chats.forEach((i) => {
-        allUsersSet.add(i.userid);
+        i.members.forEach((j) => {
+          allUsersSet.add(j);
+        });
       });
-      const latestUserids = iterTake(
-        chats,
-        (i) => i.userid,
-        PRESENCE_LIMIT - 1,
-      );
       const usersDiff = Array.from(allUsersSet);
       const profilesDiff = Array.from(allUsersSet);
       return {
         chats,
-        latestUserids,
         chatsMap: {value: new Map(chats.map((i) => [i.chatid, i]))},
         allChatsSet: new Set(chatids),
         validChatsSet: new Set(chatids),
@@ -626,11 +718,6 @@ const chatsReducer = (state, action) => {
         // reverse sort
         return b.last_updated - a.last_updated;
       });
-      const latestUserids = iterTake(
-        chats,
-        (i) => i.userid,
-        PRESENCE_LIMIT - 1,
-      );
       const chatsMap = {
         value: state.chatsMap.value,
       };
@@ -639,11 +726,12 @@ const chatsReducer = (state, action) => {
         chatsMap.value.set(i.chatid, i);
         allChatsSet.add(i.chatid);
         validChatsSet.add(i.chatid);
-        allUsersSet.add(i.userid);
+        i.members.forEach((j) => {
+          allUsersSet.add(j);
+        });
       });
       return Object.assign({}, state, {
         chats,
-        latestUserids,
         chatsMap,
         allChatsSet,
         validChatsSet,
@@ -677,18 +765,12 @@ const chatsReducer = (state, action) => {
         // reverse sort
         return b.last_updated - a.last_updated;
       });
-      const latestUserids = iterTake(
-        chats,
-        (i) => i.userid,
-        PRESENCE_LIMIT - 1,
-      );
       const chatsMap = {
         value: state.chatsMap.value,
       };
       chatsMap.value.set(chat.chatid, chat);
       return Object.assign({}, state, {
         chats,
-        latestUserids,
         chatsMap,
       });
     }
@@ -779,7 +861,6 @@ const GDMs = ({isMobile}) => {
 
   const [chats, dispatchChats] = useReducer(chatsReducer, {
     chats: [],
-    latestUserids: new Set(),
     chatsMap: {value: new Map()},
     allChatsSet: new Set(),
     validChatsSet: new Set(),
@@ -799,13 +880,14 @@ const GDMs = ({isMobile}) => {
     },
     [dispatchChats],
   );
-  const [initChats] = useAuthResource(
-    selectAPILatestDMs,
+  const [initChats, reinitChats] = useAuthResource(
+    selectAPILatestGDMs,
     [0, CHATS_LIMIT],
     [],
     {posthook: posthookInit},
   );
 
+  const startElem = useRef(null);
   const endElem = useRef(null);
 
   const firstLastUpdated =
@@ -820,7 +902,7 @@ const GDMs = ({isMobile}) => {
     [dispatchChats],
   );
   const [_loadChats, _execLoadChats] = useAuthCall(
-    selectAPILatestDMs,
+    selectAPILatestGDMs,
     [firstLastUpdated, CHATS_SCROLL_LIMIT],
     [],
     {posthook: posthookLoadChats, errhook: displayErrSnack},
@@ -833,7 +915,7 @@ const GDMs = ({isMobile}) => {
     [dispatchChats],
   );
   useAuthResource(
-    chats.chatsDiff.length > 0 ? selectAPIDMs : selectAPINull,
+    chats.chatsDiff.length > 0 ? selectAPIGDMs : selectAPINull,
     [chats.chatsDiff],
     [],
     {posthook: posthookChats, errhook: displayErrSnack},
@@ -873,41 +955,20 @@ const GDMs = ({isMobile}) => {
   );
 
   const form = useForm({
-    chatid: '',
+    friendid: '',
   });
 
-  const apiSearch = useAPI(selectAPISearch);
-  const searchUsers = useCallback(
-    async ({signal}, search) => {
-      const [data, res, err] = await apiSearch(
-        {signal},
-        search,
-        CHATS_SEARCH_LIMIT,
-      );
-      if (err || !res || !res.ok || !Array.isArray(data)) {
-        return [];
-      }
-      return data.map((i) => ({
-        display: i.name || i.username,
-        value: i.chatid,
-      }));
-    },
-    [apiSearch],
-  );
-  const userSuggest = useFormSearch(searchUsers, 256);
+  const userSuggest = useSearchFriends();
 
-  const navigate = useNavigate();
+  const searchFriendid = form.state.friendid;
 
-  const formAssign = form.assign;
-  const searchChatid = form.state.chatid;
-  const goToDM = useCallback(() => {
-    if (searchChatid) {
-      navigate(searchChatid);
+  const modal = useModal();
+  const posthookCreate = useCallback(() => {
+    reinitChats();
+    if (startElem.current) {
+      startElem.current.scrollIntoView({behavior: 'smooth'});
     }
-    formAssign({
-      chatid: '',
-    });
-  }, [formAssign, navigate, searchChatid]);
+  }, [reinitChats, startElem]);
 
   const ws = useContext(WSCtx);
 
@@ -938,6 +999,8 @@ const GDMs = ({isMobile}) => {
     j.push('connected');
   }
 
+  const matchURL = useHref('');
+
   const sidebar = (
     <Grid className="conduit-chat-sidebar" direction="column" nowrap strict>
       <Column>
@@ -954,6 +1017,24 @@ const GDMs = ({isMobile}) => {
               <span className={j.join(' ')}></span>
             </Tooltip>
           </Column>
+          <Column shrink="0">
+            <ButtonGroup>
+              <ButtonTertiary
+                forwardedRef={modal.anchorRef}
+                onClick={modal.toggle}
+              >
+                <FaIcon icon="plus" />
+              </ButtonTertiary>
+            </ButtonGroup>
+            {modal.show && (
+              <ModalSurface size="md" anchor={modal.anchor} close={modal.close}>
+                <CreateChat
+                  posthookCreate={posthookCreate}
+                  close={modal.close}
+                />
+              </ModalSurface>
+            )}
+          </Column>
         </Grid>
         {initChats.err && <p>{initChats.err.message}</p>}
         <Form
@@ -965,22 +1046,23 @@ const GDMs = ({isMobile}) => {
           compactDisplays={form.compactDisplays}
         >
           <FieldDynSearchSelect
-            name="chatid"
+            name="friendid"
             placeholder="Search"
             onSearch={userSuggest.setSearch}
             options={userSuggest.opts}
             nohint
             fullWidth
             iconRight={
-              <ButtonTertiary onClick={goToDM}>
-                <FaIcon icon={searchChatid ? 'arrow-right' : 'search'} />
+              <ButtonTertiary>
+                <FaIcon icon={searchFriendid ? 'arrow-right' : 'search'} />
               </ButtonTertiary>
             }
           />
         </Form>
       </Column>
-      <Column className="minheight0" grow="1" basis="0">
-        <ListGroup className="conduit-chat-list">
+      <Column className="minheight0 chat-col" grow="1" basis="0">
+        <ListGroup className="chat-list">
+          <div className="start-marker" ref={startElem} />
           {chats.chats.map((i) => (
             <ChatRow
               key={i.chatid}
@@ -994,8 +1076,6 @@ const GDMs = ({isMobile}) => {
       </Column>
     </Grid>
   );
-
-  const matchURL = useHref('');
 
   return (
     <Grid className="conduit-chat-root" strict>
