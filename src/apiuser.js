@@ -348,9 +348,7 @@ export default {
   del: {
     url: '',
     method: 'DELETE',
-    transformer: (username) => ({
-      json: {username},
-    }),
+    transformer: (json) => ({json}),
     err: 'Could not delete account',
   },
   approvals: {

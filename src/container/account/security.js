@@ -4,6 +4,7 @@ import {
   useAuthCall,
   useAuthResource,
   useRefreshUser,
+  useLogout,
 } from '@xorkevin/turbine';
 import {
   Grid,
@@ -28,6 +29,7 @@ import {
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonSecondary from '@xorkevin/nuke/src/component/button/secondary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
+import ButtonDanger from '@xorkevin/nuke/src/component/button/danger';
 
 import {GovUICtx} from '../../middleware';
 import {emailRegex} from '../../utility';
@@ -660,6 +662,125 @@ const AccountSessions = () => {
   );
 };
 
+const useFormLock = () => {
+  const [locked, setLocked] = useState(true);
+  const lock = useCallback(() => {
+    setLocked(true);
+  }, [setLocked]);
+  const unlock = useCallback(() => {
+    setLocked(false);
+  }, [setLocked]);
+  return [locked, lock, unlock];
+};
+
+const selectAPIDel = (api) => api.u.user.del;
+
+const AccountDelete = () => {
+  const ctx = useContext(GovUICtx);
+  const displaySnackbar = useSnackbarView(
+    <SnackbarSurface>Account deleted</SnackbarSurface>,
+  );
+  const logout = useLogout();
+
+  const [dangerLocked, dangerLock, dangerUnlock] = useFormLock();
+
+  const form = useForm({
+    username: '',
+    password: '',
+  });
+
+  const posthookDel = useCallback(() => {
+    displaySnackbar();
+    logout();
+  }, [logout, displaySnackbar]);
+  const [del, execDel] = useAuthCall(
+    selectAPIDel,
+    [form.state],
+    {},
+    {posthook: posthookDel},
+  );
+
+  const modal = useModal();
+
+  return (
+    <Fragment>
+      <h3>Danger Zone</h3>
+      <hr />
+      <Grid>
+        <Column fullWidth>
+          <Grid justify="space-between" align="center" nowrap>
+            <Column className="minwidth0" grow="1">
+              <h5>Delete this account</h5>
+              <p>
+                This will delete this account and all its content. This cannot
+                be undone.
+              </p>
+            </Column>
+            <Column shrink="0">
+              <ButtonDanger
+                disabled={dangerLocked}
+                forwardedRef={modal.anchorRef}
+                onClick={modal.toggle}
+              >
+                Delete account
+              </ButtonDanger>
+              {modal.show && (
+                <ModalSurface
+                  size="md"
+                  anchor={modal.anchor}
+                  close={modal.close}
+                >
+                  <Form
+                    formState={form.state}
+                    onChange={form.update}
+                    onSubmit={execDel}
+                  >
+                    <Field
+                      name="username"
+                      label="Username"
+                      hint="Confirm username to delete account"
+                      fullWidth
+                      autoComplete="username"
+                      autoFocus
+                    />
+                    <Field
+                      name="password"
+                      type="password"
+                      label="Password"
+                      nohint
+                      fullWidth
+                      autoComplete="current-password"
+                    />
+                  </Form>
+                  <ButtonGroup>
+                    <ButtonDanger onClick={execDel}>
+                      Delete account
+                    </ButtonDanger>
+                  </ButtonGroup>
+                  {del.err && <p>{del.err.message}</p>}
+                </ModalSurface>
+              )}
+            </Column>
+          </Grid>
+          <ButtonGroup>
+            {dangerLocked ? (
+              <Fragment>
+                <FaIcon icon="lock" />
+                <ButtonTertiary onClick={dangerUnlock}>Unlock</ButtonTertiary>
+              </Fragment>
+            ) : (
+              <Fragment>
+                <FaIcon icon="unlock-alt" />
+                <ButtonTertiary onClick={dangerLock}>Cancel</ButtonTertiary>
+              </Fragment>
+            )}
+          </ButtonGroup>
+        </Column>
+      </Grid>
+    </Fragment>
+  );
+};
+
 const AccountSecurity = ({pathConfirm, parsePlatform}) => {
   return (
     <div>
@@ -667,6 +788,7 @@ const AccountSecurity = ({pathConfirm, parsePlatform}) => {
       <AccountEmail pathConfirm={pathConfirm} />
       <Account2FA />
       <AccountSessions parsePlatform={parsePlatform} />
+      <AccountDelete />
     </div>
   );
 };
