@@ -273,6 +273,19 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
   color: $color-text-light-3;
 }
 
+.conduit-chat-msgs-base {
+  height: 100%;
+
+  --msg-txt-color: #{$color-text-light-1};
+  --msg-bg: #{$color-back-primary-1};
+  --msg-txt-color-alt: #{$color-text-dark-1};
+  --msg-bg-alt: #{$color-back-dark-3};
+  --msg-txt-color-dark: #{$color-text-light-1};
+  --msg-bg-dark: #{$color-back-primary-2};
+  --msg-txt-color-alt-dark: #{$color-text-light-1};
+  --msg-bg-alt-dark: #{$color-back-light-3};
+}
+
 .conduit-chat-msgs-root {
   height: 100%;
   padding: 8px;
@@ -328,8 +341,8 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
     & > .value {
       padding: 8px 12px;
       border-radius: 4px;
-      color: $color-text-dark-1;
-      background-color: $color-back-dark-3;
+      color: var(--msg-txt-color-alt);
+      background: var(--msg-bg-alt);
     }
 
     & > .time {
@@ -366,8 +379,8 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
 
     & > .base {
       & > .value {
-        color: $color-text-light-1;
-        background-color: $color-back-primary-1;
+        color: var(--msg-txt-color);
+        background: var(--msg-bg);
         border-top-left-radius: 16px;
         border-bottom-left-radius: 16px;
       }
@@ -427,8 +440,8 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
 .dark .conduit-chat-msg {
   & > .base {
     & > .value {
-      color: $color-text-light-1;
-      background-color: $color-back-light-3;
+      color: var(--msg-txt-color-alt-dark);
+      background: var(--msg-bg-alt-dark);
     }
 
     & > .time {
@@ -445,10 +458,30 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
   &.self {
     & > .base {
       & > .value {
-        color: $color-text-light-1;
-        background-color: $color-back-primary-2;
+        color: var(--msg-txt-color-dark);
+        background: var(--msg-bg-dark);
       }
     }
+  }
+}
+
+.conduit-send-msg {
+  color: var(--msg-txt-color);
+  background: var(--msg-bg);
+
+  &.tertiary {
+    color: var(--msg-txt-color);
+    background: var(--msg-bg);
+  }
+}
+
+.dark .conduit-send-msg {
+  color: var(--msg-txt-color-dark);
+  background: var(--msg-bg-dark);
+
+  &.tertiary {
+    color: var(--msg-txt-color-dark);
+    background: var(--msg-bg-dark);
   }
 }
 

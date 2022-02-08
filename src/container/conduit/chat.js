@@ -12,7 +12,6 @@ import {
   Tooltip,
   Time,
 } from '@xorkevin/nuke';
-import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 import Img from '@xorkevin/nuke/src/component/image/circle';
 
@@ -259,87 +258,104 @@ const ChatMsgs = ({
   if (present) {
     j.push('connected');
   }
+
+  const s = {
+    '--msg-bg':
+      'linear-gradient(180deg, rgba(255,104,0,1) 0%, rgba(255,173,0,1) 100%) fixed center / cover',
+    '--msg-bg-dark':
+      'linear-gradient(180deg, rgba(255,104,0,1) 0%, rgba(255,173,0,1) 100%) fixed center / cover',
+  };
+
   return (
-    <Grid className="conduit-chat-msgs-root" direction="column" nowrap strict>
-      <Column className="header">
-        <Grid className="header-row" align="center" nowrap strict>
-          {isMobile && (
+    <div className="conduit-chat-msgs-base" style={s}>
+      <Grid className="conduit-chat-msgs-root" direction="column" nowrap strict>
+        <Column className="header">
+          <Grid className="header-row" align="center" nowrap strict>
+            {isMobile && (
+              <Column shrink="0">
+                <Anchor local href={back}>
+                  <ButtonTertiary>
+                    <FaIcon icon="arrow-left" />
+                  </ButtonTertiary>
+                </Anchor>
+              </Column>
+            )}
+            {profile && (
+              <Column className="profile-picture text-center" shrink="0">
+                <ProfileImg profiles={profiles} userid={profile.userid} />
+                <Tooltip
+                  className="conduit-chat-presence-indicator"
+                  position="right"
+                  tooltip={present ? 'ONLINE' : 'OFFLINE'}
+                >
+                  <span className={j.join(' ')}></span>
+                </Tooltip>
+              </Column>
+            )}
+            <Column className="minwidth0 chat-name" grow="1">
+              <h5>{chatTitle}</h5>
+            </Column>
             <Column shrink="0">
-              <Anchor local href={back}>
-                <ButtonTertiary>
-                  <FaIcon icon="arrow-left" />
+              <ButtonTertiary>
+                <FaIcon icon="ellipsis-v" />
+              </ButtonTertiary>
+            </Column>
+          </Grid>
+        </Column>
+        <Column className="minheight0 msgs-outer" grow="1" basis="0">
+          {err && <p>{err.message}</p>}
+          <div className="msgs">
+            <div className="start-marker" ref={startElem} />
+            {msgs.msgs.map((i, n, arr) => (
+              <MsgRow
+                key={i.msgid}
+                loggedInUserid={loggedInUserid}
+                users={users}
+                profiles={profiles}
+                msgid={i.msgid}
+                userid={i.userid}
+                kind={i.kind}
+                time_ms={i.time_ms}
+                value={i.value}
+                first={
+                  n === 0 ||
+                  arr[n - 1].userid !== i.userid ||
+                  arr[n - 1].time_ms - i.time_ms > MSGS_BREAK_DURATION
+                }
+                last={
+                  n === arr.length - 1 ||
+                  arr[n + 1].userid !== i.userid ||
+                  i.time_ms - arr[n + 1].time_ms > MSGS_BREAK_DURATION
+                }
+              />
+            ))}
+            <div className="end-marker" ref={endElem}>
+              <ButtonGroup>
+                <ButtonTertiary onClick={execLoadMsgs}>
+                  Load more
                 </ButtonTertiary>
-              </Anchor>
-            </Column>
-          )}
-          {profile && (
-            <Column className="profile-picture text-center" shrink="0">
-              <ProfileImg profiles={profiles} userid={profile.userid} />
-              <Tooltip
-                className="conduit-chat-presence-indicator"
-                position="right"
-                tooltip={present ? 'ONLINE' : 'OFFLINE'}
-              >
-                <span className={j.join(' ')}></span>
-              </Tooltip>
-            </Column>
-          )}
-          <Column className="minwidth0 chat-name" grow="1">
-            <h5>{chatTitle}</h5>
-          </Column>
-        </Grid>
-      </Column>
-      <Column className="minheight0 msgs-outer" grow="1" basis="0">
-        {err && <p>{err.message}</p>}
-        <div className="msgs">
-          <div className="start-marker" ref={startElem} />
-          {msgs.msgs.map((i, n, arr) => (
-            <MsgRow
-              key={i.msgid}
-              loggedInUserid={loggedInUserid}
-              users={users}
-              profiles={profiles}
-              msgid={i.msgid}
-              userid={i.userid}
-              kind={i.kind}
-              time_ms={i.time_ms}
-              value={i.value}
-              first={
-                n === 0 ||
-                arr[n - 1].userid !== i.userid ||
-                arr[n - 1].time_ms - i.time_ms > MSGS_BREAK_DURATION
-              }
-              last={
-                n === arr.length - 1 ||
-                arr[n + 1].userid !== i.userid ||
-                i.time_ms - arr[n + 1].time_ms > MSGS_BREAK_DURATION
+              </ButtonGroup>
+            </div>
+          </div>
+        </Column>
+        <Column>
+          <Form formState={formState} onChange={formUpdate} onSubmit={sendMsg}>
+            <Field
+              name="value"
+              placeholder="Message"
+              nohint
+              fullWidth
+              autoFocus
+              iconRight={
+                <ButtonTertiary className="conduit-send-msg" onClick={sendMsg}>
+                  <FaIcon icon="arrow-right" />
+                </ButtonTertiary>
               }
             />
-          ))}
-          <div className="end-marker" ref={endElem}>
-            <ButtonGroup>
-              <ButtonTertiary onClick={execLoadMsgs}>Load more</ButtonTertiary>
-            </ButtonGroup>
-          </div>
-        </div>
-      </Column>
-      <Column>
-        <Form formState={formState} onChange={formUpdate} onSubmit={sendMsg}>
-          <Field
-            name="value"
-            placeholder="Message"
-            nohint
-            fullWidth
-            autoFocus
-            iconRight={
-              <ButtonPrimary onClick={sendMsg}>
-                <FaIcon icon="arrow-right" />
-              </ButtonPrimary>
-            }
-          />
-        </Form>
-      </Column>
-    </Grid>
+          </Form>
+        </Column>
+      </Grid>
+    </div>
   );
 };
 
