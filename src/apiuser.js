@@ -224,6 +224,15 @@ export default {
           },
         },
       },
+      del: {
+        url: '',
+        method: 'DELETE',
+        transformer: (userid, username) => ({
+          params: [userid],
+          json: {username},
+        }),
+        err: 'Could not delete user',
+      },
     },
   },
   name: {
@@ -335,6 +344,14 @@ export default {
         err: 'Could not create account',
       },
     },
+  },
+  del: {
+    url: '',
+    method: 'DELETE',
+    transformer: (username) => ({
+      json: {username},
+    }),
+    err: 'Could not delete account',
   },
   approvals: {
     url: '/approvals',
