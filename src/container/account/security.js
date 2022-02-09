@@ -676,7 +676,6 @@ const useFormLock = () => {
 const selectAPIDel = (api) => api.u.user.del;
 
 const AccountDelete = () => {
-  const ctx = useContext(GovUICtx);
   const displaySnackbar = useSnackbarView(
     <SnackbarSurface>Account deleted</SnackbarSurface>,
   );

@@ -1,9 +1,10 @@
-import {useEffect, useCallback} from 'react';
+import {Fragment, useEffect, useCallback} from 'react';
 import {useURL} from '@xorkevin/substation';
 import {
   Container,
   Grid,
   Column,
+  FieldSearchSelect,
   Field,
   Form,
   Anchor,
@@ -12,6 +13,7 @@ import {
   Tooltip,
   Time,
 } from '@xorkevin/nuke';
+import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 import Img from '@xorkevin/nuke/src/component/image/circle';
 
@@ -210,6 +212,41 @@ const msgsReducer = (state, action) => {
   }
 };
 
+const themeOpts = [{display: 'Citrus', value: 'citrus'}];
+
+const ChatSettings = ({
+  execUpdateSettings,
+  settingsState,
+  settingsUpdate,
+  close,
+  err,
+}) => {
+  return (
+    <Fragment>
+      <h4>Settings</h4>
+      <Form
+        formState={settingsState}
+        onChange={settingsUpdate}
+        onSubmit={execUpdateSettings}
+      >
+        <Field name="name" label="Name" nohint fullWidth />
+        <FieldSearchSelect
+          name="themePreset"
+          options={themeOpts}
+          label="Theme"
+          nohint
+          fullWidth
+        />
+      </Form>
+      <ButtonGroup>
+        <ButtonTertiary onClick={close}>Cancel</ButtonTertiary>
+        <ButtonPrimary onClick={execUpdateSettings}>Update</ButtonPrimary>
+      </ButtonGroup>
+      {err && <p>{err.message}</p>}
+    </Fragment>
+  );
+};
+
 const ChatMsgs = ({
   loggedInUserid,
   users,
@@ -226,6 +263,8 @@ const ChatMsgs = ({
   execCreate,
   formState,
   formUpdate,
+  modalAnchorRef,
+  modalToggle,
   isMobile,
   back,
 }) => {
@@ -296,7 +335,10 @@ const ChatMsgs = ({
               <h5>{chatTitle}</h5>
             </Column>
             <Column shrink="0">
-              <ButtonTertiary>
+              <ButtonTertiary
+                forwardedRef={modalAnchorRef}
+                onClick={modalToggle}
+              >
                 <FaIcon icon="ellipsis-v" />
               </ButtonTertiary>
             </Column>
@@ -363,6 +405,7 @@ export {
   SelectAChat,
   ProfileImg,
   MsgRow,
+  ChatSettings,
   ChatMsgs,
   msgsReducer,
   MsgsReset,

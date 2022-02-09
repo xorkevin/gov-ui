@@ -135,7 +135,6 @@ export default {
               params: [chatid],
               json,
             }),
-            expectjson: true,
             err: 'Failed to update dm settings',
           },
           msg: {
@@ -222,7 +221,6 @@ export default {
               params: [chatid],
               json,
             }),
-            expectjson: true,
             err: 'Failed to update group chat settings',
           },
           del: {
