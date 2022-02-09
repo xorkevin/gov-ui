@@ -333,16 +333,21 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
 }
 
 .conduit-chat-msg {
-  max-width: 48rem;
+  max-width: 100%;
 
   & > .base {
     padding: 2px;
 
     & > .value {
+      max-width: 36rem;
       padding: 8px 12px;
       border-radius: 4px;
       color: var(--msg-txt-color-alt);
       background: var(--msg-bg-alt);
+
+      @media (min-width: $grid-lg-breakpoint) {
+        max-width: 48rem;
+      }
     }
 
     & > .time {

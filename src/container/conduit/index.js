@@ -84,7 +84,7 @@ const Conduit = () => {
           direction={isMobile ? 'column' : 'row'}
           strict
         >
-          <Column fullWidth lg={2} md={4}>
+          <Column fullWidth lg={2} md={3}>
             {isMobile ? (
               <Grid justify="space-between" align="center" nowrap>
                 <Column>
@@ -174,7 +174,7 @@ const Conduit = () => {
               </Sidebar>
             )}
           </Column>
-          <Column fullWidth lg={22} md={20} grow={isMobile && '1'}>
+          <Column fullWidth lg={22} md={21} grow={isMobile && '1'}>
             <Suspense fallback={ctx.fallbackView}>
               <Routes>
                 <Route
