@@ -1,8 +1,10 @@
 import {
+  Fragment,
   useState,
   useReducer,
   useEffect,
   useCallback,
+  useMemo,
   useRef,
   useContext,
 } from 'react';
@@ -26,6 +28,8 @@ import {
   Column,
   ListGroup,
   ListItem,
+  ModalSurface,
+  useModal,
   useMenu,
   Menu,
   MenuItem,
@@ -55,6 +59,7 @@ import {
 import {
   SelectAChat,
   ProfileImg,
+  ChatSettings,
   ChatMsgs,
   msgsReducer,
   MsgsReset,
@@ -81,11 +86,72 @@ const PRESENCE_LIMIT = 255;
 
 const selectAPILatestDMs = (api) => api.conduit.dm;
 const selectAPIDMs = (api) => api.conduit.dm.ids;
+const selectAPIEdit = (api) => api.conduit.dm.id.edit;
 const selectAPISearch = (api) => api.conduit.dm.search;
 const selectAPIUsers = (api) => api.u.user.ids;
 const selectAPIProfiles = (api) => api.profile.ids;
 const selectAPIMsgs = (api) => api.conduit.dm.id.msg;
 const selectAPICreateMsg = (api) => api.conduit.dm.id.msg.create;
+
+const parseJSON = (s) => {
+  try {
+    return JSON.parse(s);
+  } catch (_err) {
+    return {};
+  }
+};
+
+const SettingsModal = ({chatid, initState, invalidateChat, close}) => {
+  const snackbar = useSnackbar();
+  const displayErrSnack = useCallback(
+    (_res, err) => {
+      snackbar(<SnackbarSurface>{err.message}</SnackbarSurface>);
+    },
+    [snackbar],
+  );
+
+  const form = useForm(
+    Object.assign(
+      {
+        name: '',
+        themePreset: '',
+      },
+      initState,
+    ),
+  );
+
+  const formState = form.state;
+  const t = useMemo(
+    () => ({
+      name: formState.name,
+      theme: JSON.stringify({
+        preset: formState.themePreset,
+      }),
+    }),
+    [formState],
+  );
+
+  const posthookUpdate = useCallback(() => {
+    invalidateChat(chatid);
+    close();
+  }, [chatid, invalidateChat, close]);
+  const [update, execUpdate] = useAuthCall(
+    selectAPIEdit,
+    [chatid, t],
+    {},
+    {posthook: posthookUpdate, errhook: displayErrSnack},
+  );
+
+  return (
+    <ChatSettings
+      execUpdateSettings={execUpdate}
+      settingsState={form.state}
+      settingsUpdate={form.update}
+      close={close}
+      err={update.err}
+    />
+  );
+};
 
 const Chat = ({
   chatsMap,
@@ -208,26 +274,54 @@ const Chat = ({
     chat && chat.name
   );
 
+  const modal = useModal();
+
+  const settings = useMemo(() => {
+    if (!chat) {
+      return {};
+    }
+    const t = parseJSON(chat.theme);
+    return {
+      name: chat.name,
+      themePreset: t.preset,
+    };
+  }, [chat]);
+
   return (
-    <ChatMsgs
-      loggedInUserid={loggedInUserid}
-      users={users}
-      profiles={profiles}
-      chatTitle={chatTitle}
-      profile={profile}
-      present={present}
-      err={initMsgs.err}
-      msgsEnd={msgsEnd}
-      startElem={startElem}
-      endElem={endElem}
-      msgs={msgs}
-      execLoadMsgs={execLoadMsgs}
-      execCreate={execCreate}
-      formState={form.state}
-      formUpdate={form.update}
-      isMobile={isMobile}
-      back={back}
-    />
+    <Fragment>
+      <ChatMsgs
+        loggedInUserid={loggedInUserid}
+        users={users}
+        profiles={profiles}
+        chatTitle={chatTitle}
+        profile={profile}
+        present={present}
+        err={initMsgs.err}
+        msgsEnd={msgsEnd}
+        startElem={startElem}
+        endElem={endElem}
+        msgs={msgs}
+        theme={chat && chat.theme}
+        execLoadMsgs={execLoadMsgs}
+        execCreate={execCreate}
+        formState={form.state}
+        formUpdate={form.update}
+        modalAnchorRef={modal.anchorRef}
+        modalToggle={modal.toggle}
+        isMobile={isMobile}
+        back={back}
+      />
+      {chat && modal.show && (
+        <ModalSurface size="md" anchor={modal.anchor} close={modal.close}>
+          <SettingsModal
+            chatid={chatid}
+            initState={settings}
+            invalidateChat={invalidateChat}
+            close={modal.close}
+          />
+        </ModalSurface>
+      )}
+    </Fragment>
   );
 };
 

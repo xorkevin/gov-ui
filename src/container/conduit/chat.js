@@ -1,4 +1,4 @@
-import {Fragment, useEffect, useCallback} from 'react';
+import {Fragment, useEffect, useCallback, useMemo} from 'react';
 import {useURL} from '@xorkevin/substation';
 import {
   Container,
@@ -212,7 +212,34 @@ const msgsReducer = (state, action) => {
   }
 };
 
-const themeOpts = [{display: 'Citrus', value: 'citrus'}];
+const parseJSON = (s) => {
+  try {
+    return JSON.parse(s);
+  } catch (_err) {
+    return {};
+  }
+};
+
+const themeOpts = [
+  {display: 'Blue', value: 'blue'},
+  {display: 'Citrus', value: 'citrus'},
+  {display: 'Peach', value: 'peach'},
+];
+
+const styles = Object.freeze({
+  citrus: {
+    '--msg-bg':
+      'linear-gradient(180deg, rgba(253,68,29,1) 0%, rgba(252,149,0,1) 100%) fixed center / cover',
+    '--msg-bg-dark':
+      'linear-gradient(180deg, rgba(253,68,29,1) 0%, rgba(252,149,0,1) 100%) fixed center / cover',
+  },
+  peach: {
+    '--msg-bg':
+      'linear-gradient(180deg, rgba(246,95,15,1) 0%, rgba(242,92,84,1) 100%) fixed center / cover',
+    '--msg-bg-dark':
+      'linear-gradient(180deg, rgba(246,95,15,1) 0%, rgba(242,92,84,1) 100%) fixed center / cover',
+  },
+});
 
 const ChatSettings = ({
   execUpdateSettings,
@@ -259,6 +286,7 @@ const ChatMsgs = ({
   startElem,
   endElem,
   msgs,
+  theme,
   execLoadMsgs,
   execCreate,
   formState,
@@ -298,12 +326,14 @@ const ChatMsgs = ({
     j.push('connected');
   }
 
-  const s = {
-    '--msg-bg':
-      'linear-gradient(180deg, rgba(255,104,0,1) 0%, rgba(255,173,0,1) 100%) fixed center / cover',
-    '--msg-bg-dark':
-      'linear-gradient(180deg, rgba(255,104,0,1) 0%, rgba(255,173,0,1) 100%) fixed center / cover',
-  };
+  const themeObj = useMemo(() => {
+    if (!theme) {
+      return {};
+    }
+    return Object.assign({}, parseJSON(theme));
+  }, [theme]);
+
+  const s = styles[themeObj.preset];
 
   return (
     <div className="conduit-chat-msgs-base" style={s}>

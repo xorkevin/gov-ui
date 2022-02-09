@@ -315,6 +315,7 @@ const Chat = ({chatsMap, users, profiles, invalidateChat, isMobile, back}) => {
         startElem={startElem}
         endElem={endElem}
         msgs={msgs}
+        theme={chat && chat.theme}
         execLoadMsgs={execLoadMsgs}
         execCreate={execCreate}
         formState={form.state}
