@@ -73,7 +73,7 @@ const GDM_WS_LOC = 'conduit.gdm';
 
 const selectAPILatestGDMs = (api) => api.conduit.gdm;
 const selectAPIGDMs = (api) => api.conduit.gdm.ids;
-const selectAPIUpd = (api) => api.conduit.gdm.id.edit;
+const selectAPIEdit = (api) => api.conduit.gdm.id.edit;
 const selectAPICreate = (api) => api.conduit.gdm.create;
 const selectAPISearch = (api) => api.conduit.gdm.search;
 const selectAPISearchFriends = (api) => api.conduit.friend.search;
@@ -167,7 +167,7 @@ const SettingsModal = ({chatid, initState, invalidateChat, close}) => {
     close();
   }, [chatid, invalidateChat, close]);
   const [update, execUpdate] = useAuthCall(
-    selectAPIUpd,
+    selectAPIEdit,
     [chatid, t],
     {},
     {posthook: posthookUpdate, errhook: displayErrSnack},
@@ -303,28 +303,41 @@ const Chat = ({chatsMap, users, profiles, invalidateChat, isMobile, back}) => {
     };
   }, [chat]);
 
+  const isDiffChat =
+    initMsgs.data.length > 0 && initMsgs.data[0].chatid !== chatid;
+
+  if (!chat && initMsgs.err) {
+    return (
+      <div>
+        <p>{initMsgs.err.message}</p>
+      </div>
+    );
+  }
+
   return (
     <Fragment>
-      <ChatMsgs
-        loggedInUserid={loggedInUserid}
-        users={users}
-        profiles={profiles}
-        chatTitle={chatTitle}
-        err={initMsgs.err}
-        msgsEnd={msgsEnd}
-        startElem={startElem}
-        endElem={endElem}
-        msgs={msgs}
-        theme={chat && chat.theme}
-        execLoadMsgs={execLoadMsgs}
-        execCreate={execCreate}
-        formState={form.state}
-        formUpdate={form.update}
-        modalAnchorRef={modal.anchorRef}
-        modalToggle={modal.toggle}
-        isMobile={isMobile}
-        back={back}
-      />
+      {chat && !isDiffChat && (
+        <ChatMsgs
+          loggedInUserid={loggedInUserid}
+          users={users}
+          profiles={profiles}
+          chatTitle={chatTitle}
+          err={initMsgs.err}
+          msgsEnd={msgsEnd}
+          startElem={startElem}
+          endElem={endElem}
+          msgs={msgs}
+          theme={chat && chat.theme}
+          execLoadMsgs={execLoadMsgs}
+          execCreate={execCreate}
+          formState={form.state}
+          formUpdate={form.update}
+          modalAnchorRef={modal.anchorRef}
+          modalToggle={modal.toggle}
+          isMobile={isMobile}
+          back={back}
+        />
+      )}
       {chat && modal.show && (
         <ModalSurface size="md" anchor={modal.anchor} close={modal.close}>
           <SettingsModal

@@ -224,6 +224,8 @@ const themeOpts = [
   {display: 'Blue', value: 'blue'},
   {display: 'Citrus', value: 'citrus'},
   {display: 'Peach', value: 'peach'},
+  {display: 'Minimal', value: 'minimal'},
+  {display: 'Stealth', value: 'stealth'},
 ];
 
 const styles = Object.freeze({
@@ -238,6 +240,20 @@ const styles = Object.freeze({
       'linear-gradient(180deg, rgba(246,95,15,1) 0%, rgba(242,92,84,1) 100%) fixed center / cover',
     '--msg-bg-dark':
       'linear-gradient(180deg, rgba(246,95,15,1) 0%, rgba(242,92,84,1) 100%) fixed center / cover',
+  },
+  minimal: {
+    '--msg-txt-color': 'unset',
+    '--msg-bg': 'unset',
+    '--msg-txt-color-alt': 'unset',
+    '--msg-bg-alt': 'unset',
+    '--msg-txt-color-dark': 'unset',
+    '--msg-bg-dark': 'unset',
+    '--msg-txt-color-alt-dark': 'unset',
+    '--msg-bg-alt-dark': 'unset',
+  },
+  stealth: {
+    '--msg-bg': 'rgba(0,0,0,0.5)',
+    '--msg-bg-dark': 'rgba(0,0,0,0.25)',
   },
 });
 

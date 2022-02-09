@@ -287,30 +287,43 @@ const Chat = ({
     };
   }, [chat]);
 
+  const isDiffChat =
+    initMsgs.data.length > 0 && initMsgs.data[0].chatid !== chatid;
+
+  if (!chat && initMsgs.err) {
+    return (
+      <div>
+        <p>{initMsgs.err.message}</p>
+      </div>
+    );
+  }
+
   return (
     <Fragment>
-      <ChatMsgs
-        loggedInUserid={loggedInUserid}
-        users={users}
-        profiles={profiles}
-        chatTitle={chatTitle}
-        profile={profile}
-        present={present}
-        err={initMsgs.err}
-        msgsEnd={msgsEnd}
-        startElem={startElem}
-        endElem={endElem}
-        msgs={msgs}
-        theme={chat && chat.theme}
-        execLoadMsgs={execLoadMsgs}
-        execCreate={execCreate}
-        formState={form.state}
-        formUpdate={form.update}
-        modalAnchorRef={modal.anchorRef}
-        modalToggle={modal.toggle}
-        isMobile={isMobile}
-        back={back}
-      />
+      {chat && !isDiffChat && (
+        <ChatMsgs
+          loggedInUserid={loggedInUserid}
+          users={users}
+          profiles={profiles}
+          chatTitle={chatTitle}
+          profile={profile}
+          present={present}
+          err={initMsgs.err}
+          msgsEnd={msgsEnd}
+          startElem={startElem}
+          endElem={endElem}
+          msgs={msgs}
+          theme={chat && chat.theme}
+          execLoadMsgs={execLoadMsgs}
+          execCreate={execCreate}
+          formState={form.state}
+          formUpdate={form.update}
+          modalAnchorRef={modal.anchorRef}
+          modalToggle={modal.toggle}
+          isMobile={isMobile}
+          back={back}
+        />
+      )}
       {chat && modal.show && (
         <ModalSurface size="md" anchor={modal.anchor} close={modal.close}>
           <SettingsModal

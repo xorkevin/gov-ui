@@ -477,6 +477,16 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
   &.tertiary {
     color: var(--msg-txt-color);
     background: var(--msg-bg);
+
+    &:hover {
+      color: var(--msg-txt-color);
+      background: var(--msg-bg);
+
+      &:not([disabled]) {
+        color: var(--msg-txt-color);
+        background: var(--msg-bg);
+      }
+    }
   }
 }
 
@@ -487,6 +497,16 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
   &.tertiary {
     color: var(--msg-txt-color-dark);
     background: var(--msg-bg-dark);
+
+    &:hover {
+      color: var(--msg-txt-color-dark);
+      background: var(--msg-bg-dark);
+
+      &:not([disabled]) {
+        color: var(--msg-txt-color-dark);
+        background: var(--msg-bg-dark);
+      }
+    }
   }
 }
 
