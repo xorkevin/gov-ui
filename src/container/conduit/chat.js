@@ -253,7 +253,9 @@ const styles = Object.freeze({
   },
   stealth: {
     '--msg-bg': 'rgba(0,0,0,0.5)',
-    '--msg-bg-dark': 'rgba(0,0,0,0.25)',
+    '--msg-bg-alt': 'rgba(0,0,0,0.125)',
+    '--msg-bg-dark': 'rgba(255,255,255,0.125)',
+    '--msg-bg-alt-dark': 'rgba(255,255,255,0.25)',
   },
 });
 
