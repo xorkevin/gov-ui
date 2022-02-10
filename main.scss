@@ -339,6 +339,7 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
     padding: 2px;
 
     & > .value {
+      display: block;
       max-width: 36rem;
       padding: 8px 12px;
       border-radius: 4px;
@@ -348,6 +349,11 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
       @media (min-width: $grid-lg-breakpoint) {
         max-width: 48rem;
       }
+    }
+
+    & > .options {
+      opacity: 0;
+      transition: opacity $transition-normal;
     }
 
     & > .profile-picture {
@@ -422,6 +428,31 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
         & > .value {
           border-top-left-radius: 16px;
         }
+      }
+    }
+  }
+
+  &:hover {
+    & > .base {
+      & > .options {
+        opacity: 1;
+      }
+    }
+  }
+
+  &.deleted {
+    --msg-txt-color: #{$color-text-dark-2};
+    --msg-bg: transparent;
+    --msg-txt-color-alt: #{$color-text-dark-2};
+    --msg-bg-alt: transparent;
+    --msg-txt-color-dark: #{$color-text-light-2};
+    --msg-bg-dark: transparent;
+    --msg-txt-color-alt-dark: #{$color-text-light-2};
+    --msg-bg-alt-dark: transparent;
+
+    & > .base {
+      & > .value {
+        font-style: oblique;
       }
     }
   }

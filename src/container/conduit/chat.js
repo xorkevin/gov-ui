@@ -4,6 +4,9 @@ import {
   Container,
   Grid,
   Column,
+  useMenu,
+  Menu,
+  MenuItem,
   FieldSearchSelect,
   Field,
   Form,
@@ -15,6 +18,7 @@ import {
 } from '@xorkevin/nuke';
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
+import ButtonSmall from '@xorkevin/nuke/src/component/button/small';
 import Img from '@xorkevin/nuke/src/component/image/circle';
 
 import {dateToLocale} from '../../utility';
@@ -49,11 +53,13 @@ const MsgRow = ({
   loggedInUserid,
   users,
   profiles,
+  msgid,
   userid,
   time_ms,
   value,
   first,
   last,
+  deleteMsg,
 }) => {
   const isSelf = userid === loggedInUserid;
   const username =
@@ -68,6 +74,18 @@ const MsgRow = ({
   if (last) {
     k.push('last');
   }
+  const deleted = !value;
+  if (deleted) {
+    k.push('deleted');
+  }
+
+  const menu = useMenu();
+
+  const menuClose = menu.close;
+  const execDeleteMsg = useCallback(() => {
+    deleteMsg(msgid);
+    menuClose();
+  }, [deleteMsg, msgid, menuClose]);
 
   const timeString = useMemo(() => dateToLocale(time_ms), [time_ms]);
 
@@ -117,8 +135,25 @@ const MsgRow = ({
           position={isSelf ? 'left' : 'right'}
           tooltip={timeString}
         >
-          {value}
+          {deleted ? <small>Deleted</small> : value}
         </Tooltip>
+        <Column className="options" shrink="0">
+          <ButtonGroup>
+            <ButtonSmall
+              forwardedRef={menu.anchorRef}
+              onClick={!deleted ? menu.toggle : undefined}
+            >
+              <FaIcon icon="ellipsis-v" />
+            </ButtonSmall>
+          </ButtonGroup>
+          {menu.show && (
+            <Menu size="md" anchor={menu.anchor} close={menu.close}>
+              <MenuItem onClick={execDeleteMsg} icon={<FaIcon icon="times" />}>
+                Delete
+              </MenuItem>
+            </Menu>
+          )}
+        </Column>
       </Grid>
     </div>
   );
@@ -307,6 +342,7 @@ const ChatMsgs = ({
   theme,
   execLoadMsgs,
   execCreate,
+  deleteMsg,
   formState,
   formUpdate,
   modalAnchorRef,
@@ -417,6 +453,7 @@ const ChatMsgs = ({
                   arr[n + 1].userid !== i.userid ||
                   i.time_ms - arr[n + 1].time_ms > MSGS_BREAK_DURATION
                 }
+                deleteMsg={deleteMsg}
               />
             ))}
             <div className="end-marker" ref={endElem}>

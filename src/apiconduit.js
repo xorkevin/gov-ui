@@ -160,7 +160,7 @@ export default {
               },
               del: {
                 url: '/id/{1}',
-                method: 'POST',
+                method: 'DELETE',
                 transformer: (chatid, msgid) => ({
                   params: [chatid, msgid],
                 }),
@@ -282,7 +282,7 @@ export default {
               },
               del: {
                 url: '/id/{1}',
-                method: 'POST',
+                method: 'DELETE',
                 transformer: (chatid, msgid) => ({
                   params: [chatid, msgid],
                 }),

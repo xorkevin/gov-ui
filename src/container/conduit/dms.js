@@ -92,6 +92,7 @@ const selectAPIUsers = (api) => api.u.user.ids;
 const selectAPIProfiles = (api) => api.profile.ids;
 const selectAPIMsgs = (api) => api.conduit.dm.id.msg;
 const selectAPICreateMsg = (api) => api.conduit.dm.id.msg.create;
+const selectAPIDelMsg = (api) => api.conduit.dm.id.msg.del;
 
 const parseJSON = (s) => {
   try {
@@ -245,6 +246,25 @@ const Chat = ({
     {posthook: posthookCreate, errhook: displayErrSnack},
   );
 
+  const relogin = useRelogin();
+  const apiDeleteMsg = useAPI(selectAPIDelMsg);
+  const deleteMsg = useCallback(
+    async (msgid) => {
+      if (!chatid) {
+        return;
+      }
+      const [_loginData, _loginRes, errLogin] = await relogin();
+      if (errLogin) {
+        return;
+      }
+      const [_data, _res, err] = await apiDeleteMsg({}, chatid, msgid);
+      if (err) {
+        displayErrSnack({}, err);
+      }
+    },
+    [apiDeleteMsg, relogin, displayErrSnack, chatid],
+  );
+
   const ws = useContext(WSCtx);
 
   const onmessageWS = useCallback(
@@ -316,6 +336,7 @@ const Chat = ({
           theme={chat && chat.theme}
           execLoadMsgs={execLoadMsgs}
           execCreate={execCreate}
+          deleteMsg={deleteMsg}
           formState={form.state}
           formUpdate={form.update}
           modalAnchorRef={modal.anchorRef}
