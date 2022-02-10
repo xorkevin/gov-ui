@@ -17,6 +17,8 @@ import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 import Img from '@xorkevin/nuke/src/component/image/circle';
 
+import {dateToLocale} from '../../utility';
+
 const MSG_TIME_REL_DURATION = 604800000;
 const MSGS_BREAK_DURATION = 1800000;
 
@@ -66,6 +68,9 @@ const MsgRow = ({
   if (last) {
     k.push('last');
   }
+
+  const timeString = useMemo(() => dateToLocale(time_ms), [time_ms]);
+
   return (
     <div className={k.join(' ')}>
       {last && (
@@ -107,18 +112,13 @@ const MsgRow = ({
             <ProfileImg profiles={profiles} userid={userid} />
           )}
         </Column>
-        <Column className="value minwidth0">{value}</Column>
-        {!last && (
-          <Column className="time" shrink="0">
-            <small>
-              <Time
-                position={isSelf ? 'left' : 'right'}
-                value={time_ms}
-                relDuration={MSG_TIME_REL_DURATION}
-              />
-            </small>
-          </Column>
-        )}
+        <Tooltip
+          className="value minwidth0"
+          position={isSelf ? 'left' : 'right'}
+          tooltip={timeString}
+        >
+          {value}
+        </Tooltip>
       </Grid>
     </div>
   );

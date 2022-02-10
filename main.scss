@@ -350,13 +350,6 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
       }
     }
 
-    & > .time {
-      padding: 8px;
-      color: $color-text-dark-3;
-      opacity: 0;
-      transition: opacity $transition-normal;
-    }
-
     & > .profile-picture {
       width: 2rem;
       margin: 0 8px;
@@ -432,14 +425,6 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
       }
     }
   }
-
-  &:hover {
-    & > .base {
-      & > .time {
-        opacity: 1;
-      }
-    }
-  }
 }
 
 .dark .conduit-chat-msg {
@@ -447,10 +432,6 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
     & > .value {
       color: var(--msg-txt-color-alt-dark);
       background: var(--msg-bg-alt-dark);
-    }
-
-    & > .time {
-      color: $color-text-light-3;
     }
 
     & > .info {
