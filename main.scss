@@ -55,6 +55,10 @@ $color-danger-light: lighten($color-danger, 12.5%) !default;
   min-height: 0;
 }
 
+.wordbreak {
+  word-break: break-word;
+}
+
 .field-disabled-solid.disabled {
   opacity: 1;
 }

@@ -1055,7 +1055,7 @@ const GDMs = ({isMobile}) => {
     <Grid className="conduit-chat-sidebar" direction="column" nowrap strict>
       <Column>
         <Grid align="center" nowrap strict>
-          <Column grow="1">
+          <Column className="wordbreak" grow="1">
             <Grid align="center" nowrap>
               <Column>
                 <h4>Group Messages</h4>
