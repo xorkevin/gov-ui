@@ -36,8 +36,6 @@ const ConduitFriends = lazy(() => import('./friends'));
 const ConduitDMs = lazy(() => import('./dms'));
 const ConduitGDMs = lazy(() => import('./gdms'));
 
-const WS_STATE = 'conduit:chat';
-
 const selectAPIWS = (api) => api.ws;
 
 const Conduit = () => {
@@ -56,7 +54,7 @@ const Conduit = () => {
     const [_data, _res, err] = await relogin();
     return err;
   }, [relogin]);
-  const ws = useWS(WS_STATE, wsurl, {
+  const ws = useWS(wsurl, {
     prehook: prehookWS,
   });
 

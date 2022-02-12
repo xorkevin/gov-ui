@@ -25,9 +25,12 @@ import AnchorText from '@xorkevin/nuke/src/component/anchor/text';
 
 import {GovUICtx} from '../../middleware';
 import {formatURL} from '../../utility';
+import {WSCtx, useWSPresenceLocation} from '../../component/ws';
 
 const FRIENDS_LIMIT = 32;
 const INVITATION_LIMIT = 32;
+
+const FRIENDS_WS_LOC = 'conduit.friends';
 
 const selectAPIFriends = (api) => api.conduit.friend;
 const selectAPIUnfriend = (api) => api.conduit.friend.id.remove;
@@ -409,6 +412,8 @@ const Sent = () => {
 };
 
 const Friends = () => {
+  const ws = useContext(WSCtx);
+  useWSPresenceLocation(ws, FRIENDS_WS_LOC);
   return (
     <Container padded narrow>
       <h3>Friends</h3>

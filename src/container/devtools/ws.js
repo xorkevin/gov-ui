@@ -14,7 +14,7 @@ import {
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 
-import {useWSValue, useWS, useWSSubChan} from '../../component/ws';
+import {useWS, useWSSubChan} from '../../component/ws';
 
 const selectAPIEcho = (api) => api.ws.echo;
 
@@ -104,7 +104,7 @@ const WSEchoContainer = () => {
     const [_data, _res, err] = await relogin();
     return err;
   }, [relogin]);
-  const ws = useWS('devtools:ws', shouldConnect ? url : null, {
+  const ws = useWS(shouldConnect ? url : null, {
     prehook: prehookWS,
     errhook: displayErrSnack,
   });
@@ -132,7 +132,7 @@ const WSEchoContainer = () => {
     },
     [dispatchMsgs],
   );
-  useWSSubChan(ws.subChan, 'echo', {
+  useWSSubChan(ws, 'echo', {
     onopen: onopenWS,
     onmessage: onmessageWS,
     onerror: onerrorWS,
@@ -156,7 +156,7 @@ const WSEchoContainer = () => {
     });
   }, [ws, formAssign, formVal]);
 
-  const {open} = useWSValue('devtools:ws');
+  const open = ws.state.open;
 
   return (
     <div>

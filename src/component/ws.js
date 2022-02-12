@@ -1,12 +1,11 @@
 import {
   createContext,
+  useState,
   useEffect,
   useCallback,
   useMemo,
   useRef,
-  useContext,
 } from 'react';
-import {atomFamily, useRecoilValue, useSetRecoilState} from 'recoil';
 
 import {sleep} from '../utility';
 
@@ -23,33 +22,19 @@ const parseJSON = (s) => {
 };
 
 const WSDefaultOpts = Object.freeze({
-  name: '__DEFAULT__',
   send: noop,
+  sendChan: noop,
   sub: noop,
+  subChan: noop,
+  state: Object.freeze({
+    open: false,
+  }),
 });
 
 const WSCtx = createContext(WSDefaultOpts);
 
-const defaultWSState = Object.freeze({
-  open: false,
-});
-
-const WSState = atomFamily({
-  key: 'govui:ws_state',
-  default: defaultWSState,
-});
-
 const WSProvider = ({value, children}) => {
   return <WSCtx.Provider value={value}>{children}</WSCtx.Provider>;
-};
-
-const useWSValue = (name) => {
-  return useRecoilValue(WSState(name));
-};
-
-const useWSValueCtx = () => {
-  const {name} = useContext(WSCtx);
-  return useWSValue(name);
 };
 
 const registerHandlers = (socket, sub) => {
@@ -71,12 +56,8 @@ const registerHandlers = (socket, sub) => {
   }
 };
 
-const useWS = (
-  name,
-  url,
-  {delayMin, delayMax, delayExp, prehook, errhook} = {},
-) => {
-  const setWSState = useSetRecoilState(WSState(name));
+const useWS = (url, {delayMin, delayMax, delayExp, prehook, errhook} = {}) => {
+  const [state, setWSState] = useState(false);
 
   const ws = useRef({
     socket: null,
@@ -279,18 +260,19 @@ const useWS = (
 
   const res = useMemo(
     () => ({
-      name,
       send,
       sendChan,
       sub,
       subChan,
+      state,
     }),
-    [name, send, sendChan, sub, subChan],
+    [send, sendChan, sub, subChan, state],
   );
   return res;
 };
 
-const useWSSub = (sub, {onopen, onmessage, onerror, onclose} = {}) => {
+const useWSSub = (ws, {onopen, onmessage, onerror, onclose} = {}) => {
+  const {sub} = ws;
   useEffect(() => {
     const controller = new AbortController();
     sub({onopen, onmessage, onerror, onclose}, controller.signal);
@@ -300,57 +282,39 @@ const useWSSub = (sub, {onopen, onmessage, onerror, onclose} = {}) => {
   }, [sub, onopen, onmessage, onerror, onclose]);
 };
 
-const useWSSubChan = (
-  sub,
-  chan,
-  {onopen, onmessage, onerror, onclose} = {},
-) => {
+const useWSSubChan = (ws, chan, {onopen, onmessage, onerror, onclose} = {}) => {
+  const {subChan} = ws;
   useEffect(() => {
     const controller = new AbortController();
-    sub(chan, {onopen, onmessage, onerror, onclose}, controller.signal);
+    subChan(chan, {onopen, onmessage, onerror, onclose}, controller.signal);
     return () => {
       controller.abort();
     };
-  }, [sub, chan, onopen, onmessage, onerror, onclose]);
+  }, [subChan, chan, onopen, onmessage, onerror, onclose]);
 };
 
 const CTL_CHANNEL = '_ctl_';
 
-const useWSPresenceLocation = (name, send, loc) => {
-  const {open} = useWSValue(name);
+const useWSPresenceLocation = (ws, loc) => {
+  const {state, sendChan} = ws;
+  const {open} = state;
   useEffect(() => {
     if (!open) {
       return;
     }
-    send(CTL_CHANNEL, {
+    sendChan(CTL_CHANNEL, {
       ops: [{op: 'location', args: {location: loc}}],
     });
-  }, [open, send, loc]);
-};
-
-const useWSPresenceLocationCtx = (send, loc) => {
-  const {open} = useWSValueCtx();
-  useEffect(() => {
-    if (!open) {
-      return;
-    }
-    send(CTL_CHANNEL, {
-      ops: [{op: 'location', args: {location: loc}}],
-    });
-  }, [open, send, loc]);
+  }, [open, sendChan, loc]);
 };
 
 export {
   WS_PROTOCOL,
   WSDefaultOpts,
   WSCtx,
-  WSState,
   WSProvider,
-  useWSValue,
-  useWSValueCtx,
   useWS,
   useWSSub,
   useWSSubChan,
   useWSPresenceLocation,
-  useWSPresenceLocationCtx,
 };

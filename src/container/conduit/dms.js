@@ -50,12 +50,7 @@ import AnchorText from '@xorkevin/nuke/src/component/anchor/nocolor';
 
 import {GovUICtx} from '../../middleware';
 import {formatURL} from '../../utility';
-import {
-  WSCtx,
-  useWSValueCtx,
-  useWSSubChan,
-  useWSPresenceLocationCtx,
-} from '../../component/ws';
+import {WSCtx, useWSSubChan, useWSPresenceLocation} from '../../component/ws';
 import {
   SelectAChat,
   ProfileImg,
@@ -276,7 +271,7 @@ const Chat = ({
     },
     [dispatchMsgs, chatid],
   );
-  useWSSubChan(ws.subChan, DM_WS_CHANNEL_MSG, {
+  useWSSubChan(ws, DM_WS_CHANNEL_MSG, {
     onmessage: onmessageWS,
   });
 
@@ -833,7 +828,7 @@ const DMs = ({isMobile}) => {
 
   const ws = useContext(WSCtx);
 
-  useWSPresenceLocationCtx(ws.sendChan, DM_WS_LOC);
+  useWSPresenceLocation(ws, DM_WS_LOC);
 
   const [presence, setPresence] = useState(null);
 
@@ -863,11 +858,11 @@ const DMs = ({isMobile}) => {
     },
     [dispatchChats, setPresence],
   );
-  useWSSubChan(ws.subChan, DM_WS_CHANNELS, {
+  useWSSubChan(ws, DM_WS_CHANNELS, {
     onmessage: onmessageWS,
   });
 
-  const {open: wsopen} = useWSValueCtx();
+  const wsopen = ws.state.open;
   const j = ['indicator'];
   if (wsopen) {
     j.push('connected');

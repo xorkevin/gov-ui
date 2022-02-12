@@ -42,12 +42,7 @@ import {
 import ButtonPrimary from '@xorkevin/nuke/src/component/button/primary';
 import ButtonTertiary from '@xorkevin/nuke/src/component/button/tertiary';
 
-import {
-  WSCtx,
-  useWSValueCtx,
-  useWSSubChan,
-  useWSPresenceLocationCtx,
-} from '../../component/ws';
+import {WSCtx, useWSSubChan, useWSPresenceLocation} from '../../component/ws';
 import {
   SelectAChat,
   ChatSettings,
@@ -298,7 +293,7 @@ const Chat = ({chatsMap, users, profiles, invalidateChat, isMobile, back}) => {
     },
     [dispatchMsgs, chatid],
   );
-  useWSSubChan(ws.subChan, GDM_WS_CHANNEL_MSG, {
+  useWSSubChan(ws, GDM_WS_CHANNEL_MSG, {
     onmessage: onmessageWS,
   });
 
@@ -988,7 +983,7 @@ const GDMs = ({isMobile}) => {
 
   const ws = useContext(WSCtx);
 
-  useWSPresenceLocationCtx(ws.sendChan, GDM_WS_LOC);
+  useWSPresenceLocation(ws, GDM_WS_LOC);
 
   const onmessageWS = useCallback(
     (channel, value) => {
@@ -1005,11 +1000,11 @@ const GDMs = ({isMobile}) => {
     },
     [dispatchChats],
   );
-  useWSSubChan(ws.subChan, GDM_WS_CHANNELS, {
+  useWSSubChan(ws, GDM_WS_CHANNELS, {
     onmessage: onmessageWS,
   });
 
-  const {open: wsopen} = useWSValueCtx();
+  const wsopen = ws.state.open;
   const j = ['indicator'];
   if (wsopen) {
     j.push('connected');
