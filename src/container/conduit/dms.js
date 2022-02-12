@@ -947,7 +947,7 @@ const DMs = ({isMobile}) => {
   const sidebar = (
     <Grid className="conduit-chat-sidebar" direction="column" nowrap strict>
       <Column>
-        <Grid align="center" nowrap strict>
+        <Grid align="center" strict>
           <Column className="wordbreak" grow="1">
             <Grid align="center" nowrap>
               <Column>
