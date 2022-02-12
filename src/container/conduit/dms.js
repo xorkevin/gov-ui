@@ -811,6 +811,12 @@ const DMs = ({isMobile}) => {
     };
   }, [endElem, execLoadChats, chatsEnd, loadingChats]);
 
+  const scrollTop = useCallback(() => {
+    if (startElem.current) {
+      startElem.current.scrollIntoView({behavior: 'smooth'});
+    }
+  }, [startElem]);
+
   const invalidateChat = useCallback(
     (chatid) => {
       dispatchChats(ChatsInvalidate([chatid]));
@@ -941,18 +947,29 @@ const DMs = ({isMobile}) => {
   const sidebar = (
     <Grid className="conduit-chat-sidebar" direction="column" nowrap strict>
       <Column>
-        <Grid align="center" nowrap>
-          <Column>
-            <h4>Direct Messages</h4>
+        <Grid align="center" nowrap strict>
+          <Column grow="1">
+            <Grid align="center" nowrap>
+              <Column>
+                <h4>Direct Messages</h4>
+              </Column>
+              <Column shrink="0">
+                <Tooltip
+                  className="conduit-chat-connection-indicator"
+                  position="right"
+                  tooltip={wsopen ? 'CONNECTED' : 'DISCONNECTED'}
+                >
+                  <span className={j.join(' ')}></span>
+                </Tooltip>
+              </Column>
+            </Grid>
           </Column>
           <Column shrink="0">
-            <Tooltip
-              className="conduit-chat-connection-indicator"
-              position="right"
-              tooltip={wsopen ? 'CONNECTED' : 'DISCONNECTED'}
-            >
-              <span className={j.join(' ')}></span>
-            </Tooltip>
+            <div>
+              <ButtonTertiary onClick={scrollTop}>
+                <FaIcon icon="arrow-up" />
+              </ButtonTertiary>
+            </div>
           </Column>
         </Grid>
         {initChats.err && <p>{initChats.err.message}</p>}

@@ -998,6 +998,12 @@ const GDMs = ({isMobile}) => {
     };
   }, [endElem, execLoadChats, chatsEnd, loadingChats]);
 
+  const scrollTop = useCallback(() => {
+    if (startElem.current) {
+      startElem.current.scrollIntoView({behavior: 'smooth'});
+    }
+  }, [startElem]);
+
   const invalidateChat = useCallback(
     (chatid) => {
       dispatchChats(ChatsInvalidate([chatid]));
@@ -1066,7 +1072,7 @@ const GDMs = ({isMobile}) => {
             </Grid>
           </Column>
           <Column shrink="0">
-            <ButtonGroup>
+            <div>
               <ButtonTertiary
                 forwardedRef={modalCreate.anchorRef}
                 onClick={modalCreate.toggle}
@@ -1079,7 +1085,10 @@ const GDMs = ({isMobile}) => {
               >
                 <FaIcon icon="search" />
               </ButtonTertiary>
-            </ButtonGroup>
+              <ButtonTertiary onClick={scrollTop}>
+                <FaIcon icon="arrow-up" />
+              </ButtonTertiary>
+            </div>
             {modalCreate.show && (
               <ModalSurface
                 size="md"
