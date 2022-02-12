@@ -225,14 +225,16 @@ const Chat = ({chatsMap, users, profiles, invalidateChat, isMobile, back}) => {
   const firstMsgid =
     msgs.msgs.length === 0 ? '' : msgs.msgs[msgs.msgs.length - 1].msgid;
 
+  const loadingMsgs = useRef(false);
   const posthookLoadMsgs = useCallback(
     (_res, msgs) => {
       dispatchMsgs(MsgsAppend(msgs));
-      if (Array.isArray(msgs) && msgs.length === 0) {
+      if (!Array.isArray(msgs) || msgs.length === 0) {
         msgsEnd.current = true;
       }
+      loadingMsgs.current = false;
     },
-    [dispatchMsgs, msgsEnd],
+    [dispatchMsgs, msgsEnd, loadingMsgs],
   );
   const [_loadMsgs, execLoadMsgs] = useAuthCall(
     selectAPIMsgs,
@@ -339,6 +341,7 @@ const Chat = ({chatsMap, users, profiles, invalidateChat, isMobile, back}) => {
           chatTitle={chatTitle}
           err={initMsgs.err}
           msgsEnd={msgsEnd}
+          loadingMsgs={loadingMsgs}
           startElem={startElem}
           endElem={endElem}
           msgs={msgs}
@@ -892,11 +895,14 @@ const GDMs = ({isMobile}) => {
     profilesDiff: [],
   });
 
+  const chatsEnd = useRef(false);
+
   const posthookInit = useCallback(
     (_res, chats) => {
       dispatchChats(ChatsReset(chats));
+      chatsEnd.current = false;
     },
-    [dispatchChats],
+    [dispatchChats, chatsEnd],
   );
   const [initChats, reinitChats] = useAuthResource(
     selectAPILatestGDMs,
@@ -913,13 +919,18 @@ const GDMs = ({isMobile}) => {
       ? 0
       : chats.chats[chats.chats.length - 1].last_updated;
 
+  const loadingChats = useRef(false);
   const posthookLoadChats = useCallback(
     (_res, chats) => {
       dispatchChats(ChatsAppend(chats));
+      if (!Array.isArray(chats) || chats.length === 0) {
+        chatsEnd.current = true;
+      }
+      loadingChats.current = false;
     },
-    [dispatchChats],
+    [dispatchChats, chatsEnd, loadingChats],
   );
-  const [_loadChats, _execLoadChats] = useAuthCall(
+  const [_loadChats, execLoadChats] = useAuthCall(
     selectAPILatestGDMs,
     [firstLastUpdated, CHATS_SCROLL_LIMIT],
     [],
@@ -964,6 +975,28 @@ const GDMs = ({isMobile}) => {
     [],
     {posthook: posthookProfiles, errhook: displayErrSnack},
   );
+
+  useEffect(() => {
+    if (!endElem.current) {
+      return;
+    }
+    const observer = new IntersectionObserver((entries) => {
+      if (chatsEnd.current) {
+        return;
+      }
+      if (loadingChats.current) {
+        return;
+      }
+      if (entries.some((i) => i.isIntersecting)) {
+        loadingChats.current = true;
+        execLoadChats();
+      }
+    });
+    observer.observe(endElem.current);
+    return () => {
+      observer.disconnect();
+    };
+  }, [endElem, execLoadChats, chatsEnd, loadingChats]);
 
   const invalidateChat = useCallback(
     (chatid) => {
@@ -1084,7 +1117,11 @@ const GDMs = ({isMobile}) => {
               loggedInUserid={loggedInUserid}
             />
           ))}
-          <div className="end-marker" ref={endElem} />
+          <div className="end-marker" ref={endElem}>
+            <ButtonGroup>
+              <ButtonTertiary onClick={execLoadChats}>Load more</ButtonTertiary>
+            </ButtonGroup>
+          </div>
         </ListGroup>
       </Column>
     </Grid>

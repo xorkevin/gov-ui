@@ -336,6 +336,7 @@ const ChatMsgs = ({
   present,
   err,
   msgsEnd,
+  loadingMsgs,
   startElem,
   endElem,
   msgs,
@@ -358,7 +359,11 @@ const ChatMsgs = ({
       if (msgsEnd.current) {
         return;
       }
+      if (loadingMsgs.current) {
+        return;
+      }
       if (entries.some((i) => i.isIntersecting)) {
+        loadingMsgs.current = true;
         execLoadMsgs();
       }
     });
@@ -366,7 +371,7 @@ const ChatMsgs = ({
     return () => {
       observer.disconnect();
     };
-  }, [endElem, execLoadMsgs, msgsEnd]);
+  }, [endElem, execLoadMsgs, msgsEnd, loadingMsgs]);
 
   const scrollTop = useCallback(() => {
     if (startElem.current) {
