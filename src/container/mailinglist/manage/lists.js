@@ -11,7 +11,6 @@ import {
   Field,
   FieldTextarea,
   FieldSelect,
-  FieldSearchSelect,
   Form,
   useForm,
   SnackbarSurface,
@@ -30,7 +29,7 @@ import AnchorSecondary from '@xorkevin/nuke/src/component/anchor/secondary';
 
 import {GovUICtx} from '../../../middleware';
 import {formatURL} from '../../../utility';
-import {useOrgOpts} from '../../../component/accounts';
+import {useAccountChooser, AccountForm} from '../../../component/accounts';
 import {senderPolicyOpts, memberPolicyOpts} from './opts';
 
 const LISTS_LIMIT = 32;
@@ -164,21 +163,18 @@ const ListRow = ({
 
 const ManageLists = ({baseurl, listurl}) => {
   const ctx = useContext(GovUICtx);
-  const {userid, username} = useAuthValue();
+  const {username} = useAuthValue();
 
   const displaySnackbarCreate = useSnackbarView(
     <SnackbarSurface>&#x2713; Org created</SnackbarSurface>,
   );
 
-  const form = useForm({
-    accountid: userid,
-  });
-  const orgOpts = useOrgOpts();
+  const accounts = useAccountChooser();
 
-  const isOrg = ctx.isOrgName(form.state.accountid);
+  const isOrg = ctx.isOrgName(accounts.accountid);
   const [org] = useResource(
     isOrg ? selectAPIOrg : selectAPINull,
-    [ctx.orgNameToOrgID(form.state.accountid)],
+    [ctx.orgNameToOrgID(accounts.accountid)],
     {
       orgid: '',
       name: '',
@@ -201,7 +197,7 @@ const ManageLists = ({baseurl, listurl}) => {
   );
   const [lists, reexecute] = useResource(
     selectAPILists,
-    [form.state.accountid, LISTS_LIMIT, paginate.index],
+    [accounts.accountid, LISTS_LIMIT, paginate.index],
     [],
     {posthook: posthookLists},
   );
@@ -231,7 +227,7 @@ const ManageLists = ({baseurl, listurl}) => {
           {modal.show && (
             <ModalSurface size="md" anchor={modal.anchor} close={modal.close}>
               <CreateList
-                accountid={form.state.accountid}
+                accountid={accounts.accountid}
                 posthookCreate={posthookCreate}
                 close={modal.close}
               />
@@ -240,14 +236,7 @@ const ManageLists = ({baseurl, listurl}) => {
         </Column>
       </Grid>
       <hr />
-      <Form formState={form.state} onChange={form.update}>
-        <FieldSearchSelect
-          name="accountid"
-          options={orgOpts}
-          label="Account"
-          nohint
-        />
-      </Form>
+      <AccountForm accounts={accounts} />
       <ListGroup>
         {Array.isArray(lists.data) &&
           lists.data.map((i) => (

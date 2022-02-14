@@ -1,6 +1,5 @@
 import {lazy, Suspense, useContext} from 'react';
 import {Routes, Route, Navigate} from 'react-router-dom';
-import {useAuthValue} from '@xorkevin/turbine';
 import {
   MainContent,
   Section,
@@ -10,27 +9,19 @@ import {
   Sidebar,
   SidebarItem,
   SidebarHeader,
-  FieldSearchSelect,
-  Form,
-  useForm,
   FaIcon,
 } from '@xorkevin/nuke';
 
 import {GovUICtx} from '../../middleware';
-import {useOrgOpts} from '../../component/accounts';
+import {useAccountChooser, AccountForm} from '../../component/accounts';
 
 const CourierLink = lazy(() => import('./link'));
 const CourierBrand = lazy(() => import('./brand'));
 
 const Courier = () => {
-  const {userid} = useAuthValue();
   const ctx = useContext(GovUICtx);
 
-  const form = useForm({
-    accountid: userid,
-  });
-
-  const orgOpts = useOrgOpts();
+  const accounts = useAccountChooser();
 
   return (
     <MainContent>
@@ -38,15 +29,7 @@ const Courier = () => {
         <Container padded>
           <Grid>
             <Column fullWidth md={6} lg={4}>
-              <Form formState={form.state} onChange={form.update}>
-                <FieldSearchSelect
-                  name="accountid"
-                  options={orgOpts}
-                  label="Account"
-                  nohint
-                  fullWidth
-                />
-              </Form>
+              <AccountForm accounts={accounts} />
               <Sidebar>
                 <SidebarHeader>Courier</SidebarHeader>
                 <SidebarItem link="link" local icon={<FaIcon icon="link" />}>
@@ -64,14 +47,14 @@ const Courier = () => {
                     path="link"
                     element={
                       <CourierLink
-                        accountid={form.state.accountid}
+                        accountid={accounts.accountid}
                         courierPath={ctx.courierLinkPath}
                       />
                     }
                   />
                   <Route
                     path="brand"
-                    element={<CourierBrand accountid={form.state.accountid} />}
+                    element={<CourierBrand accountid={accounts.accountid} />}
                   />
                   <Route path="*" element={<Navigate to="link" replace />} />
                 </Routes>
