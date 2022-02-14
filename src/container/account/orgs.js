@@ -31,8 +31,8 @@ import {formatURL} from '../../utility';
 
 const ORG_LIMIT = 32;
 
-const selectAPIRoles = (api) => api.u.user.roleint;
 const selectAPIOrgs = (api) => api.orgs.search;
+const selectAPIRoles = (api) => api.u.user.roleint;
 const selectAPICreate = (api) => api.orgs.create;
 const selectAPIEditRank = (api) => api.u.user.id.edit.rank;
 

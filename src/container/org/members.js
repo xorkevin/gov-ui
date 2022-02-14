@@ -1,4 +1,5 @@
-import {useState, useCallback, useContext} from 'react';
+import {Fragment, useCallback, useMemo, useContext} from 'react';
+import {Routes, Route, Navigate} from 'react-router-dom';
 import {useResource, selectAPINull} from '@xorkevin/substation';
 import {
   Grid,
@@ -23,26 +24,25 @@ import {formatURL} from '../../utility';
 
 const MEMBER_LIMIT = 32;
 
+const selectAPIMembers = (api) => api.orgs.id.member;
 const selectAPIRoles = (api) => api.u.user.role.get;
 const selectAPIUsers = (api) => api.u.user.ids;
 
-const MemberRow = ({
-  isViewMod,
-  pathUserProfile,
-  username,
-  first_name,
-  last_name,
-}) => {
+const MemberRow = ({isViewMod, pathUserProfile, username, user}) => {
+  const name = user ? `${user.first_name} ${user.last_name}` : username;
+  const subname = user ? username : '';
+
   const menu = useMenu();
+
   return (
     <ListItem>
       <Grid justify="space-between" align="center" nowrap>
         <Column className="minwidth0" grow="1">
           <h5 className="heading-inline">
             <AnchorText local href={formatURL(pathUserProfile, username)}>
-              {first_name} {last_name}
+              {name}
             </AnchorText>{' '}
-            <small>{username}</small>
+            <small>{subname}</small>
           </h5>
           {isViewMod && (
             <small>
@@ -67,24 +67,75 @@ const MemberRow = ({
   );
 };
 
-const OrgMembers = ({org}) => {
+const OrgUsers = ({org}) => {
   const ctx = useContext(GovUICtx);
-
-  const [isViewMod, setViewMod] = useState(false);
 
   const paginate = usePaginate(MEMBER_LIMIT);
 
-  const setFirst = paginate.first;
-  const viewUsr = useCallback(() => {
-    setViewMod(false);
-    setFirst();
-  }, [setViewMod, setFirst]);
-  const viewMod = useCallback(() => {
-    setViewMod(true);
-    setFirst();
-  }, [setViewMod, setFirst]);
+  const setAtEnd = paginate.setAtEnd;
+  const posthookMembers = useCallback(
+    (_res, members) => {
+      setAtEnd(members.length < MEMBER_LIMIT);
+    },
+    [setAtEnd],
+  );
+  const [members] = useResource(
+    selectAPIMembers,
+    [org.orgid, '', MEMBER_LIMIT, paginate.index],
+    [],
+    {posthook: posthookMembers},
+  );
+  const userids = useMemo(
+    () =>
+      Array.isArray(members.data) &&
+      Array.from(new Set(members.data.map((i) => i.userid))),
+    [members],
+  );
+  const [users] = useResource(
+    userids.length > 0 ? selectAPIUsers : selectAPINull,
+    [userids],
+    [],
+  );
+  const userMap = useMemo(
+    () => Object.fromEntries(users.data.map((i) => [i.userid, i])),
+    [users],
+  );
 
-  const usrRole = ctx.orgUsrRole(org.orgid);
+  return (
+    <Fragment>
+      <ListGroup>
+        {Array.isArray(members.data) &&
+          members.data.map((i) => (
+            <MemberRow
+              key={i.userid}
+              isViewMod={false}
+              pathUserProfile={ctx.pathUserProfile}
+              userid={i.userid}
+              username={i.username}
+              user={userMap[i.userid]}
+            />
+          ))}
+      </ListGroup>
+      <ButtonGroup>
+        <ButtonTertiary disabled={paginate.atFirst} onClick={paginate.prev}>
+          prev
+        </ButtonTertiary>
+        {paginate.page}
+        <ButtonTertiary disabled={paginate.atLast} onClick={paginate.next}>
+          next
+        </ButtonTertiary>
+      </ButtonGroup>
+      {members.err && <p>{members.err.message}</p>}
+      {users.err && <p>{users.err.message}</p>}
+    </Fragment>
+  );
+};
+
+const OrgMods = ({org}) => {
+  const ctx = useContext(GovUICtx);
+
+  const paginate = usePaginate(MEMBER_LIMIT);
+
   const modRole = ctx.orgModRole(org.orgid);
 
   const setAtEnd = paginate.setAtEnd;
@@ -96,7 +147,7 @@ const OrgMembers = ({org}) => {
   );
   const [userids] = useResource(
     selectAPIRoles,
-    [isViewMod ? modRole : usrRole, MEMBER_LIMIT, paginate.index],
+    [modRole, MEMBER_LIMIT, paginate.index],
     [],
     {posthook: posthookUserIDs},
   );
@@ -105,7 +156,42 @@ const OrgMembers = ({org}) => {
     [userids.data],
     [],
   );
+  const userMap = useMemo(
+    () => Object.fromEntries(users.data.map((i) => [i.userid, i])),
+    [users],
+  );
 
+  return (
+    <Fragment>
+      <ListGroup>
+        {userids.data.length > 0 &&
+          users.data.map((i) => (
+            <MemberRow
+              key={i.userid}
+              isViewMod={true}
+              pathUserProfile={ctx.pathUserProfile}
+              userid={i.userid}
+              username={i.username}
+              user={userMap[i.userid]}
+            />
+          ))}
+      </ListGroup>
+      <ButtonGroup>
+        <ButtonTertiary disabled={paginate.atFirst} onClick={paginate.prev}>
+          prev
+        </ButtonTertiary>
+        {paginate.page}
+        <ButtonTertiary disabled={paginate.atLast} onClick={paginate.next}>
+          next
+        </ButtonTertiary>
+      </ButtonGroup>
+      {userids.err && <p>{userids.err.message}</p>}
+      {users.err && <p>{users.err.message}</p>}
+    </Fragment>
+  );
+};
+
+const OrgMembers = ({org}) => {
   return (
     <div>
       <h3>Members</h3>
@@ -113,38 +199,18 @@ const OrgMembers = ({org}) => {
       <Grid>
         <Column fullWidth md={24}>
           <Tabbar>
-            <TabItem className={!isViewMod ? 'active' : ''} onClick={viewUsr}>
+            <TabItem local link="users">
               Members
             </TabItem>
-            <TabItem className={isViewMod ? 'active' : ''} onClick={viewMod}>
+            <TabItem local link="mods">
               Moderators
             </TabItem>
           </Tabbar>
-          <ListGroup>
-            {userids.data.length > 0 &&
-              users.data.map((i) => (
-                <MemberRow
-                  key={i.userid}
-                  isViewMod={isViewMod}
-                  pathUserProfile={ctx.pathUserProfile}
-                  userid={i.userid}
-                  username={i.username}
-                  first_name={i.first_name}
-                  last_name={i.last_name}
-                />
-              ))}
-          </ListGroup>
-          <ButtonGroup>
-            <ButtonTertiary disabled={paginate.atFirst} onClick={paginate.prev}>
-              prev
-            </ButtonTertiary>
-            {paginate.page}
-            <ButtonTertiary disabled={paginate.atLast} onClick={paginate.next}>
-              next
-            </ButtonTertiary>
-          </ButtonGroup>
-          {userids.err && <p>{userids.err.message}</p>}
-          {users.err && <p>{users.err.message}</p>}
+          <Routes>
+            <Route path="users" element={<OrgUsers org={org} />} />
+            <Route path="mods" element={<OrgMods org={org} />} />
+            <Route path="*" element={<Navigate to="users" replace />} />
+          </Routes>
         </Column>
       </Grid>
     </div>

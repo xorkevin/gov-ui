@@ -115,7 +115,7 @@ const Org = ({pathOrg}) => {
                       element={<OrgOverview org={org.data} />}
                     />
                     <Route
-                      path="members"
+                      path="members/*"
                       element={<OrgMembers org={org.data} />}
                     />
                     {isMod && (
