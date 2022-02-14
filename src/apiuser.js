@@ -45,6 +45,18 @@ export default {
       },
     },
   },
+  roleint: {
+    url: '/roleint',
+    method: 'GET',
+    transformer: (roles) => ({
+      query: {
+        roles: roles.join(','),
+      },
+    }),
+    expectjson: true,
+    selector: (_res, data) => data && data.roles,
+    err: 'Could not get user roles',
+  },
   sessions: {
     url: '/sessions',
     children: {

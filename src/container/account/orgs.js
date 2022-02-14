@@ -1,13 +1,11 @@
-import {Fragment, useState, useCallback, useMemo, useContext} from 'react';
-import {useResource, selectAPINull} from '@xorkevin/substation';
+import {Fragment, useCallback, useMemo, useContext} from 'react';
+import {selectAPINull} from '@xorkevin/substation';
 import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
   Grid,
   Column,
   ListGroup,
   ListItem,
-  Tabbar,
-  TabItem,
   ModalSurface,
   useModal,
   useMenu,
@@ -33,8 +31,8 @@ import {formatURL} from '../../utility';
 
 const ORG_LIMIT = 32;
 
-const selectAPIRoles = (api) => api.u.user.roles.get;
-const selectAPIOrgs = (api) => api.orgs.get;
+const selectAPIRoles = (api) => api.u.user.roleint;
+const selectAPIOrgs = (api) => api.orgs.search;
 const selectAPICreate = (api) => api.orgs.create;
 const selectAPIEditRank = (api) => api.u.user.id.edit.rank;
 
@@ -172,48 +170,36 @@ const Orgs = () => {
     <SnackbarSurface>&#x2713; Left organization</SnackbarSurface>,
   );
 
-  const [isViewMod, setViewMod] = useState(false);
-
   const paginate = usePaginate(ORG_LIMIT);
 
-  const setFirst = paginate.first;
-  const viewUsr = useCallback(() => {
-    setViewMod(false);
-    setFirst();
-  }, [setViewMod, setFirst]);
-  const viewMod = useCallback(() => {
-    setViewMod(true);
-    setFirst();
-  }, [setViewMod, setFirst]);
-
   const setAtEnd = paginate.setAtEnd;
-  const posthookRoles = useCallback(
-    (_res, roles) => {
-      setAtEnd(roles.length < ORG_LIMIT);
+  const posthookOrgs = useCallback(
+    (_res, orgs) => {
+      setAtEnd(orgs.length < ORG_LIMIT);
     },
     [setAtEnd],
   );
-  const [roles, reexecute] = useAuthResource(
-    selectAPIRoles,
-    [
-      isViewMod ? ctx.orgModPrefix : ctx.orgUsrPrefix,
-      ORG_LIMIT,
-      paginate.index,
-    ],
+  const [orgs, reexecute] = useAuthResource(
+    selectAPIOrgs,
+    ['', ORG_LIMIT, paginate.index],
     [],
-    {posthook: posthookRoles},
+    {posthook: posthookOrgs},
   );
 
-  const roleToOrgID = ctx.roleToOrgID;
-  const orgids = useMemo(
-    () => roles.data.map((i) => roleToOrgID(i)),
-    [roleToOrgID, roles],
+  const {orgModRole} = ctx;
+  const modRoleids = useMemo(
+    () =>
+      Array.isArray(orgs.data)
+        ? Array.from(new Set(orgs.data.map((i) => orgModRole(i.orgid))))
+        : [],
+    [orgModRole, orgs],
   );
-  const [orgs] = useResource(
-    orgids.length > 0 ? selectAPIOrgs : selectAPINull,
-    [orgids],
+  const [modRoles] = useAuthResource(
+    modRoleids.length > 0 ? selectAPIRoles : selectAPINull,
+    [modRoleids],
     [],
   );
+  const modRoleSet = useMemo(() => new Set(modRoles.data), [modRoles]);
 
   const modal = useModal();
 
@@ -252,21 +238,13 @@ const Orgs = () => {
         </Column>
       </Grid>
       <hr />
-      <Tabbar>
-        <TabItem className={!isViewMod ? 'active' : ''} onClick={viewUsr}>
-          Member
-        </TabItem>
-        <TabItem className={isViewMod ? 'active' : ''} onClick={viewMod}>
-          Moderator
-        </TabItem>
-      </Tabbar>
       <ListGroup>
-        {orgids.length > 0 &&
+        {modRoles.success &&
           Array.isArray(orgs.data) &&
           orgs.data.map((i) => (
             <OrgRow
               key={i.orgid}
-              isMod={isViewMod}
+              isMod={modRoleSet.has(orgModRole(i.orgid))}
               pathOrg={ctx.pathOrg}
               pathOrgSettings={ctx.pathOrgSettings}
               orgid={i.orgid}
@@ -287,8 +265,8 @@ const Orgs = () => {
           next
         </ButtonTertiary>
       </ButtonGroup>
-      {roles.err && <p>{roles.err.message}</p>}
       {orgs.err && <p>{orgs.err.message}</p>}
+      {modRoles.err && <p>{modRoles.err.message}</p>}
     </div>
   );
 };

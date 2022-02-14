@@ -11,6 +11,20 @@ export default {
     selector: (_res, data) => data && data.orgs,
     err: 'Unable to get orgs',
   },
+  search: {
+    url: '/search',
+    method: 'GET',
+    transformer: (prefix, amount, offset) => ({
+      query: {
+        prefix,
+        amount,
+        offset,
+      },
+    }),
+    expectjson: true,
+    selector: (_res, data) => data && data.orgs,
+    err: 'Unable to get orgs',
+  },
   getall: {
     url: '',
     method: 'GET',
@@ -32,6 +46,21 @@ export default {
         }),
         expectjson: true,
         err: 'Unable to get org',
+      },
+      member: {
+        url: '/member',
+        method: 'GET',
+        transformer: (id, prefix, amount, offset) => ({
+          params: [id],
+          query: {
+            prefix,
+            amount,
+            offset,
+          },
+        }),
+        expectjson: true,
+        selector: (_res, data) => data && data.members,
+        err: 'Unable to get org members',
       },
       edit: {
         url: '',
