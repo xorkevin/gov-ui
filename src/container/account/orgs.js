@@ -1,11 +1,14 @@
 import {Fragment, useCallback, useMemo, useContext} from 'react';
-import {selectAPINull} from '@xorkevin/substation';
+import {Routes, Route, Navigate} from 'react-router-dom';
+import {selectAPINull, useResource} from '@xorkevin/substation';
 import {useAuthValue, useAuthCall, useAuthResource} from '@xorkevin/turbine';
 import {
   Grid,
   Column,
   ListGroup,
   ListItem,
+  Tabbar,
+  TabItem,
   ModalSurface,
   useModal,
   useMenu,
@@ -31,8 +34,10 @@ import {formatURL} from '../../utility';
 
 const ORG_LIMIT = 32;
 
-const selectAPIOrgs = (api) => api.orgs.search;
-const selectAPIRoles = (api) => api.u.user.roleint;
+const selectAPIOrgs = (api) => api.orgs.get;
+const selectAPIOrgsSearch = (api) => api.orgs.search;
+const selectAPIRoleInt = (api) => api.u.user.roleint;
+const selectAPIRoles = (api) => api.u.user.roles.get;
 const selectAPICreate = (api) => api.orgs.create;
 const selectAPIEditRank = (api) => api.u.user.id.edit.rank;
 
@@ -161,11 +166,9 @@ const CreateOrg = ({posthookCreate, close}) => {
   );
 };
 
-const Orgs = () => {
+const OrgMember = () => {
   const ctx = useContext(GovUICtx);
-  const displaySnackbarCreate = useSnackbarView(
-    <SnackbarSurface>&#x2713; Org created</SnackbarSurface>,
-  );
+
   const snackLeftOrg = useSnackbarView(
     <SnackbarSurface>&#x2713; Left organization</SnackbarSurface>,
   );
@@ -180,7 +183,7 @@ const Orgs = () => {
     [setAtEnd],
   );
   const [orgs, reexecute] = useAuthResource(
-    selectAPIOrgs,
+    selectAPIOrgsSearch,
     ['', ORG_LIMIT, paginate.index],
     [],
     {posthook: posthookOrgs},
@@ -195,20 +198,11 @@ const Orgs = () => {
     [orgModRole, orgs],
   );
   const [modRoles] = useAuthResource(
-    modRoleids.length > 0 ? selectAPIRoles : selectAPINull,
+    modRoleids.length > 0 ? selectAPIRoleInt : selectAPINull,
     [modRoleids],
     [],
   );
   const modRoleSet = useMemo(() => new Set(modRoles.data), [modRoles]);
-
-  const modal = useModal();
-
-  const modalClose = modal.close;
-  const posthookCreate = useCallback(() => {
-    modalClose();
-    displaySnackbarCreate();
-    reexecute();
-  }, [modalClose, displaySnackbarCreate, reexecute]);
 
   const posthookLeave = useCallback(() => {
     snackLeftOrg();
@@ -216,28 +210,7 @@ const Orgs = () => {
   }, [reexecute, snackLeftOrg]);
 
   return (
-    <div>
-      <Grid justify="space-between" align="flex-end">
-        <Column grow="1">
-          <h3>Organizations</h3>
-        </Column>
-        <Column>
-          <ButtonGroup>
-            <ButtonTertiary
-              forwardedRef={modal.anchorRef}
-              onClick={modal.toggle}
-            >
-              <FaIcon icon="plus" /> New
-            </ButtonTertiary>
-          </ButtonGroup>
-          {modal.show && (
-            <ModalSurface size="md" anchor={modal.anchor} close={modalClose}>
-              <CreateOrg posthookCreate={posthookCreate} close={modalClose} />
-            </ModalSurface>
-          )}
-        </Column>
-      </Grid>
-      <hr />
+    <Fragment>
       <ListGroup>
         {modRoles.success &&
           Array.isArray(orgs.data) &&
@@ -267,6 +240,127 @@ const Orgs = () => {
       </ButtonGroup>
       {orgs.err && <p>{orgs.err.message}</p>}
       {modRoles.err && <p>{modRoles.err.message}</p>}
+    </Fragment>
+  );
+};
+
+const noop = () => {};
+
+const OrgMod = () => {
+  const ctx = useContext(GovUICtx);
+
+  const paginate = usePaginate(ORG_LIMIT);
+
+  const setAtEnd = paginate.setAtEnd;
+
+  const posthookRoles = useCallback(
+    (_res, roles) => {
+      setAtEnd(roles.length < ORG_LIMIT);
+    },
+    [setAtEnd],
+  );
+  const [roles, reexecute] = useAuthResource(
+    selectAPIRoles,
+    [ctx.orgModPrefix, ORG_LIMIT, paginate.index],
+    [],
+    {posthook: posthookRoles},
+  );
+
+  const {roleToOrgID} = ctx;
+  const orgids = useMemo(
+    () => roles.data.map((i) => roleToOrgID(i)),
+    [roleToOrgID, roles],
+  );
+  const [orgs] = useResource(
+    orgids.length > 0 ? selectAPIOrgs : selectAPINull,
+    [orgids],
+    [],
+  );
+
+  return (
+    <Fragment>
+      <ListGroup>
+        {orgids.length > 0 &&
+          Array.isArray(orgs.data) &&
+          orgs.data.map((i) => (
+            <OrgRow
+              key={i.orgid}
+              isMod={true}
+              pathOrg={ctx.pathOrg}
+              pathOrgSettings={ctx.pathOrgSettings}
+              orgid={i.orgid}
+              name={i.name}
+              display_name={i.display_name}
+              desc={i.desc}
+              creation_time={i.creation_time}
+              posthookLeave={noop}
+            />
+          ))}
+      </ListGroup>
+      <ButtonGroup>
+        <ButtonTertiary disabled={paginate.atFirst} onClick={paginate.prev}>
+          prev
+        </ButtonTertiary>
+        {paginate.page}
+        <ButtonTertiary disabled={paginate.atLast} onClick={paginate.next}>
+          next
+        </ButtonTertiary>
+      </ButtonGroup>
+      {roles.err && <p>{roles.err.message}</p>}
+      {orgs.err && <p>{orgs.err.message}</p>}
+    </Fragment>
+  );
+};
+
+const Orgs = () => {
+  const displaySnackbarCreate = useSnackbarView(
+    <SnackbarSurface>&#x2713; Org created</SnackbarSurface>,
+  );
+
+  const modal = useModal();
+
+  const modalClose = modal.close;
+  const posthookCreate = useCallback(() => {
+    modalClose();
+    displaySnackbarCreate();
+  }, [modalClose, displaySnackbarCreate]);
+
+  return (
+    <div>
+      <Grid justify="space-between" align="flex-end">
+        <Column grow="1">
+          <h3>Organizations</h3>
+        </Column>
+        <Column>
+          <ButtonGroup>
+            <ButtonTertiary
+              forwardedRef={modal.anchorRef}
+              onClick={modal.toggle}
+            >
+              <FaIcon icon="plus" /> New
+            </ButtonTertiary>
+          </ButtonGroup>
+          {modal.show && (
+            <ModalSurface size="md" anchor={modal.anchor} close={modalClose}>
+              <CreateOrg posthookCreate={posthookCreate} close={modalClose} />
+            </ModalSurface>
+          )}
+        </Column>
+      </Grid>
+      <hr />
+      <Tabbar>
+        <TabItem local link="member">
+          Member
+        </TabItem>
+        <TabItem local link="mod">
+          Moderator
+        </TabItem>
+      </Tabbar>
+      <Routes>
+        <Route path="member" element={<OrgMember />} />
+        <Route path="mod" element={<OrgMod />} />
+        <Route path="*" element={<Navigate to="member" replace />} />
+      </Routes>
     </div>
   );
 };

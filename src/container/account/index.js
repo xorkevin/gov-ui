@@ -111,7 +111,7 @@ const Account = () => {
                     element={<InvitationsContainer />}
                   />
                   {ctx.enableUserOrgs && (
-                    <Route path="orgs" element={<OrgsContainer />} />
+                    <Route path="orgs/*" element={<OrgsContainer />} />
                   )}
                   <Route path="dev/apikey" element={<DevApikeyContainer />} />
                   <Route path="*" element={<Navigate to="account" replace />} />
