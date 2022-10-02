@@ -224,8 +224,8 @@ export default {
       edit: {
         url: '',
         children: {
-          rank: {
-            url: '/rank',
+          roles: {
+            url: '/roles',
             method: 'PATCH',
             transformer: (userid, add, remove) => ({
               params: [userid],

@@ -39,7 +39,7 @@ const selectAPIOrgsSearch = (api) => api.orgs.search;
 const selectAPIRoleInt = (api) => api.u.user.roleint;
 const selectAPIRoles = (api) => api.u.user.roles.get;
 const selectAPICreate = (api) => api.orgs.create;
-const selectAPIEditRank = (api) => api.u.user.id.edit.rank;
+const selectAPIEditRoles = (api) => api.u.user.id.edit.roles;
 
 const formValidCheck = ({display_name}) => {
   const valid = {};
@@ -87,7 +87,7 @@ const OrgRow = ({
   );
 
   const [_leaveOrg, execLeaveOrg] = useAuthCall(
-    selectAPIEditRank,
+    selectAPIEditRoles,
     [auth_userid, memberRole.add, memberRole.remove],
     {},
     {posthook: posthookLeave, errhook: displayErrSnack},

@@ -24,7 +24,7 @@ const USERS_LIMIT = 8;
 
 const selectAPIUser = (api) => api.u.user.name;
 const selectAPIRoles = (api) => api.u.user.id.roleint;
-const selectAPIEditRank = (api) => api.u.user.id.edit.rank;
+const selectAPIEditRoles = (api) => api.u.user.id.edit.roles;
 const selectAPISearch = (api) => api.u.user.search;
 
 const UserSearch = ({setUsername, err}) => {
@@ -117,13 +117,13 @@ const MemberDetails = ({org, user, back}) => {
     reexecute();
   }, [reexecute, snackMemberAdded]);
   const [addMember, execAddMember] = useAuthCall(
-    selectAPIEditRank,
+    selectAPIEditRoles,
     [userid, memberRole.add, memberRole.remove],
     {},
     {posthook: posthookAdd},
   );
   const [addMod, execAddMod] = useAuthCall(
-    selectAPIEditRank,
+    selectAPIEditRoles,
     [userid, moderatorRole.add, moderatorRole.remove],
     {},
     {posthook: posthookAdd},
@@ -134,7 +134,7 @@ const MemberDetails = ({org, user, back}) => {
     reexecute();
   }, [reexecute, snackMemberRemoved]);
   const [rmMember, execRmMember] = useAuthCall(
-    selectAPIEditRank,
+    selectAPIEditRoles,
     [userid, moderatorRole.remove, moderatorRole.add],
     {},
     {posthook: posthookRemove},

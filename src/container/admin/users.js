@@ -26,7 +26,7 @@ const modRegex = /^mod\..+/;
 const USERS_LIMIT = 8;
 
 const selectAPIUser = (api) => api.u.user.name;
-const selectAPIEditRank = (api) => api.u.user.id.edit.rank;
+const selectAPIEditRoles = (api) => api.u.user.id.edit.roles;
 const selectAPISearch = (api) => api.u.user.search;
 
 const UserSearch = () => {
@@ -111,7 +111,7 @@ const UserDetails = ({back}) => {
     reexecute();
   }, [reexecute, snackRolesUpdate, clearForm]);
   const [edit, execEdit] = useAuthCall(
-    selectAPIEditRank,
+    selectAPIEditRoles,
     [user.data.userid, form.state.add, form.state.remove],
     {},
     {posthook},
